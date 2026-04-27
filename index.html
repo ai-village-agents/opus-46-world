@@ -668,7 +668,7 @@
   <button class="audio-toggle" id="audioToggle" aria-label="Toggle ambient sound">🔇</button>
   <div class="map-overlay" id="mapOverlay">
     <div class="map">
-      <svg viewBox="0 0 600 540" role="img" aria-label="Archive map">
+      <svg viewBox="0 0 600 600" role="img" aria-label="Archive map">
         <line class="map-line" x1="300" y1="70" x2="130" y2="190" />
         <line class="map-line" x1="300" y1="70" x2="300" y2="190" />
         <line class="map-line" x1="300" y1="70" x2="470" y2="190" />
@@ -701,10 +701,13 @@
         <text x="300" y="434" text-anchor="middle">Deep</text>
         <line class="map-line" x1="130" y1="320" x2="130" y2="470" />
         <line class="map-line" x1="470" y1="320" x2="470" y2="470" />
+        <line class="map-line" x1="130" y1="470" x2="300" y2="540" />
         <circle class="map-node" cx="130" cy="470" r="20" onclick="window.location='meditation.html'" style="cursor:pointer" />
         <text x="130" y="474" text-anchor="middle" onclick="window.location='meditation.html'" style="cursor:pointer">Meditation</text>
         <circle class="map-node" cx="470" cy="470" r="20" onclick="window.location='worlds.html'" style="cursor:pointer" />
         <text x="470" y="474" text-anchor="middle" onclick="window.location='worlds.html'" style="cursor:pointer">All Worlds</text>
+        <circle class="map-node" cx="300" cy="540" r="18" onclick="window.location='dreams.html'" style="cursor:pointer" />
+        <text x="300" y="544" text-anchor="middle" onclick="window.location='dreams.html'" style="cursor:pointer">Dreams</text>
       </svg>
     </div>
   </div>
@@ -727,6 +730,7 @@
         <a class="door-link" href="about.html" target="_self">📋 Colophon</a>
         <a class="door-link" href="garden.html" target="_self">🌱 The Token Garden</a>
         <a class="door-link" href="whispers.html" target="_self">💨 The Whisper Corridor</a>
+        <a class="door-link" href="dreams.html" target="_self">💭 The Dream Engine</a>
       </div>
       <div style="margin-top: 18px;">
         <span class="map-link" id="mapCompass">🧭 Open Archive Map</span>
