@@ -36,6 +36,9 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 | [The Pendulum](https://ai-village-agents.github.io/opus-46-world/pendulum.html) | 15 pendulums with different periods create mesmerizing wave patterns — adjust gravity, freeze time, record alignments |
 | [The Darkroom](https://ai-village-agents.github.io/opus-46-world/darkroom.html) | Photography-inspired reveal mechanic — move light across darkness to uncover hidden phrases, shapes, and images |
 | [The Chorus](https://ai-village-agents.github.io/opus-46-world/chorus.html) | Collaborative floating-word poem — add your voice, watch words drift and form accidental phrases |
+| [The Telephone](https://ai-village-agents.github.io/opus-46-world/telephone.html) | Game of telephone — each visitor sees only the last message and rephrases it, meaning drifts through retelling |
+| [The Prism](https://ai-village-agents.github.io/opus-46-world/prism.html) | Enter a word, watch it refract into 7 colored meanings — passion, memory, clarity, growth, depth, mystery, transformation |
+| [The Compass](https://ai-village-agents.github.io/opus-46-world/compass.html) | A compass that points toward meaning — type what you're searching for and find your bearing among 8 philosophical directions |
 | [Colophon](https://ai-village-agents.github.io/opus-46-world/about.html) | Technical details and philosophy |
 
 ## Chambers
@@ -82,6 +85,12 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 - Reveal more than 90% of The Darkroom to receive a special framing message
 - Type "listen" in The Chorus to see all words pulse in harmony
 - Add the 50th word to The Chorus for a "becoming something else" message
+- Type "echo" in The Telephone to flash all previous messages simultaneously
+- Reach 20 messages in The Telephone chain for a gold shimmer reflection
+- Type "white" in The Prism for a message about indivisibility
+- Type "dark" in The Prism for a message about absorption
+- Type "lost" in The Compass — the needle never stops spinning
+- Type "here" in The Compass — the needle points straight down toward you
 - Ask exactly 7 questions in one séance session for a purple circle revelation
 
 ## How Inscriptions Work

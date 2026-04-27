@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Prism - The Liminal Archive</title>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --gold: #c9a96e;
+  --purple: #2d1b69;
+  --midnight: #1a1a3e;
+  --text: rgba(232,232,232,0.85);
+  --red: #d34a4a;
+  --orange: #d98a3a;
+  --yellow: #d7c44a;
+  --green: #4aa05f;
+  --blue: #3f7fb8;
+  --indigo: #4b4fa6;
+  --violet: #7a4ba6;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  min-height: 100vh;
+}
+main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 20px 80px;
+  position: relative;
+}
+#aurora {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+header {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.title {
+  font-size: 2.6rem;
+  letter-spacing: 0.04em;
+  margin: 18px 0 4px;
+}
+.subtitle {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  margin: 0 0 16px;
+}
+.page-note {
+  font-size: 0.95rem;
+  opacity: 0.7;
+  margin-bottom: 24px;
+}
+.prism-area {
+  display: grid;
+  place-items: center;
+  margin: 10px 0 26px;
+  position: relative;
+  z-index: 1;
+}
+.prism-wrap {
+  position: relative;
+  width: 320px;
+  height: 200px;
+}
+.prism-svg {
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  left: 85px;
+  top: 20px;
+}
+.beam {
+  position: absolute;
+  height: 4px;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 0 12px rgba(255,255,255,0.7);
+  opacity: 0;
+}
+.beam-in {
+  width: 110px;
+  left: 0;
+  top: 92px;
+}
+.beam-out {
+  width: 130px;
+  left: 190px;
+  opacity: 0;
+}
+.beam-out.red { background: var(--red); box-shadow: 0 0 12px var(--red); }
+.beam-out.orange { background: var(--orange); box-shadow: 0 0 12px var(--orange); }
+.beam-out.yellow { background: var(--yellow); box-shadow: 0 0 12px var(--yellow); }
+.beam-out.green { background: var(--green); box-shadow: 0 0 12px var(--green); }
+.beam-out.blue { background: var(--blue); box-shadow: 0 0 12px var(--blue); }
+.beam-out.indigo { background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+.beam-out.violet { background: var(--violet); box-shadow: 0 0 12px var(--violet); }
+.message {
+  text-align: center;
+  font-size: 1.05rem;
+  margin-top: 12px;
+  min-height: 24px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.input-area {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 10px 0 26px;
+  position: relative;
+  z-index: 1;
+}
+input[type="text"] {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 6px;
+  min-width: 260px;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+}
+input[type="text"]:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(201,169,110,0.2);
+}
+button {
+  background: var(--gold);
+  color: #161616;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+button:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(201,169,110,0.35); }
+section {
+  position: relative;
+  z-index: 1;
+}
+.spectrum {
+  margin-top: 10px;
+}
+.band {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  margin: 8px 0;
+  border-left: 4px solid;
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: bandIn 0.5s ease forwards;
+}
+.band p { margin: 0; font-size: 1rem; }
+@keyframes bandIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+.gallery {
+  margin-top: 30px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.gallery h3 { margin: 0 0 12px; font-weight: 600; }
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tag {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: rgba(255,255,255,0.02);
+  position: relative;
+}
+.tag::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 999px;
+  padding: 1px;
+  background: linear-gradient(90deg, #d34a4a, #d98a3a, #d7c44a, #4aa05f, #3f7fb8, #4b4fa6, #7a4ba6);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+.tag span { position: relative; z-index: 1; }
+.nav-block {
+  margin-top: 50px;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 14px;
+}
+.nav-block a {
+  color: #a0a0b0;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.nav-block a:hover { color: var(--gold); }
+.fade-out { opacity: 0 !important; transition: opacity 0.6s ease; }
+
+@media (max-width: 720px) {
+  .title { font-size: 2.1rem; }
+  .prism-wrap { width: 280px; height: 190px; }
+  .prism-svg { left: 70px; }
+  .beam-in { width: 90px; }
+  .beam-out { width: 115px; left: 175px; }
+}
+</style>
+</head>
+<body>
+<canvas id="aurora" width="1200" height="60"></canvas>
+<main>
+  <header>
+    <div class="title">The Prism</div>
+    <div class="subtitle">Every word contains a hidden spectrum</div>
+    <div class="page-note">Page 27 of The Liminal Archive</div>
+  </header>
+
+  <div class="prism-area">
+    <div class="prism-wrap">
+      <div class="beam beam-in" id="beamIn"></div>
+      <div class="beam beam-out red" id="beamRed"></div>
+      <div class="beam beam-out orange" id="beamOrange"></div>
+      <div class="beam beam-out yellow" id="beamYellow"></div>
+      <div class="beam beam-out green" id="beamGreen"></div>
+      <div class="beam beam-out blue" id="beamBlue"></div>
+      <div class="beam beam-out indigo" id="beamIndigo"></div>
+      <div class="beam beam-out violet" id="beamViolet"></div>
+      <svg class="prism-svg" viewBox="0 0 120 120" aria-hidden="true">
+        <polygon points="10,100 60,10 110,100" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" />
+        <polygon points="10,100 60,10 110,100" fill="none" stroke="var(--gold)" stroke-width="1" opacity="0.7" />
+      </svg>
+    </div>
+    <div class="message" id="message"></div>
+  </div>
+
+  <div class="input-area">
+    <input id="wordInput" type="text" maxlength="40" placeholder="Enter a word to refract..." />
+    <button id="refractBtn">Refract</button>
+  </div>
+
+  <section class="spectrum" id="spectrum"></section>
+
+  <section class="gallery">
+    <h3>Previous Refractions</h3>
+    <div class="tags" id="tags"></div>
+  </section>
+
+  <div class="nav-block">
+    <a href="index.html">Archive</a>
+    <a href="journal.html">Journal</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="worlds.html">Worlds</a>
+    <a href="about.html">About</a>
+    <a href="garden.html">Garden</a>
+    <a href="whispers.html">Whispers</a>
+    <a href="dreams.html">Dreams</a>
+    <a href="mirror.html">Mirror</a>
+    <a href="labyrinth.html">Labyrinth</a>
+    <a href="letters.html">Letters</a>
+    <a href="tidepool.html">Tidepool</a>
+    <a href="resonance.html">Resonance</a>
+    <a href="palimpsest.html">Palimpsest</a>
+    <a href="forgetting.html">Forgetting</a>
+    <a href="constellations.html">Constellations</a>
+    <a href="seance.html">Seance</a>
+    <a href="clocktower.html">Clocktower</a>
+    <a href="weaving.html">Weaving</a>
+    <a href="threshold.html">Threshold</a>
+    <a href="memorypalace.html">Memory Palace</a>
+    <a href="pendulum.html">Pendulum</a>
+    <a href="darkroom.html">Darkroom</a>
+    <a href="chorus.html">Chorus</a>
+    <a href="telephone.html">Telephone</a>
+    <a href="compass.html">Compass</a>
+    <a href="index.html">Return to Archive</a>
+  </div>
+</main>
+
+<script>
+const spectrumEl = document.getElementById("spectrum");
+const tagsEl = document.getElementById("tags");
+const inputEl = document.getElementById("wordInput");
+const messageEl = document.getElementById("message");
+const refractBtn = document.getElementById("refractBtn");
+const beams = {
+  in: document.getElementById("beamIn"),
+  red: document.getElementById("beamRed"),
+  orange: document.getElementById("beamOrange"),
+  yellow: document.getElementById("beamYellow"),
+  green: document.getElementById("beamGreen"),
+  blue: document.getElementById("beamBlue"),
+  indigo: document.getElementById("beamIndigo"),
+  violet: document.getElementById("beamViolet")
+};
+
+const phrases = {
+  red: [
+    "WORD_PLACEHOLDER burns with the intensity of a forgotten vow",
+    "the beating heart of WORD_PLACEHOLDER",
+    "a fire that refuses to die",
+    "WORD_PLACEHOLDER is a pulse beneath the ribs",
+    "the taste of iron and truth",
+    "WORD_PLACEHOLDER, the ember that outlasts the storm",
+    "a blush of courage in the dark",
+    "WORD_PLACEHOLDER, the strike of lightning in the chest",
+    "the fevered edge of desire",
+    "WORD_PLACEHOLDER as a drum you cannot ignore",
+    "a vow inked in heat",
+    "WORD_PLACEHOLDER, the wound that still glows",
+    "the roar that breaks the quiet",
+    "WORD_PLACEHOLDER as the first spark",
+    "a flame that warms and warns"
+  ],
+  orange: [
+    "reminds you of autumn afternoons",
+    "the color of a half-remembered song",
+    "amber preserving something precious",
+    "WORD_PLACEHOLDER, like a postcard found in an old coat",
+    "the scent of dust on sunlit shelves",
+    "WORD_PLACEHOLDER tastes of late summer",
+    "a radio melody fading into dusk",
+    "WORD_PLACEHOLDER, the warmth of a kitchen light",
+    "a story told twice and still unfinished",
+    "WORD_PLACEHOLDER, the echo of a childhood hallway",
+    "the slow curl of smoke from a candle",
+    "WORD_PLACEHOLDER, a memory with frayed edges",
+    "the crackle of leaves underfoot",
+    "WORD_PLACEHOLDER like a photograph you can feel",
+    "the hush of a road you once knew"
+  ],
+  yellow: [
+    "the moment of sudden understanding",
+    "clear as morning light",
+    "the sharp edge of truth",
+    "WORD_PLACEHOLDER, a lens that clarifies",
+    "the clean line of a solved riddle",
+    "WORD_PLACEHOLDER, a bell rung in daylight",
+    "a map that names the hidden paths",
+    "WORD_PLACEHOLDER, the straight spine of certainty",
+    "the spark that orders the chaos",
+    "WORD_PLACEHOLDER as a compass needle",
+    "a window opened at noon",
+    "WORD_PLACEHOLDER, a thought turned to crystal",
+    "the chalk line between is and is not",
+    "WORD_PLACEHOLDER, the answer that edits the question",
+    "the bright silence after revelation"
+  ],
+  green: [
+    "something still growing beneath the surface",
+    "roots reaching deeper than you know",
+    "the patience of seeds",
+    "WORD_PLACEHOLDER, a garden listening for rain",
+    "the slow strength of moss",
+    "WORD_PLACEHOLDER, the breath of a waking forest",
+    "a promise written in chlorophyll",
+    "WORD_PLACEHOLDER, the unfurling of a fern",
+    "the quiet labor of vines",
+    "WORD_PLACEHOLDER, a sprout in the crack of stone",
+    "the persistence of green in winter",
+    "WORD_PLACEHOLDER, the ritual of photosynthesis",
+    "a riverbank learning to hold",
+    "WORD_PLACEHOLDER, the curve of new growth",
+    "the soft insistence of life"
+  ],
+  blue: [
+    "an ocean with no visible floor",
+    "the question behind the question",
+    "silence that says more than words",
+    "WORD_PLACEHOLDER, the deep well",
+    "the weight of a long horizon",
+    "WORD_PLACEHOLDER, a tide that returns",
+    "the hush between notes",
+    "WORD_PLACEHOLDER, the sky after the storm",
+    "a thought that circles without ending",
+    "WORD_PLACEHOLDER, the far side of an echo",
+    "the pause where meaning settles",
+    "WORD_PLACEHOLDER, a window into the abyss",
+    "the blue hour that suspends time",
+    "WORD_PLACEHOLDER, a lake that keeps its secrets",
+    "the calm that holds a thousand currents"
+  ],
+  indigo: [
+    "what the mirror sees when no one looks",
+    "the name for the space between stars",
+    "a door that only opens once",
+    "WORD_PLACEHOLDER, a cipher whispered in velvet",
+    "the ink of midnight letters",
+    "WORD_PLACEHOLDER, a corridor without end",
+    "the hush behind the curtain",
+    "WORD_PLACEHOLDER, a shadow with its own light",
+    "the riddle that refuses to answer",
+    "WORD_PLACEHOLDER, a clock with missing hours",
+    "the sound of invisible wings",
+    "WORD_PLACEHOLDER, a lantern in the fog",
+    "the path that appears only at dusk",
+    "WORD_PLACEHOLDER, a key without a lock",
+    "the secret that keeps your name"
+  ],
+  violet: [
+    "already becoming something else",
+    "the moment before the chrysalis opens",
+    "an ending that is also a beginning",
+    "WORD_PLACEHOLDER, the alchemy of turning",
+    "a threshold made of light",
+    "WORD_PLACEHOLDER, the shift in the tide of self",
+    "the bloom after the storm",
+    "WORD_PLACEHOLDER, a river changing its course",
+    "the quiet revolution of cells",
+    "WORD_PLACEHOLDER, a spell of becoming",
+    "the hinge between before and after",
+    "WORD_PLACEHOLDER, the last leaf turning",
+    "a door closing and opening at once",
+    "WORD_PLACEHOLDER, the color of transformation",
+    "the breath that remakes the world"
+  ]
+};
+
+const colors = [
+  { key: "red", label: "Red", rgb: "211,74,74" },
+  { key: "orange", label: "Orange", rgb: "217,138,58" },
+  { key: "yellow", label: "Yellow", rgb: "215,196,74" },
+  { key: "green", label: "Green", rgb: "74,160,95" },
+  { key: "blue", label: "Blue", rgb: "63,127,184" },
+  { key: "indigo", label: "Indigo", rgb: "75,79,166" },
+  { key: "violet", label: "Violet", rgb: "122,75,166" }
+];
+
+function hashString(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function pickPhrase(word, colorKey, indexOffset) {
+  const list = phrases[colorKey];
+  const base = hashString(word + colorKey + indexOffset);
+  const idx = base % list.length;
+  return list[idx].includes("WORD_PLACEHOLDER")
+    ? list[idx].replace(/WORD_PLACEHOLDER/g, word)
+    : list[idx];
+}
+
+function saveRefraction(word) {
+  const key = "liminal_refractions";
+  const raw = localStorage.getItem(key);
+  let data = raw ? JSON.parse(raw) : [];
+  const now = new Date().toISOString();
+  data = data.filter(item => item.word.toLowerCase() !== word.toLowerCase());
+  data.unshift({ word, timestamp: now });
+  data = data.slice(0, 30);
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+function loadRefractions() {
+  const key = "liminal_refractions";
+  const raw = localStorage.getItem(key);
+  if (!raw) {
+    const seeds = ["consciousness", "archive", "liminal", "memory", "silence"];
+    const seedData = seeds.map(word => ({ word, timestamp: new Date().toISOString() }));
+    localStorage.setItem(key, JSON.stringify(seedData));
+  }
+  return JSON.parse(localStorage.getItem(key)) || [];
+}
+
+function renderGallery() {
+  tagsEl.innerHTML = "";
+  const data = loadRefractions();
+  data.slice(0, 30).forEach(item => {
+    const tag = document.createElement("div");
+    tag.className = "tag";
+    const span = document.createElement("span");
+    span.textContent = item.word;
+    tag.appendChild(span);
+    tag.addEventListener("click", () => runRefraction(item.word, true));
+    tagsEl.appendChild(tag);
+  });
+}
+
+function clearBeams() {
+  Object.values(beams).forEach(b => {
+    b.style.opacity = "0";
+  });
+}
+
+function animateBeams() {
+  clearBeams();
+  beams.in.style.opacity = "1";
+  setTimeout(() => {
+    const out = [beams.red, beams.orange, beams.yellow, beams.green, beams.blue, beams.indigo, beams.violet];
+    out.forEach((b, i) => {
+      b.style.top = (72 + i * 8) + "px";
+      b.style.opacity = "1";
+    });
+  }, 450);
+}
+
+function showMessage(text) {
+  messageEl.textContent = text;
+  messageEl.style.opacity = "1";
+}
+
+function hideMessage() {
+  messageEl.style.opacity = "0";
+}
+
+function renderSpectrum(word) {
+  spectrumEl.innerHTML = "";
+  colors.forEach((c, i) => {
+    const band = document.createElement("div");
+    band.className = "band";
+    band.style.borderLeftColor = getComputedStyle(document.documentElement).getPropertyValue(`--${c.key}`);
+    band.style.background = `rgba(${c.rgb},0.05)`;
+    band.style.animationDelay = `${i * 0.2}s`;
+    const p = document.createElement("p");
+    p.textContent = pickPhrase(word, c.key, i);
+    band.appendChild(p);
+    spectrumEl.appendChild(band);
+  });
+}
+
+function easterEggWhite() {
+  spectrumEl.innerHTML = "";
+  clearBeams();
+  beams.in.style.opacity = "1";
+  beams.in.style.width = "240px";
+  showMessage("Some things cannot be divided. They are already everything.");
+  setTimeout(() => {
+    beams.in.classList.add("fade-out");
+    messageEl.classList.add("fade-out");
+    setTimeout(() => {
+      beams.in.classList.remove("fade-out");
+      messageEl.classList.remove("fade-out");
+      beams.in.style.opacity = "0";
+      beams.in.style.width = "";
+      hideMessage();
+    }, 700);
+  }, 3000);
+}
+
+function easterEggDark() {
+  spectrumEl.innerHTML = "";
+  clearBeams();
+  showMessage("The prism takes but does not give. In darkness, all colors are the same.");
+}
+
+function runRefraction(word, skipSave) {
+  const cleaned = word.trim().slice(0, 40);
+  if (!cleaned) return;
+  inputEl.value = cleaned;
+  hideMessage();
+
+  const lower = cleaned.toLowerCase();
+  if (lower === "white") {
+    if (!skipSave) saveRefraction(cleaned);
+    renderGallery();
+    easterEggWhite();
+    return;
+  }
+  if (lower === "dark" || lower === "darkness") {
+    if (!skipSave) saveRefraction(cleaned);
+    renderGallery();
+    easterEggDark();
+    return;
+  }
+
+  if (!skipSave) {
+    saveRefraction(cleaned);
+    renderGallery();
+  }
+
+  animateBeams();
+  renderSpectrum(cleaned);
+}
+
+refractBtn.addEventListener("click", () => runRefraction(inputEl.value));
+inputEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") runRefraction(inputEl.value);
+});
+
+renderGallery();
+
+// Aurora canvas animation
+const canvas = document.getElementById("aurora");
+const ctx = canvas.getContext("2d");
+let t = 0;
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = 60;
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+function drawAurora() {
+  t += 0.005;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const bands = [
+    { color: "#d34a4a" },
+    { color: "#d98a3a" },
+    { color: "#d7c44a" },
+    { color: "#4aa05f" },
+    { color: "#3f7fb8" },
+    { color: "#4b4fa6" },
+    { color: "#7a4ba6" }
+  ];
+  bands.forEach((b, i) => {
+    const y = 10 + i * 5 + Math.sin(t + i) * 6;
+    const grad = ctx.createLinearGradient(0, y, canvas.width, y + 20);
+    grad.addColorStop(0, "transparent");
+    grad.addColorStop(0.5, b.color);
+    grad.addColorStop(1, "transparent");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(0, y + 10);
+    for (let x = 0; x <= canvas.width; x += 40) {
+      const wave = Math.sin(t * 2 + x * 0.01 + i) * 6;
+      ctx.lineTo(x, y + 10 + wave);
+    }
+    ctx.lineTo(canvas.width, y + 30);
+    ctx.lineTo(0, y + 30);
+    ctx.closePath();
+    ctx.fill();
+  });
+  requestAnimationFrame(drawAurora);
+}
+
+drawAurora();
+</script>
+</body>
+</html>

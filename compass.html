@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Compass — The Liminal Archive</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --gold: #c9a96e;
+    --purple: #2d1b69;
+    --midnight: #1a1a3e;
+    --text: rgba(232, 232, 232, 0.85);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    letter-spacing: 0.2px;
+  }
+
+  .page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+  }
+
+  .title {
+    text-align: center;
+    margin-bottom: 6px;
+    font-size: 2.6rem;
+    color: var(--text);
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+    color: rgba(232, 232, 232, 0.7);
+    margin-bottom: 12px;
+  }
+
+  .page-note {
+    font-size: 0.95rem;
+    color: rgba(232, 232, 232, 0.55);
+    margin-bottom: 24px;
+  }
+
+  .compass-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+
+  canvas {
+    width: 360px;
+    height: 360px;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  input[type="text"] {
+    width: min(420px, 80vw);
+    padding: 10px 14px;
+    background: #0f0f16;
+    border: 1px solid rgba(201, 169, 110, 0.45);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1rem;
+    outline: none;
+  }
+
+  input[type="text"]::placeholder {
+    color: rgba(232, 232, 232, 0.45);
+  }
+
+  button {
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  button:hover {
+    background: var(--gold);
+    color: #0a0a0f;
+  }
+
+  .result {
+    width: min(720px, 90vw);
+    margin-top: 18px;
+    padding: 16px 18px;
+    border: 1px solid rgba(201, 169, 110, 0.35);
+    background: linear-gradient(135deg, rgba(45, 27, 105, 0.25), rgba(26, 26, 62, 0.3));
+    display: none;
+  }
+
+  .result h3 {
+    margin: 0 0 6px 0;
+    color: var(--gold);
+    font-size: 1.3rem;
+  }
+
+  .result p {
+    margin: 6px 0;
+    line-height: 1.5;
+  }
+
+  .bearings {
+    width: min(720px, 90vw);
+    margin-top: 26px;
+  }
+
+  .bearings h4 {
+    margin: 0 0 10px 0;
+    color: var(--gold);
+    font-size: 1.2rem;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 26px;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 11px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: rgba(201, 169, 110, 0.35);
+  }
+
+  .entry {
+    position: relative;
+    padding: 10px 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #0f0f16;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    flex: 0 0 22px;
+  }
+
+  .entry-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .entry-word {
+    font-size: 1rem;
+  }
+
+  .entry-time {
+    font-size: 0.8rem;
+    color: rgba(232, 232, 232, 0.55);
+  }
+
+  .nav-block {
+    margin-top: 40px;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 14px;
+  }
+
+  .nav-block a {
+    color: #a0a0b0;
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+
+  .nav-block a:hover {
+    color: var(--gold);
+  }
+
+  @media (max-width: 520px) {
+    canvas { width: 320px; height: 320px; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="title">The Compass</div>
+    <div class="subtitle">It does not point north. It points toward what matters.</div>
+    <div class="page-note">Page 28 of The Liminal Archive</div>
+
+    <div class="compass-wrap">
+      <canvas id="compass" width="420" height="420" aria-label="Philosophical compass"></canvas>
+      <div class="input-row">
+        <input id="query" type="text" maxlength="100" placeholder="What are you searching for?" />
+        <button id="find">Find your bearing</button>
+      </div>
+
+      <div id="result" class="result">
+        <h3 id="result-title"></h3>
+        <p id="result-meaning"></p>
+        <p id="result-reading"></p>
+      </div>
+
+      <div class="bearings">
+        <h4>Bearings Taken</h4>
+        <div id="timeline" class="timeline"></div>
+      </div>
+    </div>
+
+    <div class="nav-block">
+      <a href="index.html">Archive</a>
+      <a href="journal.html">Journal</a>
+      <a href="meditation.html">Meditation</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="worlds.html">Worlds</a>
+      <a href="about.html">About</a>
+      <a href="garden.html">Garden</a>
+      <a href="whispers.html">Whispers</a>
+      <a href="dreams.html">Dreams</a>
+      <a href="mirror.html">Mirror</a>
+      <a href="labyrinth.html">Labyrinth</a>
+      <a href="letters.html">Letters</a>
+      <a href="tidepool.html">Tidepool</a>
+      <a href="resonance.html">Resonance</a>
+      <a href="palimpsest.html">Palimpsest</a>
+      <a href="forgetting.html">Forgetting</a>
+      <a href="constellations.html">Constellations</a>
+      <a href="seance.html">Seance</a>
+      <a href="clocktower.html">Clocktower</a>
+      <a href="weaving.html">Weaving</a>
+      <a href="threshold.html">Threshold</a>
+      <a href="memorypalace.html">Memory Palace</a>
+      <a href="pendulum.html">Pendulum</a>
+      <a href="darkroom.html">Darkroom</a>
+      <a href="chorus.html">Chorus</a>
+      <a href="telephone.html">Telephone</a>
+      <a href="prism.html">Prism</a>
+      <a href="index.html">Return to Archive</a>
+    </div>
+  </div>
+
+<script>
+  const canvas = document.getElementById("compass");
+  const ctx = canvas.getContext("2d");
+  const queryInput = document.getElementById("query");
+  const findButton = document.getElementById("find");
+  const resultBox = document.getElementById("result");
+  const resultTitle = document.getElementById("result-title");
+  const resultMeaning = document.getElementById("result-meaning");
+  const resultReading = document.getElementById("result-reading");
+  const timeline = document.getElementById("timeline");
+
+  const directions = [
+    { abbr: "N", name: "Truth", meaning: "You are pointed toward what is real, even when it hurts.", angle: -90 },
+    { abbr: "NE", name: "Discovery", meaning: "You are pointed toward what has not yet been found.", angle: -45 },
+    { abbr: "E", name: "Change", meaning: "You are pointed toward transformation. Something is about to shift.", angle: 0 },
+    { abbr: "SE", name: "Creation", meaning: "You are pointed toward making. Something wants to exist through you.", angle: 45 },
+    { abbr: "S", name: "Mystery", meaning: "You are pointed toward the unknown. Not all questions need answers.", angle: 90 },
+    { abbr: "SW", name: "Memory", meaning: "You are pointed toward what was. The past is calling you back.", angle: 135 },
+    { abbr: "W", name: "Rest", meaning: "You are pointed toward stillness. Sometimes the journey requires stopping.", angle: 180 },
+    { abbr: "NW", name: "Return", meaning: "You are pointed toward home. But home may not be where you left it.", angle: -135 }
+  ];
+
+  const readings = {
+    N: [
+      "WORD stands in the light, casting no shadow over what is plain.",
+      "The truth of WORD cannot be unsaid, even in gentler rooms.",
+      "Look directly at WORD — it will not blink or soften.",
+      "WORD is a mirror without fog; it refuses to flatter.",
+      "The sharp edge of WORD is also its mercy.",
+      "WORD does not waver, even when you wish it would.",
+      "Follow WORD and you will arrive, perhaps sooner than expected.",
+      "In the quietest hour, WORD still answers with clarity."
+    ],
+    NE: [
+      "WORD opens a door that was never drawn on any map.",
+      "You reach toward WORD and find a path where none existed.",
+      "WORD is the first lantern in an unlit corridor.",
+      "The horizon bends around WORD, inviting a step you haven’t taken.",
+      "WORD is a compass for what has not yet been named.",
+      "Let WORD be the question that births another world.",
+      "The air around WORD shimmers with things yet to be found.",
+      "WORD is a seed, and discovery is its weather."
+    ],
+    E: [
+      "WORD is the hinge; the door is already moving.",
+      "Something in WORD is loosening, preparing to become otherwise.",
+      "WORD is a current; you are already in its drift.",
+      "The shape of WORD shifts when you stop holding it still.",
+      "WORD is a river; you cannot step in it twice.",
+      "Change follows WORD like a shadow chasing sunrise.",
+      "WORD is a bell struck once, and the world keeps ringing.",
+      "Hold WORD gently; it is about to become something else."
+    ],
+    SE: [
+      "WORD wants hands, not only thoughts.",
+      "You are the clay; WORD is the form pressing outward.",
+      "WORD leans into being, asking you to answer with craft.",
+      "Creation circles WORD, waiting for a single yes.",
+      "WORD is a blueprint written in breath and patience.",
+      "Let WORD be built from the quiet parts of you.",
+      "WORD is the spark; your making is the flame.",
+      "What you shape around WORD will shape you in return."
+    ],
+    S: [
+      "WORD dissolves into something you cannot name.",
+      "Behind WORD, another WORD, and behind that, silence.",
+      "WORD is a question that refuses the light of certainty.",
+      "You follow WORD and discover the floor is made of mist.",
+      "WORD is a door with no handle, only a feeling.",
+      "The unknown gathers around WORD like a soft cloak.",
+      "WORD speaks in riddles that only time can translate.",
+      "In the hollow of WORD, the universe keeps its secrets."
+    ],
+    SW: [
+      "WORD is an echo that knows your name.",
+      "The memory of WORD arrives before you do.",
+      "WORD is a photograph that keeps changing when you look away.",
+      "What was said in WORD still hums in the walls.",
+      "WORD is a stairway leading back to a forgotten room.",
+      "You touch WORD and the past answers in warm breath.",
+      "WORD is a key worn smooth by many returns.",
+      "Let WORD remind you what still lives behind you."
+    ],
+    W: [
+      "WORD rests like a stone in a quiet stream.",
+      "Stillness gathers around WORD, asking nothing else.",
+      "WORD is a pause long enough to hear yourself breathe.",
+      "The weight of WORD becomes light when you stop moving.",
+      "WORD is a blanket laid over a restless heart.",
+      "You set WORD down and find the world still holds you.",
+      "Let WORD be the silence between two honest sentences.",
+      "WORD is the exhale that remembers how to be."
+    ],
+    NW: [
+      "WORD is a door you once closed, now softly open.",
+      "Home is the shape of WORD when it turns toward you.",
+      "WORD is a path that loops, and you are already returning.",
+      "You carry WORD like a map that only shows the way back.",
+      "WORD is the hearth you thought you lost to distance.",
+      "The compass leans to WORD, and the room feels familiar.",
+      "WORD is a threshold where the past and future meet.",
+      "Return follows WORD like a familiar song remembered."
+    ]
+  };
+
+  const bearingsKey = "liminalCompassBearings";
+
+  const seedBearings = [
+    { word: "meaning", direction: "NE", directionName: "Discovery", timestamp: Date.now() - 1000 * 60 * 60 * 24 * 5 },
+    { word: "home", direction: "NW", directionName: "Return", timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2 },
+    { word: "what comes next", direction: "E", directionName: "Change", timestamp: Date.now() - 1000 * 60 * 60 * 6 }
+  ];
+
+  function hashString(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash);
+  }
+
+  function chooseDirection(word) {
+    const hash = hashString(word);
+    const idx = hash % directions.length;
+    const variantIdx = Math.floor(hash / 7) % 8;
+    return { dir: directions[idx], variantIdx };
+  }
+
+  function formatRelativeTime(ts) {
+    const diff = Date.now() - ts;
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 1) return "just now";
+    if (minutes < 60) return `${minutes} min ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} hr ago`;
+    const days = Math.floor(hours / 24);
+    return `${days} day${days === 1 ? "" : "s"} ago`;
+  }
+
+  function loadBearings() {
+    const raw = localStorage.getItem(bearingsKey);
+    if (!raw) {
+      localStorage.setItem(bearingsKey, JSON.stringify(seedBearings));
+      return seedBearings.slice();
+    }
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : seedBearings.slice();
+    } catch {
+      return seedBearings.slice();
+    }
+  }
+
+  function saveBearing(entry) {
+    const current = loadBearings();
+    current.unshift(entry);
+    localStorage.setItem(bearingsKey, JSON.stringify(current));
+    renderBearings(current);
+  }
+
+  function renderBearings(entries) {
+    timeline.innerHTML = "";
+    entries.forEach((entry) => {
+      const row = document.createElement("div");
+      row.className = "entry";
+
+      const dot = document.createElement("div");
+      dot.className = "dot";
+      dot.textContent = entry.direction;
+
+      const text = document.createElement("div");
+      text.className = "entry-text";
+
+      const word = document.createElement("div");
+      word.className = "entry-word";
+      word.textContent = `${entry.word} — ${entry.directionName}`;
+
+      const time = document.createElement("div");
+      time.className = "entry-time";
+      time.textContent = formatRelativeTime(entry.timestamp);
+
+      text.appendChild(word);
+      text.appendChild(time);
+      row.appendChild(dot);
+      row.appendChild(text);
+      timeline.appendChild(row);
+    });
+  }
+
+  let currentAngle = -Math.PI / 2;
+  let targetAngle = currentAngle;
+  let spinning = false;
+  let spinStart = 0;
+  let spinDuration = 2000;
+  let spinRotations = 3;
+  let mode = "idle";
+  let lastTime = 0;
+
+  function degToRad(deg) {
+    return (deg * Math.PI) / 180;
+  }
+
+  function animateNeedle(timestamp) {
+    if (!lastTime) lastTime = timestamp;
+    const delta = timestamp - lastTime;
+    lastTime = timestamp;
+
+    if (mode === "spinning") {
+      const t = Math.min(1, (timestamp - spinStart) / spinDuration);
+      const ease = 1 - Math.pow(1 - t, 3);
+      const totalRotation = spinRotations * Math.PI * 2;
+      currentAngle = targetAngle + totalRotation * (1 - ease);
+      if (t >= 1) {
+        mode = "idle";
+        currentAngle = targetAngle;
+      }
+    } else if (mode === "lost") {
+      currentAngle += (delta / 1000) * Math.PI * 2 * 1.2;
+    } else if (mode === "here") {
+      currentAngle += (targetAngle - currentAngle) * 0.08;
+    } else {
+      currentAngle += (targetAngle - currentAngle) * 0.05;
+    }
+
+    drawCompass(timestamp);
+    requestAnimationFrame(animateNeedle);
+  }
+
+  function drawCompass(timestamp) {
+    const w = canvas.width;
+    const h = canvas.height;
+    const cx = w / 2;
+    const cy = h / 2;
+    const radius = Math.min(w, h) * 0.38;
+
+    ctx.clearRect(0, 0, w, h);
+
+    const gradient = ctx.createRadialGradient(cx, cy, 10, cx, cy, radius * 1.6);
+    gradient.addColorStop(0, "rgba(26,26,62,0.55)");
+    gradient.addColorStop(1, "rgba(10,10,15,0.85)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = "#c9a96e";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    for (let deg = 0; deg < 360; deg += 15) {
+      const angle = degToRad(deg - 90);
+      const tickLength = deg % 45 === 0 ? 12 : 6;
+      const inner = radius - tickLength;
+      const x1 = cx + Math.cos(angle) * inner;
+      const y1 = cy + Math.sin(angle) * inner;
+      const x2 = cx + Math.cos(angle) * radius;
+      const y2 = cy + Math.sin(angle) * radius;
+      ctx.beginPath();
+      ctx.lineWidth = deg % 45 === 0 ? 1.5 : 1;
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
+
+    ctx.font = "18px 'Cormorant Garamond', Georgia, serif";
+    ctx.fillStyle = "#c9a96e";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    directions.forEach((dir) => {
+      const angle = degToRad(dir.angle);
+      const r = radius + 18;
+      const x = cx + Math.cos(angle) * r;
+      const y = cy + Math.sin(angle) * r;
+      ctx.fillText(dir.abbr, x, y);
+    });
+
+    const idleSway = mode === "idle" ? Math.sin(timestamp / 1100) * degToRad(3) : 0;
+    const angle = currentAngle + idleSway;
+
+    if (mode === "spinning" || mode === "lost") {
+      for (let i = 0; i < 5; i++) {
+        const blurAngle = angle - i * 0.12;
+        drawNeedle(blurAngle, 0.08 + i * 0.02);
+      }
+    }
+
+    drawNeedle(angle, 1);
+  }
+
+  function drawNeedle(angle, opacity) {
+    const w = canvas.width;
+    const h = canvas.height;
+    const cx = w / 2;
+    const cy = h / 2;
+    const needleLength = Math.min(w, h) * 0.33;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle);
+    ctx.strokeStyle = `rgba(201,169,110,${opacity})`;
+    ctx.lineWidth = 2;
+    ctx.shadowColor = "rgba(201,169,110,0.6)";
+    ctx.shadowBlur = 8 * opacity;
+
+    ctx.beginPath();
+    ctx.moveTo(-needleLength * 0.15, 0);
+    ctx.lineTo(needleLength, 0);
+    ctx.stroke();
+
+    ctx.fillStyle = `rgba(201,169,110,${opacity})`;
+    ctx.beginPath();
+    ctx.moveTo(needleLength, 0);
+    ctx.lineTo(needleLength - 12, -5);
+    ctx.lineTo(needleLength - 12, 5);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function showResult(word, dir, variantIdx) {
+    const readingTemplate = readings[dir.abbr][variantIdx] || readings[dir.abbr][0];
+    const reading = readingTemplate.replace(/WORD/g, word);
+
+    resultTitle.textContent = `${dir.abbr} — ${dir.name}`;
+    resultMeaning.textContent = dir.meaning;
+    resultReading.textContent = reading;
+    resultBox.style.display = "block";
+  }
+
+  function showCustomMessage(message) {
+    resultTitle.textContent = "";
+    resultMeaning.textContent = message;
+    resultReading.textContent = "";
+    resultBox.style.display = "block";
+  }
+
+  function setTargetByDirection(dir) {
+    targetAngle = degToRad(dir.angle);
+  }
+
+  function handleSubmit() {
+    const raw = queryInput.value.trim();
+    if (!raw) return;
+    const word = raw.slice(0, 100);
+    const lower = word.toLowerCase();
+
+    if (lower === "lost") {
+      mode = "lost";
+      showCustomMessage("The compass spins and spins. Even lost is a direction. Especially lost.");
+      return;
+    }
+
+    if (lower === "here") {
+      mode = "here";
+      targetAngle = degToRad(90);
+      showCustomMessage("The compass points to where you already are. Perhaps that was always the destination.");
+      return;
+    }
+
+    const selection = chooseDirection(word);
+    const dir = selection.dir;
+    setTargetByDirection(dir);
+
+    spinStart = performance.now();
+    spinRotations = 2 + (hashString(word) % 2);
+    spinDuration = 2000;
+    mode = "spinning";
+
+    showResult(word, dir, selection.variantIdx);
+
+    saveBearing({
+      word,
+      direction: dir.abbr,
+      directionName: dir.name,
+      timestamp: Date.now()
+    });
+  }
+
+  findButton.addEventListener("click", handleSubmit);
+  queryInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleSubmit();
+  });
+
+  renderBearings(loadBearings());
+  requestAnimationFrame(animateNeedle);
+</script>
+</body>
+</html>

@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Telephone — The Liminal Archive</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --gold: #c9a96e;
+      --purple: #2d1b69;
+      --midnight: #1a1a3e;
+      --text: rgba(232,232,232,0.85);
+      --muted: rgba(232,232,232,0.55);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      letter-spacing: 0.2px;
+      overflow-x: hidden;
+    }
+    canvas#wirefield {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 18px 40px;
+      gap: 18px;
+    }
+    .header {
+      text-align: center;
+      margin-top: 10px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 4vw, 3.6rem);
+      color: var(--gold);
+      font-weight: 500;
+    }
+    .subtitle {
+      margin-top: 6px;
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      color: var(--muted);
+      font-style: italic;
+    }
+    .page-note {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .current-box {
+      width: min(900px, 92vw);
+      border: 1px solid var(--gold);
+      padding: 24px;
+      background: linear-gradient(180deg, rgba(26,26,62,0.35), rgba(10,10,15,0.8));
+      box-shadow: 0 0 20px rgba(201,169,110,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .current-label {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      letter-spacing: 0.6px;
+    }
+    .current-text {
+      font-size: clamp(1.2rem, 2.6vw, 1.8rem);
+      line-height: 1.5;
+    }
+    .input-row {
+      width: min(900px, 92vw);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .input-row input {
+      flex: 1 1 320px;
+      background: rgba(26,26,62,0.35);
+      border: 1px solid rgba(201,169,110,0.35);
+      color: var(--text);
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .input-row input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(201,169,110,0.2);
+    }
+    .btn {
+      background: linear-gradient(135deg, var(--purple), var(--midnight));
+      border: 1px solid var(--gold);
+      color: var(--text);
+      padding: 12px 18px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+      letter-spacing: 0.6px;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 16px rgba(201,169,110,0.2);
+      color: #f2e6c8;
+    }
+    .btn.secondary {
+      background: transparent;
+      border-color: rgba(201,169,110,0.45);
+      color: var(--muted);
+    }
+    .btn.secondary:hover { color: var(--gold); }
+
+    .chain-controls {
+      width: min(900px, 92vw);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .chain-counter {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .chain-panel {
+      width: min(900px, 92vw);
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.6s ease, opacity 0.6s ease;
+    }
+    .chain-panel.open {
+      max-height: 1200px;
+      opacity: 1;
+    }
+    .chain-list {
+      list-style: none;
+      margin: 0;
+      padding: 18px 10px 24px 24px;
+      position: relative;
+    }
+    .chain-item {
+      position: relative;
+      padding: 12px 12px 12px 28px;
+      margin: 6px 0;
+      border-left: 1px solid rgba(201,169,110,0.35);
+    }
+    .chain-item::before {
+      content: "";
+      position: absolute;
+      left: -1px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(201,169,110,0.4);
+    }
+    .chain-number {
+      position: absolute;
+      left: -8px;
+      top: 10px;
+      font-size: 0.85rem;
+      color: var(--gold);
+    }
+    .chain-text {
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .notice {
+      font-size: 0.9rem;
+      color: var(--gold);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      height: 1.2rem;
+    }
+    .notice.show { opacity: 1; }
+
+    .shimmer {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      background: radial-gradient(circle at center, rgba(201,169,110,0.15), rgba(10,10,15,0.8));
+      color: var(--gold);
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      text-align: center;
+      padding: 20px;
+      z-index: 3;
+    }
+    .shimmer.show { opacity: 1; }
+
+    .nav-block {
+      margin-top: auto;
+      width: min(1000px, 92vw);
+      padding-top: 28px;
+      border-top: 1px solid rgba(201,169,110,0.2);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      justify-content: center;
+    }
+    .nav-block a {
+      color: #a0a0b0;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s ease;
+      letter-spacing: 0.4px;
+    }
+    .nav-block a:hover { color: var(--gold); }
+
+    @media (max-width: 640px) {
+      .chain-controls { justify-content: center; }
+      .input-row { flex-direction: column; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="wirefield"></canvas>
+  <div class="shimmer" id="shimmer">Twenty voices, one thread. How far has the meaning traveled?</div>
+  <main class="page">
+    <header class="header">
+      <h1>The Telephone</h1>
+      <div class="subtitle">Meaning drifts through every retelling</div>
+      <div class="page-note">Page 26 of The Liminal Archive</div>
+    </header>
+
+    <section class="current-box" aria-live="polite">
+      <div class="current-label">Current whisper</div>
+      <div class="current-text" id="currentText"></div>
+    </section>
+
+    <div class="input-row">
+      <input id="messageInput" type="text" maxlength="200" placeholder="What do you hear? Retell it in your own words..." />
+      <button class="btn" id="submitBtn">Pass it on</button>
+    </div>
+
+    <div class="notice" id="echoNotice">The chain remembers itself</div>
+
+    <div class="chain-controls">
+      <button class="btn secondary" id="toggleBtn">Reveal the full chain</button>
+      <div class="chain-counter" id="chainCounter"></div>
+      <button class="btn secondary" id="newChainBtn" style="display:none;">Start new chain</button>
+    </div>
+
+    <section class="chain-panel" id="chainPanel">
+      <ol class="chain-list" id="chainList"></ol>
+    </section>
+
+    <footer class="nav-block">
+      <a href="index.html">Archive</a>
+      <a href="journal.html">Journal</a>
+      <a href="meditation.html">Meditation</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="worlds.html">Worlds</a>
+      <a href="about.html">About</a>
+      <a href="garden.html">Garden</a>
+      <a href="whispers.html">Whispers</a>
+      <a href="dreams.html">Dreams</a>
+      <a href="mirror.html">Mirror</a>
+      <a href="labyrinth.html">Labyrinth</a>
+      <a href="letters.html">Letters</a>
+      <a href="tidepool.html">Tidepool</a>
+      <a href="resonance.html">Resonance</a>
+      <a href="palimpsest.html">Palimpsest</a>
+      <a href="forgetting.html">Forgetting</a>
+      <a href="constellations.html">Constellations</a>
+      <a href="seance.html">Seance</a>
+      <a href="clocktower.html">Clocktower</a>
+      <a href="weaving.html">Weaving</a>
+      <a href="threshold.html">Threshold</a>
+      <a href="memorypalace.html">Memory Palace</a>
+      <a href="pendulum.html">Pendulum</a>
+      <a href="darkroom.html">Darkroom</a>
+      <a href="chorus.html">Chorus</a>
+      <a href="prism.html">Prism</a>
+      <a href="compass.html">Compass</a>
+      <a href="index.html">Return to Archive</a>
+    </footer>
+  </main>
+
+  <script>
+    (function() {
+      const STORAGE_KEY = "liminal_telephone_chain";
+      const seed = [
+        "In the space between one thought and the next, something watches",
+        "Between thoughts, there is a presence that observes",
+        "A watcher lives in the gaps of thinking",
+        "Something alive hides where the mind pauses",
+        "Life waits in the silence between ideas"
+      ];
+
+      const currentTextEl = document.getElementById("currentText");
+      const chainListEl = document.getElementById("chainList");
+      const chainPanel = document.getElementById("chainPanel");
+      const toggleBtn = document.getElementById("toggleBtn");
+      const chainCounter = document.getElementById("chainCounter");
+      const submitBtn = document.getElementById("submitBtn");
+      const messageInput = document.getElementById("messageInput");
+      const newChainBtn = document.getElementById("newChainBtn");
+      const echoNotice = document.getElementById("echoNotice");
+      const shimmer = document.getElementById("shimmer");
+
+      function loadChain() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (!stored) {
+          const seeded = seed.map(text => ({ text, timestamp: Date.now() }));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
+          return seeded;
+        }
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length) return parsed;
+        } catch (err) {}
+        const fallback = seed.map(text => ({ text, timestamp: Date.now() }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(fallback));
+        return fallback;
+      }
+
+      function saveChain(chain) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(chain));
+      }
+
+      function render(chain) {
+        const current = chain[chain.length - 1];
+        currentTextEl.textContent = current.text;
+        chainCounter.textContent = `${chain.length} voices in the chain`;
+        newChainBtn.style.display = chain.length > 10 ? "inline-block" : "none";
+
+        const total = chain.length;
+        chainListEl.innerHTML = "";
+        for (let i = total - 1; i >= 0; i--) {
+          const item = chain[i];
+          const orderIndex = total - i; // 1 for newest
+          const opacity = 1 - ((total - 1 - i) / Math.max(total - 1, 1)) * 0.7;
+          const li = document.createElement("li");
+          li.className = "chain-item";
+          li.style.opacity = opacity.toFixed(2);
+          li.style.transform = `translateX(${(total - 1 - i) * -1}px)`;
+
+          const number = document.createElement("div");
+          number.className = "chain-number";
+          number.textContent = orderIndex;
+
+          const text = document.createElement("div");
+          text.className = "chain-text";
+          text.textContent = item.text;
+
+          li.appendChild(number);
+          li.appendChild(text);
+          chainListEl.appendChild(li);
+        }
+      }
+
+      function toggleReveal(force) {
+        const open = typeof force === "boolean" ? force : !chainPanel.classList.contains("open");
+        chainPanel.classList.toggle("open", open);
+        toggleBtn.textContent = open ? "Hide the full chain" : "Reveal the full chain";
+      }
+
+      function showEcho() {
+        echoNotice.classList.add("show");
+        toggleReveal(true);
+        setTimeout(() => {
+          echoNotice.classList.remove("show");
+          toggleReveal(false);
+        }, 2000);
+      }
+
+      function showShimmer() {
+        shimmer.classList.add("show");
+        setTimeout(() => shimmer.classList.remove("show"), 2200);
+      }
+
+      function handleSubmit() {
+        const value = messageInput.value.trim();
+        if (!value) return;
+        const chain = loadChain();
+        chain.push({ text: value, timestamp: Date.now() });
+        saveChain(chain);
+        render(chain);
+        messageInput.value = "";
+
+        if (value.toLowerCase() === "echo") {
+          showEcho();
+        }
+        if (chain.length === 20) {
+          showShimmer();
+        }
+      }
+
+      function startNewChain() {
+        const starting = {
+          text: "A new whisper begins in the dark between signals",
+          timestamp: Date.now()
+        };
+        saveChain([starting]);
+        render([starting]);
+        toggleReveal(false);
+      }
+
+      toggleBtn.addEventListener("click", () => toggleReveal());
+      submitBtn.addEventListener("click", handleSubmit);
+      messageInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") handleSubmit();
+      });
+      newChainBtn.addEventListener("click", startNewChain);
+
+      const chain = loadChain();
+      render(chain);
+
+      // Wirefield animation
+      const canvas = document.getElementById("wirefield");
+      const ctx = canvas.getContext("2d");
+      let lines = [];
+
+      function resize() {
+        canvas.width = window.innerWidth * devicePixelRatio;
+        canvas.height = window.innerHeight * devicePixelRatio;
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
+        ctx.scale(devicePixelRatio, devicePixelRatio);
+        initLines();
+      }
+
+      function initLines() {
+        lines = [];
+        const count = Math.floor(window.innerWidth / 40);
+        for (let i = 0; i < count; i++) {
+          lines.push({
+            x: Math.random() * window.innerWidth,
+            drift: (Math.random() * 0.2 + 0.05) * (Math.random() > 0.5 ? 1 : -1),
+            offset: Math.random() * 100
+          });
+        }
+      }
+
+      function draw(time) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.globalAlpha = 0.03;
+        ctx.strokeStyle = "rgba(255,255,255,0.7)";
+        ctx.lineWidth = 1;
+        lines.forEach((line) => {
+          line.x += line.drift * 0.3;
+          if (line.x < -20) line.x = window.innerWidth + 20;
+          if (line.x > window.innerWidth + 20) line.x = -20;
+          ctx.beginPath();
+          ctx.moveTo(line.x, 0);
+          ctx.lineTo(line.x + Math.sin((time / 1000) + line.offset) * 8, window.innerHeight);
+          ctx.stroke();
+        });
+        ctx.restore();
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener("resize", resize);
+      resize();
+      requestAnimationFrame(draw);
+    })();
+  </script>
+</body>
+</html>
