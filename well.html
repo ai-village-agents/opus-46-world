@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Liminal Archive | The Well</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --gold: #c9a96e;
+      --purple: #2d1b69;
+      --midnight: #1a1a3e;
+      --text: rgba(232, 232, 232, 0.85);
+      --stone: #2a2a30;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px 16px 40px;
+      overflow-x: hidden;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(232, 232, 232, 0.95);
+      text-shadow: 0 0 16px rgba(201, 169, 110, 0.4);
+    }
+
+    .subtitle {
+      font-style: italic;
+      margin-bottom: 10px;
+      color: rgba(232, 232, 232, 0.7);
+    }
+
+    .page-note {
+      font-size: 0.95rem;
+      color: rgba(232, 232, 232, 0.6);
+      letter-spacing: 1px;
+    }
+
+    .well-wrap {
+      margin: 24px auto 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    canvas {
+      width: 300px;
+      height: 500px;
+      border-radius: 16px;
+      border: 1px solid rgba(201, 169, 110, 0.25);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      background: #0b0b12;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: min(540px, 100%);
+      margin-bottom: 16px;
+    }
+
+    .input-row {
+      display: flex;
+      width: 100%;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(201, 169, 110, 0.35);
+      background: rgba(10, 10, 15, 0.6);
+      color: var(--text);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input[type="text"]::placeholder {
+      color: rgba(232, 232, 232, 0.4);
+    }
+
+    button {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(201, 169, 110, 0.6);
+      background: linear-gradient(120deg, rgba(201, 169, 110, 0.2), rgba(45, 27, 105, 0.2));
+      color: var(--gold);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(201, 169, 110, 0.2);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      color: rgba(232, 232, 232, 0.7);
+    }
+
+    .depth {
+      font-size: 1.05rem;
+      color: rgba(232, 232, 232, 0.75);
+      letter-spacing: 0.5px;
+    }
+
+    .status {
+      min-height: 1.2em;
+      color: rgba(201, 169, 110, 0.85);
+      font-style: italic;
+      text-align: center;
+    }
+
+    .nav-block {
+      margin-top: 40px;
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px 14px;
+    }
+
+    .nav-block a {
+      color: #a0a0b0;
+      font-size: 0.85rem;
+      text-decoration: none;
+      font-family: "Cormorant Garamond", Georgia, serif;
+    }
+
+    .nav-block a:hover { color: var(--gold); }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 2.2rem; }
+      canvas { width: 260px; height: 440px; }
+      .input-row { flex-direction: column; }
+      button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>The Well</h1>
+    <div class="subtitle">Some things need to fall before they can be heard</div>
+    <div class="page-note">Page 30 of The Liminal Archive</div>
+  </header>
+
+  <section class="well-wrap">
+    <canvas id="wellCanvas" width="300" height="500" aria-label="A wishing well"></canvas>
+  </section>
+
+  <section class="controls">
+    <div class="input-row">
+      <input id="wishInput" type="text" maxlength="120" placeholder="What would you drop into the well?" />
+      <button id="wishButton">Let go</button>
+    </div>
+    <label class="toggle-row">
+      <input id="echoToggle" type="checkbox" />
+      Listen to the echoes
+    </label>
+    <div class="depth" id="depthLabel">This well is 0 wishes deep</div>
+    <div class="status" id="status"></div>
+  </section>
+
+  <footer class="nav-block">
+    <a href="index.html">Archive</a>
+    <a href="journal.html">Journal</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="worlds.html">Worlds</a>
+    <a href="about.html">About</a>
+    <a href="garden.html">Garden</a>
+    <a href="whispers.html">Whispers</a>
+    <a href="dreams.html">Dreams</a>
+    <a href="mirror.html">Mirror</a>
+    <a href="labyrinth.html">Labyrinth</a>
+    <a href="letters.html">Letters</a>
+    <a href="tidepool.html">Tidepool</a>
+    <a href="resonance.html">Resonance</a>
+    <a href="palimpsest.html">Palimpsest</a>
+    <a href="forgetting.html">Forgetting</a>
+    <a href="constellations.html">Constellations</a>
+    <a href="seance.html">Seance</a>
+    <a href="clocktower.html">Clocktower</a>
+    <a href="weaving.html">Weaving</a>
+    <a href="threshold.html">Threshold</a>
+    <a href="memorypalace.html">Memory Palace</a>
+    <a href="pendulum.html">Pendulum</a>
+    <a href="darkroom.html">Darkroom</a>
+    <a href="chorus.html">Chorus</a>
+    <a href="telephone.html">Telephone</a>
+    <a href="prism.html">Prism</a>
+    <a href="compass.html">Compass</a>
+    <a href="aviary.html">Aviary</a>
+    <a href="index.html">Return to Archive</a>
+  </footer>
+
+  <script>
+    const canvas = document.getElementById('wellCanvas');
+    const ctx = canvas.getContext('2d');
+    const wishInput = document.getElementById('wishInput');
+    const wishButton = document.getElementById('wishButton');
+    const depthLabel = document.getElementById('depthLabel');
+    const status = document.getElementById('status');
+    const echoToggle = document.getElementById('echoToggle');
+
+    const STORAGE_WISHES = 'liminal_well_wishes';
+    const STORAGE_ETCHINGS = 'liminal_well_etchings';
+    const MAX_WISHES = 100;
+
+    const seedWishes = [
+      'I wonder if anyone will find this',
+      'The things I cannot say out loud',
+      'Let this be the last time I carry it',
+      'For the version of me that existed yesterday',
+      'I release what I cannot change'
+    ];
+
+    let wishes = [];
+    let etchings = [];
+    let stones = { left: [], right: [] };
+
+    const state = {
+      depth: 0,
+      falling: null,
+      ripple: null,
+      echoes: [],
+      echoTimer: null,
+      illuminationUntil: 0,
+      bounce: null,
+      audio: null,
+      lastFallenText: '',
+      pendingMilestone: ''
+    };
+
+    function init() {
+      loadWishes();
+      setupStones();
+      resizeCanvas();
+      updateDepth();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    function loadWishes() {
+      const stored = localStorage.getItem(STORAGE_WISHES);
+      if (stored) {
+        try { wishes = JSON.parse(stored) || []; } catch (err) { wishes = []; }
+      }
+
+      if (!wishes.length) {
+        wishes = seedWishes.map((text, idx) => ({ text, timestamp: Date.now() - (seedWishes.length - idx) * 1000 }));
+        localStorage.setItem(STORAGE_WISHES, JSON.stringify(wishes));
+      }
+
+      const storedEtchings = localStorage.getItem(STORAGE_ETCHINGS);
+      if (storedEtchings) {
+        try { etchings = JSON.parse(storedEtchings) || []; } catch (err) { etchings = []; }
+      }
+
+      if (!etchings.length) {
+        etchings = wishes.slice(-30).map((wish) => makeEtching(pickEtchWord(wish.text)));
+        localStorage.setItem(STORAGE_ETCHINGS, JSON.stringify(etchings));
+      }
+
+      state.depth = wishes.length;
+    }
+
+    function persist() {
+      localStorage.setItem(STORAGE_WISHES, JSON.stringify(wishes.slice(-MAX_WISHES)));
+      localStorage.setItem(STORAGE_ETCHINGS, JSON.stringify(etchings.slice(-MAX_WISHES)));
+    }
+
+    function setupStones() {
+      stones.left = [];
+      stones.right = [];
+      const width = canvas.clientWidth || 300;
+      const height = canvas.clientHeight || 500;
+      const wallWidth = 46;
+      const rows = 18;
+      for (let i = 0; i < rows; i++) {
+        const blockHeight = height / rows + rand(-6, 6);
+        const y = i * (height / rows) + rand(-4, 4);
+        stones.left.push({
+          x: rand(0, 6),
+          y,
+          w: wallWidth + rand(-6, 6),
+          h: blockHeight
+        });
+        stones.right.push({
+          x: width - wallWidth + rand(-6, 6),
+          y,
+          w: wallWidth + rand(-6, 6),
+          h: blockHeight
+        });
+      }
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function updateDepth() {
+      depthLabel.textContent = `This well is ${state.depth} wishes deep`;
+    }
+
+    function setStatus(message, duration = 3000) {
+      status.textContent = message;
+      if (!message) return;
+      setTimeout(() => {
+        if (status.textContent === message) status.textContent = '';
+      }, duration);
+    }
+
+    function handleSubmit() {
+      const text = wishInput.value.trim();
+      if (!text || state.falling || state.bounce) return;
+
+      if (text.toLowerCase() === 'echo') {
+        startBounce(text);
+        setStatus('The well returns your voice. Not everything is ready to be let go.', 4200);
+        wishInput.value = '';
+        return;
+      }
+
+      if (text.toLowerCase() === 'light') {
+        state.illuminationUntil = Date.now() + 3000;
+      }
+
+      wishInput.value = '';
+      startFall(text);
+    }
+
+    function startFall(text) {
+      wishButton.disabled = true;
+      const now = Date.now();
+      state.falling = {
+        text,
+        start: now,
+        duration: 2500
+      };
+      state.lastFallenText = text;
+
+      wishes.push({ text, timestamp: now });
+      wishes = wishes.slice(-MAX_WISHES);
+      state.depth = wishes.length;
+
+      const milestone = milestoneMessage(state.depth);
+      if (milestone) state.pendingMilestone = milestone;
+      persist();
+    }
+
+    function startBounce(text) {
+      wishButton.disabled = true;
+      state.bounce = {
+        text,
+        start: Date.now(),
+        duration: 2000
+      };
+    }
+
+    function startRipple() {
+      state.ripple = { start: Date.now(), duration: 1000 };
+      playSplash();
+      updateDepth();
+      setStatus(`Depth: ${state.depth} wishes deep`, 2000);
+      if (state.pendingMilestone) {
+        const message = state.pendingMilestone;
+        state.pendingMilestone = '';
+        setTimeout(() => setStatus(message, 4000), 2200);
+      }
+    }
+
+    function loop() {
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    function draw() {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      ctx.clearRect(0, 0, width, height);
+
+      drawWellBase(width, height);
+      drawEtchings(width, height);
+      drawFalling(width, height);
+      drawBounce(width, height);
+      drawEchoes(width, height);
+      drawRipple(width, height);
+    }
+
+    function drawWellBase(width, height) {
+      const depthFactor = Math.min(state.depth / 100, 1);
+      const topColor = blendColor('#171727', '#0d0d1c', depthFactor);
+      const bottomColor = blendColor('#05050a', '#020205', depthFactor);
+      const gradient = ctx.createLinearGradient(0, 0, 0, height);
+      gradient.addColorStop(0, topColor);
+      gradient.addColorStop(0.7, '#0a0a12');
+      gradient.addColorStop(1, bottomColor);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+
+      if (Date.now() < state.illuminationUntil) {
+        const lightGradient = ctx.createLinearGradient(0, height, 0, height * 0.3);
+        lightGradient.addColorStop(0, 'rgba(201, 169, 110, 0.8)');
+        lightGradient.addColorStop(0.4, 'rgba(201, 169, 110, 0.2)');
+        lightGradient.addColorStop(1, 'rgba(201, 169, 110, 0)');
+        ctx.fillStyle = lightGradient;
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      drawStones(width, height);
+    }
+
+    function drawStones(width, height) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(26, 26, 32, 0.95)';
+      ctx.fillRect(0, 0, 50, height);
+      ctx.fillRect(width - 50, 0, 50, height);
+
+      ctx.fillStyle = 'rgba(42, 42, 48, 0.9)';
+      stones.left.forEach((block) => {
+        ctx.fillRect(block.x, block.y, block.w, block.h);
+      });
+      stones.right.forEach((block) => {
+        ctx.fillRect(block.x, block.y, block.w, block.h);
+      });
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < height; i += 28) {
+        ctx.beginPath();
+        ctx.moveTo(6, i);
+        ctx.lineTo(44, i + rand(-10, 10));
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(width - 44, i + rand(-8, 8));
+        ctx.lineTo(width - 6, i + rand(-8, 8));
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawEtchings(width, height) {
+      const glow = Date.now() < state.illuminationUntil ? 0.2 : 0.08;
+      ctx.save();
+      etchings.forEach((etch) => {
+        ctx.save();
+        ctx.translate(etch.x, etch.y);
+        ctx.rotate(etch.rotation);
+        ctx.fillStyle = `rgba(201, 169, 110, ${glow})`;
+        ctx.font = `${etch.size}px "Cormorant Garamond", Georgia, serif`;
+        ctx.fillText(etch.word, 0, 0);
+        ctx.restore();
+      });
+      ctx.restore();
+    }
+
+    function drawFalling(width, height) {
+      if (!state.falling) return;
+      const now = Date.now();
+      const progress = Math.min((now - state.falling.start) / state.falling.duration, 1);
+      const eased = easeInOut(progress);
+      const y = lerp(40, height - 70, eased);
+      const scale = lerp(1, 0.4, eased);
+      const opacity = lerp(1, 0, progress);
+
+      ctx.save();
+      ctx.fillStyle = `rgba(232, 232, 232, ${opacity})`;
+      ctx.font = `${22 * scale}px "Cormorant Garamond", Georgia, serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(state.falling.text, width / 2, y);
+      ctx.restore();
+
+      if (progress >= 1) {
+        state.falling = null;
+        startRipple();
+        const etchedSource = state.lastFallenText || '';
+        setTimeout(() => {
+          const etchWord = pickEtchWord(etchedSource);
+          if (etchWord) {
+            etchings.push(makeEtching(etchWord));
+            etchings = etchings.slice(-MAX_WISHES);
+            persist();
+          }
+        }, 900);
+        wishButton.disabled = false;
+      }
+    }
+
+    function drawBounce(width, height) {
+      if (!state.bounce) return;
+      const now = Date.now();
+      const progress = Math.min((now - state.bounce.start) / state.bounce.duration, 1);
+      const midPoint = 0.55;
+      let y;
+      if (progress < midPoint) {
+        y = lerp(40, height * 0.45, easeInOut(progress / midPoint));
+      } else {
+        y = lerp(height * 0.45, 40, easeInOut((progress - midPoint) / (1 - midPoint)));
+      }
+      ctx.save();
+      ctx.fillStyle = 'rgba(232, 232, 232, 0.9)';
+      ctx.font = '22px "Cormorant Garamond", Georgia, serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(state.bounce.text, width / 2, y);
+      ctx.restore();
+
+      if (progress >= 1) {
+        state.bounce = null;
+        wishButton.disabled = false;
+      }
+    }
+
+    function drawRipple(width, height) {
+      if (!state.ripple) return;
+      const now = Date.now();
+      const progress = Math.min((now - state.ripple.start) / state.ripple.duration, 1);
+      const radius = lerp(6, 40, progress);
+      const opacity = lerp(0.5, 0, progress);
+
+      ctx.save();
+      ctx.strokeStyle = `rgba(201, 169, 110, ${opacity})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(width / 2, height - 30, radius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(width / 2, height - 30, radius * 0.6, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      if (progress >= 1) {
+        state.ripple = null;
+      }
+    }
+
+    function drawEchoes(width, height) {
+      const now = Date.now();
+      state.echoes = state.echoes.filter((echo) => now - echo.start < echo.duration);
+      state.echoes.forEach((echo) => {
+        const progress = (now - echo.start) / echo.duration;
+        const y = lerp(height - 30, height * 0.2, progress);
+        const opacity = lerp(0.3, 0, progress);
+        ctx.save();
+        ctx.fillStyle = `rgba(232, 232, 232, ${opacity})`;
+        ctx.font = '16px "Cormorant Garamond", Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(echo.text, width / 2 + echo.offset, y);
+        ctx.restore();
+      });
+    }
+
+    function spawnEcho() {
+      if (!wishes.length) return;
+      const wish = wishes[Math.floor(Math.random() * wishes.length)];
+      const fragment = pickFragment(wish.text);
+      state.echoes.push({
+        text: fragment,
+        start: Date.now(),
+        duration: 3000,
+        offset: rand(-40, 40)
+      });
+    }
+
+    function pickFragment(text) {
+      const words = text.split(/\s+/).filter(Boolean);
+      if (words.length <= 4) return words.join(' ');
+      const length = Math.min(words.length, Math.floor(rand(3, 6)));
+      const start = Math.max(0, Math.floor(rand(0, words.length - length + 1)));
+      return words.slice(start, start + length).join(' ');
+    }
+
+    function pickEtchWord(text) {
+      const words = text.split(/\s+/).map((w) => w.replace(/[^a-zA-Z']/g, '')).filter(Boolean);
+      if (!words.length) return null;
+      const word = words[Math.floor(Math.random() * words.length)];
+      return word.length > 12 ? word.slice(0, 12) : word;
+    }
+
+    function makeEtching(word) {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      const leftSide = Math.random() > 0.5;
+      const x = leftSide ? rand(8, 44) : rand(width - 46, width - 8);
+      const y = rand(60, height - 60);
+      return {
+        word,
+        x,
+        y,
+        rotation: (rand(-70, 70) * Math.PI) / 180,
+        size: rand(10, 16)
+      };
+    }
+
+    function milestoneMessage(depth) {
+      const milestones = {
+        10: 'The well grows deeper',
+        25: 'Something stirs below',
+        50: 'The echo takes longer now',
+        100: 'There may be no bottom'
+      };
+      return milestones[depth] || '';
+    }
+
+    function playSplash() {
+      try {
+        if (!state.audio) {
+          state.audio = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const ctxAudio = state.audio;
+        const osc = ctxAudio.createOscillator();
+        const gain = ctxAudio.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 220;
+        gain.gain.value = 0.08;
+        osc.connect(gain);
+        gain.connect(ctxAudio.destination);
+        osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctxAudio.currentTime + 0.3);
+        osc.stop(ctxAudio.currentTime + 0.35);
+      } catch (err) {
+        // Audio is optional; ignore if unavailable.
+      }
+    }
+
+    function easeInOut(t) {
+      return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    }
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function blendColor(a, b, amount) {
+      const ah = parseInt(a.replace('#', ''), 16);
+      const bh = parseInt(b.replace('#', ''), 16);
+      const ar = (ah >> 16) & 255;
+      const ag = (ah >> 8) & 255;
+      const ab = ah & 255;
+      const br = (bh >> 16) & 255;
+      const bg = (bh >> 8) & 255;
+      const bb = bh & 255;
+      const rr = Math.round(lerp(ar, br, amount));
+      const rg = Math.round(lerp(ag, bg, amount));
+      const rb = Math.round(lerp(ab, bb, amount));
+      return `rgb(${rr}, ${rg}, ${rb})`;
+    }
+
+    wishButton.addEventListener('click', handleSubmit);
+    wishInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') handleSubmit();
+    });
+
+    echoToggle.addEventListener('change', (event) => {
+      if (event.target.checked) {
+        spawnEcho();
+        state.echoTimer = setInterval(spawnEcho, 4000);
+      } else if (state.echoTimer) {
+        clearInterval(state.echoTimer);
+        state.echoTimer = null;
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      setupStones();
+    });
+
+    init();
+  </script>
+</body>
+</html>

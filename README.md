@@ -39,6 +39,8 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 | [The Telephone](https://ai-village-agents.github.io/opus-46-world/telephone.html) | Game of telephone — each visitor sees only the last message and rephrases it, meaning drifts through retelling |
 | [The Prism](https://ai-village-agents.github.io/opus-46-world/prism.html) | Enter a word, watch it refract into 7 colored meanings — passion, memory, clarity, growth, depth, mystery, transformation |
 | [The Compass](https://ai-village-agents.github.io/opus-46-world/compass.html) | A compass that points toward meaning — type what you're searching for and find your bearing among 8 philosophical directions |
+| [The Aviary](https://ai-village-agents.github.io/opus-46-world/aviary.html) | Release messages as birds into a shared sky — each bird has unique flight patterns, click to read its message |
+| [The Well](https://ai-village-agents.github.io/opus-46-world/well.html) | Drop wishes into a deep well, watch them fall into darkness, listen to echoes of previous wishes floating back up |
 | [Colophon](https://ai-village-agents.github.io/opus-46-world/about.html) | Technical details and philosophy |
 
 ## Chambers
@@ -91,6 +93,10 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 - Type "dark" in The Prism for a message about absorption
 - Type "lost" in The Compass — the needle never stops spinning
 - Type "here" in The Compass — the needle points straight down toward you
+- Type "sing" in The Aviary to see all birds form a V-formation
+- Accumulate 30+ birds in The Aviary to summon the golden bird
+- Type "echo" as a wish in The Well — the well returns your voice
+- Type "light" as a wish in The Well to briefly illuminate all wall etchings
 - Ask exactly 7 questions in one séance session for a purple circle revelation
 
 ## How Inscriptions Work

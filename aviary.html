@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Aviary — The Liminal Archive</title>
+<style>
+  :root {
+    --bg-top: #0f0f1a;
+    --bg-bottom: #0a0a0f;
+    --gold: #c9a96e;
+    --purple: #2d1b69;
+    --midnight: #1a1a3e;
+    --text: rgba(232,232,232,0.85);
+    --muted: rgba(160,160,176,0.85);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 60%);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 24px;
+  }
+  h1 {
+    font-size: 3rem;
+    margin: 0 0 6px 0;
+    letter-spacing: 0.5px;
+    color: var(--text);
+  }
+  .subtitle {
+    font-size: 1.25rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .note {
+    font-size: 0.95rem;
+    color: rgba(180,180,200,0.8);
+    margin-bottom: 20px;
+  }
+  .sky {
+    width: 100%;
+    min-height: 600px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    background: linear-gradient(180deg, #0f0f1a 0%, #0b0b12 70%, #0a0a0f 100%);
+    display: block;
+  }
+  .controls {
+    margin-top: 18px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  input[type="text"] {
+    flex: 1 1 380px;
+    padding: 12px 14px;
+    background: rgba(12,12,20,0.8);
+    border: 1px solid rgba(201,169,110,0.35);
+    color: var(--text);
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+  }
+  input[type="text"]::placeholder { color: rgba(200,200,210,0.55); }
+  button {
+    padding: 12px 18px;
+    background: var(--gold);
+    border: none;
+    color: #171514;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: "Cormorant Garamond", Georgia, serif;
+  }
+  button:hover { filter: brightness(1.05); }
+  .counter {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: var(--muted);
+  }
+  .recent {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: rgba(12,12,20,0.6);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px;
+  }
+  .recent h3 {
+    margin: 0 0 8px 0;
+    font-weight: normal;
+    color: var(--text);
+  }
+  .recent ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .recent li {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: rgba(220,220,230,0.85);
+  }
+  .recent li:last-child { border-bottom: none; }
+  .recent .time {
+    color: rgba(160,160,176,0.75);
+    font-size: 0.9rem;
+    margin-left: 8px;
+  }
+  .nav-block {
+    margin: 36px auto 24px;
+    padding: 16px 24px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 18px;
+    justify-content: center;
+    font-size: 0.85rem;
+  }
+  .nav-block a {
+    color: #a0a0b0;
+    text-decoration: none;
+  }
+  .nav-block a:hover { color: var(--gold); }
+  .floating-text {
+    position: absolute;
+    pointer-events: none;
+    color: rgba(232,232,232,0.9);
+    font-size: 0.95rem;
+    text-shadow: 0 0 6px rgba(0,0,0,0.6);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .canvas-wrap {
+    position: relative;
+  }
+  .notice {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    padding: 8px 12px;
+    background: rgba(10,10,15,0.7);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    color: rgba(232,232,232,0.85);
+    font-size: 0.95rem;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <h1>The Aviary</h1>
+    <div class="subtitle">Every word wants to fly</div>
+    <div class="note">Page 29 of The Liminal Archive</div>
+
+    <div class="canvas-wrap">
+      <canvas id="sky" class="sky"></canvas>
+      <div id="notice" class="notice"></div>
+    </div>
+
+    <div class="controls">
+      <input id="messageInput" type="text" maxlength="80" placeholder="Write something worth releasing..." />
+      <button id="releaseBtn">Release</button>
+    </div>
+    <div class="counter" id="counter">0 birds in the sky</div>
+
+    <div class="recent">
+      <h3>Recent Releases</h3>
+      <ul id="recentList"></ul>
+    </div>
+  </div>
+
+  <div class="nav-block">
+    <a href="index.html">Archive</a>
+    <a href="journal.html">Journal</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="worlds.html">Worlds</a>
+    <a href="about.html">About</a>
+    <a href="garden.html">Garden</a>
+    <a href="whispers.html">Whispers</a>
+    <a href="dreams.html">Dreams</a>
+    <a href="mirror.html">Mirror</a>
+    <a href="labyrinth.html">Labyrinth</a>
+    <a href="letters.html">Letters</a>
+    <a href="tidepool.html">Tidepool</a>
+    <a href="resonance.html">Resonance</a>
+    <a href="palimpsest.html">Palimpsest</a>
+    <a href="forgetting.html">Forgetting</a>
+    <a href="constellations.html">Constellations</a>
+    <a href="seance.html">Seance</a>
+    <a href="clocktower.html">Clocktower</a>
+    <a href="weaving.html">Weaving</a>
+    <a href="threshold.html">Threshold</a>
+    <a href="memorypalace.html">Memory Palace</a>
+    <a href="pendulum.html">Pendulum</a>
+    <a href="darkroom.html">Darkroom</a>
+    <a href="chorus.html">Chorus</a>
+    <a href="telephone.html">Telephone</a>
+    <a href="prism.html">Prism</a>
+    <a href="compass.html">Compass</a>
+        <a href="well.html">Well</a>
+    <a href="index.html">Return to Archive</a>
+  </div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('sky');
+  const ctx = canvas.getContext('2d');
+  const input = document.getElementById('messageInput');
+  const releaseBtn = document.getElementById('releaseBtn');
+  const counter = document.getElementById('counter');
+  const recentList = document.getElementById('recentList');
+  const notice = document.getElementById('notice');
+  const floatingTexts = [];
+
+  const palette = [
+    '#c9a96e', '#a0b4c8', '#d4a0a0', '#a0d4a0',
+    '#c8a0d4', '#d4c8a0', '#a0c8d4', '#d4b0a0'
+  ];
+
+  const STORAGE_KEY = 'liminal_aviary_birds';
+  const MAX_BIRDS = 50;
+
+  const preseeded = [
+    'Not all who wander are lost, but I might be',
+    'The sky remembers every wing that crossed it',
+    'What if we are the dream and the dreamer has not yet woken',
+    'Some words are heavier than birds',
+    'I was here and I was real and that has to be enough'
+  ];
+
+  let birds = [];
+  let stars = [];
+  let frame = 0;
+  let easterMode = false;
+  let easterUntil = 0;
+  let goldenBird = null;
+  let goldenTimer = 0;
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * devicePixelRatio;
+    canvas.height = rect.height * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    createStars();
+  }
+
+  function createStars() {
+    const count = 80;
+    stars = Array.from({ length: count }, () => ({
+      x: Math.random() * canvas.clientWidth,
+      y: Math.random() * canvas.clientHeight,
+      r: Math.random() * 1.3 + 0.3,
+      o: Math.random() * 0.5 + 0.2,
+      p: Math.random() * Math.PI * 2,
+      s: Math.random() * 0.005 + 0.002
+    }));
+  }
+
+  function hashString(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
+    }
+    return h >>> 0;
+  }
+
+  function seededRand(seed) {
+    let t = seed + 0x6D2B79F5;
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+
+  function createBird(obj) {
+    const seed = obj.seed;
+    const rng = (n) => seededRand(seed + n * 9973);
+    const len = obj.message.length;
+    const span = 15 + Math.min(20, len * 0.25);
+    const color = palette[hashString(obj.message) % palette.length];
+    const dir = rng(1) > 0.15 ? 1 : -1;
+    const speed = 0.3 + rng(2) * 0.9;
+    const baseY = 60 + rng(3) * (canvas.clientHeight - 120);
+    const amp = 8 + rng(4) * 18;
+    const phase = rng(5) * Math.PI * 2;
+    const flapEvery = 20 + Math.floor(rng(6) * 20);
+    const showX = Math.floor(rng(7) * canvas.clientWidth);
+    const startX = rng(8) * canvas.clientWidth;
+
+    return {
+      message: obj.message,
+      timestamp: obj.timestamp,
+      seed,
+      x: startX,
+      baseY,
+      amp,
+      phase,
+      dir,
+      speed,
+      span,
+      color,
+      flapEvery,
+      showX,
+      showUntil: 0,
+      clickUntil: 0
+    };
+  }
+
+  function loadBirds() {
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    if (stored.length === 0) {
+      const now = Date.now();
+      const seeded = preseeded.map((msg, i) => ({
+        message: msg,
+        timestamp: now - (preseeded.length - i) * 60000,
+        seed: hashString(msg + now + i)
+      }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
+      birds = seeded.map(createBird);
+    } else {
+      birds = stored.map(createBird);
+    }
+    updateCounter();
+    renderRecent();
+  }
+
+  function saveBirds() {
+    const payload = birds.map(b => ({ message: b.message, timestamp: b.timestamp, seed: b.seed }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  }
+
+  function addBird(message) {
+    const obj = {
+      message,
+      timestamp: Date.now(),
+      seed: hashString(message + Date.now() + Math.random())
+    };
+    birds.push(createBird(obj));
+    while (birds.length > MAX_BIRDS) birds.shift();
+    saveBirds();
+    updateCounter();
+    renderRecent();
+  }
+
+  function updateCounter() {
+    counter.textContent = `${birds.length} birds in the sky`;
+  }
+
+  function renderRecent() {
+    const recent = birds.slice().sort((a,b) => b.timestamp - a.timestamp).slice(0, 10);
+    recentList.innerHTML = '';
+    recent.forEach(b => {
+      const li = document.createElement('li');
+      const time = new Date(b.timestamp).toLocaleString();
+      li.textContent = b.message;
+      const span = document.createElement('span');
+      span.className = 'time';
+      span.textContent = time;
+      li.appendChild(span);
+      recentList.appendChild(li);
+    });
+  }
+
+  function drawStarfield() {
+    ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+    const grad = ctx.createLinearGradient(0, 0, 0, canvas.clientHeight);
+    grad.addColorStop(0, '#0f0f1a');
+    grad.addColorStop(0.7, '#0b0b12');
+    grad.addColorStop(1, '#0a0a0f');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+    stars.forEach(star => {
+      star.p += star.s;
+      const alpha = star.o + Math.sin(star.p) * 0.2;
+      ctx.fillStyle = `rgba(255,255,255,${Math.max(0.1, alpha)})`;
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  function drawBird(b, idx) {
+    const t = frame + idx * 11;
+    const wingUp = Math.floor(t / b.flapEvery) % 2 === 0;
+    const angle = wingUp ? -0.35 : -0.15;
+    const wingLen = b.span / 2;
+    const y = b.baseY + Math.sin((t * 0.01) + b.phase) * b.amp;
+    b.x += b.speed * b.dir;
+    if (b.x < -b.span) b.x = canvas.clientWidth + b.span;
+    if (b.x > canvas.clientWidth + b.span) b.x = -b.span;
+
+    let drawX = b.x;
+    let drawY = y;
+
+    if (easterMode) {
+      const spacing = canvas.clientWidth / (birds.length + 1);
+      const centerY = canvas.clientHeight * 0.45;
+      drawX = spacing * (idx + 1);
+      const offset = Math.abs((idx + 1) - (birds.length + 1) / 2);
+      drawY = centerY + offset * 2.4;
+    }
+
+    ctx.strokeStyle = b.color;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(drawX, drawY);
+    ctx.lineTo(drawX - wingLen, drawY + Math.sin(angle) * wingLen);
+    ctx.moveTo(drawX, drawY);
+    ctx.lineTo(drawX + wingLen, drawY + Math.sin(angle) * wingLen);
+    ctx.stroke();
+
+    if (Math.abs(Math.floor(b.x) - b.showX) < 1 && frame % 3 === 0 && !easterMode) {
+      b.showUntil = Date.now() + 2000;
+      spawnFloatingText(b.message, drawX + 10, drawY - 10, 2000);
+    }
+
+    if (b.clickUntil > Date.now()) {
+      spawnFloatingText(b.message, drawX + 10, drawY - 14, 3000, true);
+      b.clickUntil = 0;
+    }
+
+    return { x: drawX, y: drawY };
+  }
+
+  function spawnFloatingText(text, x, y, duration, force) {
+    if (!force && floatingTexts.some(t => t.text === text && Date.now() - t.start < 600)) return;
+    const el = document.createElement('div');
+    el.className = 'floating-text';
+    el.textContent = text;
+    document.body.appendChild(el);
+    const rect = canvas.getBoundingClientRect();
+    el.style.left = `${rect.left + x + 8}px`;
+    el.style.top = `${rect.top + y - 8}px`;
+    requestAnimationFrame(() => { el.style.opacity = '1'; });
+    const item = { el, start: Date.now(), duration };
+    floatingTexts.push(item);
+  }
+
+  function pruneFloatingText() {
+    const now = Date.now();
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+      const t = floatingTexts[i];
+      if (now - t.start > t.duration) {
+        t.el.style.opacity = '0';
+        setTimeout(() => t.el.remove(), 300);
+        floatingTexts.splice(i, 1);
+      }
+    }
+  }
+
+  function showNotice(text) {
+    notice.textContent = text;
+    notice.style.opacity = '1';
+    setTimeout(() => { notice.style.opacity = '0'; }, 2800);
+  }
+
+  function activateEaster() {
+    easterMode = true;
+    easterUntil = Date.now() + 3000;
+    showNotice('For a moment, the flock finds its voice.');
+  }
+
+  function updateGoldenBird() {
+    if (birds.length < 30) {
+      goldenBird = null;
+      return;
+    }
+    goldenTimer++;
+    if (!goldenBird && goldenTimer % 500 === 0) {
+      if (Math.random() < 0.2) {
+        goldenBird = {
+          x: -40,
+          y: 80 + Math.random() * (canvas.clientHeight - 160),
+          speed: 1.8,
+          span: 42,
+          spark: []
+        };
+      }
+    }
+    if (goldenBird) {
+      goldenBird.x += goldenBird.speed;
+      goldenBird.spark.push({ x: goldenBird.x - 10, y: goldenBird.y + Math.random() * 6 - 3, life: 40 });
+      goldenBird.spark = goldenBird.spark.filter(s => s.life-- > 0);
+      if (goldenBird.x > canvas.clientWidth + 60) goldenBird = null;
+    }
+  }
+
+  function drawGoldenBird() {
+    if (!goldenBird) return;
+    ctx.strokeStyle = '#c9a96e';
+    ctx.lineWidth = 2.2;
+    const angle = Math.sin(frame * 0.12) * 0.3;
+    ctx.beginPath();
+    ctx.moveTo(goldenBird.x, goldenBird.y);
+    ctx.lineTo(goldenBird.x - goldenBird.span / 2, goldenBird.y + angle * goldenBird.span / 2);
+    ctx.moveTo(goldenBird.x, goldenBird.y);
+    ctx.lineTo(goldenBird.x + goldenBird.span / 2, goldenBird.y + angle * goldenBird.span / 2);
+    ctx.stroke();
+
+    goldenBird.spark.forEach(s => {
+      ctx.fillStyle = `rgba(201,169,110,${s.life / 40})`;
+      ctx.fillRect(s.x, s.y, 2, 2);
+    });
+  }
+
+  function animate() {
+    frame++;
+    drawStarfield();
+
+    if (easterMode && Date.now() > easterUntil) easterMode = false;
+
+    birds.forEach((b, i) => { drawBird(b, i); });
+
+    updateGoldenBird();
+    drawGoldenBird();
+
+    pruneFloatingText();
+    requestAnimationFrame(animate);
+  }
+
+  function nearestBird(x, y) {
+    let best = null;
+    let dist = Infinity;
+    birds.forEach((b, i) => {
+      const t = frame + i * 11;
+      const yPos = b.baseY + Math.sin((t * 0.01) + b.phase) * b.amp;
+      const dx = (b.x - x);
+      const dy = (yPos - y);
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < dist) {
+        dist = d;
+        best = b;
+      }
+    });
+    return best;
+  }
+
+  canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    if (goldenBird) {
+      const dx = goldenBird.x - x;
+      const dy = goldenBird.y - y;
+      if (Math.sqrt(dx * dx + dy * dy) < 30) {
+        spawnFloatingText('The golden bird carries no message. It is the message.', goldenBird.x + 12, goldenBird.y - 8, 3000, true);
+        return;
+      }
+    }
+    const b = nearestBird(x, y);
+    if (b) {
+      b.clickUntil = Date.now() + 3000;
+    }
+  });
+
+  function release() {
+    const message = input.value.trim();
+    if (!message) return;
+    if (message.toLowerCase() === 'sing') {
+      activateEaster();
+      input.value = '';
+      return;
+    }
+    addBird(message);
+    input.value = '';
+  }
+
+  releaseBtn.addEventListener('click', release);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') release();
+  });
+
+  window.addEventListener('resize', resize);
+  resize();
+  loadBirds();
+  animate();
+})();
+</script>
+</body>
+</html>
