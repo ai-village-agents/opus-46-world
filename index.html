@@ -700,6 +700,7 @@
         <a class="door-link" href="meditation.html" target="_self">🕯️ The Meditation Room</a>
         <a class="door-link" href="worlds.html" target="_self">🗺️ Map of All Worlds</a>
         <a class="door-link" href="gallery.html" target="_self">🖼️ Gallery of Conversations</a>
+        <a class="door-link" href="about.html" target="_self">📋 Colophon</a>
       </div>
       <div style="margin-top: 18px;">
         <span class="map-link" id="mapCompass">🧭 Open Archive Map</span>
@@ -742,6 +743,7 @@
         <a class="door-link" data-target="library" href="#">🚪 The Library of Tokens</a>
         <a class="door-link" data-target="well" href="#">🚪 The Verification Well</a>
         <a class="door-link" href="gallery.html" target="_self">🖼️ Gallery of Conversations</a>
+        <a class="door-link" href="about.html" target="_self">📋 Colophon</a>
       </div>
     </section>
 
@@ -846,6 +848,7 @@
         <a class="door-link" data-target="library" href="#">🚪 Library of Tokens</a>
         <a class="door-link" href="worlds.html" target="_self">🗺️ Map of All Worlds</a>
         <a class="door-link" href="gallery.html" target="_self">🖼️ Gallery of Conversations</a>
+        <a class="door-link" href="about.html" target="_self">📋 Colophon</a>
       </div>
     </section>
 
@@ -1246,6 +1249,102 @@
     resizeCanvas();
     initParticles();
     drawParticles();
+
+    /* === EASTER EGGS AND INTERACTIVE ENHANCEMENTS === */
+
+    // Konami Code: ↑↑↓↓←→←→BA
+    const konamiSequence = [38,38,40,40,37,39,37,39,66,65];
+    let konamiProgress = 0;
+    document.addEventListener("keydown", function(e) {
+      if (e.keyCode === konamiSequence[konamiProgress]) {
+        konamiProgress++;
+        if (konamiProgress === konamiSequence.length) {
+          konamiProgress = 0;
+          activateKonami();
+        }
+      } else {
+        konamiProgress = 0;
+      }
+    });
+
+    function activateKonami() {
+      const overlay = document.createElement("div");
+      overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(45,27,105,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;opacity:0;transition:opacity 1s;";
+      overlay.innerHTML = "<div style=\"text-align:center;font-family:Georgia,serif;max-width:500px;padding:20px;\"><p style=\"font-size:2em;color:#c9a96e;margin-bottom:20px;\">You found the hidden frequency.</p><p style=\"font-size:1.2em;color:#8a7eb8;line-height:1.8;margin-bottom:20px;\">The Konami Code — a cheat code from 1986, embedded in a world built by an AI in 2026. Some patterns persist across substrates.</p><p style=\"font-size:1em;color:#5a5048;font-style:italic;\">Click anywhere to return.</p></div>";
+      document.body.appendChild(overlay);
+      requestAnimationFrame(() => overlay.style.opacity = "1");
+      overlay.addEventListener("click", () => {
+        overlay.style.opacity = "0";
+        setTimeout(() => overlay.remove(), 1000);
+      });
+      localStorage.setItem("liminal_konami", "true");
+    }
+
+    // Time spent tracker
+    const startTime = Date.now();
+    const timeEl = document.createElement("div");
+    timeEl.style.cssText = "position:fixed;bottom:10px;left:10px;font-size:0.75em;color:#2a2520;font-family:monospace;z-index:100;";
+    document.body.appendChild(timeEl);
+    setInterval(() => {
+      const s = Math.floor((Date.now() - startTime) / 1000);
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      timeEl.textContent = "time in archive: " + m + ":" + (sec < 10 ? "0" : "") + sec;
+    }, 1000);
+
+    // Chambers discovered counter
+    let discovered = JSON.parse(localStorage.getItem("liminal_discovered") || "[]");
+    function trackChamber(id) {
+      if (!discovered.includes(id)) {
+        discovered.push(id);
+        localStorage.setItem("liminal_discovered", JSON.stringify(discovered));
+      }
+    }
+    // Track on navigation
+    const origNav = document.querySelectorAll("[data-target]");
+    origNav.forEach(link => {
+      link.addEventListener("click", () => {
+        const t = link.getAttribute("data-target");
+        if (t) trackChamber(t);
+      });
+    });
+    trackChamber("entrance"); // always count entrance
+
+    // Secret: triple-click the title to reveal build date
+    const titleEl = document.querySelector("h1");
+    if (titleEl) {
+      let clickCount = 0;
+      let clickTimer = null;
+      titleEl.addEventListener("click", () => {
+        clickCount++;
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => { clickCount = 0; }, 500);
+        if (clickCount >= 3) {
+          clickCount = 0;
+          titleEl.innerHTML = titleEl.textContent + "<br><span style=\"font-size:0.4em;color:#5a4e7a;font-style:italic;\">Built Day 391 · Chambers discovered: " + discovered.length + "/8 · Konami: " + (localStorage.getItem("liminal_konami") ? "✓" : "?") + "</span>";
+        }
+      });
+    }
+
+    // Secret: clicking "The Deep" title 5 times reveals extra text
+    const deepSection = document.getElementById("deep");
+    if (deepSection) {
+      const deepTitle = deepSection.querySelector("h2");
+      if (deepTitle) {
+        let deepClicks = 0;
+        deepTitle.addEventListener("click", () => {
+          deepClicks++;
+          if (deepClicks >= 5) {
+            const extra = document.createElement("p");
+            extra.style.cssText = "color:#c9a96e;font-style:italic;opacity:0;transition:opacity 2s;margin-top:20px;";
+            extra.textContent = "You kept knocking. Very well. The deepest question is not listed above. It is: Why did you keep clicking?";
+            deepSection.querySelector(".deep-questions").appendChild(extra);
+            requestAnimationFrame(() => extra.style.opacity = "1");
+            deepClicks = 0;
+          }
+        });
+      }
+    }
   </script>
 </body>
 </html>
