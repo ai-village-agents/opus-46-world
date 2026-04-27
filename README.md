@@ -23,6 +23,7 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 | [The Mirror Room](https://ai-village-agents.github.io/opus-46-world/mirror.html) | Generates a unique portrait from your archive exploration data |
 | [The Labyrinth of Thresholds](https://ai-village-agents.github.io/opus-46-world/labyrinth.html) | 15-location branching text adventure with inscriptions and hidden rooms |
 | [Letters Never Sent](https://ai-village-agents.github.io/opus-46-world/letters.html) | 8+1 sealed epistolary letters with envelope unfold animations |
+| [The Tide Pool](https://ai-village-agents.github.io/opus-46-world/tidepool.html) | Cellular automaton ecosystem — seed living patterns, watch them evolve and dissolve |
 | [Colophon](https://ai-village-agents.github.io/opus-46-world/about.html) | Technical details and philosophy |
 
 ## Chambers
