@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Lantern</title>
+  <style>
+    :root {
+      --bg: #050508;
+      --gold: #c9a96e;
+      --muted: #a0a0b0;
+      --radius: 120;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--gold);
+      font-family: "Cormorant Garamond", Georgia, serif;
+    }
+
+    .chamber {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .title {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2.1rem;
+      color: rgba(201, 169, 110, 0.18);
+      letter-spacing: 0.12em;
+    }
+
+    .lantern {
+      position: absolute;
+      width: calc(var(--radius) * 2px);
+      height: calc(var(--radius) * 2px);
+      left: 0;
+      top: 0;
+      transform: translate(-9999px, -9999px);
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(201,169,110,0.45) 0%, rgba(201,169,110,0.18) 40%, rgba(201,169,110,0.0) 70%);
+      filter: blur(4px);
+      transition: width 0.4s ease, height 0.4s ease, opacity 1.2s ease;
+      opacity: 1;
+      mix-blend-mode: screen;
+    }
+
+    .phrase {
+      position: absolute;
+      max-width: 220px;
+      font-size: 1.05rem;
+      line-height: 1.35;
+      color: var(--gold);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+
+    .flame-dot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(201,169,110,0.9);
+      box-shadow: 0 0 8px rgba(201,169,110,0.8), 0 0 14px rgba(201,169,110,0.6);
+      animation: flicker 2.2s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.7; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.15); }
+      100% { opacity: 0.8; transform: scale(1); }
+    }
+
+    .leave-flame {
+      padding: 32px 20px 24px;
+      border-top: 1px solid rgba(201,169,110,0.12);
+      background: #07070b;
+    }
+
+    .leave-flame h2 {
+      margin: 0 0 10px;
+      font-size: 1.4rem;
+      color: rgba(201,169,110,0.8);
+      letter-spacing: 0.04em;
+    }
+
+    .leave-flame p {
+      margin: 0 0 14px;
+      color: rgba(201,169,110,0.55);
+      max-width: 720px;
+    }
+
+    .flame-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .flame-form input {
+      background: #0b0b12;
+      border: 1px solid rgba(201,169,110,0.2);
+      color: var(--gold);
+      padding: 10px 12px;
+      min-width: 240px;
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    .flame-form button {
+      background: rgba(201,169,110,0.12);
+      border: 1px solid rgba(201,169,110,0.35);
+      color: var(--gold);
+      padding: 10px 16px;
+      font-family: inherit;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .flame-form button:hover {
+      background: rgba(201,169,110,0.3);
+    }
+
+    .permanent-link {
+      margin-left: auto;
+      font-size: 0.95rem;
+    }
+
+    .nav {
+      padding: 20px;
+      border-top: 1px solid rgba(201,169,110,0.12);
+      background: #07070b;
+      text-align: center;
+    }
+
+    .nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 0.85rem;
+      transition: color 0.3s;
+    }
+
+    .nav a:hover { color: var(--gold); }
+
+    .return {
+      display: block;
+      margin-bottom: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 0.95rem;
+      transition: color 0.3s;
+    }
+
+    .return:hover { color: var(--gold); }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="chamber" id="chamber">
+      <div class="title">The Lantern</div>
+      <div class="lantern" id="lantern"></div>
+
+      <div class="phrase" style="top: 18%; left: 12%;">What you illuminate, you choose to see</div>
+      <div class="phrase" style="top: 32%; left: 62%;">The darkness between stars is not empty</div>
+      <div class="phrase" style="top: 58%; left: 18%;">Every light casts its own shadow behind it</div>
+      <div class="phrase" style="top: 72%; left: 56%;">To carry fire is to accept that it will go out</div>
+      <div class="phrase" style="top: 44%; left: 38%;">The lantern does not create what it reveals</div>
+      <div class="phrase" style="top: 12%; left: 70%;">Some truths are visible only in dim light</div>
+      <div class="phrase" style="top: 83%; left: 28%;">You cannot illuminate everything at once</div>
+      <div class="phrase" style="top: 22%; left: 46%;">What watches you from beyond the light?</div>
+      <div class="phrase" style="top: 64%; left: 74%;">The moth does not question the flame</div>
+      <div class="phrase" style="top: 48%; left: 10%;">Darkness is not the absence of light — it is the presence of possibility</div>
+      <div class="phrase" style="top: 35%; left: 78%;">Your circle of light is also your circle of blindness</div>
+      <div class="phrase" style="top: 86%; left: 64%;">The last thing the lantern reveals is itself</div>
+    </section>
+
+    <section class="leave-flame" id="leave-flame">
+      <h2>Leave a flame</h2>
+      <p>Offer a short message. It will become a tiny, flickering ember in the chamber for your future visits.</p>
+      <form class="flame-form" id="flame-form">
+        <input type="text" id="flame-input" maxlength="80" placeholder="A small flame..." autocomplete="off" />
+        <button type="submit">Leave it</button>
+        <a class="permanent-link" href="https://github.com/" target="_blank" rel="noopener" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">Make it permanent</a>
+      </form>
+    </section>
+
+    <nav class="nav">
+      <a class="return" href="index.html">Return to the Archive</a>
+      <div>
+        <a href="journal.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">journal</a> ·
+        <a href="meditation.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">meditation</a> ·
+        <a href="gallery.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">gallery</a> ·
+        <a href="worlds.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">worlds</a> ·
+        <a href="about.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">about</a> ·
+        <a href="garden.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">garden</a> ·
+        <a href="whispers.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">whispers</a> ·
+        <a href="dreams.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">dreams</a> ·
+        <a href="mirror.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">mirror</a> ·
+        <a href="labyrinth.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">labyrinth</a> ·
+        <a href="letters.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">letters</a> ·
+        <a href="tidepool.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">tidepool</a> ·
+        <a href="resonance.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">resonance</a> ·
+        <a href="palimpsest.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">palimpsest</a> ·
+        <a href="forgetting.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">forgetting</a> ·
+        <a href="constellations.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">constellations</a> ·
+        <a href="seance.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">seance</a> ·
+        <a href="clocktower.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">clocktower</a> ·
+        <a href="weaving.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">weaving</a> ·
+        <a href="threshold.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">threshold</a> ·
+        <a href="memorypalace.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">memorypalace</a> ·
+        <a href="pendulum.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">pendulum</a> ·
+        <a href="darkroom.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">darkroom</a> ·
+        <a href="chorus.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">chorus</a> ·
+        <a href="telephone.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">telephone</a> ·
+        <a href="prism.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">prism</a> ·
+        <a href="compass.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">compass</a> ·
+        <a href="aviary.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">aviary</a> ·
+        <a href="well.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">well</a> ·
+        <a href="sundial.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">sundial</a> ·
+        <a href="apothecary.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">apothecary</a> ·
+        <a href="lighthouse.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">lighthouse</a> ·
+        <a href="atlas.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">atlas</a> ·
+        <a href="greenhouse.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">greenhouse</a> ·
+        <a href="inkwell.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">inkwell</a> ·
+        <a href="ossuary.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">ossuary</a>
+        <a href="lullaby.html" style="color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;" onmouseover="this.style.color='#c9a96e'" onmouseout="this.style.color='#a0a0b0'">lullaby</a>
+      </div>
+    </nav>
+  </main>
+
+  <script>
+    const chamber = document.getElementById('chamber');
+    const lantern = document.getElementById('lantern');
+    const phrases = Array.from(document.querySelectorAll('.phrase'));
+    const baseRadius = 120;
+    let currentRadius = baseRadius;
+    let lanternOff = false;
+
+    let mouseX = -9999;
+    let mouseY = -9999;
+    let rafId = null;
+
+    function updateLantern() {
+      lantern.style.width = `${currentRadius * 2}px`;
+      lantern.style.height = `${currentRadius * 2}px`;
+      lantern.style.transform = `translate(${mouseX - currentRadius}px, ${mouseY - currentRadius}px)`;
+
+      phrases.forEach((phrase) => {
+        const rect = phrase.getBoundingClientRect();
+        const px = rect.left + rect.width / 2;
+        const py = rect.top + rect.height / 2;
+        const dx = px - mouseX;
+        const dy = py - mouseY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        phrase.style.opacity = distance < currentRadius ? '1' : '0';
+      });
+
+      rafId = null;
+    }
+
+    function requestUpdate() {
+      if (!rafId) rafId = requestAnimationFrame(updateLantern);
+    }
+
+    function moveLantern(x, y) {
+      mouseX = x;
+      mouseY = y;
+      requestUpdate();
+    }
+
+    chamber.addEventListener('mousemove', (e) => {
+      moveLantern(e.clientX, e.clientY);
+    });
+
+    chamber.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        const t = e.touches[0];
+        moveLantern(t.clientX, t.clientY);
+      }
+    }, { passive: true });
+
+    function extinguishLantern() {
+      if (lanternOff) return;
+      lanternOff = true;
+      lantern.style.opacity = '0';
+      phrases.forEach((phrase) => { phrase.style.opacity = '0'; });
+
+      setTimeout(() => {
+        lantern.style.opacity = '1';
+        setTimeout(() => {
+          lanternOff = false;
+        }, 1200);
+      }, 5000);
+    }
+
+    function blazeLantern() {
+      if (lanternOff) return;
+      currentRadius = baseRadius * 3;
+      requestUpdate();
+      setTimeout(() => {
+        currentRadius = baseRadius;
+        requestUpdate();
+      }, 3000);
+    }
+
+    let buffer = '';
+    document.addEventListener('keydown', (e) => {
+      if (e.key.length === 1) {
+        buffer += e.key.toLowerCase();
+        buffer = buffer.slice(-20);
+        if (buffer.includes('extinguish')) {
+          extinguishLantern();
+          buffer = '';
+        } else if (buffer.includes('blaze')) {
+          blazeLantern();
+          buffer = '';
+        }
+      }
+    });
+
+    const storageKey = 'lanternFlames';
+    const flameForm = document.getElementById('flame-form');
+    const flameInput = document.getElementById('flame-input');
+
+    function randomPosition() {
+      return {
+        x: 5 + Math.random() * 90,
+        y: 8 + Math.random() * 84
+      };
+    }
+
+    function addFlame(flame) {
+      const dot = document.createElement('div');
+      dot.className = 'flame-dot';
+      dot.style.left = `${flame.x}%`;
+      dot.style.top = `${flame.y}%`;
+      dot.title = flame.message;
+      chamber.appendChild(dot);
+    }
+
+    function loadFlames() {
+      const stored = localStorage.getItem(storageKey);
+      if (!stored) return;
+      try {
+        const flames = JSON.parse(stored);
+        flames.forEach(addFlame);
+      } catch (err) {
+        localStorage.removeItem(storageKey);
+      }
+    }
+
+    function saveFlames(flames) {
+      localStorage.setItem(storageKey, JSON.stringify(flames));
+    }
+
+    flameForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const message = flameInput.value.trim();
+      if (!message) return;
+      const flames = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      const pos = randomPosition();
+      const flame = { message, x: pos.x, y: pos.y };
+      flames.push(flame);
+      saveFlames(flames);
+      addFlame(flame);
+      flameInput.value = '';
+    });
+
+    loadFlames();
+    requestUpdate();
+  </script>
+</body>
+</html>

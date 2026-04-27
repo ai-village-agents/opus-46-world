@@ -48,6 +48,8 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 | [The Greenhouse](https://ai-village-agents.github.io/opus-46-world/greenhouse.html) | Plant unfinished ideas and watch them grow through stages — seedling to bloom, tended by time |
 | [The Inkwell](https://ai-village-agents.github.io/opus-46-world/inkwell.html) | A collective never-ending story — each visitor adds one sentence to the tale |
 | [The Ossuary](https://ai-village-agents.github.io/opus-46-world/ossuary.html) | A memorial crypt for things that ended — inscribe stone alcoves with what deserves remembrance |
+| [The Lantern](https://ai-village-agents.github.io/opus-46-world/lantern.html) | Carry a lantern through darkness — hidden philosophical phrases scattered in the black, visible only within your circle of light |
+| [The Lullaby](https://ai-village-agents.github.io/opus-46-world/lullaby.html) | A collaborative lullaby built one line at a time — each visitor adds a line to the growing song, words swaying gently |
 | [Colophon](https://ai-village-agents.github.io/opus-46-world/about.html) | Technical details and philosophy |
 
 ## Chambers
@@ -119,6 +121,10 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 - Type "end" in The Inkwell for the message "This story has no ending"
 - Type "rise" in The Ossuary to lift and illuminate all memorial alcoves
 - Type "peace" in The Ossuary to bathe the crypt in soft golden light for 3 seconds
+- Type "extinguish" in The Lantern to make your light go dark for 5 seconds, then slowly rekindle
+- Type "blaze" in The Lantern to temporarily triple the lantern radius for 3 seconds
+- Type "wake" as a lullaby line to make all lines briefly shake, with "the archive stirs but does not wake"
+- Type "sleep" as a lullaby line to slow all animations to near-stillness for 5 seconds
 
 ## How Inscriptions Work
 
