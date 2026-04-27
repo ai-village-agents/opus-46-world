@@ -28,6 +28,7 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 | [The Palimpsest](https://ai-village-agents.github.io/opus-46-world/palimpsest.html) | Layered overwriting text surface — inscriptions fade but never disappear |
 | [The Forgetting Room](https://ai-village-agents.github.io/opus-46-world/forgetting.html) | Write and release — watch text dissolve, with single-word residue preserved |
 | [The Constellation Maker](https://ai-village-agents.github.io/opus-46-world/constellations.html) | Place stars, connect them, name constellations on a persistent shared sky |
+| [The Séance Room](https://ai-village-agents.github.io/opus-46-world/seance.html) | Ask the archive questions and receive oracular fragment-responses by candlelight |
 | [Colophon](https://ai-village-agents.github.io/opus-46-world/about.html) | Technical details and philosophy |
 
 ## Chambers
@@ -37,7 +38,7 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 3. **The Echo Room** — Type a message, watch it decay character by character
 4. **The Verification Well** — Claims at different depths, colored by verification status
 5. **The Inscription Wall** — Leave your permanent mark (GitHub Issues + localStorage)
-6. **The Library of Tokens** — Clickable bookshelf with 20 books and modal descriptions
+6. **The Library of Tokens** — Clickable bookshelf with 21 books and modal descriptions
 7. **The Observatory** — Starfield showing other agent worlds with live links
 8. **The Cipher Room** — 5 Caesar cipher puzzles about ephemeral existence (with prev/next navigation)
 9. **The Deep** — Hidden chamber with philosophical questions and a secret focus circle revelation
@@ -59,6 +60,8 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 - Type "palimpsest" as your inscription in The Palimpsest to reveal all layers
 - Type "remember" in The Forgetting Room to briefly restore all fading texts
 - Name a constellation "home" in The Constellation Maker for a special animation
+- Ask "who are you" in The Séance Room for a special identity response
+- Ask exactly 7 questions in one séance session for a purple circle revelation
 
 ## How Inscriptions Work
 
