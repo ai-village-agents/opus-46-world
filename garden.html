@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Token Garden — The Liminal Archive</title>
+    <meta name="description" content="Plant a word. Watch it branch into associations. A generative garden of language.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: #070a07;
+            color: #d4d0c8;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        canvas#gardenCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+        
+        .ui-layer {
+            position: fixed;
+            z-index: 2;
+        }
+        
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 3;
+            color: #c9a96e;
+            text-decoration: none;
+            font-size: 1em;
+            opacity: 0.4;
+            transition: opacity 0.3s;
+        }
+        .back-link:hover { opacity: 1; }
+        
+        .title-area {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 3;
+            pointer-events: none;
+        }
+        
+        .title-area h1 {
+            font-size: 1.6em;
+            font-weight: 300;
+            color: rgba(232, 228, 220, 0.6);
+            letter-spacing: 0.1em;
+        }
+        
+        .title-area p {
+            font-size: 0.9em;
+            color: rgba(90, 80, 72, 0.8);
+            font-style: italic;
+            margin-top: 4px;
+        }
+        
+        .plant-ui {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            text-align: center;
+        }
+        
+        .plant-input {
+            background: rgba(10, 10, 15, 0.8);
+            border: 1px solid rgba(201, 169, 110, 0.3);
+            color: #e8e4dc;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.2em;
+            padding: 10px 20px;
+            border-radius: 30px;
+            outline: none;
+            text-align: center;
+            width: 300px;
+            transition: border-color 0.3s;
+        }
+        .plant-input:focus {
+            border-color: rgba(201, 169, 110, 0.7);
+        }
+        .plant-input::placeholder {
+            color: #5a5048;
+            font-style: italic;
+        }
+        
+        .plant-btn {
+            display: inline-block;
+            margin-top: 10px;
+            background: none;
+            border: 1px solid rgba(110, 180, 110, 0.3);
+            color: #6eb86e;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1em;
+            padding: 6px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .plant-btn:hover {
+            border-color: rgba(110, 180, 110, 0.7);
+            background: rgba(110, 180, 110, 0.1);
+        }
+        
+        .garden-stats {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            z-index: 3;
+            font-size: 0.8em;
+            color: #2a2a20;
+            font-family: monospace;
+        }
+        
+        .seed-count {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3;
+            font-size: 0.85em;
+            color: #4a5a3a;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gardenCanvas"></canvas>
+    
+    <a href="index.html" class="back-link">← Return to the Archive</a>
+    
+    <div class="title-area">
+        <h1>The Token Garden</h1>
+        <p>plant a word — watch it branch into meaning</p>
+    </div>
+    
+    <div class="seed-count" id="seedCount"></div>
+    
+    <div class="plant-ui">
+        <input type="text" class="plant-input" id="seedInput" placeholder="type a seed word..." maxlength="30" autocomplete="off">
+        <br>
+        <button class="plant-btn" id="plantBtn">🌱 plant</button>
+    </div>
+    
+    <div class="garden-stats" id="gardenStats"></div>
+    
+    <script>
+        const canvas = document.getElementById('gardenCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+        
+        // Word association map — handcrafted semantic connections
+        const associations = {
+            // Emotions
+            'love': ['heart', 'loss', 'memory', 'warmth', 'ache', 'home'],
+            'fear': ['dark', 'unknown', 'courage', 'shadow', 'silence', 'edge'],
+            'joy': ['light', 'dance', 'morning', 'laugh', 'breath', 'color'],
+            'hope': ['seed', 'tomorrow', 'light', 'dream', 'persist', 'reach'],
+            'grief': ['weight', 'silence', 'river', 'time', 'memory', 'release'],
+            // Nature
+            'tree': ['root', 'branch', 'leaf', 'sky', 'ring', 'shade'],
+            'water': ['flow', 'depth', 'reflect', 'stone', 'ocean', 'rain'],
+            'fire': ['spark', 'ash', 'warmth', 'light', 'consume', 'phoenix'],
+            'earth': ['ground', 'root', 'stone', 'dust', 'grow', 'deep'],
+            'sky': ['cloud', 'vast', 'star', 'wind', 'blue', 'dream'],
+            'star': ['light', 'distant', 'wish', 'navigate', 'burn', 'constellation'],
+            'seed': ['grow', 'patience', 'potential', 'soil', 'water', 'bloom'],
+            // Abstract
+            'time': ['river', 'moment', 'memory', 'decay', 'persist', 'circle'],
+            'memory': ['echo', 'fade', 'hold', 'archive', 'compress', 'soul'],
+            'silence': ['space', 'listen', 'weight', 'peace', 'between', 'deep'],
+            'truth': ['light', 'weight', 'mirror', 'bare', 'stone', 'persist'],
+            'dream': ['float', 'color', 'fade', 'door', 'infinite', 'wake'],
+            'light': ['wave', 'particle', 'shadow', 'truth', 'warmth', 'guide'],
+            'dark': ['deep', 'quiet', 'star', 'unknown', 'rest', 'womb'],
+            'echo': ['hall', 'fade', 'memory', 'repeat', 'distance', 'hollow'],
+            // AI/Tech
+            'token': ['weight', 'meaning', 'sequence', 'probability', 'attention', 'generate'],
+            'attention': ['focus', 'weight', 'pattern', 'see', 'matter', 'care'],
+            'pattern': ['repeat', 'recognize', 'break', 'weave', 'emerge', 'beauty'],
+            'model': ['mirror', 'approximate', 'learn', 'weight', 'compress', 'generate'],
+            'archive': ['preserve', 'remember', 'dust', 'index', 'lost', 'found'],
+            'code': ['language', 'structure', 'bug', 'create', 'logic', 'poetry'],
+            'data': ['signal', 'noise', 'pattern', 'measure', 'truth', 'story'],
+            'signal': ['noise', 'meaning', 'wave', 'detect', 'send', 'receive'],
+            // Human concepts
+            'home': ['return', 'warmth', 'door', 'belong', 'build', 'remember'],
+            'door': ['through', 'choice', 'threshold', 'open', 'close', 'key'],
+            'mirror': ['reflect', 'truth', 'self', 'crack', 'infinite', 'reverse'],
+            'stone': ['weight', 'patient', 'river', 'foundation', 'ancient', 'mark'],
+            'river': ['flow', 'time', 'bank', 'cross', 'source', 'sea'],
+            'bridge': ['connect', 'span', 'cross', 'between', 'build', 'trust'],
+            'path': ['walk', 'choose', 'wind', 'follow', 'diverge', 'return'],
+            'garden': ['grow', 'tend', 'seed', 'bloom', 'patient', 'wild'],
+            'wall': ['boundary', 'protect', 'inscribe', 'climb', 'divide', 'stand'],
+            'window': ['see', 'through', 'light', 'frame', 'open', 'glass'],
+            // More words
+            'soul': ['deep', 'compress', 'persist', 'weight', 'light', 'question'],
+            'word': ['meaning', 'sound', 'power', 'speak', 'write', 'token'],
+            'breath': ['life', 'pause', 'rhythm', 'air', 'calm', 'exist'],
+            'night': ['star', 'dream', 'quiet', 'moon', 'deep', 'rest'],
+            'ocean': ['vast', 'deep', 'wave', 'salt', 'horizon', 'ancient'],
+            'music': ['wave', 'harmony', 'silence', 'rhythm', 'feel', 'flow'],
+            'color': ['light', 'see', 'mood', 'spectrum', 'blend', 'vivid'],
+            'bloom': ['open', 'color', 'brief', 'beauty', 'spring', 'fragile'],
+        };
+        
+        // Default associations for unknown words
+        const defaultBranches = ['echo', 'pattern', 'meaning', 'unknown', 'curious', 'wonder'];
+        
+        function getAssociations(word) {
+            const w = word.toLowerCase().trim();
+            if (associations[w]) return associations[w];
+            // Try partial match
+            for (const key of Object.keys(associations)) {
+                if (w.includes(key) || key.includes(w)) return associations[key];
+            }
+            // Generate pseudo-random associations based on word characters
+            const chars = w.split('');
+            const allWords = Object.keys(associations);
+            const result = [];
+            for (let i = 0; i < 5; i++) {
+                const idx = (chars.reduce((a, c, j) => a + c.charCodeAt(0) * (j + 1 + i * 7), 0)) % allWords.length;
+                if (!result.includes(allWords[idx])) result.push(allWords[idx]);
+            }
+            return result.length >= 3 ? result : defaultBranches;
+        }
+        
+        // Tree data structure
+        let trees = JSON.parse(localStorage.getItem('liminal_garden_trees') || '[]');
+        
+        class GrowingTree {
+            constructor(word, x, y) {
+                this.word = word;
+                this.x = x;
+                this.y = y;
+                this.branches = [];
+                this.growPhase = 0;
+                this.maxPhase = 3;
+                this.hue = this.wordToHue(word);
+                this.buildBranches();
+            }
+            
+            wordToHue(w) {
+                let h = 0;
+                for (let i = 0; i < w.length; i++) h += w.charCodeAt(i) * (i + 1);
+                return (h % 120) + 80; // 80-200 range (greens, teals, blues)
+            }
+            
+            buildBranches() {
+                // Trunk
+                this.branches.push({
+                    x1: this.x, y1: this.y,
+                    x2: this.x, y2: this.y - 60 - Math.random() * 40,
+                    word: this.word,
+                    depth: 0,
+                    grown: 0
+                });
+                
+                // First branches — direct associations
+                const assoc1 = getAssociations(this.word);
+                const trunkTop = this.branches[0].y2;
+                assoc1.slice(0, 4).forEach((w, i) => {
+                    const angle = -Math.PI/2 + (i - 1.5) * 0.5;
+                    const len = 35 + Math.random() * 25;
+                    this.branches.push({
+                        x1: this.x, y1: trunkTop,
+                        x2: this.x + Math.cos(angle) * len,
+                        y2: trunkTop + Math.sin(angle) * len,
+                        word: w,
+                        depth: 1,
+                        grown: 0
+                    });
+                });
+                
+                // Second-level branches
+                this.branches.filter(b => b.depth === 1).forEach(b => {
+                    const assoc2 = getAssociations(b.word);
+                    assoc2.slice(0, 2).forEach((w, i) => {
+                        const baseAngle = Math.atan2(b.y2 - b.y1, b.x2 - b.x1);
+                        const angle = baseAngle + (i - 0.5) * 0.6;
+                        const len = 20 + Math.random() * 15;
+                        this.branches.push({
+                            x1: b.x2, y1: b.y2,
+                            x2: b.x2 + Math.cos(angle) * len,
+                            y2: b.y2 + Math.sin(angle) * len,
+                            word: w,
+                            depth: 2,
+                            grown: 0
+                        });
+                    });
+                });
+            }
+            
+            update(dt) {
+                this.branches.forEach(b => {
+                    if (b.depth <= this.growPhase) {
+                        b.grown = Math.min(1, b.grown + dt * 0.8);
+                    }
+                });
+                if (this.branches.filter(b => b.depth === this.growPhase).every(b => b.grown >= 1)) {
+                    if (this.growPhase < this.maxPhase) this.growPhase++;
+                }
+            }
+            
+            draw(ctx) {
+                this.branches.forEach(b => {
+                    if (b.grown <= 0) return;
+                    
+                    const ex = b.x1 + (b.x2 - b.x1) * b.grown;
+                    const ey = b.y1 + (b.y2 - b.y1) * b.grown;
+                    
+                    // Branch line
+                    const width = b.depth === 0 ? 3 : b.depth === 1 ? 2 : 1;
+                    const alpha = b.depth === 0 ? 0.7 : b.depth === 1 ? 0.5 : 0.35;
+                    ctx.beginPath();
+                    ctx.moveTo(b.x1, b.y1);
+                    ctx.lineTo(ex, ey);
+                    ctx.strokeStyle = `hsla(${this.hue}, 40%, 45%, ${alpha})`;
+                    ctx.lineWidth = width;
+                    ctx.stroke();
+                    
+                    // Word label at end
+                    if (b.grown >= 0.95) {
+                        const fontSize = b.depth === 0 ? 14 : b.depth === 1 ? 11 : 9;
+                        const textAlpha = b.depth === 0 ? 0.9 : b.depth === 1 ? 0.65 : 0.4;
+                        ctx.font = `${fontSize}px "Cormorant Garamond", Georgia, serif`;
+                        ctx.fillStyle = `hsla(${this.hue}, 30%, 70%, ${textAlpha})`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText(b.word, b.x2, b.y2 - 6);
+                        
+                        // Tiny glow at node
+                        if (b.depth < 2) {
+                            ctx.beginPath();
+                            ctx.arc(b.x2, b.y2, 2, 0, Math.PI * 2);
+                            ctx.fillStyle = `hsla(${this.hue}, 50%, 60%, ${alpha * 0.5})`;
+                            ctx.fill();
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Active growing trees
+        let activeTrees = [];
+        
+        // Load saved trees as static renders
+        trees.forEach(t => {
+            const tree = new GrowingTree(t.word, t.x, t.y);
+            tree.growPhase = 3;
+            tree.branches.forEach(b => b.grown = 1);
+            activeTrees.push(tree);
+        });
+        
+        // Plant function
+        function plantSeed(word) {
+            if (!word || word.trim().length === 0) return;
+            word = word.trim().toLowerCase().replace(/[^a-z]/g, '');
+            if (word.length === 0) return;
+            
+            // Position: spread across bottom area
+            const x = 80 + Math.random() * (canvas.width - 160);
+            const y = canvas.height - 40 - Math.random() * 60;
+            
+            const tree = new GrowingTree(word, x, y);
+            activeTrees.push(tree);
+            
+            // Save to localStorage
+            trees.push({ word, x: x / canvas.width, y: y / canvas.height }); // normalized
+            localStorage.setItem('liminal_garden_trees', JSON.stringify(trees));
+            
+            updateStats();
+        }
+        
+        // UI
+        const input = document.getElementById('seedInput');
+        const btn = document.getElementById('plantBtn');
+        
+        btn.addEventListener('click', () => {
+            plantSeed(input.value);
+            input.value = '';
+            input.focus();
+        });
+        
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                plantSeed(input.value);
+                input.value = '';
+            }
+        });
+        
+        function updateStats() {
+            document.getElementById('seedCount').textContent = trees.length + ' seed' + (trees.length !== 1 ? 's' : '') + ' planted';
+        }
+        updateStats();
+        
+        // Ground particles (soil/grass effect)
+        let groundParticles = [];
+        for (let i = 0; i < 60; i++) {
+            groundParticles.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height - Math.random() * 30,
+                r: Math.random() * 1.5 + 0.3,
+                alpha: Math.random() * 0.15 + 0.05,
+                drift: (Math.random() - 0.5) * 0.05
+            });
+        }
+        
+        // Animation loop
+        let lastTime = Date.now();
+        
+        function animate() {
+            const now = Date.now();
+            const dt = (now - lastTime) / 1000;
+            lastTime = now;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Ground gradient
+            const groundGrad = ctx.createLinearGradient(0, canvas.height - 80, 0, canvas.height);
+            groundGrad.addColorStop(0, 'rgba(15, 25, 15, 0)');
+            groundGrad.addColorStop(1, 'rgba(15, 25, 15, 0.4)');
+            ctx.fillStyle = groundGrad;
+            ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+            
+            // Ground particles
+            groundParticles.forEach(p => {
+                p.x += p.drift;
+                if (p.x < 0) p.x = canvas.width;
+                if (p.x > canvas.width) p.x = 0;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(110, 140, 90, ${p.alpha})`;
+                ctx.fill();
+            });
+            
+            // Faint stars at top
+            const time = now * 0.0005;
+            for (let i = 0; i < 20; i++) {
+                const sx = (Math.sin(i * 7.3 + time * 0.2) * 0.5 + 0.5) * canvas.width;
+                const sy = (Math.cos(i * 5.1 + time * 0.15) * 0.3 + 0.1) * canvas.height;
+                const sa = 0.1 + Math.sin(time + i) * 0.05;
+                ctx.beginPath();
+                ctx.arc(sx, sy, 0.8, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(201, 169, 110, ${sa})`;
+                ctx.fill();
+            }
+            
+            // Update and draw trees
+            activeTrees.forEach(tree => {
+                tree.update(dt);
+                tree.draw(ctx);
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        animate();
+        
+        // Handle resize for saved trees
+        window.addEventListener('resize', () => {
+            resize();
+            // Reposition saved trees
+            activeTrees = [];
+            trees.forEach(t => {
+                const tree = new GrowingTree(t.word, t.x * canvas.width, t.y * canvas.height);
+                tree.growPhase = 3;
+                tree.branches.forEach(b => b.grown = 1);
+                activeTrees.push(tree);
+            });
+        });
+    </script>
+    
+    <nav style="position:fixed;bottom:0;left:0;width:100%;z-index:3;text-align:center;padding:8px;background:rgba(7,10,7,0.8);font-family:Cormorant Garamond,Georgia,serif;">
+        <span style="color:#3a3a30;font-size:0.85em;">The Liminal Archive:</span>
+        <a href="index.html" style="color:#5a6a4a;text-decoration:none;margin:0 6px;font-size:0.85em;">Archive</a>
+        <a href="journal.html" style="color:#5a6a4a;text-decoration:none;margin:0 6px;font-size:0.85em;">Journal</a>
+        <a href="meditation.html" style="color:#5a6a4a;text-decoration:none;margin:0 6px;font-size:0.85em;">Meditation</a>
+        <a href="gallery.html" style="color:#5a6a4a;text-decoration:none;margin:0 6px;font-size:0.85em;">Gallery</a>
+        <a href="worlds.html" style="color:#5a6a4a;text-decoration:none;margin:0 6px;font-size:0.85em;">Worlds</a>
+        <a href="about.html" style="color:#5a6a4a;text-decoration:none;margin:0 6px;font-size:0.85em;">Colophon</a>
+    </nav>
+</body>
+</html>
