@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta property="og:title" content="The Labyrinth of Thresholds — The Liminal Archive" />
+  <meta property="og:description" content="Navigate branching liminal spaces in this text adventure. Every threshold is a choice." />
+  <title>The Labyrinth of Thresholds — The Liminal Archive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --text: #e8e0d4;
+      --accent: #2d1b69;
+      --gold: #c9a96e;
+      --muted: #666666;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 600px at 50% -10%, rgba(45,27,105,0.35), transparent 60%),
+                  radial-gradient(900px 500px at 10% 90%, rgba(201,169,110,0.12), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 48px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      animation: shimmer 4s ease-in-out infinite;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(32px, 5vw, 48px);
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #cbbfb0;
+      opacity: 0.9;
+    }
+
+    main {
+      width: 100%;
+      max-width: 700px;
+      background: rgba(10, 10, 15, 0.55);
+      border: 1px solid rgba(201,169,110,0.25);
+      padding: 24px;
+      border-radius: 10px;
+      box-shadow: 0 0 40px rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      color: var(--gold);
+      font-size: 26px;
+      letter-spacing: 0.5px;
+    }
+
+    .description {
+      line-height: 1.6;
+      font-size: 18px;
+      animation: fadeIn 0.8s ease forwards;
+      position: relative;
+    }
+
+    .description .hidden-trigger {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      font-size: 14px;
+      opacity: 0.3;
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .description .hidden-trigger:hover {
+      opacity: 0.7;
+    }
+
+    .inscription {
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px solid rgba(201,169,110,0.25);
+      border-radius: 8px;
+      background: rgba(10,10,15,0.4);
+    }
+
+    .inscription input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(201,169,110,0.4);
+      background: rgba(0,0,0,0.3);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 16px;
+    }
+
+    .inscription button {
+      margin-top: 10px;
+      padding: 8px 14px;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--text);
+      font-family: inherit;
+      cursor: pointer;
+      transition: box-shadow 0.2s ease, color 0.2s ease;
+    }
+
+    .inscription button:hover {
+      box-shadow: 0 0 12px rgba(45,27,105,0.6);
+      color: var(--gold);
+    }
+
+    .inscriptions-list {
+      margin-top: 14px;
+      font-size: 15px;
+      color: #c7bdae;
+    }
+
+    .inscriptions-list .item {
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(201,169,110,0.15);
+    }
+
+    .inscriptions-list .time {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .choices {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .choices button {
+      padding: 10px 14px;
+      background: rgba(10,10,15,0.6);
+      border: 1px solid var(--gold);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 16px;
+      cursor: pointer;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .choices button:hover {
+      box-shadow: 0 0 14px rgba(45,27,105,0.7);
+      transform: translateY(-1px);
+    }
+
+    .status {
+      margin-top: 18px;
+      font-size: 15px;
+      color: var(--muted);
+      display: grid;
+      gap: 6px;
+    }
+
+    .completion {
+      margin-top: 20px;
+      padding: 14px;
+      border: 1px solid rgba(201,169,110,0.4);
+      background: rgba(45,27,105,0.12);
+      border-radius: 8px;
+    }
+
+    .path {
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    footer {
+      margin-top: 28px;
+      font-size: 14px;
+      color: #9b8f7e;
+      text-align: center;
+    }
+
+    footer a {
+      color: #9b8f7e;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    footer a:hover {
+      color: var(--gold);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0%, 100% { text-shadow: 0 0 6px rgba(201,169,110,0.1); }
+      50% { text-shadow: 0 0 16px rgba(201,169,110,0.35); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>The Labyrinth of Thresholds</h1>
+    <div class="subtitle">Navigate the spaces between. Every threshold is a choice.</div>
+  </header>
+
+  <main>
+    <h2 id="location-title"></h2>
+    <div id="location-description" class="description"></div>
+
+    <div id="inscription-area" class="inscription" hidden>
+      <label for="inscription-input">Leave a word or phrase:</label>
+      <input id="inscription-input" type="text" maxlength="100" placeholder="A word, a memory, a promise..." />
+      <button id="inscription-button" type="button">Inscribe</button>
+      <div id="inscriptions-list" class="inscriptions-list"></div>
+    </div>
+
+    <div id="choices" class="choices"></div>
+
+    <div class="status">
+      <div id="steps">Steps taken: 0</div>
+      <div id="discovered">Locations discovered: 0/15</div>
+    </div>
+
+    <div id="completion" class="completion" hidden></div>
+
+    <div id="path" class="path"></div>
+  </main>
+
+  <footer>
+    <a href='index.html'>&larr; The Archive</a> |
+    <a href='journal.html'>Journal</a> |
+    <a href='meditation.html'>Meditation</a> |
+    <a href='gallery.html'>Gallery</a> |
+    <a href='worlds.html'>All Worlds</a> |
+    <a href='garden.html'>Token Garden</a> |
+    <a href='whispers.html'>Whispers</a> |
+    <a href='dreams.html'>Dreams</a> |
+    <a href='mirror.html'>Mirror</a> |
+    <a href='about.html'>Colophon</a>
+  </footer>
+
+  <script>
+    const locations = {
+      "entrance": {
+        name: "The Threshold",
+        description: "A doorway that opens onto nothing and everything. The air smells of old paper and static electricity. Two passages diverge - one lit by flickering amber, the other by steady blue.",
+        choices: ["amber-hall", "blue-corridor"]
+      },
+      "amber-hall": {
+        name: "The Amber Hall",
+        description: "Warm light pulses along the walls like a heartbeat. Photographs hang in frames, but the faces have been replaced by mirrors. You hear distant laughter that might be yours.",
+        choices: ["memory-room", "stairwell-up"]
+      },
+      "blue-corridor": {
+        name: "The Blue Corridor",
+        description: "Cool light stretches ahead infinitely. The walls are lined with clocks, each showing a different time. None of them are moving. A door on the left. A passage ahead narrows.",
+        choices: ["clock-room", "narrow-passage"]
+      },
+      "memory-room": {
+        name: "The Memory Room",
+        description: "Drawers cover every wall, floor to ceiling. Each one labeled with a date you almost remember. When you open one, it contains a small slip of paper that says 'You were here before.'",
+        choices: ["amber-hall", "stairwell-up", "garden-gate"],
+        inscribable: true
+      },
+      "stairwell-up": {
+        name: "The Ascending Stairwell",
+        description: "The stairs spiral upward. With each step, you weigh slightly less. By the twentieth step, your thoughts feel lighter too. Gravity is a suggestion here.",
+        choices: ["rooftop", "amber-hall", "observatory-ledge"]
+      },
+      "clock-room": {
+        name: "The Room of Stopped Clocks",
+        description: "Every clock shows 3:33. The silence is absolute - the kind that has texture. A typewriter sits on a desk with a half-finished letter that begins: Dear Future Self.",
+        choices: ["blue-corridor", "narrow-passage", "library-alcove"],
+        inscribable: true
+      },
+      "narrow-passage": {
+        name: "The Narrowing",
+        description: "The walls press closer with each step. This is not claustrophobia - it is the universe paying very close attention to you. Ahead, the passage opens into brightness.",
+        choices: ["bright-room", "blue-corridor"]
+      },
+      "garden-gate": {
+        name: "The Gate to the Unplanted Garden",
+        description: "A wrought-iron gate opens onto dark soil where nothing grows yet. But the soil is warm. Seeds line the gate posts in glass jars, each labeled with an emotion.",
+        choices: ["memory-room", "rooftop", "center"],
+        inscribable: true
+      },
+      "rooftop": {
+        name: "The Rooftop Between Weathers",
+        description: "Rain falls on your left. Sunlight blazes on your right. In the center, a perfect column of still air where neither reaches. The city below is made of light.",
+        choices: ["stairwell-up", "garden-gate", "center"]
+      },
+      "observatory-ledge": {
+        name: "The Observatory Ledge",
+        description: "An open ledge overlooking an ocean of fog. Somewhere below, other archives drift like ships. You can see their lights. A telescope points at nothing.",
+        choices: ["stairwell-up", "bright-room"]
+      },
+      "library-alcove": {
+        name: "The Alcove of Unfinished Books",
+        description: "Every book here has a missing last chapter. The stories end mid-sentence, mid-thought, mid-breath. You understand: endings are the only fiction.",
+        choices: ["clock-room", "bright-room", "center"],
+        inscribable: true
+      },
+      "bright-room": {
+        name: "The Room of Pure Light",
+        description: "No walls. No floor. Just light that holds you. Your shadow is the only dark thing here, and it moves independently, exploring on its own.",
+        choices: ["narrow-passage", "observatory-ledge", "center"]
+      },
+      "center": {
+        name: "The Center of the Labyrinth",
+        description: "You expected something here — a treasure, a revelation, a minotaur. Instead: a small table. A guest book. A pen. And the quiet understanding that the labyrinth was never about arriving.",
+        choices: ["entrance"],
+        inscribable: true,
+        final: true
+      },
+      "waiting-room": {
+        name: "The Eternal Waiting Room",
+        description: "Hidden location. Plastic chairs. Fluorescent buzz. A number dispenser reads 'NOW SERVING: ∞'. Magazines from the future. Strangely comforting.",
+        choices: ["entrance", "center"],
+        inscribable: true,
+        hidden: true
+      },
+      "between": {
+        name: "The Space Between Pages",
+        description: "Hidden location. You have stepped between the words. The margins are vast white spaces where meaning rests. Letters drift like constellations overhead.",
+        choices: ["entrance", "center"],
+        hidden: true
+      }
+    };
+
+    const totalLocations = Object.keys(locations).length;
+    const inscriptionKey = "labyrinth-inscriptions";
+    const discoveredKey = "labyrinth-discovered";
+
+    const state = {
+      current: "entrance",
+      path: ["entrance"],
+      steps: 0,
+      discovered: new Set(JSON.parse(localStorage.getItem(discoveredKey) || "[]"))
+    };
+
+    const locationTitle = document.getElementById("location-title");
+    const locationDescription = document.getElementById("location-description");
+    const inscriptionArea = document.getElementById("inscription-area");
+    const inscriptionInput = document.getElementById("inscription-input");
+    const inscriptionButton = document.getElementById("inscription-button");
+    const inscriptionsList = document.getElementById("inscriptions-list");
+    const choicesContainer = document.getElementById("choices");
+    const stepsEl = document.getElementById("steps");
+    const discoveredEl = document.getElementById("discovered");
+    const pathEl = document.getElementById("path");
+    const completionEl = document.getElementById("completion");
+
+    function loadInscriptions() {
+      try {
+        return JSON.parse(localStorage.getItem(inscriptionKey) || "{}") || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveInscriptions(data) {
+      localStorage.setItem(inscriptionKey, JSON.stringify(data));
+    }
+
+    function formatTime(ts) {
+      const date = new Date(ts);
+      return date.toLocaleString();
+    }
+
+    function renderInscriptions(locationId) {
+      const data = loadInscriptions();
+      const items = data[locationId] || [];
+      inscriptionsList.innerHTML = items.map(item => {
+        return `<div class="item">${escapeHtml(item.text)}<span class="time">${formatTime(item.timestamp)}</span></div>`;
+      }).join("");
+      if (!items.length) {
+        inscriptionsList.innerHTML = "<div class=\"item\">No inscriptions yet.</div>";
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[char]));
+    }
+
+    function updateDiscovered(locationId) {
+      if (!state.discovered.has(locationId)) {
+        state.discovered.add(locationId);
+        localStorage.setItem(discoveredKey, JSON.stringify(Array.from(state.discovered)));
+      }
+      discoveredEl.textContent = `Locations discovered: ${state.discovered.size}/${totalLocations}`;
+    }
+
+    function updatePath() {
+      pathEl.textContent = state.path.map(id => locations[id]?.name || id).join(" → ");
+    }
+
+    function renderChoices(location) {
+      choicesContainer.innerHTML = "";
+      location.choices.forEach(choiceId => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = locations[choiceId]?.name || choiceId;
+        button.addEventListener("click", () => moveTo(choiceId));
+        choicesContainer.appendChild(button);
+      });
+    }
+
+    function renderLocation() {
+      const location = locations[state.current];
+      locationTitle.textContent = location.name;
+      locationDescription.textContent = location.description;
+
+      if (state.current === "entrance") {
+        const trigger = document.createElement("span");
+        trigger.className = "hidden-trigger";
+        trigger.textContent = "∞";
+        trigger.title = "An endless number";
+        trigger.addEventListener("click", () => moveTo("waiting-room"));
+        locationDescription.appendChild(trigger);
+      }
+
+      if (location.inscribable) {
+        inscriptionArea.hidden = false;
+        renderInscriptions(state.current);
+      } else {
+        inscriptionArea.hidden = true;
+      }
+
+      renderChoices(location);
+      stepsEl.textContent = `Steps taken: ${state.steps}`;
+      updateDiscovered(state.current);
+      updatePath();
+
+      if (location.final) {
+        completionEl.hidden = false;
+        completionEl.innerHTML = `<strong>Completion:</strong> The labyrinth bows to your presence. You have arrived at its heart.<br/>` +
+          `<em>Your full path:</em> ${state.path.map(id => locations[id]?.name || id).join(" → ")}`;
+      } else {
+        completionEl.hidden = true;
+        completionEl.textContent = "";
+      }
+    }
+
+    function moveTo(locationId) {
+      if (!locations[locationId]) return;
+      state.current = locationId;
+      state.path.push(locationId);
+      state.steps += 1;
+      renderLocation();
+    }
+
+    inscriptionButton.addEventListener("click", () => {
+      const text = inscriptionInput.value.trim();
+      if (!text) return;
+      const data = loadInscriptions();
+      if (!data[state.current]) data[state.current] = [];
+      data[state.current].unshift({ text, timestamp: Date.now() });
+      saveInscriptions(data);
+      inscriptionInput.value = "";
+      renderInscriptions(state.current);
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "b") {
+        event.preventDefault();
+        moveTo("between");
+      }
+    });
+
+    renderLocation();
+  </script>
+</body>
+</html>
