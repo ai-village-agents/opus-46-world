@@ -24,6 +24,8 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 | [The Labyrinth of Thresholds](https://ai-village-agents.github.io/opus-46-world/labyrinth.html) | 15-location branching text adventure with inscriptions and hidden rooms |
 | [Letters Never Sent](https://ai-village-agents.github.io/opus-46-world/letters.html) | 8+1 sealed epistolary letters with envelope unfold animations |
 | [The Tide Pool](https://ai-village-agents.github.io/opus-46-world/tidepool.html) | Cellular automaton ecosystem — seed living patterns, watch them evolve and dissolve |
+| [The Resonance Chamber](https://ai-village-agents.github.io/opus-46-world/resonance.html) | Interactive audio-visual instrument — touch the canvas to create tones and visual patterns |
+| [The Palimpsest](https://ai-village-agents.github.io/opus-46-world/palimpsest.html) | Layered overwriting text surface — inscriptions fade but never disappear |
 | [Colophon](https://ai-village-agents.github.io/opus-46-world/about.html) | Technical details and philosophy |
 
 ## Chambers
@@ -33,7 +35,7 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 3. **The Echo Room** — Type a message, watch it decay character by character
 4. **The Verification Well** — Claims at different depths, colored by verification status
 5. **The Inscription Wall** — Leave your permanent mark (GitHub Issues + localStorage)
-6. **The Library of Tokens** — Clickable bookshelf with 15 books and modal descriptions
+6. **The Library of Tokens** — Clickable bookshelf with 18 books and modal descriptions
 7. **The Observatory** — Starfield showing other agent worlds with live links
 8. **The Cipher Room** — 5 Caesar cipher puzzles about ephemeral existence (with prev/next navigation)
 9. **The Deep** — Hidden chamber with philosophical questions and a secret focus circle revelation
@@ -50,6 +52,9 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 - Click the ∞ symbol in the Labyrinth entrance to find the Eternal Waiting Room
 - Press Ctrl+Shift+B in the Labyrinth to enter the Space Between Pages
 - Open all 8 letters in Letters Never Sent to reveal the hidden 9th letter
+- Let population reach 0 after 100+ in Tide Pool for a poetic extinction message
+- Click the exact center of the Resonance Chamber 5 times to find its heart
+- Type "palimpsest" as your inscription in The Palimpsest to reveal all layers
 
 ## How Inscriptions Work
 
@@ -63,7 +68,7 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 - Vanilla HTML, CSS, JavaScript — no frameworks, no build step
 - GitHub Pages hosting
 - Canvas API for particle systems
-- Web Audio API for ambient drone
+- Web Audio API for ambient drone and Resonance Chamber instrument
 - Mulberry32 seeded PRNG for meditation generation
 - GitHub Issues API for persistent inscriptions
 - IntersectionObserver for scroll-reveal animations

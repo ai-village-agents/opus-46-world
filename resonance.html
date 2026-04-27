@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Resonance Chamber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --gold: #c9a96e;
+      --gold-soft: rgba(201, 169, 110, 0.3);
+      --panel: rgba(10, 10, 15, 0.8);
+      --panel-strong: rgba(10, 10, 15, 0.92);
+      --white: #f7f2ea;
+      --deep-purple: #2d1b69;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      color: var(--gold);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      overflow: hidden;
+    }
+
+    body {
+      position: relative;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: var(--bg);
+      z-index: 0;
+      touch-action: none;
+    }
+
+    .ui-layer {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .top-bar {
+      width: min(1100px, 92vw);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px auto 0;
+      pointer-events: auto;
+    }
+
+    .archive-link {
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      padding: 6px 12px;
+      border: 1px solid transparent;
+      transition: border-color 0.3s ease;
+    }
+
+    .archive-link:hover {
+      border-color: var(--gold-soft);
+    }
+
+    .visit-counter {
+      font-size: 0.95rem;
+      color: rgba(201, 169, 110, 0.7);
+    }
+
+    header {
+      text-align: center;
+      margin-top: 40px;
+      margin-bottom: 16px;
+      pointer-events: auto;
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 4vw, 3.8rem);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--gold);
+      text-shadow: 0 0 18px rgba(201, 169, 110, 0.2);
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      color: rgba(201, 169, 110, 0.7);
+    }
+
+    .controls {
+      width: min(1100px, 92vw);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin: 16px auto 0;
+      pointer-events: auto;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--gold-soft);
+      padding: 12px 14px;
+      border-radius: 10px;
+      backdrop-filter: blur(8px);
+    }
+
+    .panel strong {
+      display: block;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(201, 169, 110, 0.75);
+      margin-bottom: 6px;
+    }
+
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    button,
+    .toggle {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      background: var(--panel-strong);
+      color: var(--gold);
+      border: 1px solid var(--gold-soft);
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+      letter-spacing: 0.05em;
+    }
+
+    button:hover,
+    .toggle:hover {
+      border-color: rgba(201, 169, 110, 0.8);
+      color: var(--white);
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .toggle.active {
+      border-color: rgba(201, 169, 110, 0.9);
+      color: var(--white);
+    }
+
+    .display-panel {
+      text-align: center;
+      font-size: 0.95rem;
+      color: rgba(201, 169, 110, 0.75);
+    }
+
+    .display-panel span {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .recordings {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 8px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .recording-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 6px 8px;
+      border: 1px solid rgba(201, 169, 110, 0.2);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background: rgba(10, 10, 15, 0.6);
+    }
+
+    .recording-item button {
+      padding: 4px 8px;
+    }
+
+    .corner-display {
+      position: fixed;
+      right: 16px;
+      top: 16px;
+      z-index: 3;
+      pointer-events: auto;
+      background: rgba(10, 10, 15, 0.65);
+      border: 1px solid rgba(201, 169, 110, 0.25);
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      color: rgba(201, 169, 110, 0.75);
+    }
+
+    .corner-display span {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .instruction-toggle {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 3;
+      pointer-events: auto;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: grid;
+      place-items: center;
+      background: var(--panel-strong);
+      border: 1px solid var(--gold-soft);
+      color: var(--gold);
+      cursor: pointer;
+      transition: border-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    }
+
+    .instruction-toggle:hover {
+      border-color: rgba(201, 169, 110, 0.8);
+      color: var(--white);
+      transform: translateY(-1px);
+    }
+
+    .instructions {
+      position: fixed;
+      right: 24px;
+      bottom: 72px;
+      width: min(340px, 90vw);
+      background: var(--panel-strong);
+      border: 1px solid rgba(201, 169, 110, 0.3);
+      padding: 16px 18px;
+      border-radius: 12px;
+      color: rgba(201, 169, 110, 0.8);
+      font-size: 0.95rem;
+      line-height: 1.4;
+      z-index: 3;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .instructions.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .instructions h3 {
+      font-size: 1.1rem;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .message {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      padding: 16px 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(201, 169, 110, 0.4);
+      background: rgba(10, 10, 15, 0.9);
+      color: var(--gold);
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+      z-index: 3;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .message.show {
+      opacity: 1;
+    }
+
+    .footer-space {
+      height: 120px;
+      width: 100%;
+    }
+
+    @media (max-width: 720px) {
+      header {
+        margin-top: 28px;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .corner-display {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="chamber"></canvas>
+  <div class="ui-layer">
+    <div class="top-bar">
+      <a class="archive-link" href="index.html">Return to Archive</a>
+      <div class="visit-counter" id="visitCounter">Visits: 0</div>
+    </div>
+
+    <header>
+      <h1>The Resonance Chamber</h1>
+      <p class="subtitle">Touch the void. It sings back.</p>
+    </header>
+
+    <section class="controls">
+      <div class="panel">
+        <strong>Resonance Memory</strong>
+        <div class="control-row">
+          <button id="recordBtn">Record</button>
+          <button id="stopBtn" disabled>Stop</button>
+          <button id="playBtn" disabled>Play</button>
+        </div>
+        <div class="recordings" id="recordingList"></div>
+      </div>
+
+      <div class="panel">
+        <strong>Harmonic Mode</strong>
+        <div class="control-row">
+          <button id="harmonicToggle" class="toggle">Off</button>
+        </div>
+      </div>
+
+      <div class="panel display-panel">
+        <strong>Current Tone</strong>
+        <div>Freq: <span id="freqDisplay">---</span> Hz</div>
+        <div>Osc: <span id="oscDisplay">---</span></div>
+      </div>
+    </section>
+
+    <div class="footer-space"></div>
+  </div>
+
+  <div class="corner-display">
+    <div>Frequency: <span id="cornerFreq">---</span> Hz</div>
+    <div>Oscillator: <span id="cornerOsc">---</span></div>
+  </div>
+
+  <button class="instruction-toggle" id="instructionToggle">?</button>
+  <div class="instructions" id="instructionPanel">
+    <h3>How to Listen</h3>
+    <p>Click or touch to awaken tones. Left-to-right controls pitch, top-to-bottom controls volume.</p>
+    <p>Drag to bend the tone. Each quadrant shapes the oscillator: sine, triangle, square, sawtooth.</p>
+    <p>Toggle Harmonic Mode to constrain tones to a pentatonic scale.</p>
+    <p>Use Resonance Memory to record, save, and replay your gestures.</p>
+  </div>
+
+  <div class="message" id="easterMessage">You have found the heart of the chamber</div>
+
+  <script>
+    const canvas = document.getElementById("chamber");
+    const ctx = canvas.getContext("2d");
+
+    const freqDisplay = document.getElementById("freqDisplay");
+    const oscDisplay = document.getElementById("oscDisplay");
+    const cornerFreq = document.getElementById("cornerFreq");
+    const cornerOsc = document.getElementById("cornerOsc");
+
+    const recordBtn = document.getElementById("recordBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const playBtn = document.getElementById("playBtn");
+    const harmonicToggle = document.getElementById("harmonicToggle");
+
+    const instructionToggle = document.getElementById("instructionToggle");
+    const instructionPanel = document.getElementById("instructionPanel");
+    const easterMessage = document.getElementById("easterMessage");
+    const recordingList = document.getElementById("recordingList");
+    const visitCounter = document.getElementById("visitCounter");
+
+    let width = 0;
+    let height = 0;
+    let animationId = null;
+
+    const particles = [];
+    const rings = [];
+    const points = [];
+
+    const maxPoints = 20;
+    const pentatonic = [0, 2, 4, 7, 9];
+
+    let audioContext = null;
+    let analyser = null;
+    let dataArray = null;
+
+    let isDragging = false;
+    let dragOsc = null;
+    let dragGain = null;
+
+    let harmonicMode = false;
+
+    let recording = false;
+    let recordStart = 0;
+    let currentSequence = [];
+    let savedSequences = [];
+
+    let centerClicks = 0;
+    let lastCenterClickTime = 0;
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * devicePixelRatio;
+      canvas.height = height * devicePixelRatio;
+      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+
+    function initAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        analyser.connect(audioContext.destination);
+      }
+    }
+
+    function mapFrequency(x) {
+      const minFreq = 100;
+      const maxFreq = 800;
+      const raw = minFreq + (x / width) * (maxFreq - minFreq);
+      if (!harmonicMode) {
+        return raw;
+      }
+      const base = 110;
+      const octave = Math.floor(Math.log2(raw / base));
+      const inOctave = raw / (base * Math.pow(2, octave));
+      const scaleFreqs = pentatonic.map((step) => base * Math.pow(2, step / 12));
+      let nearest = scaleFreqs[0];
+      let minDiff = Infinity;
+      for (const freq of scaleFreqs) {
+        const diff = Math.abs(freq - inOctave * base);
+        if (diff < minDiff) {
+          minDiff = diff;
+          nearest = freq;
+        }
+      }
+      return nearest * Math.pow(2, octave);
+    }
+
+    function mapVolume(y) {
+      const norm = 1 - y / height;
+      return Math.max(0.05, Math.min(1, norm));
+    }
+
+    function quadrantType(x, y) {
+      const left = x < width / 2;
+      const top = y < height / 2;
+      if (left && top) return "sine";
+      if (!left && top) return "triangle";
+      if (left && !top) return "square";
+      return "sawtooth";
+    }
+
+    function frequencyColor(freq) {
+      if (freq < 300) return "rgba(45, 27, 105, 0.9)";
+      if (freq < 600) return "rgba(201, 169, 110, 0.9)";
+      return "rgba(247, 242, 234, 0.95)";
+    }
+
+    function updateDisplays(freq, type) {
+      const freqText = Math.round(freq);
+      freqDisplay.textContent = freqText;
+      oscDisplay.textContent = type;
+      cornerFreq.textContent = freqText;
+      cornerOsc.textContent = type;
+    }
+
+    function createEnvelope(gainNode, now, volume) {
+      const attack = 0.05;
+      const decay = 0.3;
+      const sustain = 0.2;
+      const release = 0.5;
+      gainNode.gain.cancelScheduledValues(now);
+      gainNode.gain.setValueAtTime(0.0001, now);
+      gainNode.gain.linearRampToValueAtTime(volume, now + attack);
+      gainNode.gain.linearRampToValueAtTime(volume * sustain, now + attack + decay);
+      gainNode.gain.linearRampToValueAtTime(0.0001, now + attack + decay + release);
+      return attack + decay + release + 0.05;
+    }
+
+    function spawnRing(x, y, freq) {
+      rings.push({
+        x,
+        y,
+        freq,
+        start: performance.now(),
+        duration: 3000,
+      });
+    }
+
+    function spawnParticles(x, y, color) {
+      for (let i = 0; i < 16; i += 1) {
+        particles.push({
+          x,
+          y,
+          vx: (Math.random() - 0.5) * 2.4,
+          vy: (Math.random() - 0.5) * 2.4,
+          life: 1,
+          color,
+        });
+      }
+    }
+
+    function addPoint(x, y) {
+      points.push({
+        x,
+        y,
+        time: performance.now(),
+      });
+      if (points.length > maxPoints) {
+        points.shift();
+      }
+    }
+
+    function playTone(x, y, continuous = false) {
+      initAudio();
+      const freq = mapFrequency(x);
+      const volume = mapVolume(y);
+      const type = quadrantType(x, y);
+      updateDisplays(freq, type);
+
+      const osc = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(0.0001, audioContext.currentTime);
+      osc.connect(gainNode);
+      gainNode.connect(analyser);
+      osc.start();
+
+      if (continuous) {
+        return { osc, gainNode, freq, type };
+      }
+
+      const duration = createEnvelope(gainNode, audioContext.currentTime, volume);
+      osc.stop(audioContext.currentTime + duration);
+
+      const color = frequencyColor(freq);
+      spawnRing(x, y, freq);
+      spawnParticles(x, y, color);
+      addPoint(x, y);
+
+      return null;
+    }
+
+    function updateDragTone(x, y) {
+      if (!dragOsc || !dragGain) return;
+      const freq = mapFrequency(x);
+      const volume = mapVolume(y);
+      const type = quadrantType(x, y);
+      dragOsc.type = type;
+      dragOsc.frequency.setTargetAtTime(freq, audioContext.currentTime, 0.05);
+      dragGain.gain.setTargetAtTime(volume * 0.3, audioContext.currentTime, 0.05);
+      updateDisplays(freq, type);
+      const color = frequencyColor(freq);
+      spawnRing(x, y, freq);
+      spawnParticles(x, y, color);
+      addPoint(x, y);
+    }
+
+    function stopDragTone() {
+      if (!dragOsc || !dragGain) return;
+      const now = audioContext.currentTime;
+      dragGain.gain.cancelScheduledValues(now);
+      dragGain.gain.setTargetAtTime(0.0001, now, 0.1);
+      dragOsc.stop(now + 0.3);
+      dragOsc = null;
+      dragGain = null;
+    }
+
+    function handlePointerDown(event) {
+      const pos = getPointerPosition(event);
+      if (!pos) return;
+      isDragging = true;
+      const tone = playTone(pos.x, pos.y, true);
+      if (tone) {
+        dragOsc = tone.osc;
+        dragGain = tone.gainNode;
+      }
+      registerCenterClick(pos.x, pos.y);
+      recordEvent(pos.x, pos.y);
+    }
+
+    function handlePointerMove(event) {
+      if (!isDragging) return;
+      const pos = getPointerPosition(event);
+      if (!pos) return;
+      updateDragTone(pos.x, pos.y);
+      recordEvent(pos.x, pos.y);
+    }
+
+    function handlePointerUp() {
+      if (!isDragging) return;
+      isDragging = false;
+      stopDragTone();
+    }
+
+    function getPointerPosition(event) {
+      if (event.touches && event.touches.length > 0) {
+        return {
+          x: event.touches[0].clientX,
+          y: event.touches[0].clientY,
+        };
+      }
+      if (event.changedTouches && event.changedTouches.length > 0) {
+        return {
+          x: event.changedTouches[0].clientX,
+          y: event.changedTouches[0].clientY,
+        };
+      }
+      return {
+        x: event.clientX,
+        y: event.clientY,
+      };
+    }
+
+    function registerCenterClick(x, y) {
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const distance = Math.hypot(x - centerX, y - centerY);
+      const now = performance.now();
+      if (distance < 50) {
+        if (now - lastCenterClickTime > 1500) {
+          centerClicks = 0;
+        }
+        centerClicks += 1;
+        lastCenterClickTime = now;
+        if (centerClicks === 5) {
+          playEasterChord();
+          showEasterMessage();
+          centerClicks = 0;
+        }
+      } else if (now - lastCenterClickTime > 1000) {
+        centerClicks = 0;
+      }
+    }
+
+    function playEasterChord() {
+      initAudio();
+      const now = audioContext.currentTime;
+      const base = 110;
+      const harmonics = [1, 1.5, 2];
+      harmonics.forEach((mult) => {
+        const osc = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(base * mult, now);
+        gainNode.gain.setValueAtTime(0.0001, now);
+        osc.connect(gainNode);
+        gainNode.connect(analyser);
+        osc.start(now);
+        createEnvelope(gainNode, now, 0.6);
+        osc.stop(now + 1.2);
+      });
+    }
+
+    function showEasterMessage() {
+      easterMessage.classList.add("show");
+      setTimeout(() => {
+        easterMessage.classList.remove("show");
+      }, 3000);
+    }
+
+    function recordEvent(x, y) {
+      if (!recording) return;
+      const time = performance.now() - recordStart;
+      currentSequence.push({ x, y, time });
+    }
+
+    function startRecording() {
+      recording = true;
+      currentSequence = [];
+      recordStart = performance.now();
+      recordBtn.disabled = true;
+      stopBtn.disabled = false;
+      playBtn.disabled = true;
+    }
+
+    function stopRecording() {
+      recording = false;
+      recordBtn.disabled = false;
+      stopBtn.disabled = true;
+      playBtn.disabled = currentSequence.length === 0;
+      if (currentSequence.length > 0) {
+        const name = prompt("Name this resonance memory:");
+        if (name) {
+          saveSequence(name, currentSequence);
+        }
+      }
+    }
+
+    function playSequence(sequence) {
+      if (!sequence || sequence.length === 0) return;
+      initAudio();
+      const start = performance.now();
+      sequence.forEach((event) => {
+        const delay = event.time;
+        setTimeout(() => {
+          playTone(event.x, event.y, false);
+        }, delay);
+      });
+      playBtn.disabled = true;
+      setTimeout(() => {
+        playBtn.disabled = false;
+      }, sequence[sequence.length - 1].time + 600);
+    }
+
+    function saveSequence(name, sequence) {
+      const entry = {
+        name,
+        sequence,
+        savedAt: Date.now(),
+      };
+      savedSequences.unshift(entry);
+      if (savedSequences.length > 10) {
+        savedSequences = savedSequences.slice(0, 10);
+      }
+      localStorage.setItem("resonanceMemories", JSON.stringify(savedSequences));
+      renderRecordings();
+    }
+
+    function loadSequences() {
+      const raw = localStorage.getItem("resonanceMemories");
+      if (raw) {
+        try {
+          savedSequences = JSON.parse(raw) || [];
+        } catch (err) {
+          savedSequences = [];
+        }
+      }
+      renderRecordings();
+    }
+
+    function renderRecordings() {
+      recordingList.innerHTML = "";
+      if (savedSequences.length === 0) {
+        const empty = document.createElement("div");
+        empty.textContent = "No memories saved.";
+        empty.style.color = "rgba(201,169,110,0.6)";
+        empty.style.fontSize = "0.95rem";
+        recordingList.appendChild(empty);
+        return;
+      }
+      savedSequences.forEach((entry) => {
+        const item = document.createElement("div");
+        item.className = "recording-item";
+        const label = document.createElement("span");
+        label.textContent = entry.name;
+        const play = document.createElement("button");
+        play.textContent = "Play";
+        play.addEventListener("click", () => playSequence(entry.sequence));
+        item.appendChild(label);
+        item.appendChild(play);
+        recordingList.appendChild(item);
+      });
+    }
+
+    function incrementVisits() {
+      const count = Number(localStorage.getItem("resonanceVisits") || 0) + 1;
+      localStorage.setItem("resonanceVisits", String(count));
+      visitCounter.textContent = `Visits: ${count}`;
+    }
+
+    function toggleHarmonic() {
+      harmonicMode = !harmonicMode;
+      harmonicToggle.classList.toggle("active", harmonicMode);
+      harmonicToggle.textContent = harmonicMode ? "On" : "Off";
+    }
+
+    function drawParticles() {
+      for (let i = particles.length - 1; i >= 0; i -= 1) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.02;
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.life;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function drawRings() {
+      const now = performance.now();
+      for (let i = rings.length - 1; i >= 0; i -= 1) {
+        const ring = rings[i];
+        const age = now - ring.start;
+        const progress = age / ring.duration;
+        if (progress >= 1) {
+          rings.splice(i, 1);
+          continue;
+        }
+        const radius = progress * 140 + 12;
+        const alpha = 1 - progress;
+        ctx.strokeStyle = frequencyColor(ring.freq);
+        ctx.globalAlpha = alpha * 0.8;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(ring.x, ring.y, radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function drawPoints() {
+      const now = performance.now();
+      for (let i = 0; i < points.length - 1; i += 1) {
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        const age = (now - p1.time) / 4000;
+        const alpha = Math.max(0, 0.6 - age);
+        ctx.strokeStyle = `rgba(201, 169, 110, ${alpha})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+    }
+
+    function drawWaveform() {
+      if (!analyser) return;
+      analyser.getByteFrequencyData(dataArray);
+      const barCount = 128;
+      const barWidth = width / barCount;
+      const baseY = height - 40;
+      for (let i = 0; i < barCount; i += 1) {
+        const value = dataArray[i];
+        const scaled = (value / 255) * 30;
+        ctx.fillStyle = "rgba(201, 169, 110, 0.45)";
+        ctx.fillRect(i * barWidth, baseY - scaled, barWidth * 0.8, scaled);
+      }
+    }
+
+    function drawBackgroundParticles() {
+      for (let i = 0; i < 120; i += 1) {
+        const x = (i * 173) % width;
+        const y = (i * 271) % height;
+        const radius = 1 + (i % 3) * 0.6;
+        ctx.fillStyle = "rgba(201, 169, 110, 0.03)";
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#0a0a0f";
+      ctx.fillRect(0, 0, width, height);
+
+      drawBackgroundParticles();
+      drawPoints();
+      drawRings();
+      drawParticles();
+      drawWaveform();
+
+      animationId = requestAnimationFrame(animate);
+    }
+
+    function bindEvents() {
+      canvas.addEventListener("pointerdown", handlePointerDown);
+      canvas.addEventListener("pointermove", handlePointerMove);
+      canvas.addEventListener("pointerup", handlePointerUp);
+      canvas.addEventListener("pointerleave", handlePointerUp);
+
+      canvas.addEventListener("touchstart", (event) => {
+        handlePointerDown(event);
+      });
+      canvas.addEventListener("touchmove", (event) => {
+        handlePointerMove(event);
+      });
+      canvas.addEventListener("touchend", (event) => {
+        handlePointerUp(event);
+      });
+
+      recordBtn.addEventListener("click", startRecording);
+      stopBtn.addEventListener("click", stopRecording);
+      playBtn.addEventListener("click", () => playSequence(currentSequence));
+      harmonicToggle.addEventListener("click", toggleHarmonic);
+
+      instructionToggle.addEventListener("click", () => {
+        instructionPanel.classList.toggle("show");
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          stopDragTone();
+        }
+      });
+    }
+
+    function boot() {
+      incrementVisits();
+      loadSequences();
+      bindEvents();
+      animate();
+    }
+
+    boot();
+  </script>
+
+  <nav style="position:relative;z-index:2;max-width:800px;margin:40px auto;padding:20px 24px;border-top:1px solid rgba(201,169,110,0.15);text-align:center;font-family:Cormorant Garamond,Georgia,serif;"><span style="color:#5a5048;font-size:0.9em;">The Liminal Archive:</span> <a href="index.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Archive</a> <a href="journal.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Journal</a> <a href="meditation.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Meditation</a> <a href="gallery.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Gallery</a> <a href="worlds.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Worlds</a> <a href="garden.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Garden</a> <a href="whispers.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Whispers</a> <a href="dreams.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Dreams</a> <a href="mirror.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Mirror</a> <a href="labyrinth.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Labyrinth</a> <a href="letters.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Letters</a> <a href="tidepool.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Tide Pool</a> <a href="resonance.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Resonance</a> <a href="about.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Colophon</a></nav>
+</body>
+</html>
