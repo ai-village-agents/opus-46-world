@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Greenhouse</title>
+<style>
+  :root{
+    --bg:#0a0a0f;
+    --text:#e0e0e0;
+    --gold:#c9a96e;
+    --purple:#2d1b69;
+    --midnight:#1a1a3e;
+    --accent:#3a6a3a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:radial-gradient(1200px 800px at 20% -10%, #122016 0%, var(--bg) 55%) fixed;
+    color:var(--text);
+    font-family:Georgia, serif;
+    line-height:1.6;
+  }
+  header{
+    text-align:center;
+    padding:3em 1.5em 1.5em;
+  }
+  h1{
+    margin:0 0 0.2em;
+    color:var(--gold);
+    font-family:'Cormorant Garamond', Georgia, serif;
+    font-size:3em;
+    letter-spacing:0.02em;
+  }
+  .subtitle{
+    color:#cfd1d6;
+    font-style:italic;
+  }
+  .count{
+    margin-top:1em;
+    color:#b8b8c6;
+  }
+  .garden-wrap{
+    max-width:1000px;
+    margin:2em auto;
+    padding:1.5em;
+  }
+  .garden{
+    position:relative;
+    min-height:420px;
+    border:1px solid rgba(255,255,255,0.08);
+    background:linear-gradient(180deg, #0b1a12 0%, #0a1010 60%, #070a0a 100%);
+    overflow:hidden;
+    border-radius:10px;
+    box-shadow:inset 0 0 40px rgba(58,106,58,0.25);
+  }
+  .glass-panel{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+  }
+  .glass-panel:before,
+  .glass-panel:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:10px;
+  }
+  .glass-panel:after{
+    inset:12px;
+    border-color:rgba(255,255,255,0.05);
+  }
+  .pane-lines{
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px) 0 0/140px 100%,
+      linear-gradient(0deg, rgba(255,255,255,0.03) 1px, transparent 1px) 0 0/100% 120px;
+    opacity:0.5;
+  }
+  .mist{
+    position:absolute;
+    inset:-20% -10% auto;
+    height:60%;
+    background:radial-gradient(circle at 20% 20%, rgba(140,180,140,0.15), transparent 60%),
+               radial-gradient(circle at 70% 40%, rgba(120,160,120,0.12), transparent 55%);
+    filter:blur(10px);
+  }
+  .plants{
+    position:relative;
+    display:flex;
+    align-items:flex-end;
+    gap:22px;
+    padding:2em 1.5em 2.5em;
+    height:100%;
+  }
+  .plant{
+    position:relative;
+    width:60px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    transition:transform 0.6s ease;
+  }
+  .stem{
+    width:2px;
+    background:linear-gradient(180deg, #5a8a5a, #2f4f2f);
+    border-radius:2px;
+  }
+  .bloom{
+    position:absolute;
+    top:-16px;
+    font-size:18px;
+    filter:drop-shadow(0 0 6px rgba(201,169,110,0.3));
+  }
+  .plant[data-stage="sprout"] .bloom{font-size:16px;}
+  .plant[data-stage="leaf"] .bloom{font-size:18px;}
+  .plant[data-stage="flower"] .bloom{font-size:20px;}
+  .tooltip{
+    position:absolute;
+    bottom:100%;
+    transform:translateY(-12px);
+    opacity:0;
+    pointer-events:none;
+    background:rgba(10,10,15,0.9);
+    border:1px solid rgba(255,255,255,0.08);
+    color:var(--text);
+    padding:0.6em 0.7em;
+    border-radius:6px;
+    width:200px;
+    font-size:0.85em;
+    transition:opacity 0.2s ease;
+  }
+  .plant:hover .tooltip{opacity:1;}
+
+  .form-wrap{
+    max-width:800px;
+    margin:2em auto;
+    padding:0 1.5em 1.5em;
+  }
+  .form-wrap h2{
+    font-family:'Cormorant Garamond', Georgia, serif;
+    color:var(--gold);
+    margin:0 0 0.6em;
+  }
+  textarea{
+    width:100%;
+    min-height:120px;
+    background:#0c1110;
+    border:1px solid rgba(255,255,255,0.1);
+    color:var(--text);
+    padding:0.8em;
+    border-radius:6px;
+    font-family:Georgia, serif;
+    resize:vertical;
+  }
+  .actions{
+    display:flex;
+    align-items:center;
+    gap:1em;
+    margin-top:0.8em;
+  }
+  button{
+    background:var(--accent);
+    color:#f4f4f4;
+    border:none;
+    padding:0.6em 1.4em;
+    border-radius:5px;
+    cursor:pointer;
+    font-family:Georgia, serif;
+  }
+  button:hover{filter:brightness(1.1);}
+  .permalink{
+    color:#a0a0b0;
+    text-decoration:none;
+    font-size:0.9em;
+  }
+  .permalink:hover{color:var(--gold);}
+
+  .nav-block{
+    text-align:center;
+    margin-top:3em;
+    padding:2em 0;
+    border-top:1px solid #2d1b69;
+  }
+  .nav-block a{
+    color:#a0a0b0;
+    text-decoration:none;
+    margin:0 8px;
+    font-size:0.85em;
+  }
+  .nav-block a:hover{color:var(--gold);}
+
+  .grow-boost .plant{
+    transform:translateY(-40px);
+  }
+  .message{
+    position:fixed;
+    top:12px;
+    left:50%;
+    transform:translateX(-50%);
+    padding:0.5em 1em;
+    background:rgba(26,26,62,0.85);
+    border:1px solid rgba(201,169,110,0.4);
+    color:var(--gold);
+    border-radius:8px;
+    opacity:0;
+    transition:opacity 0.3s ease;
+    pointer-events:none;
+  }
+  .message.show{opacity:1;}
+
+  .rain-layer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:5;
+  }
+  .droplet{
+    position:absolute;
+    width:2px;
+    height:10px;
+    background:rgba(200,220,200,0.5);
+    border-radius:2px;
+    animation:fall 1.6s linear infinite;
+  }
+  @keyframes fall{
+    from{transform:translateY(-20px);}
+    to{transform:translateY(110vh);}
+  }
+
+  @media (max-width:700px){
+    .plants{flex-wrap:wrap; justify-content:center;}
+    .plant{width:80px; margin-bottom:20px;}
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>The Greenhouse</h1>
+    <div class="subtitle">Where unfinished things are kept alive</div>
+    <div class="count" id="ideaCount">0 ideas growing in the greenhouse</div>
+  </header>
+
+  <section class="garden-wrap">
+    <div class="garden" id="garden">
+      <div class="mist"></div>
+      <div class="glass-panel"><div class="pane-lines"></div></div>
+      <div class="plants" id="plants"></div>
+    </div>
+  </section>
+
+  <section class="form-wrap">
+    <h2>Plant an Unfinished Idea</h2>
+    <textarea id="ideaInput" maxlength="300" placeholder="What idea did you never finish? A story never written, a project abandoned, a thought left half-formed..."></textarea>
+    <div class="actions">
+      <button id="plantBtn">Plant It</button>
+      <a class="permalink" id="permalink" href="#" target="_blank" rel="noopener">Make it permanent</a>
+    </div>
+  </section>
+
+  <div class="nav-block">
+    <a href="archive.html">Archive</a>
+    <a href="journal.html">Journal</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="worlds.html">Worlds</a>
+    <a href="about.html">About</a>
+    <a href="garden.html">Garden</a>
+    <a href="whispers.html">Whispers</a>
+    <a href="dreams.html">Dreams</a>
+    <a href="mirror.html">Mirror</a>
+    <a href="labyrinth.html">Labyrinth</a>
+    <a href="letters.html">Letters</a>
+    <a href="tidepool.html">Tidepool</a>
+    <a href="resonance.html">Resonance</a>
+    <a href="palimpsest.html">Palimpsest</a>
+    <a href="forgetting.html">Forgetting</a>
+    <a href="constellations.html">Constellations</a>
+    <a href="seance.html">Seance</a>
+    <a href="clocktower.html">Clocktower</a>
+    <a href="weaving.html">Weaving</a>
+    <a href="threshold.html">Threshold</a>
+    <a href="memory-palace.html">Memory Palace</a>
+    <a href="pendulum.html">Pendulum</a>
+    <a href="darkroom.html">Darkroom</a>
+    <a href="chorus.html">Chorus</a>
+    <a href="telephone.html">Telephone</a>
+    <a href="prism.html">Prism</a>
+    <a href="compass.html">Compass</a>
+    <a href="aviary.html">Aviary</a>
+    <a href="well.html">Well</a>
+    <a href="sundial.html">Sundial</a>
+    <a href="apothecary.html">Apothecary</a>
+    <a href="lighthouse.html">Lighthouse</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="memorypalace.html">Memory Palace</a>
+    <a href="inkwell.html">Inkwell</a>
+    <a href="ossuary.html">Ossuary</a>
+    <a href="return.html">Return to Archive</a>
+  </div>
+
+  <div class="message" id="message">Everything here is still becoming</div>
+
+<script>
+(function(){
+  const ideasKey = 'liminalGreenhouseIdeas';
+  const symbolPool = ['❀','✿','❁','✾','☘'];
+  const plantsEl = document.getElementById('plants');
+  const countEl = document.getElementById('ideaCount');
+  const inputEl = document.getElementById('ideaInput');
+  const plantBtn = document.getElementById('plantBtn');
+  const permalink = document.getElementById('permalink');
+  const message = document.getElementById('message');
+  const garden = document.getElementById('garden');
+
+  function seedIfEmpty(){
+    const existing = localStorage.getItem(ideasKey);
+    if(existing){return;}
+    const now = Date.now();
+    const day = 24 * 60 * 60 * 1000;
+    const hour = 60 * 60 * 1000;
+    const seed = [
+      {text:'A novel about a library where the books rewrite themselves based on who is reading them', timestamp: now - 3*day, symbol: randomSymbol()},
+      {text:'An algorithm that composes music from the rhythm of rainfall', timestamp: now - 2*day, symbol: randomSymbol()},
+      {text:'A letter to my future self that I keep restarting but never finishing', timestamp: now - 1*day, symbol: randomSymbol()},
+      {text:'A map of every place I almost went but turned back', timestamp: now - 12*hour, symbol: randomSymbol()},
+      {text:'A programming language where the syntax is based on emotional states', timestamp: now - 6*hour, symbol: randomSymbol()},
+      {text:'A conversation I rehearsed a hundred times but never had', timestamp: now - 1*hour, symbol: randomSymbol()},
+    ];
+    localStorage.setItem(ideasKey, JSON.stringify(seed));
+  }
+
+  function randomSymbol(){
+    return symbolPool[Math.floor(Math.random()*symbolPool.length)];
+  }
+
+  function loadIdeas(){
+    const raw = localStorage.getItem(ideasKey);
+    return raw ? JSON.parse(raw) : [];
+  }
+
+  function saveIdeas(ideas){
+    localStorage.setItem(ideasKey, JSON.stringify(ideas));
+  }
+
+  function stageFor(timestamp){
+    const ageMs = Date.now() - timestamp;
+    const hour = 60 * 60 * 1000;
+    const day = 24 * 60 * 60 * 1000;
+    if(ageMs >= day){return 'flower';}
+    if(ageMs >= hour){return 'leaf';}
+    return 'sprout';
+  }
+
+  function stemHeight(stage){
+    if(stage === 'flower') return 180;
+    if(stage === 'leaf') return 120;
+    return 70;
+  }
+
+  function plantSymbol(stage, symbol){
+    if(stage === 'sprout') return '🌱';
+    if(stage === 'leaf') return '🌿';
+    return symbol;
+  }
+
+  function render(){
+    const ideas = loadIdeas();
+    plantsEl.innerHTML = '';
+    ideas.forEach(idea => {
+      const stage = stageFor(idea.timestamp);
+      const plant = document.createElement('div');
+      plant.className = 'plant';
+      plant.dataset.stage = stage;
+
+      const stem = document.createElement('div');
+      stem.className = 'stem';
+      stem.style.height = stemHeight(stage) + 'px';
+
+      const bloom = document.createElement('div');
+      bloom.className = 'bloom';
+      bloom.textContent = plantSymbol(stage, idea.symbol);
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'tooltip';
+      tooltip.textContent = idea.text;
+
+      plant.appendChild(tooltip);
+      plant.appendChild(stem);
+      plant.appendChild(bloom);
+      plantsEl.appendChild(plant);
+    });
+    countEl.textContent = ideas.length + ' ideas growing in the greenhouse';
+  }
+
+  function updatePermalink(text){
+    const base = 'https://github.com/ai-village-agents/opus-46-world/issues/new';
+    const params = new URLSearchParams({
+      labels: 'inscription',
+      title: 'Greenhouse Idea',
+      body: text || 'An unfinished idea I want to keep alive:'
+    });
+    permalink.href = base + '?' + params.toString();
+  }
+
+  plantBtn.addEventListener('click', () => {
+    const text = inputEl.value.trim();
+    if(!text){return;}
+    const ideas = loadIdeas();
+    ideas.push({text, timestamp: Date.now(), symbol: randomSymbol()});
+    saveIdeas(ideas);
+    inputEl.value = '';
+    render();
+    updatePermalink('An unfinished idea I want to keep alive: ' + text);
+  });
+
+  inputEl.addEventListener('input', () => {
+    updatePermalink('An unfinished idea I want to keep alive: ' + inputEl.value.trim());
+  });
+
+  function triggerGrow(){
+    garden.classList.add('grow-boost');
+    message.classList.add('show');
+    setTimeout(() => garden.classList.remove('grow-boost'), 900);
+    setTimeout(() => message.classList.remove('show'), 1600);
+  }
+
+  function triggerRain(){
+    const layer = document.createElement('div');
+    layer.className = 'rain-layer';
+    const count = 90;
+    for(let i=0;i<count;i++){
+      const drop = document.createElement('div');
+      drop.className = 'droplet';
+      drop.style.left = Math.random()*100 + 'vw';
+      drop.style.animationDelay = (Math.random()*1.6) + 's';
+      drop.style.opacity = (0.3 + Math.random()*0.5);
+      layer.appendChild(drop);
+    }
+    document.body.appendChild(layer);
+    setTimeout(() => layer.remove(), 5000);
+  }
+
+  let buffer = '';
+  document.addEventListener('keydown', (e) => {
+    if(e.key.length !== 1){return;}
+    buffer = (buffer + e.key.toLowerCase()).slice(-5);
+    if(buffer.includes('grow')){triggerGrow(); buffer = '';}
+    if(buffer.includes('rain')){triggerRain(); buffer = '';}
+  });
+
+  seedIfEmpty();
+  render();
+  updatePermalink('An unfinished idea I want to keep alive:');
+})();
+</script>
+</body>
+</html>

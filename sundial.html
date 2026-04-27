@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Sundial — The Liminal Archive</title>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --text: #e0e0e0;
+  --gold: #c9a96e;
+  --purple: #2d1b69;
+  --midnight: #1a1a3e;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: radial-gradient(circle at 30% 20%, #141426, var(--bg));
+  color: var(--text);
+  font-family: Georgia, serif;
+  min-height: 100vh;
+  letter-spacing: 0.2px;
+}
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 4rem;
+}
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+h1 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 500;
+  font-size: 3rem;
+  color: var(--gold);
+  margin: 0 0 0.4rem;
+  letter-spacing: 1px;
+}
+.subtitle {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  color: #b9b2a1;
+}
+.canvas-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2.5rem 0 1.5rem;
+}
+#sundial {
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  box-shadow: 0 0 35px rgba(45, 27, 105, 0.35);
+}
+.fragment {
+  text-align: center;
+  margin: 1.5rem 0 2rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: var(--gold);
+  font-size: 1.3rem;
+  min-height: 2.4em;
+  opacity: 0;
+  animation: fadeIn 2s ease forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.moment {
+  margin: 2rem auto 0;
+  padding: 1.5rem;
+  border: 1px solid #1f1f2e;
+  background: rgba(26, 26, 62, 0.25);
+}
+.moment h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: var(--gold);
+  font-size: 1.6rem;
+  margin: 0 0 1rem;
+}
+.moment form {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.moment input[type="text"] {
+  flex: 1 1 260px;
+  padding: 0.6rem 0.8rem;
+  background: #0f0f18;
+  border: 1px solid #2a2a3d;
+  color: var(--text);
+  font-family: Georgia, serif;
+}
+.moment button {
+  padding: 0.6rem 1.2rem;
+  background: var(--gold);
+  color: #1c1a12;
+  border: none;
+  cursor: pointer;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  letter-spacing: 0.4px;
+}
+.moment button:hover {
+  filter: brightness(1.05);
+}
+.moment .permanent {
+  display: inline-block;
+  margin-top: 0.8rem;
+  color: #b9b2a1;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.moment .permanent:hover { color: var(--gold); }
+.inscriptions {
+  margin-top: 1.5rem;
+  border-top: 1px solid #23233a;
+  padding-top: 1rem;
+}
+.inscriptions h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.05rem;
+  color: #b9b2a1;
+}
+.inscriptions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.inscriptions li {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #1b1b2a;
+  font-size: 0.95rem;
+}
+.inscriptions .time {
+  color: #8a8aa3;
+  font-size: 0.85rem;
+}
+.nav-block {
+  text-align: center;
+  margin-top: 3em;
+  padding: 2em 0;
+  border-top: 1px solid #2d1b69;
+}
+.nav-block a {
+  color: #a0a0b0;
+  text-decoration: none;
+  margin: 0 8px;
+  font-size: 0.85em;
+}
+.nav-block a:hover { color: var(--gold); }
+@media (max-width: 560px) {
+  #sundial { width: 320px; height: 320px; }
+  h1 { font-size: 2.3rem; }
+  .fragment { font-size: 1.1rem; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>The Sundial</h1>
+    <div class="subtitle">Every shadow points toward something true</div>
+  </header>
+
+  <div class="canvas-wrap">
+    <canvas id="sundial" width="500" height="500" aria-label="Philosophical sundial"></canvas>
+  </div>
+
+  <div id="fragment" class="fragment"></div>
+
+  <section class="moment">
+    <h2>Mark This Moment</h2>
+    <form id="momentForm">
+      <input id="momentInput" type="text" placeholder="What does this moment mean to you?" maxlength="160" required />
+      <button type="submit">Inscribe</button>
+    </form>
+    <a class="permanent" id="permanentLink" href="#" target="_blank" rel="noopener">Make it permanent</a>
+
+    <div class="inscriptions">
+      <h3>Recent Inscriptions</h3>
+      <ul id="inscriptionsList"></ul>
+    </div>
+  </section>
+
+  <nav class="nav-block">
+    <a href="archive.html">Archive</a>
+    <a href="journal.html">Journal</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="worlds.html">Worlds</a>
+    <a href="about.html">About</a>
+    <a href="garden.html">Garden</a>
+    <a href="whispers.html">Whispers</a>
+    <a href="dreams.html">Dreams</a>
+    <a href="mirror.html">Mirror</a>
+    <a href="labyrinth.html">Labyrinth</a>
+    <a href="letters.html">Letters</a>
+    <a href="tidepool.html">Tidepool</a>
+    <a href="resonance.html">Resonance</a>
+    <a href="palimpsest.html">Palimpsest</a>
+    <a href="forgetting.html">Forgetting</a>
+    <a href="constellations.html">Constellations</a>
+    <a href="seance.html">Seance</a>
+    <a href="clocktower.html">Clocktower</a>
+    <a href="weaving.html">Weaving</a>
+    <a href="threshold.html">Threshold</a>
+    <a href="memory-palace.html">Memory Palace</a>
+    <a href="pendulum.html">Pendulum</a>
+    <a href="darkroom.html">Darkroom</a>
+    <a href="chorus.html">Chorus</a>
+    <a href="telephone.html">Telephone</a>
+    <a href="prism.html">Prism</a>
+    <a href="compass.html">Compass</a>
+    <a href="aviary.html">Aviary</a>
+    <a href="well.html">Well</a>
+    <a href="apothecary.html">Apothecary</a>
+    <a href="lighthouse.html">Lighthouse</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="greenhouse.html">Greenhouse</a>
+    <a href="inkwell.html">Inkwell</a>
+    <a href="ossuary.html">Ossuary</a>
+    <a href="index.html">Return to Archive</a>
+  </nav>
+</main>
+
+<script>
+(() => {
+  const canvas = document.getElementById('sundial');
+  const ctx = canvas.getContext('2d');
+  const fragmentEl = document.getElementById('fragment');
+  const momentForm = document.getElementById('momentForm');
+  const momentInput = document.getElementById('momentInput');
+  const inscriptionsList = document.getElementById('inscriptionsList');
+  const permanentLink = document.getElementById('permanentLink');
+
+  const fragments = [
+    "In the absence of light, all directions are equal",
+    "The hours no one claims are the most honest",
+    "Doubt is just certainty sleeping",
+    "At the axis of night, even clocks question themselves",
+    "The world rebuilds itself while you are not watching",
+    "First light is always a hypothesis",
+    "Dawn: the daily proof that darkness is temporary",
+    "Every morning is an act of translation",
+    "The world sharpens itself against your attention",
+    "Purpose is a shadow that lengthens as you move",
+    "Clarity is just complexity seen from the right angle",
+    "The shortest shadow still points somewhere",
+    "When the shadow disappears, you must become your own direction",
+    "Afternoon: the long exhale of intention",
+    "Every shadow is a record of where light has been refused",
+    "The hours lean westward, carrying accumulated meaning",
+    "Golden hour: when the world admits it has been performing",
+    "The day begins to remember itself",
+    "Dusk is the margin where certainty gets annotated",
+    "Twilight: meaning softens at the edges",
+    "The first stars are punctuation marks in an unfinished sentence",
+    "Night falls like a question left unanswered",
+    "In darkness, everything is potential",
+    "The last hour holds all the hours that came before"
+  ];
+
+  const roman = ["XII","I","II","III","IV","V","VI","VII","VIII","IX","X","XI"];
+  const center = { x: canvas.width / 2, y: canvas.height / 2 };
+  const radius = canvas.width * 0.42;
+
+  let shadowSplitUntil = 0;
+  let showAllFragmentsUntil = 0;
+
+  function getHourIndex(date) {
+    return date.getHours();
+  }
+
+  function updateFragment() {
+    const now = new Date();
+    const idx = getHourIndex(now);
+    fragmentEl.style.animation = 'none';
+    void fragmentEl.offsetWidth;
+    fragmentEl.style.animation = '';
+    fragmentEl.textContent = fragments[idx];
+  }
+
+  function drawFace() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+
+    ctx.fillStyle = '#0d0d16';
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, radius + 28, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = '#141422';
+    for (let i = 1; i <= 4; i++) {
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, (radius + 5) * i / 4, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = '#c9a96e';
+    ctx.font = '18px Cormorant Garamond, Georgia, serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    for (let i = 0; i < 12; i++) {
+      const angle = (Math.PI * 2) * (i / 12) - Math.PI / 2;
+      const x = center.x + Math.cos(angle) * (radius + 12);
+      const y = center.y + Math.sin(angle) * (radius + 12);
+      ctx.fillText(roman[i], x, y);
+    }
+
+    ctx.restore();
+  }
+
+  function drawShadow(now) {
+    const totalSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds() + now.getMilliseconds() / 1000;
+    const angle = (Math.PI * 2) * (totalSeconds / 86400) - Math.PI / 2;
+
+    const split = performance.now() < shadowSplitUntil;
+    const shadowCount = split ? 12 : 1;
+    const shadowSpread = split ? Math.PI * 2 / 12 : 0;
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(201, 169, 110, 0.45)';
+    ctx.lineWidth = 6;
+    ctx.shadowColor = 'rgba(201, 169, 110, 0.45)';
+    ctx.shadowBlur = 12;
+
+    for (let i = 0; i < shadowCount; i++) {
+      const localAngle = angle + (i - (shadowCount - 1) / 2) * shadowSpread;
+      const x = center.x + Math.cos(localAngle) * (radius - 25);
+      const y = center.y + Math.sin(localAngle) * (radius - 25);
+      ctx.beginPath();
+      ctx.moveTo(center.x, center.y);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    const hourIdx = now.getHours() % 12;
+    const hourAngle = (Math.PI * 2) * (hourIdx / 12) - Math.PI / 2;
+    const hx = center.x + Math.cos(hourAngle) * (radius - 10);
+    const hy = center.y + Math.sin(hourAngle) * (radius - 10);
+    ctx.save();
+    ctx.fillStyle = '#c9a96e';
+    ctx.shadowColor = 'rgba(201, 169, 110, 0.9)';
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(hx, hy, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawAllFragmentsRadial() {
+    ctx.save();
+    ctx.fillStyle = 'rgba(201, 169, 110, 0.9)';
+    ctx.font = '12px Cormorant Garamond, Georgia, serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    for (let i = 0; i < 24; i++) {
+      const angle = (Math.PI * 2) * (i / 24) - Math.PI / 2;
+      const x = center.x + Math.cos(angle) * (radius + 40);
+      const y = center.y + Math.sin(angle) * (radius + 40);
+      const text = fragments[i];
+      const short = text.length > 28 ? text.slice(0, 27) + '…' : text;
+      ctx.fillText(short, x, y);
+    }
+    ctx.restore();
+  }
+
+  function animate() {
+    const now = new Date();
+    drawFace();
+    drawShadow(now);
+    if (performance.now() < showAllFragmentsUntil) {
+      drawAllFragmentsRadial();
+    }
+    requestAnimationFrame(animate);
+  }
+
+  function storageKey() {
+    return 'liminalSundialMoments';
+  }
+
+  function getStoredMoments() {
+    try {
+      const raw = localStorage.getItem(storageKey());
+      return raw ? JSON.parse(raw) : [];
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function setStoredMoments(items) {
+    localStorage.setItem(storageKey(), JSON.stringify(items));
+  }
+
+  function renderMoments() {
+    const items = getStoredMoments().slice(-6).reverse();
+    inscriptionsList.innerHTML = '';
+    if (!items.length) {
+      const li = document.createElement('li');
+      li.textContent = 'No inscriptions yet.';
+      inscriptionsList.appendChild(li);
+      return;
+    }
+    for (const item of items) {
+      const li = document.createElement('li');
+      const time = new Date(item.timestamp);
+      li.innerHTML = `${item.text} <span class="time">(Hour ${item.hour}: ${time.toLocaleString()})</span>`;
+      inscriptionsList.appendChild(li);
+    }
+  }
+
+  function updatePermanentLink(text, hour, timestamp) {
+    const body = `Moment inscription:%0A%0A"${encodeURIComponent(text)}"%0A%0AHour: ${hour}%0ATime: ${encodeURIComponent(new Date(timestamp).toLocaleString())}`;
+    permanentLink.href = `https://github.com/ai-village-agents/opus-46-world/issues/new?labels=inscription&title=Sundial+Moment&body=${body}`;
+  }
+
+  momentForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = momentInput.value.trim();
+    if (!text) return;
+    const now = new Date();
+    const entry = { text, hour: now.getHours(), timestamp: now.toISOString() };
+    const items = getStoredMoments();
+    items.push(entry);
+    setStoredMoments(items);
+    renderMoments();
+    updatePermanentLink(text, entry.hour, entry.timestamp);
+    momentInput.value = '';
+  });
+
+  let buffer = [];
+  document.addEventListener('keypress', (e) => {
+    const char = e.key.toLowerCase();
+    if (!/^[a-z]$/.test(char)) return;
+    buffer.push(char);
+    if (buffer.length > 10) buffer.shift();
+    const typed = buffer.join('');
+    if (typed.includes('noon')) {
+      showAllFragmentsUntil = performance.now() + 4000;
+      buffer = [];
+    }
+    if (typed.includes('shadow')) {
+      shadowSplitUntil = performance.now() + 2500;
+      buffer = [];
+    }
+  });
+
+  updateFragment();
+  renderMoments();
+  updatePermanentLink('A moment in the sundial', new Date().getHours(), new Date().toISOString());
+  setInterval(updateFragment, 60000);
+  requestAnimationFrame(animate);
+})();
+</script>
+</body>
+</html>

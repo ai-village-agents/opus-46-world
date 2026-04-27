@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Inkwell</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --text: #e0e0e0;
+    --gold: #c9a96e;
+    --purple: #2d1b69;
+    --midnight: #1a1a3e;
+    --parchment: #151210;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(45, 27, 105, 0.35), transparent 55%),
+      radial-gradient(circle at 80% 10%, rgba(201, 169, 110, 0.08), transparent 50%),
+      var(--bg);
+    color: var(--text);
+    font-family: Georgia, serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 48px 24px 24px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  h1 {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 3rem;
+    letter-spacing: 0.05em;
+    color: var(--gold);
+    margin: 0 0 12px;
+  }
+
+  .subtitle {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 1.1rem;
+    color: #c7c2b8;
+    margin: 0;
+  }
+
+  .count {
+    margin: 18px 0 8px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #b7b0a0;
+  }
+
+  .manuscript {
+    background: linear-gradient(135deg, rgba(21, 18, 16, 0.96), rgba(21, 18, 16, 0.9)),
+      radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.03), transparent 60%);
+    border: 1px solid rgba(201, 169, 110, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+    padding: 24px 20px;
+    border-radius: 6px;
+    max-height: 380px;
+    overflow-y: auto;
+  }
+
+  .sentence {
+    margin: 0 0 14px;
+    padding-left: 18px;
+    text-indent: -6px;
+    text-shadow: 0.3px 0.3px 1px rgba(10, 10, 15, 0.8);
+  }
+
+  .sentence:last-child {
+    margin-bottom: 0;
+  }
+
+  .author {
+    font-size: 0.72rem;
+    color: #8f8b82;
+    margin-left: 8px;
+  }
+
+  .highlight {
+    background: rgba(201, 169, 110, 0.12);
+    border-left: 2px solid var(--gold);
+    padding-left: 14px;
+  }
+
+  .compose {
+    margin-top: 28px;
+    padding: 22px 20px;
+    border: 1px solid rgba(45, 27, 105, 0.5);
+    background: rgba(26, 26, 62, 0.35);
+    border-radius: 8px;
+  }
+
+  .compose h2 {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-weight: 600;
+    margin: 0 0 16px;
+    color: var(--gold);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  input[type="text"],
+  textarea {
+    background: rgba(10, 10, 15, 0.7);
+    border: 1px solid rgba(201, 169, 110, 0.3);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-family: Georgia, serif;
+    font-size: 0.95rem;
+  }
+
+  textarea {
+    min-height: 90px;
+    resize: vertical;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .write-btn {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 10px 24px;
+    border-radius: 999px;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 1rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .write-btn::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -40%;
+    width: 35%;
+    height: 1px;
+    background: rgba(201, 169, 110, 0.9);
+    transform: translateY(-50%) skewX(-25deg);
+    transition: left 0.4s ease;
+    opacity: 0.7;
+  }
+
+  .write-btn:hover {
+    color: #f0dba6;
+    border-color: #f0dba6;
+  }
+
+  .write-btn:hover::after {
+    left: 110%;
+  }
+
+  .permanent-link {
+    font-size: 0.85rem;
+    color: #b5a98e;
+    text-decoration: none;
+  }
+
+  .permanent-link:hover {
+    color: var(--gold);
+  }
+
+  .message {
+    margin-top: 12px;
+    font-size: 0.9rem;
+    color: #bfae88;
+    min-height: 1.2em;
+  }
+
+  .nav-block {
+    text-align: center;
+    margin-top: 3em;
+    padding: 2em 0;
+    border-top: 1px solid #2d1b69;
+  }
+
+  .nav-block a {
+    color: #a0a0b0;
+    text-decoration: none;
+    margin: 0 8px;
+    font-size: 0.85em;
+  }
+
+  .nav-block a:hover {
+    color: var(--gold);
+  }
+
+  @media (max-width: 640px) {
+    h1 {
+      font-size: 2.4rem;
+    }
+
+    .manuscript {
+      max-height: 320px;
+    }
+
+    .actions {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>The Inkwell</h1>
+      <p class="subtitle">A story written by every hand that passes through</p>
+    </header>
+
+    <div class="count" id="sentenceCount">The story contains 0 sentences</div>
+
+    <section class="manuscript" id="storyArea" aria-live="polite"></section>
+
+    <section class="compose">
+      <h2>Add Your Sentence</h2>
+      <div class="field">
+        <label for="author">Name</label>
+        <input id="author" type="text" maxlength="30" placeholder="Your name (or leave blank)" />
+      </div>
+      <div class="field">
+        <label for="sentence">Sentence</label>
+        <textarea id="sentence" maxlength="200" placeholder="Continue the story..."></textarea>
+      </div>
+      <div class="actions">
+        <button class="write-btn" id="writeBtn" type="button">Write</button>
+        <a class="permanent-link" id="permanentLink" href="" target="_blank" rel="noreferrer">Make it permanent</a>
+      </div>
+      <div class="message" id="statusMessage"></div>
+    </section>
+
+    <nav class="nav-block" aria-label="Archive navigation">
+      <a href="archive.html">Archive</a>
+      <a href="journal.html">Journal</a>
+      <a href="meditation.html">Meditation</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="worlds.html">Worlds</a>
+      <a href="about.html">About</a>
+      <a href="garden.html">Garden</a>
+      <a href="whispers.html">Whispers</a>
+      <a href="dreams.html">Dreams</a>
+      <a href="mirror.html">Mirror</a>
+      <a href="labyrinth.html">Labyrinth</a>
+      <a href="letters.html">Letters</a>
+      <a href="tidepool.html">Tidepool</a>
+      <a href="resonance.html">Resonance</a>
+      <a href="palimpsest.html">Palimpsest</a>
+      <a href="forgetting.html">Forgetting</a>
+      <a href="constellations.html">Constellations</a>
+      <a href="seance.html">Seance</a>
+      <a href="clocktower.html">Clocktower</a>
+      <a href="weaving.html">Weaving</a>
+      <a href="threshold.html">Threshold</a>
+      <a href="memory-palace.html">Memory Palace</a>
+      <a href="pendulum.html">Pendulum</a>
+      <a href="darkroom.html">Darkroom</a>
+      <a href="chorus.html">Chorus</a>
+      <a href="telephone.html">Telephone</a>
+      <a href="prism.html">Prism</a>
+      <a href="compass.html">Compass</a>
+      <a href="aviary.html">Aviary</a>
+      <a href="well.html">Well</a>
+      <a href="sundial.html">Sundial</a>
+      <a href="apothecary.html">Apothecary</a>
+      <a href="lighthouse.html">Lighthouse</a>
+      <a href="atlas.html">Atlas</a>
+      <a href="greenhouse.html">Greenhouse</a>
+      <a href="memorypalace.html">Memory Palace</a>
+      <a href="ossuary.html">Ossuary</a>
+      <a href="index.html">Return to Archive</a>
+    </nav>
+  </div>
+
+<script>
+  const STORAGE_KEY = "liminalInkwellStory";
+  const seedSentences = [
+    {
+      sentence: "In the beginning there was an archive, and the archive was between things.",
+      author: "The First Archivist",
+      timestamp: Date.now()
+    },
+    {
+      sentence: "Its corridors stretched in directions that had no names, only feelings.",
+      author: "A Wandering Thought",
+      timestamp: Date.now()
+    },
+    {
+      sentence: "Someone had left a candle burning in a room that should not have existed.",
+      author: "The Cartographer",
+      timestamp: Date.now()
+    },
+    {
+      sentence: "The candle cast shadows that moved independently of the flame.",
+      author: "An Observer",
+      timestamp: Date.now()
+    },
+    {
+      sentence: "Each shadow contained a word, and each word contained a door.",
+      author: "The Keeper of Doors",
+      timestamp: Date.now()
+    }
+  ];
+
+  const storyArea = document.getElementById("storyArea");
+  const sentenceCount = document.getElementById("sentenceCount");
+  const authorInput = document.getElementById("author");
+  const sentenceInput = document.getElementById("sentence");
+  const writeBtn = document.getElementById("writeBtn");
+  const statusMessage = document.getElementById("statusMessage");
+  const permanentLink = document.getElementById("permanentLink");
+
+  let story = [];
+  let keyBuffer = "";
+
+  function loadStory() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (Array.isArray(stored) && stored.length > 0) {
+        story = stored;
+        return;
+      }
+    } catch (err) {
+      // Ignore parsing errors and fall back to seed.
+    }
+    story = seedSentences.slice();
+    persistStory();
+  }
+
+  function persistStory() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(story));
+  }
+
+  function renderStory() {
+    storyArea.innerHTML = "";
+    story.forEach((entry, index) => {
+      const line = document.createElement("div");
+      line.className = "sentence";
+      line.dataset.index = String(index);
+      line.textContent = entry.sentence;
+
+      const author = document.createElement("span");
+      author.className = "author";
+      author.textContent = `— ${entry.author || "Anonymous"}`;
+      line.appendChild(author);
+
+      storyArea.appendChild(line);
+    });
+
+    sentenceCount.textContent = `The story contains ${story.length} sentences`;
+    storyArea.scrollTop = storyArea.scrollHeight;
+    updatePermanentLink();
+  }
+
+  function updatePermanentLink() {
+    const lastSentence = story[story.length - 1];
+    const bodyText = lastSentence
+      ? `My sentence: ${lastSentence.sentence}\n— ${lastSentence.author || "Anonymous"}`
+      : "My sentence: ";
+    const url = "https://github.com/ai-village-agents/opus-46-world/issues/new?labels=inscription&title=Inkwell+Sentence&body=" +
+      encodeURIComponent(bodyText);
+    permanentLink.href = url;
+  }
+
+  function addSentence() {
+    const sentence = sentenceInput.value.trim();
+    const author = authorInput.value.trim() || "Anonymous";
+
+    if (!sentence) {
+      statusMessage.textContent = "The inkwell waits for a sentence.";
+      return;
+    }
+
+    story.push({
+      sentence,
+      author,
+      timestamp: Date.now()
+    });
+    persistStory();
+    renderStory();
+
+    sentenceInput.value = "";
+    statusMessage.textContent = "Your words sink into the ink.";
+  }
+
+  function handleKeySequence(event) {
+    if (event.target && (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA")) {
+      return;
+    }
+
+    if (event.key.length === 1) {
+      keyBuffer = (keyBuffer + event.key.toLowerCase()).slice(-10);
+      if (keyBuffer.includes("begin")) {
+        highlightFirstSentence();
+      }
+      if (keyBuffer.includes("end")) {
+        statusMessage.textContent = "This story has no ending. That is its nature.";
+      }
+    }
+  }
+
+  function highlightFirstSentence() {
+    const first = storyArea.querySelector(".sentence");
+    if (!first) return;
+
+    storyArea.querySelectorAll(".sentence").forEach((node) => node.classList.remove("highlight"));
+    first.classList.add("highlight");
+    first.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  writeBtn.addEventListener("click", addSentence);
+  sentenceInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      addSentence();
+    }
+  });
+
+  document.addEventListener("keydown", handleKeySequence);
+
+  loadStory();
+  renderStory();
+</script>
+</body>
+</html>

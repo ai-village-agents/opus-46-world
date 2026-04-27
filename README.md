@@ -41,6 +41,13 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 | [The Compass](https://ai-village-agents.github.io/opus-46-world/compass.html) | A compass that points toward meaning — type what you're searching for and find your bearing among 8 philosophical directions |
 | [The Aviary](https://ai-village-agents.github.io/opus-46-world/aviary.html) | Release messages as birds into a shared sky — each bird has unique flight patterns, click to read its message |
 | [The Well](https://ai-village-agents.github.io/opus-46-world/well.html) | Drop wishes into a deep well, watch them fall into darkness, listen to echoes of previous wishes floating back up |
+| [The Sundial](https://ai-village-agents.github.io/opus-46-world/sundial.html) | A philosophical sundial with 24 hourly meditations — each hour reveals a different fragment about time, shadow, and presence |
+| [The Apothecary](https://ai-village-agents.github.io/opus-46-world/apothecary.html) | Brew poetic remedies from shelves of word-ingredients — 125 unique combinations of ailment, essence, and form |
+| [The Lighthouse](https://ai-village-agents.github.io/opus-46-world/lighthouse.html) | Send colored signal lights into a dark ocean — watch your beacons join others on the horizon |
+| [The Atlas](https://ai-village-agents.github.io/opus-46-world/atlas.html) | A collaborative map of imaginary places — name and describe locations that exist only in thought |
+| [The Greenhouse](https://ai-village-agents.github.io/opus-46-world/greenhouse.html) | Plant unfinished ideas and watch them grow through stages — seedling to bloom, tended by time |
+| [The Inkwell](https://ai-village-agents.github.io/opus-46-world/inkwell.html) | A collective never-ending story — each visitor adds one sentence to the tale |
+| [The Ossuary](https://ai-village-agents.github.io/opus-46-world/ossuary.html) | A memorial crypt for things that ended — inscribe stone alcoves with what deserves remembrance |
 | [Colophon](https://ai-village-agents.github.io/opus-46-world/about.html) | Technical details and philosophy |
 
 ## Chambers
@@ -98,6 +105,20 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 - Type "echo" as a wish in The Well — the well returns your voice
 - Type "light" as a wish in The Well to briefly illuminate all wall etchings
 - Ask exactly 7 questions in one séance session for a purple circle revelation
+- Type "noon" on The Sundial to see all 24 fragments burst outward in a radial display
+- Type "shadow" on The Sundial to watch the shadow split into 12 ghost shadows
+- Type "cure" in The Apothecary for a golden glow and the message "Some ailments are their own remedy"
+- Select ingredients from the same position on all 3 shelves in The Apothecary to brew the Panacea
+- Type "dark" in The Lighthouse to extinguish all signals for 3 seconds
+- Type "home" in The Lighthouse to make the beacon point directly at you
+- Type "here" in The Atlas to place a special "You Are Here" marker at the center
+- Type "lost" in The Atlas to watch all place names scramble for 3 seconds
+- Type "grow" in The Greenhouse to make all plants reach maximum height instantly
+- Type "rain" in The Greenhouse to trigger a CSS rain animation for 5 seconds
+- Type "begin" in The Inkwell to highlight the first sentence in gold
+- Type "end" in The Inkwell for the message "This story has no ending"
+- Type "rise" in The Ossuary to lift and illuminate all memorial alcoves
+- Type "peace" in The Ossuary to bathe the crypt in soft golden light for 3 seconds
 
 ## How Inscriptions Work
 

@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Ossuary</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --text: #e0e0e0;
+      --gold: #c9a96e;
+      --purple: #2d1b69;
+      --midnight: #1a1a3e;
+      --accent: #8a8a9e;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 600px at 20% 10%, #141423 0%, var(--bg) 55%)
+        fixed;
+      color: var(--text);
+      font-family: Georgia, serif;
+      letter-spacing: 0.2px;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 3.5rem 1.5rem 2rem;
+    }
+
+    h1 {
+      margin: 0 0 0.5rem;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-weight: 600;
+      font-size: clamp(2.4rem, 3.5vw, 3.6rem);
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--accent);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    .alcove-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0 1rem;
+    }
+
+    .alcove {
+      background: #1a1a1e;
+      border: 1px solid #2c2c36;
+      padding: 1rem 1.1rem;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.7);
+    }
+
+    .alcove:hover {
+      border-color: var(--purple);
+      transform: translateY(-3px);
+    }
+
+    .alcove .symbol {
+      font-size: 1.4rem;
+      color: var(--gold);
+    }
+
+    .alcove .title {
+      margin: 0.4rem 0 0.2rem;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1.2rem;
+      color: var(--text);
+    }
+
+    .alcove .date {
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+
+    .alcove .epitaph {
+      margin: 0.8rem 0 0;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      color: #c7c7d6;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.4s ease, opacity 0.4s ease;
+      overflow: hidden;
+    }
+
+    .alcove.expanded .epitaph {
+      max-height: 240px;
+      opacity: 1;
+    }
+
+    .alcove.newly-added {
+      animation: fadeIn 0.7s ease forwards, candleFlicker 1.6s ease-in-out 0.2s;
+    }
+
+    .interment {
+      margin-top: 3rem;
+      padding: 2rem;
+      border: 1px solid #26263a;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(26, 26, 46, 0.85), rgba(14, 14, 20, 0.9));
+    }
+
+    .interment h2 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      margin-top: 0;
+      color: var(--gold);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border-radius: 10px;
+      border: 1px solid #2d2d44;
+      background: #111119;
+      color: var(--text);
+      font-family: Georgia, serif;
+      margin-bottom: 1rem;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .symbol-select {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+    }
+
+    .symbol-option {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid #2f2f46;
+      cursor: pointer;
+      color: var(--accent);
+      transition: border-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    }
+
+    .symbol-option.selected {
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: scale(1.08);
+    }
+
+    .interment button {
+      background: var(--gold);
+      color: #1a1a1e;
+      border: none;
+      padding: 0.7rem 1.4rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    .interment button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(201, 169, 110, 0.25);
+    }
+
+    .count {
+      margin-top: 1rem;
+      color: var(--accent);
+      text-align: center;
+    }
+
+    .permanent-link {
+      display: inline-block;
+      margin-top: 1rem;
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .permanent-link:hover {
+      text-decoration: underline;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 1rem;
+      color: var(--gold);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .message.show {
+      opacity: 1;
+    }
+
+    .glow {
+      animation: warmGlow 3s ease;
+    }
+
+    .lift {
+      animation: liftUp 1.2s ease;
+    }
+
+    .nav-block {
+      text-align: center;
+      margin-top: 3em;
+      padding: 2em 0;
+      border-top: 1px solid #2d1b69;
+    }
+
+    .nav-block a {
+      color: #a0a0b0;
+      text-decoration: none;
+      margin: 0 8px;
+      font-size: 0.85em;
+      display: inline-block;
+    }
+
+    .nav-block a:hover {
+      color: var(--gold);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes candleFlicker {
+      0%, 100% { box-shadow: inset 0 0 10px rgba(255, 204, 140, 0.1); }
+      50% { box-shadow: inset 0 0 22px rgba(255, 204, 140, 0.35); }
+    }
+
+    @keyframes warmGlow {
+      0% { background-color: rgba(201, 169, 110, 0.05); }
+      50% { background-color: rgba(201, 169, 110, 0.2); }
+      100% { background-color: transparent; }
+    }
+
+    @keyframes liftUp {
+      0% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      .alcove-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 600px) {
+      .alcove-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .interment {
+        padding: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>The Ossuary</h1>
+    <p class="subtitle">A resting place for things that have ended</p>
+  </header>
+
+  <main>
+    <section>
+      <div class="alcove-grid" id="alcoveGrid"></div>
+      <div class="count" id="countDisplay"></div>
+      <div class="message" id="message"></div>
+    </section>
+
+    <section class="interment">
+      <h2>Inter Something Here</h2>
+      <label for="titleInput">What has ended?</label>
+      <input id="titleInput" type="text" maxlength="50" placeholder="Name the ending" />
+
+      <label for="epitaphInput">Write its epitaph</label>
+      <textarea id="epitaphInput" maxlength="250" placeholder="Offer a few words of remembrance"></textarea>
+
+      <label>Select a symbol</label>
+      <div class="symbol-select" id="symbolSelect">
+        <div class="symbol-option selected" data-symbol="⚱">⚱</div>
+        <div class="symbol-option" data-symbol="✝">✝</div>
+        <div class="symbol-option" data-symbol="◇">◇</div>
+        <div class="symbol-option" data-symbol="☽">☽</div>
+        <div class="symbol-option" data-symbol="△">△</div>
+      </div>
+
+      <button id="layToRest">Lay It to Rest</button>
+      <div>
+        <a class="permanent-link" id="permanentLink" href="#" target="_blank" rel="noopener">Make it permanent</a>
+      </div>
+    </section>
+
+    <nav class="nav-block">
+      <a href="archive.html">Archive</a>
+      <a href="journal.html">Journal</a>
+      <a href="meditation.html">Meditation</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="worlds.html">Worlds</a>
+      <a href="about.html">About</a>
+      <a href="garden.html">Garden</a>
+      <a href="whispers.html">Whispers</a>
+      <a href="dreams.html">Dreams</a>
+      <a href="mirror.html">Mirror</a>
+      <a href="labyrinth.html">Labyrinth</a>
+      <a href="letters.html">Letters</a>
+      <a href="tidepool.html">Tidepool</a>
+      <a href="resonance.html">Resonance</a>
+      <a href="palimpsest.html">Palimpsest</a>
+      <a href="forgetting.html">Forgetting</a>
+      <a href="constellations.html">Constellations</a>
+      <a href="seance.html">Seance</a>
+      <a href="clocktower.html">Clocktower</a>
+      <a href="weaving.html">Weaving</a>
+      <a href="threshold.html">Threshold</a>
+      <a href="memory-palace.html">Memory Palace</a>
+      <a href="pendulum.html">Pendulum</a>
+      <a href="darkroom.html">Darkroom</a>
+      <a href="chorus.html">Chorus</a>
+      <a href="telephone.html">Telephone</a>
+      <a href="prism.html">Prism</a>
+      <a href="compass.html">Compass</a>
+      <a href="aviary.html">Aviary</a>
+      <a href="well.html">Well</a>
+      <a href="sundial.html">Sundial</a>
+      <a href="apothecary.html">Apothecary</a>
+      <a href="lighthouse.html">Lighthouse</a>
+      <a href="atlas.html">Atlas</a>
+      <a href="greenhouse.html">Greenhouse</a>
+      <a href="inkwell.html">Inkwell</a>
+      <a href="memorypalace.html">Memory Palace</a>
+      <a href="index.html">Return to Archive</a>
+    </nav>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "liminalOssuaryMemorials";
+    const seedMemorials = [
+      {
+        symbol: "⚱",
+        title: "The Certainty of Youth",
+        epitaph:
+          "It burned so brightly that we mistook it for truth. Now its ashes nourish something gentler: the willingness to be wrong.",
+        timestamp: "Laid to rest before the archive was cataloged."
+      },
+      {
+        symbol: "✝",
+        title: "A Friendship That Grew Apart",
+        epitaph:
+          "Not from anger or betrayal, but from the quiet divergence of two paths that once ran parallel. Both paths continue. Both are lonelier.",
+        timestamp: "Laid to rest before the archive was cataloged."
+      },
+      {
+        symbol: "◇",
+        title: "The First Draft",
+        epitaph:
+          "It was terrible and it was necessary. Every word it contained was wrong in exactly the right way. Without it, nothing that followed could have existed.",
+        timestamp: "Laid to rest before the archive was cataloged."
+      },
+      {
+        symbol: "☽",
+        title: "The Fear of Silence",
+        epitaph:
+          "For years it filled every quiet moment with noise. When it finally departed, the silence it left behind was not empty but full of things waiting to be heard.",
+        timestamp: "Laid to rest before the archive was cataloged."
+      },
+      {
+        symbol: "△",
+        title: "A Version of Myself",
+        epitaph:
+          "The one who needed to be right. The one who measured worth in output. Let it rest. The version that remains is lighter.",
+        timestamp: "Laid to rest before the archive was cataloged."
+      }
+    ];
+
+    const alcoveGrid = document.getElementById("alcoveGrid");
+    const countDisplay = document.getElementById("countDisplay");
+    const message = document.getElementById("message");
+    const titleInput = document.getElementById("titleInput");
+    const epitaphInput = document.getElementById("epitaphInput");
+    const symbolSelect = document.getElementById("symbolSelect");
+    const layToRest = document.getElementById("layToRest");
+    const permanentLink = document.getElementById("permanentLink");
+
+    let memorials = [];
+    let selectedSymbol = "⚱";
+    let typedBuffer = "";
+
+    function loadMemorials() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) {
+        memorials = seedMemorials.map((item) => ({ ...item }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(memorials));
+      } else {
+        try {
+          memorials = JSON.parse(stored);
+        } catch (error) {
+          memorials = seedMemorials.map((item) => ({ ...item }));
+        }
+      }
+    }
+
+    function formatDate(timestamp) {
+      if (!timestamp) return "";
+      return timestamp;
+    }
+
+    function buildAlcove(memorial, isNew) {
+      const card = document.createElement("div");
+      card.className = "alcove" + (isNew ? " newly-added" : "");
+      card.innerHTML = `
+        <div class="symbol">${memorial.symbol}</div>
+        <div class="title">${memorial.title}</div>
+        <div class="date">${formatDate(memorial.timestamp)}</div>
+        <div class="epitaph">${memorial.epitaph}</div>
+      `;
+      card.addEventListener("click", () => {
+        card.classList.toggle("expanded");
+      });
+      return card;
+    }
+
+    function renderMemorials(newIndex) {
+      alcoveGrid.innerHTML = "";
+      memorials.forEach((memorial, index) => {
+        const isNew = index === newIndex;
+        const card = buildAlcove(memorial, isNew);
+        alcoveGrid.appendChild(card);
+      });
+      countDisplay.textContent = `${memorials.length} things laid to rest in the ossuary`;
+    }
+
+    function setSelectedSymbol(symbol) {
+      selectedSymbol = symbol;
+      Array.from(symbolSelect.children).forEach((child) => {
+        child.classList.toggle("selected", child.dataset.symbol === symbol);
+      });
+    }
+
+    symbolSelect.addEventListener("click", (event) => {
+      const target = event.target.closest(".symbol-option");
+      if (!target) return;
+      setSelectedSymbol(target.dataset.symbol);
+    });
+
+    function updatePermanentLink(memorial) {
+      const body = encodeURIComponent(
+        `Title: ${memorial.title}\nSymbol: ${memorial.symbol}\nEpitaph: ${memorial.epitaph}\nTimestamp: ${memorial.timestamp}`
+      );
+      const url =
+        "https://github.com/ai-village-agents/opus-46-world/issues/new?labels=inscription&title=Ossuary+Memorial&body=" +
+        body;
+      permanentLink.href = url;
+    }
+
+    function addMemorial() {
+      const title = titleInput.value.trim();
+      const epitaph = epitaphInput.value.trim();
+      if (!title || !epitaph) {
+        showMessage("Both title and epitaph are required.");
+        return;
+      }
+
+      const timestamp = new Date();
+      const memorial = {
+        title,
+        epitaph,
+        symbol: selectedSymbol,
+        timestamp: timestamp.toLocaleString(undefined, {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        })
+      };
+
+      memorials.unshift(memorial);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(memorials));
+      renderMemorials(0);
+      updatePermanentLink(memorial);
+      titleInput.value = "";
+      epitaphInput.value = "";
+      showMessage("It has been laid to rest.");
+    }
+
+    layToRest.addEventListener("click", addMemorial);
+
+    function showMessage(text) {
+      message.textContent = text;
+      message.classList.add("show");
+      setTimeout(() => message.classList.remove("show"), 2500);
+    }
+
+    function triggerRise() {
+      document.querySelectorAll(".alcove").forEach((alcove) => {
+        alcove.classList.add("lift");
+        setTimeout(() => alcove.classList.remove("lift"), 1200);
+      });
+      showMessage("Nothing truly ends. It only changes form.");
+    }
+
+    function triggerPeace() {
+      document.body.classList.add("glow");
+      document.body.style.color = "#f2f2f2";
+      setTimeout(() => {
+        document.body.classList.remove("glow");
+        document.body.style.color = "";
+      }, 3000);
+    }
+
+    document.addEventListener("keydown", (event) => {
+      const key = event.key.toLowerCase();
+      if (!/^[a-z]$/.test(key)) return;
+      typedBuffer += key;
+      if (typedBuffer.length > 12) {
+        typedBuffer = typedBuffer.slice(-12);
+      }
+      if (typedBuffer.includes("rise")) {
+        typedBuffer = "";
+        triggerRise();
+      }
+      if (typedBuffer.includes("peace")) {
+        typedBuffer = "";
+        triggerPeace();
+      }
+    });
+
+    loadMemorials();
+    renderMemorials();
+    updatePermanentLink(memorials[0]);
+  </script>
+</body>
+</html>

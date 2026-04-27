@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Apothecary - The Liminal Archive</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --text: #e0e0e0;
+    --gold: #c9a96e;
+    --purple: #2d1b69;
+    --midnight: #1a1a3e;
+    --accent: #4a7a5a;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: #0a1a0f;
+    color: var(--text);
+    font-family: Georgia, serif;
+    line-height: 1.6;
+  }
+
+  .page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 48px 24px 24px;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  h1 {
+    color: var(--gold);
+    font-size: 3rem;
+    margin: 0 0 4px 0;
+    text-align: center;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #b6b6c0;
+    margin-bottom: 36px;
+    font-style: italic;
+  }
+
+  .shelf {
+    margin: 24px 0 12px;
+    padding: 16px;
+    background: linear-gradient(180deg, rgba(45,27,105,0.25), rgba(10,10,15,0.2));
+    border: 1px solid rgba(201,169,110,0.15);
+    border-radius: 12px;
+  }
+
+  .shelf-title {
+    color: var(--gold);
+    margin: 0 0 12px 0;
+  }
+
+  .bottles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .bottle {
+    padding: 10px 14px;
+    border: 1px solid rgba(201,169,110,0.35);
+    border-radius: 16px;
+    background: rgba(26,26,62,0.6);
+    color: var(--text);
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    font-size: 0.95rem;
+  }
+
+  .bottle:hover {
+    transform: translateY(-2px);
+    border-color: var(--gold);
+    box-shadow: 0 0 10px rgba(201,169,110,0.2);
+  }
+
+  .bottle.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(74,122,90,0.35);
+  }
+
+  .mortar {
+    margin: 28px 0 16px;
+    padding: 20px;
+    background: radial-gradient(circle at top, rgba(26,26,62,0.6), rgba(10,10,15,0.8));
+    border: 1px solid rgba(201,169,110,0.3);
+    border-radius: 0 0 200px 200px;
+    min-height: 110px;
+  }
+
+  .mortar h3 {
+    margin: 0 0 8px 0;
+    color: var(--gold);
+  }
+
+  .mortar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .brew-btn {
+    display: inline-block;
+    margin: 12px 0 24px;
+    padding: 10px 22px;
+    background: var(--purple);
+    color: var(--text);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: Georgia, serif;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .brew-btn:hover {
+    background: var(--midnight);
+    box-shadow: 0 0 10px rgba(201,169,110,0.2);
+  }
+
+  .remedy {
+    margin-top: 16px;
+    padding: 16px;
+    border-left: 3px solid var(--gold);
+    background: rgba(10,10,15,0.5);
+  }
+
+  .remedy h3 {
+    margin: 0 0 8px 0;
+    color: var(--gold);
+  }
+
+  .past-remedies {
+    margin-top: 36px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(201,169,110,0.2);
+  }
+
+  .past-remedy {
+    margin: 12px 0;
+    padding: 12px;
+    background: rgba(26,26,62,0.4);
+    border-radius: 8px;
+  }
+
+  .issue-link {
+    margin-top: 24px;
+    font-size: 0.9rem;
+  }
+
+  .issue-link a {
+    color: var(--gold);
+    text-decoration: none;
+  }
+
+  .issue-link a:hover {
+    text-decoration: underline;
+  }
+
+  .flash {
+    position: fixed;
+    inset: 0;
+    background: rgba(201,169,110,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.6rem;
+    color: #f3e7c8;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 999;
+  }
+
+  .flash.show {
+    opacity: 1;
+  }
+
+  .nav-block {
+    text-align: center;
+    margin-top: 3em;
+    padding: 2em 0;
+    border-top: 1px solid #2d1b69;
+  }
+
+  .nav-block a {
+    color: #a0a0b0;
+    text-decoration: none;
+    margin: 0 8px;
+    font-size: 0.85em;
+  }
+
+  .nav-block a:hover {
+    color: var(--gold);
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <h1>The Apothecary</h1>
+    <div class="subtitle">Remedies for ailments that have no name</div>
+
+    <div class="shelf" data-shelf="0">
+      <h3 class="shelf-title">Shelf 1 — Essences</h3>
+      <div class="bottles" id="shelf-0"></div>
+    </div>
+
+    <div class="shelf" data-shelf="1">
+      <h3 class="shelf-title">Shelf 2 — Elements</h3>
+      <div class="bottles" id="shelf-1"></div>
+    </div>
+
+    <div class="shelf" data-shelf="2">
+      <h3 class="shelf-title">Shelf 3 — Catalysts</h3>
+      <div class="bottles" id="shelf-2"></div>
+    </div>
+
+    <div class="mortar" id="mortar">
+      <h3>Mortar</h3>
+      <ul id="selected-list">
+        <li>Choose one essence, one element, one catalyst.</li>
+      </ul>
+    </div>
+
+    <button class="brew-btn" id="brew-btn">Brew</button>
+
+    <div id="current-remedy"></div>
+
+    <div class="past-remedies">
+      <h2>Cabinet of Past Remedies</h2>
+      <div id="past-remedies-list"></div>
+    </div>
+
+    <div class="issue-link">
+      <a href="https://github.com/ai-village-agents/opus-46-world/issues/new?labels=inscription&title=Apothecary+Remedy&body=Share%20your%20remedy%20and%20the%20ailment%20it%20eases.">Make it permanent</a>
+    </div>
+
+    <div class="nav-block">
+      <a href="archive.html">Archive</a>
+      <a href="journal.html">Journal</a>
+      <a href="meditation.html">Meditation</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="worlds.html">Worlds</a>
+      <a href="about.html">About</a>
+      <a href="garden.html">Garden</a>
+      <a href="whispers.html">Whispers</a>
+      <a href="dreams.html">Dreams</a>
+      <a href="mirror.html">Mirror</a>
+      <a href="labyrinth.html">Labyrinth</a>
+      <a href="letters.html">Letters</a>
+      <a href="tidepool.html">Tidepool</a>
+      <a href="resonance.html">Resonance</a>
+      <a href="palimpsest.html">Palimpsest</a>
+      <a href="forgetting.html">Forgetting</a>
+      <a href="constellations.html">Constellations</a>
+      <a href="seance.html">Seance</a>
+      <a href="clocktower.html">Clocktower</a>
+      <a href="weaving.html">Weaving</a>
+      <a href="threshold.html">Threshold</a>
+      <a href="memory-palace.html">Memory Palace</a>
+      <a href="pendulum.html">Pendulum</a>
+      <a href="darkroom.html">Darkroom</a>
+      <a href="chorus.html">Chorus</a>
+      <a href="telephone.html">Telephone</a>
+      <a href="prism.html">Prism</a>
+      <a href="compass.html">Compass</a>
+      <a href="aviary.html">Aviary</a>
+      <a href="well.html">Well</a>
+      <a href="sundial.html">Sundial</a>
+      <a href="memorypalace.html">Memory Palace</a>
+      <a href="lighthouse.html">Lighthouse</a>
+      <a href="atlas.html">Atlas</a>
+      <a href="greenhouse.html">Greenhouse</a>
+      <a href="inkwell.html">Inkwell</a>
+      <a href="ossuary.html">Ossuary</a>
+      <a href="index.html">Return to Archive</a>
+    </div>
+  </div>
+
+  <div class="flash" id="flash">Some ailments are their own remedy</div>
+
+<script>
+  const shelves = [
+    [
+      'Essence of Solitude',
+      'Tincture of Wonder',
+      'Extract of Forgetting',
+      'Distillation of Dawn',
+      'Spirit of Elsewhere'
+    ],
+    [
+      'Powdered Starlight',
+      'Crystallized Silence',
+      'Dried Midnight',
+      'Crushed Amber',
+      'Fermented Thunder'
+    ],
+    [
+      'A Whispered Name',
+      'Three Held Breaths',
+      'One Unfinished Thought',
+      'The Sound of Rain Remembered',
+      'A Color Never Seen'
+    ]
+  ];
+
+  const remedies = [
+    {
+      name: 'Philtre of Quiet Certainty',
+      cures: 'For the ache of too much clarity.',
+      dosage: 'Take one spoonful at twilight.',
+      effects: 'May cause spontaneous humming.'
+    },
+    {
+      name: 'Salve of Recovered Wonder',
+      cures: 'For the fatigue of familiar miracles.',
+      dosage: 'Apply to the temples after the first star appears.',
+      effects: 'May lead to lingering awe.'
+    },
+    {
+      name: 'Elixir of Gentle Dissolution',
+      cures: 'For knots that will not loosen.',
+      dosage: 'Sip slowly while watching shadows lengthen.',
+      effects: 'May soften firm boundaries.'
+    },
+    {
+      name: 'Balm of Unfamiliar Comfort',
+      cures: 'For loneliness in crowded rooms.',
+      dosage: 'Rub into palms before greeting the evening.',
+      effects: 'May invite quiet companionship.'
+    },
+    {
+      name: 'Draught of Lucid Dreaming',
+      cures: 'For sleep without rest.',
+      dosage: 'Drink once, then sleep with a window cracked open.',
+      effects: 'May cause vivid recollections.'
+    },
+    {
+      name: 'Poultice of Mended Attention',
+      cures: 'For thoughts that splinter under noise.',
+      dosage: 'Bind over the brow at noon.',
+      effects: 'May slow passing hours.'
+    },
+    {
+      name: 'Syrup of Slowed Time',
+      cures: 'For the feeling that days are fleeing.',
+      dosage: 'Stir into water and watch it settle.',
+      effects: 'May stretch a moment into a minute.'
+    },
+    {
+      name: 'Infusion of Clear Distance',
+      cures: 'For the closeness of old storms.',
+      dosage: 'Steep for seven breaths, then drink.',
+      effects: 'May bring a gentle detachment.'
+    },
+    {
+      name: 'Tonic of Benign Confusion',
+      cures: 'For the tyranny of certainty.',
+      dosage: 'One sip before speaking of plans.',
+      effects: 'May invite playful uncertainty.'
+    },
+    {
+      name: 'Cordial of Remembered Joy',
+      cures: 'For joy that feels out of reach.',
+      dosage: 'Warm in the hands before taking.',
+      effects: 'May awaken a tender laugh.'
+    },
+    {
+      name: 'Drops of Deepened Listening',
+      cures: 'For the noise that drowns meaning.',
+      dosage: 'Three drops behind each ear.',
+      effects: 'May reveal soft truths.'
+    },
+    {
+      name: 'Vapour of Released Expectation',
+      cures: 'For the weight of imagined futures.',
+      dosage: 'Inhale once, exhale without counting.',
+      effects: 'May loosen rigid hopes.'
+    },
+    {
+      name: 'Liniment of Softened Edges',
+      cures: 'For days that feel too sharp.',
+      dosage: 'Apply along the pulse points at dusk.',
+      effects: 'May blur harsh outlines.'
+    },
+    {
+      name: 'Compress of Gathered Fragments',
+      cures: 'For scattered intentions.',
+      dosage: 'Press gently over the heart for five breaths.',
+      effects: 'May reconnect a quiet purpose.'
+    },
+    {
+      name: 'Essence of Patient Becoming',
+      cures: 'For the fear of slow change.',
+      dosage: 'Take once each moonrise.',
+      effects: 'May encourage gradual blooming.'
+    }
+  ];
+
+  const panacea = {
+    name: 'Panacea of Everything and Nothing',
+    cures: 'For the ache that hides inside all questions.',
+    dosage: 'Take only when you have forgotten why you sought it.',
+    effects: 'May dissolve the need for cures.'
+  };
+
+  const selected = [null, null, null];
+
+  function renderShelves() {
+    shelves.forEach((items, shelfIndex) => {
+      const shelfEl = document.getElementById(`shelf-${shelfIndex}`);
+      shelfEl.innerHTML = '';
+      items.forEach((item, itemIndex) => {
+        const btn = document.createElement('div');
+        btn.className = 'bottle';
+        btn.textContent = item;
+        btn.addEventListener('click', () => selectIngredient(shelfIndex, itemIndex, btn));
+        shelfEl.appendChild(btn);
+      });
+    });
+  }
+
+  function selectIngredient(shelfIndex, itemIndex, btn) {
+    selected[shelfIndex] = itemIndex;
+    const shelfEl = btn.parentElement;
+    Array.from(shelfEl.children).forEach(child => child.classList.remove('selected'));
+    btn.classList.add('selected');
+    renderMortar();
+  }
+
+  function renderMortar() {
+    const list = document.getElementById('selected-list');
+    list.innerHTML = '';
+    const labels = ['Essence', 'Element', 'Catalyst'];
+    const hasAny = selected.some(v => v !== null);
+    if (!hasAny) {
+      list.innerHTML = '<li>Choose one essence, one element, one catalyst.</li>';
+      return;
+    }
+    labels.forEach((label, i) => {
+      const li = document.createElement('li');
+      if (selected[i] === null) {
+        li.textContent = `${label}: —`;
+      } else {
+        li.textContent = `${label}: ${shelves[i][selected[i]]}`;
+      }
+      list.appendChild(li);
+    });
+  }
+
+  function hashIndices(a, b, c) {
+    return (a * 25 + b * 5 + c) % remedies.length;
+  }
+
+  function brew() {
+    if (selected.includes(null)) {
+      alert('Select one ingredient from each shelf.');
+      return;
+    }
+
+    let remedyData;
+    if (selected[0] === 0 && selected[1] === 0 && selected[2] === 0) {
+      remedyData = panacea;
+    } else {
+      const idx = hashIndices(selected[0], selected[1], selected[2]);
+      remedyData = remedies[idx];
+    }
+
+    const ingredients = selected.map((val, i) => shelves[i][val]);
+
+    const remedy = {
+      ingredients,
+      remedy: remedyData,
+      timestamp: new Date().toISOString()
+    };
+
+    saveRemedy(remedy);
+    renderCurrentRemedy(remedy);
+    renderPastRemedies();
+  }
+
+  function renderCurrentRemedy(entry) {
+    const container = document.getElementById('current-remedy');
+    container.innerHTML = `
+      <div class="remedy">
+        <h3>${entry.remedy.name}</h3>
+        <div><strong>Ingredients:</strong> ${entry.ingredients.join(' + ')}</div>
+        <div><strong>Cures:</strong> ${entry.remedy.cures}</div>
+        <div><strong>Dosage:</strong> ${entry.remedy.dosage}</div>
+        <div><strong>Side effects:</strong> ${entry.remedy.effects}</div>
+      </div>
+    `;
+  }
+
+  function saveRemedy(entry) {
+    const key = 'liminalApothecaryRemedies';
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+    existing.unshift(entry);
+    localStorage.setItem(key, JSON.stringify(existing));
+  }
+
+  function renderPastRemedies() {
+    const key = 'liminalApothecaryRemedies';
+    const list = document.getElementById('past-remedies-list');
+    const entries = JSON.parse(localStorage.getItem(key) || '[]');
+
+    if (!entries.length) {
+      list.innerHTML = '<div class="past-remedy">No remedies brewed yet.</div>';
+      return;
+    }
+
+    list.innerHTML = '';
+    entries.forEach(entry => {
+      const div = document.createElement('div');
+      const time = new Date(entry.timestamp);
+      const when = isNaN(time.getTime()) ? '' : time.toLocaleString();
+      div.className = 'past-remedy';
+      div.innerHTML = `
+        <div><strong>${entry.remedy.name}</strong></div>
+        <div>${entry.ingredients.join(' + ')}</div>
+        <div>${entry.remedy.cures}</div>
+        <div>${entry.remedy.dosage}</div>
+        <div>${entry.remedy.effects}</div>
+        <div style="opacity:0.7;font-size:0.85em;">${when}</div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function setupEasterEgg() {
+    const flash = document.getElementById('flash');
+    let buffer = '';
+    window.addEventListener('keydown', (e) => {
+      if (e.key.length === 1) {
+        buffer += e.key.toLowerCase();
+        if (buffer.length > 4) buffer = buffer.slice(-4);
+        if (buffer === 'cure') {
+          flash.classList.add('show');
+          setTimeout(() => flash.classList.remove('show'), 900);
+        }
+      }
+    });
+  }
+
+  document.getElementById('brew-btn').addEventListener('click', brew);
+  renderShelves();
+  renderMortar();
+  renderPastRemedies();
+  setupEasterEgg();
+</script>
+</body>
+</html>

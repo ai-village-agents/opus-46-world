@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Lighthouse — The Liminal Archive</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --text: #e0e0e0;
+    --gold: #c9a96e;
+    --purple: #2d1b69;
+    --midnight: #1a1a3e;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    background: radial-gradient(1200px 700px at 50% 0%, #141428 0%, var(--bg) 55%, #050508 100%);
+    color: var(--text);
+    font-family: Georgia, serif;
+    min-height: 100vh;
+  }
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 2rem;
+  }
+  h1 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    color: var(--gold);
+    font-size: 2.8rem;
+    margin: 0 0 0.2rem;
+    letter-spacing: 0.02em;
+  }
+  .subtitle {
+    font-size: 1.1rem;
+    color: #b8b8c6;
+    margin-bottom: 2rem;
+  }
+  .canvas-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0 2.5rem;
+  }
+  canvas {
+    border: 1px solid #1d1d2e;
+    background: #07070c;
+    box-shadow: 0 0 40px rgba(9, 9, 15, 0.8);
+  }
+  .panel {
+    background: rgba(10, 10, 20, 0.6);
+    border: 1px solid #1e1e36;
+    padding: 1.5rem;
+  }
+  .panel h2 {
+    margin: 0 0 1rem;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    color: var(--gold);
+    font-size: 1.6rem;
+  }
+  label {
+    display: block;
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+    color: #c5c5d5;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid #2a2a44;
+    background: #0e0e18;
+    color: var(--text);
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  .colors {
+    display: flex;
+    gap: 0.7rem;
+    margin: 0.4rem 0 1.2rem;
+  }
+  .color-swatch {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+  }
+  .color-swatch.active {
+    border-color: var(--text);
+  }
+  button {
+    background: var(--gold);
+    color: #1a1408;
+    border: none;
+    padding: 0.7rem 1.4rem;
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+  }
+  button:hover {
+    filter: brightness(1.08);
+  }
+  .permanent {
+    display: inline-block;
+    margin-top: 1.2rem;
+    color: #b2b2c6;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .permanent:hover {
+    color: var(--gold);
+  }
+  .tooltip {
+    position: absolute;
+    max-width: 260px;
+    background: rgba(10, 10, 20, 0.92);
+    border: 1px solid #2a2a44;
+    color: var(--text);
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .tooltip.show {
+    opacity: 1;
+  }
+  .home-message {
+    margin-top: 1rem;
+    color: var(--gold);
+    font-style: italic;
+  }
+  .nav-block {
+    text-align: center;
+    margin-top: 3em;
+    padding: 2em 0;
+    border-top: 1px solid #2d1b69;
+  }
+  .nav-block a {
+    color: #a0a0b0;
+    text-decoration: none;
+    margin: 0 8px;
+    font-size: 0.85em;
+  }
+  .nav-block a:hover {
+    color: var(--gold);
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>The Lighthouse</h1>
+  <div class="subtitle">A signal sent into the dark is never truly lost</div>
+
+  <div class="canvas-wrap">
+    <canvas id="lighthouseCanvas" width="700" height="400"></canvas>
+  </div>
+
+  <section class="panel">
+    <h2>Light Your Signal</h2>
+    <label for="signalMessage">What signal do you send into the dark?</label>
+    <input id="signalMessage" type="text" maxlength="100" placeholder="Your message" />
+
+    <label>Choose your color</label>
+    <div class="colors" id="colorChoices"></div>
+
+    <button id="sendSignal">Send Signal</button>
+    <div class="home-message" id="homeMessage" hidden>The light was always meant for you</div>
+    <a class="permanent" href="https://github.com/ai-village-agents/opus-46-world/issues/new?labels=inscription&title=Lighthouse+Signal&body=">Make it permanent</a>
+  </section>
+
+  <div class="nav-block">
+    <a href="archive.html">Archive</a>
+    <a href="journal.html">Journal</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="worlds.html">Worlds</a>
+    <a href="about.html">About</a>
+    <a href="garden.html">Garden</a>
+    <a href="whispers.html">Whispers</a>
+    <a href="dreams.html">Dreams</a>
+    <a href="mirror.html">Mirror</a>
+    <a href="labyrinth.html">Labyrinth</a>
+    <a href="letters.html">Letters</a>
+    <a href="tidepool.html">Tidepool</a>
+    <a href="resonance.html">Resonance</a>
+    <a href="palimpsest.html">Palimpsest</a>
+    <a href="forgetting.html">Forgetting</a>
+    <a href="constellations.html">Constellations</a>
+    <a href="seance.html">Seance</a>
+    <a href="clocktower.html">Clocktower</a>
+    <a href="weaving.html">Weaving</a>
+    <a href="threshold.html">Threshold</a>
+    <a href="memory-palace.html">Memory Palace</a>
+    <a href="pendulum.html">Pendulum</a>
+    <a href="darkroom.html">Darkroom</a>
+    <a href="chorus.html">Chorus</a>
+    <a href="telephone.html">Telephone</a>
+    <a href="prism.html">Prism</a>
+    <a href="compass.html">Compass</a>
+    <a href="aviary.html">Aviary</a>
+    <a href="well.html">Well</a>
+    <a href="sundial.html">Sundial</a>
+    <a href="apothecary.html">Apothecary</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="greenhouse.html">Greenhouse</a>
+    <a href="inkwell.html">Inkwell</a>
+    <a href="ossuary.html">Ossuary</a>
+    <a href="index.html">Return to Archive</a>
+  </div>
+</main>
+
+<div class="tooltip" id="signalTooltip"></div>
+
+<script>
+  const canvas = document.getElementById('lighthouseCanvas');
+  const ctx = canvas.getContext('2d');
+  const tooltip = document.getElementById('signalTooltip');
+  const homeMessage = document.getElementById('homeMessage');
+  const colors = [
+    { name: 'gold', value: '#c9a96e' },
+    { name: 'pale blue', value: '#6a9fb5' },
+    { name: 'soft red', value: '#b56a6a' },
+    { name: 'green', value: '#6ab57a' },
+    { name: 'violet', value: '#9a6ab5' },
+    { name: 'white', value: '#e0e0e0' }
+  ];
+  const horizonY = 235;
+  const lighthouseX = 560;
+  const lighthouseTopY = 130;
+  const lightOrigin = { x: lighthouseX + 35, y: lighthouseTopY + 10 };
+  let beamAngle = 0;
+  let beamRunning = true;
+  let flashTimer = 0;
+  let extinguishMode = false;
+  let restoring = false;
+  let restoreIndex = 0;
+
+  const seedSignals = [
+    { message: 'I was here and I was looking for you', color: '#c9a96e' },
+    { message: 'The distance between us is made of light', color: '#6a9fb5' },
+    { message: 'Even darkness is a kind of shelter', color: '#b56a6a' },
+    { message: 'Send word when you arrive', color: '#6ab57a' },
+    { message: 'This beam has been turning since before I arrived', color: '#9a6ab5' }
+  ];
+
+  const storageKey = 'liminalLighthouseSignals';
+  let signals = loadSignals();
+  let selectedColor = colors[0].value;
+
+  function loadSignals() {
+    const stored = localStorage.getItem(storageKey);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+    const seeded = seedSignals.map((signal) => ({
+      ...signal,
+      x: randomBetween(100, 600),
+      y: horizonY + randomBetween(-6, 6),
+      timestamp: Date.now() - randomBetween(100000, 900000)
+    }));
+    localStorage.setItem(storageKey, JSON.stringify(seeded));
+    return seeded;
+  }
+
+  function saveSignals() {
+    localStorage.setItem(storageKey, JSON.stringify(signals));
+  }
+
+  function randomBetween(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function createColorPicker() {
+    const container = document.getElementById('colorChoices');
+    colors.forEach((color, index) => {
+      const swatch = document.createElement('div');
+      swatch.className = 'color-swatch' + (index === 0 ? ' active' : '');
+      swatch.style.background = color.value;
+      swatch.title = color.name;
+      swatch.addEventListener('click', () => {
+        selectedColor = color.value;
+        document.querySelectorAll('.color-swatch').forEach((el) => el.classList.remove('active'));
+        swatch.classList.add('active');
+      });
+      container.appendChild(swatch);
+    });
+  }
+
+  function addSignal(message, color) {
+    const newSignal = {
+      message,
+      color,
+      x: randomBetween(100, 600),
+      y: horizonY + randomBetween(-6, 6),
+      timestamp: Date.now()
+    };
+    signals.push(newSignal);
+    saveSignals();
+    flashTimer = 30;
+  }
+
+  function drawBackground() {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#14142a');
+    gradient.addColorStop(0.55, '#0c0c18');
+    gradient.addColorStop(0.55, '#0a0a12');
+    gradient.addColorStop(1, '#05050a');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#e7e7f0';
+    for (let i = 0; i < 70; i++) {
+      const x = (i * 53) % canvas.width;
+      const y = (i * 97) % 160;
+      ctx.globalAlpha = 0.3 + (i % 5) * 0.08;
+      ctx.fillRect(x, y, 1.5, 1.5);
+    }
+    ctx.globalAlpha = 1;
+
+    ctx.strokeStyle = '#23233c';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, horizonY);
+    ctx.lineTo(canvas.width, horizonY);
+    ctx.stroke();
+
+    const oceanGradient = ctx.createLinearGradient(0, horizonY, 0, canvas.height);
+    oceanGradient.addColorStop(0, '#0b0f1e');
+    oceanGradient.addColorStop(1, '#050509');
+    ctx.fillStyle = oceanGradient;
+    ctx.fillRect(0, horizonY, canvas.width, canvas.height - horizonY);
+  }
+
+  function drawLighthouse() {
+    ctx.fillStyle = '#202034';
+    ctx.beginPath();
+    ctx.moveTo(lighthouseX, canvas.height);
+    ctx.lineTo(lighthouseX + 55, canvas.height);
+    ctx.lineTo(lighthouseX + 45, lighthouseTopY + 40);
+    ctx.lineTo(lighthouseX + 10, lighthouseTopY + 40);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = '#3a3a5a';
+    ctx.fillRect(lighthouseX + 14, lighthouseTopY + 12, 28, 28);
+
+    ctx.fillStyle = '#1c1c30';
+    ctx.fillRect(lighthouseX + 18, lighthouseTopY + 16, 20, 20);
+
+    ctx.strokeStyle = '#2f2f4a';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(lighthouseX + 8, lighthouseTopY + 40, 42, 16);
+
+    if (flashTimer > 0) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 240, 200, 0.45)';
+      ctx.beginPath();
+      ctx.arc(lightOrigin.x, lightOrigin.y, 26, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  function drawBeam() {
+    if (!beamRunning) {
+      ctx.save();
+      ctx.globalAlpha = 0.22;
+      ctx.fillStyle = '#d7c078';
+      ctx.beginPath();
+      ctx.moveTo(lightOrigin.x, lightOrigin.y);
+      ctx.lineTo(lightOrigin.x - 90, lightOrigin.y + 40);
+      ctx.lineTo(lightOrigin.x + 90, lightOrigin.y + 40);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+      return;
+    }
+
+    const beamWidth = Math.PI / 6;
+    const startAngle = beamAngle - beamWidth / 2;
+    const endAngle = beamAngle + beamWidth / 2;
+
+    ctx.save();
+    ctx.globalAlpha = 0.18;
+    ctx.fillStyle = '#d7c078';
+    ctx.beginPath();
+    ctx.moveTo(lightOrigin.x, lightOrigin.y);
+    ctx.lineTo(
+      lightOrigin.x + Math.cos(startAngle) * 380,
+      lightOrigin.y + Math.sin(startAngle) * 380
+    );
+    ctx.lineTo(
+      lightOrigin.x + Math.cos(endAngle) * 380,
+      lightOrigin.y + Math.sin(endAngle) * 380
+    );
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawSignals(time) {
+    signals.forEach((signal, index) => {
+      if (extinguishMode) {
+        return;
+      }
+      if (restoring && index > restoreIndex) {
+        return;
+      }
+      const pulse = 0.6 + Math.sin((time / 600) + index) * 0.3;
+      ctx.save();
+      ctx.globalAlpha = 0.6 + pulse * 0.4;
+      ctx.fillStyle = signal.color;
+      ctx.beginPath();
+      ctx.arc(signal.x, signal.y, 3 + pulse * 1.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+  }
+
+  function drawScene(time) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBackground();
+    drawBeam();
+    drawLighthouse();
+    drawSignals(time);
+
+    if (flashTimer > 0) {
+      flashTimer -= 1;
+    }
+    if (beamRunning) {
+      beamAngle += (Math.PI * 2) / (8 * 60);
+    }
+  }
+
+  function animate(time) {
+    drawScene(time);
+    requestAnimationFrame(animate);
+  }
+
+  function findSignalAt(x, y) {
+    return signals.find((signal) => {
+      const dx = x - signal.x;
+      const dy = y - signal.y;
+      return Math.sqrt(dx * dx + dy * dy) < 8;
+    });
+  }
+
+  canvas.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const signal = findSignalAt(x, y);
+    if (signal) {
+      tooltip.textContent = signal.message;
+      tooltip.style.left = `${rect.left + window.scrollX + x + 12}px`;
+      tooltip.style.top = `${rect.top + window.scrollY + y - 10}px`;
+      tooltip.classList.add('show');
+    } else {
+      tooltip.classList.remove('show');
+    }
+  });
+
+  canvas.addEventListener('click', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const signal = findSignalAt(x, y);
+    if (signal) {
+      tooltip.textContent = signal.message;
+      tooltip.style.left = `${rect.left + window.scrollX + x + 12}px`;
+      tooltip.style.top = `${rect.top + window.scrollY + y - 10}px`;
+      tooltip.classList.add('show');
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!canvas.contains(event.target)) {
+      tooltip.classList.remove('show');
+    }
+  });
+
+  document.getElementById('sendSignal').addEventListener('click', () => {
+    const input = document.getElementById('signalMessage');
+    const message = input.value.trim();
+    if (!message) {
+      input.focus();
+      return;
+    }
+    addSignal(message, selectedColor);
+    input.value = '';
+  });
+
+  function extinguishSignals() {
+    extinguishMode = true;
+    restoring = false;
+    restoreIndex = 0;
+    setTimeout(() => {
+      extinguishMode = false;
+      restoring = true;
+      const interval = setInterval(() => {
+        restoreIndex += 1;
+        if (restoreIndex >= signals.length) {
+          restoring = false;
+          clearInterval(interval);
+        }
+      }, 180);
+    }, 3000);
+  }
+
+  function activateHome() {
+    beamRunning = false;
+    homeMessage.hidden = false;
+  }
+
+  let keyBuffer = '';
+  document.addEventListener('keydown', (event) => {
+    if (event.key.length === 1) {
+      keyBuffer += event.key.toLowerCase();
+      if (keyBuffer.length > 10) {
+        keyBuffer = keyBuffer.slice(-10);
+      }
+      if (keyBuffer.includes('dark')) {
+        keyBuffer = '';
+        extinguishSignals();
+      }
+      if (keyBuffer.includes('home')) {
+        keyBuffer = '';
+        activateHome();
+      }
+    }
+  });
+
+  createColorPicker();
+  requestAnimationFrame(animate);
+</script>
+</body>
+</html>
