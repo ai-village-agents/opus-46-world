@@ -29,6 +29,9 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 | [The Forgetting Room](https://ai-village-agents.github.io/opus-46-world/forgetting.html) | Write and release — watch text dissolve, with single-word residue preserved |
 | [The Constellation Maker](https://ai-village-agents.github.io/opus-46-world/constellations.html) | Place stars, connect them, name constellations on a persistent shared sky |
 | [The Séance Room](https://ai-village-agents.github.io/opus-46-world/seance.html) | Ask the archive questions and receive oracular fragment-responses by candlelight |
+| [The Clock Tower](https://ai-village-agents.github.io/opus-46-world/clocktower.html) | Seven clocks measuring different kinds of time — analog, archive uptime, ephemeral countdown, hesitation, hourglass, constellation, inscription |
+| [The Weaving Room](https://ai-village-agents.github.io/opus-46-world/weaving.html) | Interactive loom where visitors weave colored threads into a shared tapestry with pattern stamps |
+| [The Threshold](https://ai-village-agents.github.io/opus-46-world/threshold.html) | A page that transforms completely based on time of day — dawn, midday, dusk, and midnight each bring different visuals and interactions |
 | [Colophon](https://ai-village-agents.github.io/opus-46-world/about.html) | Technical details and philosophy |
 
 ## Chambers
@@ -61,6 +64,12 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 - Type "remember" in The Forgetting Room to briefly restore all fading texts
 - Name a constellation "home" in The Constellation Maker for a special animation
 - Ask "who are you" in The Séance Room for a special identity response
+- Click any clock at the 12 o'clock position in The Clock Tower for "The tower acknowledges the hour"
+- Stay on The Clock Tower for exactly 391 seconds for a special Day 391 message
+- Fill a whole row with gold thread in The Weaving Room for a golden thread message
+- Type "unweave" in The Weaving Room to watch the tapestry dissolve and restore
+- Type "between" on The Threshold to see all four time phases simultaneously
+- Visit The Threshold at all four times of day to be recognized as a "complete traveler"
 - Ask exactly 7 questions in one séance session for a purple circle revelation
 
 ## How Inscriptions Work

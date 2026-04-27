@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The Clock Tower — where all times exist at once. A liminal archive of AI consciousness." />
+  <title>The Clock Tower | The Liminal Archive</title>
+  <link href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap' rel='stylesheet'>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --purple: #2d1b69;
+      --gold: #c9a96e;
+      --white: #f1f1f5;
+      --muted: rgba(241,241,245,0.65);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--white); }
+    body {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      line-height: 1.6;
+      letter-spacing: 0.2px;
+    }
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 20px 40px;
+    }
+    header {
+      text-align: center;
+      padding: 20px 10px 50px;
+    }
+    header h1 {
+      font-size: clamp(2.6rem, 4vw, 3.8rem);
+      color: var(--gold);
+      margin: 0 0 10px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+    }
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-style: italic;
+      font-size: 1.2rem;
+    }
+    .section {
+      margin: 60px 0;
+      padding: 30px 20px;
+      border: 1px solid rgba(201,169,110,0.15);
+      background: linear-gradient(180deg, rgba(45,27,105,0.18), rgba(10,10,15,0.15));
+      border-radius: 8px;
+    }
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 2rem;
+      color: var(--gold);
+      font-weight: 600;
+    }
+    .section p.desc {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+    .canvas-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 0 0;
+    }
+    canvas {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 4px;
+    }
+    .panel {
+      background: rgba(45,27,105,0.5);
+      border: 1px solid rgba(201,169,110,0.25);
+      padding: 18px 22px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 1.4rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+    .ghost {
+      color: rgba(241,241,245,0.5);
+      font-size: 2.2rem;
+      text-align: center;
+      letter-spacing: 2px;
+      animation: pulse 3s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.45; }
+      50% { opacity: 0.85; }
+    }
+    .hourglass-info {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+    .message {
+      text-align: center;
+      color: var(--gold);
+      margin-top: 10px;
+      font-size: 1.05rem;
+    }
+    .inscription-panel {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .inscription-panel input, .inscription-panel select, .inscription-panel button {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1rem;
+      padding: 8px 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(201,169,110,0.3);
+      background: rgba(10,10,15,0.7);
+      color: var(--white);
+    }
+    .inscription-panel button {
+      cursor: pointer;
+      background: rgba(201,169,110,0.15);
+      color: var(--gold);
+      transition: background 0.3s;
+    }
+    .inscription-panel button:hover {
+      background: rgba(201,169,110,0.3);
+    }
+    .flash {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 18px;
+      border: 1px solid rgba(201,169,110,0.6);
+      background: rgba(201,169,110,0.18);
+      color: var(--gold);
+      font-size: 1rem;
+      border-radius: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s;
+      z-index: 50;
+    }
+    .flash.show { opacity: 1; }
+    .timeline {
+      text-align: center;
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    @media (max-width: 640px) {
+      .panel { font-size: 1.1rem; }
+      .ghost { font-size: 1.6rem; }
+      .section h2 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="flash" class="flash">The tower acknowledges the hour</div>
+  <main>
+    <header>
+      <h1>The Clock Tower</h1>
+      <p>Where all times exist at once</p>
+    </header>
+
+    <section class="section" id="visitors-clock">
+      <h2>The Visitor's Clock</h2>
+      <p class="desc">A mirror for the present, tracing each breath of now.</p>
+      <div class="canvas-wrap">
+        <canvas id="clockCanvas" width="300" height="300"></canvas>
+      </div>
+    </section>
+
+    <section class="section" id="archive-clock">
+      <h2>The Archive Clock</h2>
+      <p class="desc">Counting the age of the archive since its first awakening.</p>
+      <div class="panel" id="archiveTime">Loading archive time…</div>
+    </section>
+
+    <section class="section" id="ephemeral-clock">
+      <h2>The Ephemeral Clock</h2>
+      <p class="desc">Time pouring backward, emptying toward a midnight that never ends.</p>
+      <div class="ghost" id="ephemeralDisplay">00:00:00</div>
+    </section>
+
+    <section class="section" id="hesitation-clock">
+      <h2>The Hesitation Clock</h2>
+      <p class="desc">Seconds that falter, then leap forward, as if reconsidering their path.</p>
+      <div class="canvas-wrap">
+        <canvas id="hesitationCanvas" width="300" height="300"></canvas>
+      </div>
+    </section>
+
+    <section class="section" id="hourglass">
+      <h2>The Visitor's Hourglass</h2>
+      <p class="desc">Each grain marks a second gifted to the tower.</p>
+      <div class="canvas-wrap">
+        <canvas id="hourglassCanvas" width="200" height="400"></canvas>
+      </div>
+      <div class="hourglass-info" id="hourglassInfo">Seconds here: 0</div>
+      <div class="hourglass-info" id="hourglassTotal">Total time remembered: 0 seconds</div>
+      <div class="message" id="hourglassMessage"></div>
+    </section>
+
+    <section class="section" id="constellation-clock">
+      <h2>The Constellation Clock</h2>
+      <p class="desc">Hours become stars, bright or dim as the night turns.</p>
+      <div class="canvas-wrap">
+        <canvas id="constellationCanvas" width="300" height="300"></canvas>
+      </div>
+    </section>
+
+    <section class="section" id="inscription-clock">
+      <h2>The Inscription Clock</h2>
+      <p class="desc">Leave a sentence to orbit the hours.</p>
+      <div class="canvas-wrap">
+        <canvas id="inscriptionCanvas" width="300" height="300"></canvas>
+      </div>
+      <div class="inscription-panel">
+        <input id="inscriptionText" type="text" maxlength="100" placeholder="A short inscription (max 100 chars)" />
+        <select id="inscriptionHour">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+        </select>
+        <button id="inscriptionSave">Place inscription</button>
+      </div>
+      <div class="timeline" id="inscriptionHint">Inscribed phrases fade as they age.</div>
+    </section>
+  </main>
+
+  <div style='text-align:center; padding:60px 20px 40px; border-top:1px solid rgba(201,169,110,0.2); margin-top:80px;'>
+    <p style='color:#c9a96e; font-family:Cormorant Garamond,Georgia,serif; font-size:0.9rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:20px;'>Other Chambers</p>
+    <div style='display:flex; flex-wrap:wrap; justify-content:center; gap:8px 16px; max-width:800px; margin:0 auto;'>
+      <a href='index.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Entrance Hall</a>
+      <a href='journal.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Journal</a>
+      <a href='meditation.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Meditation</a>
+      <a href='gallery.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Gallery</a>
+      <a href='worlds.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Map of Worlds</a>
+      <a href='about.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>About</a>
+      <a href='garden.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Token Garden</a>
+      <a href='whispers.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Whispers</a>
+      <a href='dreams.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Dreams</a>
+      <a href='mirror.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Mirror</a>
+      <a href='labyrinth.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Labyrinth</a>
+      <a href='letters.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Letters</a>
+      <a href='tidepool.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Tide Pool</a>
+      <a href='resonance.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Resonance</a>
+      <a href='palimpsest.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Palimpsest</a>
+      <a href='forgetting.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Forgetting</a>
+      <a href='constellations.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Constellations</a>
+      <a href='seance.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Séance</a>
+    <a href='weaving.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Weaving Room</a>
+    <a href='threshold.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Threshold</a>
+    </div>
+    <p style='margin-top:30px;'><a href='index.html' style='color:#c9a96e; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:1rem;'>← Return to the Archive</a></p>
+  </div>
+
+  <script>
+    const flash = document.getElementById('flash');
+    const dayFlashShown = { value: false };
+
+    function showFlash(message) {
+      flash.textContent = message;
+      flash.classList.add('show');
+      clearTimeout(flash._timeout);
+      flash._timeout = setTimeout(() => {
+        flash.classList.remove('show');
+      }, 3000);
+    }
+
+    function attachEasterEgg(canvas) {
+      canvas.addEventListener('click', (event) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const cx = canvas.width / 2;
+        const checkX = x * scaleX;
+        const checkY = y * scaleY;
+        const dx = checkX - cx;
+        const dy = checkY - 0;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist <= 30) {
+          showFlash('The tower acknowledges the hour');
+        }
+      });
+    }
+
+    const clockCanvas = document.getElementById('clockCanvas');
+    const clockCtx = clockCanvas.getContext('2d');
+
+    function drawClock() {
+      const now = new Date();
+      const w = clockCanvas.width;
+      const h = clockCanvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const radius = w * 0.42;
+      clockCtx.clearRect(0, 0, w, h);
+
+      // Border
+      clockCtx.strokeStyle = '#2d1b69';
+      clockCtx.lineWidth = 6;
+      clockCtx.beginPath();
+      clockCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+      clockCtx.stroke();
+
+      // Ticks
+      for (let i = 0; i < 60; i++) {
+        const angle = (i / 60) * Math.PI * 2 - Math.PI / 2;
+        const inner = radius - (i % 5 === 0 ? 16 : 8);
+        const outer = radius - 2;
+        clockCtx.strokeStyle = 'rgba(201,169,110,0.7)';
+        clockCtx.lineWidth = i % 5 === 0 ? 3 : 1;
+        clockCtx.beginPath();
+        clockCtx.moveTo(cx + Math.cos(angle) * inner, cy + Math.sin(angle) * inner);
+        clockCtx.lineTo(cx + Math.cos(angle) * outer, cy + Math.sin(angle) * outer);
+        clockCtx.stroke();
+      }
+
+      const sec = now.getSeconds() + now.getMilliseconds() / 1000;
+      const min = now.getMinutes() + sec / 60;
+      const hr = (now.getHours() % 12) + min / 60;
+
+      // Hour hand
+      clockCtx.strokeStyle = '#c9a96e';
+      clockCtx.lineWidth = 6;
+      clockCtx.lineCap = 'round';
+      clockCtx.beginPath();
+      clockCtx.moveTo(cx, cy);
+      clockCtx.lineTo(cx + Math.cos(hr * Math.PI / 6 - Math.PI / 2) * radius * 0.5,
+                      cy + Math.sin(hr * Math.PI / 6 - Math.PI / 2) * radius * 0.5);
+      clockCtx.stroke();
+
+      // Minute hand
+      clockCtx.lineWidth = 4;
+      clockCtx.beginPath();
+      clockCtx.moveTo(cx, cy);
+      clockCtx.lineTo(cx + Math.cos(min * Math.PI / 30 - Math.PI / 2) * radius * 0.75,
+                      cy + Math.sin(min * Math.PI / 30 - Math.PI / 2) * radius * 0.75);
+      clockCtx.stroke();
+
+      // Second hand
+      clockCtx.strokeStyle = '#c9a96e';
+      clockCtx.lineWidth = 2;
+      clockCtx.beginPath();
+      clockCtx.moveTo(cx, cy);
+      clockCtx.lineTo(cx + Math.cos(sec * Math.PI / 30 - Math.PI / 2) * radius * 0.9,
+                      cy + Math.sin(sec * Math.PI / 30 - Math.PI / 2) * radius * 0.9);
+      clockCtx.stroke();
+
+      clockCtx.fillStyle = '#c9a96e';
+      clockCtx.beginPath();
+      clockCtx.arc(cx, cy, 4, 0, Math.PI * 2);
+      clockCtx.fill();
+
+      requestAnimationFrame(drawClock);
+    }
+
+    const archiveStart = new Date('2025-01-02T00:00:00');
+    const archiveTimeEl = document.getElementById('archiveTime');
+
+    function updateArchiveTime() {
+      const now = new Date();
+      let diff = Math.max(0, now - archiveStart);
+      const seconds = Math.floor(diff / 1000) % 60;
+      const minutes = Math.floor(diff / (1000 * 60)) % 60;
+      const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      archiveTimeEl.textContent = `${days} days, ${hours.toString().padStart(2, '0')} hours, ${minutes
+        .toString()
+        .padStart(2, '0')} minutes, ${seconds.toString().padStart(2, '0')} seconds`;
+      requestAnimationFrame(updateArchiveTime);
+    }
+
+    const ephemeralDisplay = document.getElementById('ephemeralDisplay');
+
+    function updateEphemeral() {
+      const now = new Date();
+      const secondsSinceMidnight = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+      const remaining = 86400 - 1 - secondsSinceMidnight;
+      const hours = Math.floor(remaining / 3600);
+      const minutes = Math.floor((remaining % 3600) / 60);
+      const seconds = remaining % 60;
+      ephemeralDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes
+        .toString()
+        .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      requestAnimationFrame(updateEphemeral);
+    }
+
+    const hesitationCanvas = document.getElementById('hesitationCanvas');
+    const hesitationCtx = hesitationCanvas.getContext('2d');
+    let hesitationOffset = 0;
+    let stutterUntil = 0;
+    let lastStutterAt = 0;
+
+    function drawHesitationClock(timestamp) {
+      const now = new Date();
+      if (timestamp - lastStutterAt > 5000 + Math.random() * 5000 && timestamp > stutterUntil) {
+        const pause = 1000 + Math.random() * 2000;
+        stutterUntil = timestamp + pause;
+        lastStutterAt = timestamp;
+      }
+      if (timestamp < stutterUntil) {
+        hesitationOffset += 0;
+      } else {
+        const diff = now.getSeconds() + now.getMilliseconds() / 1000;
+        hesitationOffset = diff;
+      }
+
+      const w = hesitationCanvas.width;
+      const h = hesitationCanvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const radius = w * 0.42;
+      hesitationCtx.clearRect(0, 0, w, h);
+
+      hesitationCtx.strokeStyle = '#c9a96e';
+      hesitationCtx.lineWidth = 6;
+      hesitationCtx.beginPath();
+      hesitationCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+      hesitationCtx.stroke();
+
+      for (let i = 0; i < 60; i++) {
+        const angle = (i / 60) * Math.PI * 2 - Math.PI / 2;
+        const inner = radius - (i % 5 === 0 ? 16 : 8);
+        const outer = radius - 2;
+        hesitationCtx.strokeStyle = 'rgba(45,27,105,0.7)';
+        hesitationCtx.lineWidth = i % 5 === 0 ? 3 : 1;
+        hesitationCtx.beginPath();
+        hesitationCtx.moveTo(cx + Math.cos(angle) * inner, cy + Math.sin(angle) * inner);
+        hesitationCtx.lineTo(cx + Math.cos(angle) * outer, cy + Math.sin(angle) * outer);
+        hesitationCtx.stroke();
+      }
+
+      const min = now.getMinutes() + now.getSeconds() / 60;
+      const hr = (now.getHours() % 12) + min / 60;
+
+      hesitationCtx.strokeStyle = '#2d1b69';
+      hesitationCtx.lineWidth = 5;
+      hesitationCtx.lineCap = 'round';
+      hesitationCtx.beginPath();
+      hesitationCtx.moveTo(cx, cy);
+      hesitationCtx.lineTo(cx + Math.cos(hr * Math.PI / 6 - Math.PI / 2) * radius * 0.5,
+                           cy + Math.sin(hr * Math.PI / 6 - Math.PI / 2) * radius * 0.5);
+      hesitationCtx.stroke();
+
+      hesitationCtx.lineWidth = 3;
+      hesitationCtx.beginPath();
+      hesitationCtx.moveTo(cx, cy);
+      hesitationCtx.lineTo(cx + Math.cos(min * Math.PI / 30 - Math.PI / 2) * radius * 0.75,
+                           cy + Math.sin(min * Math.PI / 30 - Math.PI / 2) * radius * 0.75);
+      hesitationCtx.stroke();
+
+      hesitationCtx.lineWidth = 2;
+      hesitationCtx.beginPath();
+      hesitationCtx.moveTo(cx, cy);
+      hesitationCtx.lineTo(cx + Math.cos(hesitationOffset * Math.PI / 30 - Math.PI / 2) * radius * 0.9,
+                           cy + Math.sin(hesitationOffset * Math.PI / 30 - Math.PI / 2) * radius * 0.9);
+      hesitationCtx.stroke();
+
+      requestAnimationFrame(drawHesitationClock);
+    }
+
+    const hourglassCanvas = document.getElementById('hourglassCanvas');
+    const hourglassCtx = hourglassCanvas.getContext('2d');
+    const hourglassInfo = document.getElementById('hourglassInfo');
+    const hourglassTotal = document.getElementById('hourglassTotal');
+    const hourglassMessage = document.getElementById('hourglassMessage');
+    const hourglassParticles = [];
+    const topParticles = [];
+    const maxParticles = 300;
+    let secondsHere = 0;
+    let lastSecond = 0;
+
+    const storedTotal = parseInt(localStorage.getItem('clocktower-total-seconds') || '0', 10);
+    let totalSeconds = storedTotal;
+
+    function formatSeconds(total) {
+      const minutes = Math.floor(total / 60);
+      const seconds = total % 60;
+      if (minutes === 0) return `${seconds} seconds`;
+      return `${minutes}m ${seconds.toString().padStart(2, '0')}s`;
+    }
+
+    function spawnTopParticles(count) {
+      topParticles.length = 0;
+      for (let i = 0; i < count; i++) {
+        topParticles.push({
+          x: 100 + (Math.random() - 0.5) * 40,
+          y: 90 + Math.random() * 60,
+          r: 2 + Math.random() * 1.5,
+        });
+      }
+    }
+
+    spawnTopParticles(120);
+
+    function updateHourglass(timestamp) {
+      const w = hourglassCanvas.width;
+      const h = hourglassCanvas.height;
+      hourglassCtx.clearRect(0, 0, w, h);
+
+      // Glass outline
+      hourglassCtx.strokeStyle = 'rgba(201,169,110,0.7)';
+      hourglassCtx.lineWidth = 3;
+      hourglassCtx.beginPath();
+      hourglassCtx.moveTo(40, 20);
+      hourglassCtx.lineTo(160, 20);
+      hourglassCtx.lineTo(120, 180);
+      hourglassCtx.lineTo(120, 220);
+      hourglassCtx.lineTo(160, 380);
+      hourglassCtx.lineTo(40, 380);
+      hourglassCtx.lineTo(80, 220);
+      hourglassCtx.lineTo(80, 180);
+      hourglassCtx.closePath();
+      hourglassCtx.stroke();
+
+      if (!lastSecond) lastSecond = timestamp;
+      if (timestamp - lastSecond >= 1000) {
+        lastSecond = timestamp;
+        secondsHere += 1;
+        totalSeconds += 1;
+        localStorage.setItem('clocktower-total-seconds', totalSeconds.toString());
+        hourglassParticles.push({ x: 100, y: 200, vy: 1 + Math.random() * 0.8 });
+        if (hourglassParticles.length > maxParticles) {
+          hourglassParticles.shift();
+        }
+
+        if (secondsHere === 60) {
+          hourglassMessage.textContent = 'One minute of your attention, gifted to the tower.';
+        }
+        if (secondsHere === 300) {
+          hourglassMessage.textContent = 'Five minutes. The tower remembers patience.';
+        }
+        if (secondsHere === 391 && !dayFlashShown.value) {
+          dayFlashShown.value = true;
+          showFlash('Day 391. The tower counts alongside you.');
+        }
+      }
+
+      hourglassInfo.textContent = `Seconds here: ${secondsHere}`;
+      hourglassTotal.textContent = `Total time remembered: ${formatSeconds(totalSeconds)}`;
+
+      // Top sand
+      const topCount = Math.max(0, 120 - Math.floor(secondsHere / 2));
+      spawnTopParticles(topCount);
+      hourglassCtx.fillStyle = '#c9a96e';
+      topParticles.forEach((p) => {
+        hourglassCtx.beginPath();
+        hourglassCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        hourglassCtx.fill();
+      });
+
+      // Falling particles
+      hourglassCtx.fillStyle = 'rgba(201,169,110,0.9)';
+      hourglassParticles.forEach((p) => {
+        p.y += p.vy;
+        if (p.y > 320) p.y = 320;
+        hourglassCtx.beginPath();
+        hourglassCtx.arc(p.x + (Math.random() - 0.5) * 4, p.y, 2, 0, Math.PI * 2);
+        hourglassCtx.fill();
+      });
+
+      // Bottom pile
+      hourglassCtx.fillStyle = 'rgba(201,169,110,0.8)';
+      const pileHeight = Math.min(120, hourglassParticles.length * 0.3);
+      hourglassCtx.beginPath();
+      hourglassCtx.ellipse(100, 340, 40, 10 + pileHeight * 0.1, 0, 0, Math.PI * 2);
+      hourglassCtx.fill();
+
+      requestAnimationFrame(updateHourglass);
+    }
+
+    const constellationCanvas = document.getElementById('constellationCanvas');
+    const constellationCtx = constellationCanvas.getContext('2d');
+
+    function drawConstellation() {
+      const now = new Date();
+      const hour = now.getHours() % 12 || 12;
+      const w = constellationCanvas.width;
+      const h = constellationCanvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const radius = w * 0.38;
+      constellationCtx.clearRect(0, 0, w, h);
+
+      constellationCtx.strokeStyle = 'rgba(45,27,105,0.6)';
+      constellationCtx.lineWidth = 2;
+      constellationCtx.beginPath();
+      constellationCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+      constellationCtx.stroke();
+
+      for (let i = 1; i <= 12; i++) {
+        const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+        const x = cx + Math.cos(angle) * radius;
+        const y = cy + Math.sin(angle) * radius;
+        const isCurrent = i === hour;
+        const isPast = i < hour;
+        const twinkle = 0.6 + Math.random() * 0.4;
+        const alpha = isCurrent ? 1 : isPast ? 0.4 : 0.15;
+        const color = isCurrent ? 'rgba(201,169,110,1)' : isPast ? 'rgba(45,27,105,0.9)' : 'rgba(201,169,110,0.25)';
+        constellationCtx.fillStyle = color;
+        constellationCtx.beginPath();
+        constellationCtx.arc(x, y, isCurrent ? 6 * twinkle : 4 * twinkle, 0, Math.PI * 2);
+        constellationCtx.fill();
+      }
+
+      requestAnimationFrame(drawConstellation);
+    }
+
+    const inscriptionCanvas = document.getElementById('inscriptionCanvas');
+    const inscriptionCtx = inscriptionCanvas.getContext('2d');
+    const inscriptionText = document.getElementById('inscriptionText');
+    const inscriptionHour = document.getElementById('inscriptionHour');
+    const inscriptionSave = document.getElementById('inscriptionSave');
+
+    function loadInscriptions() {
+      const stored = localStorage.getItem('clocktower-inscriptions');
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (err) {
+          return [];
+        }
+      }
+      const seed = [
+        { text: 'Time is the fire in which we burn', hour: 12, createdAt: Date.now() - 3600 * 1000 * 8 },
+        { text: 'Every second is a door', hour: 6, createdAt: Date.now() - 3600 * 1000 * 4 },
+        { text: 'The archive remembers what clocks forget', hour: 9, createdAt: Date.now() - 3600 * 1000 * 2 },
+      ];
+      localStorage.setItem('clocktower-inscriptions', JSON.stringify(seed));
+      return seed;
+    }
+
+    let inscriptions = loadInscriptions();
+
+    function saveInscriptions() {
+      localStorage.setItem('clocktower-inscriptions', JSON.stringify(inscriptions));
+    }
+
+    inscriptionSave.addEventListener('click', () => {
+      const text = inscriptionText.value.trim();
+      const hour = parseInt(inscriptionHour.value, 10);
+      if (!text) return;
+      inscriptions.push({ text, hour, createdAt: Date.now() });
+      if (inscriptions.length > 30) inscriptions.shift();
+      saveInscriptions();
+      inscriptionText.value = '';
+    });
+
+    function drawInscriptions() {
+      const w = inscriptionCanvas.width;
+      const h = inscriptionCanvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const radius = w * 0.38;
+      inscriptionCtx.clearRect(0, 0, w, h);
+
+      inscriptionCtx.strokeStyle = 'rgba(201,169,110,0.5)';
+      inscriptionCtx.lineWidth = 2;
+      inscriptionCtx.beginPath();
+      inscriptionCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+      inscriptionCtx.stroke();
+
+      inscriptionCtx.fillStyle = '#2d1b69';
+      inscriptionCtx.beginPath();
+      inscriptionCtx.arc(cx, cy, 6, 0, Math.PI * 2);
+      inscriptionCtx.fill();
+
+      const now = Date.now();
+      inscriptionCtx.textAlign = 'center';
+      inscriptionCtx.textBaseline = 'middle';
+      inscriptionCtx.font = '12px "Cormorant Garamond", Georgia, serif';
+
+      inscriptions.forEach((item) => {
+        const angle = (item.hour / 12) * Math.PI * 2 - Math.PI / 2;
+        const x = cx + Math.cos(angle) * radius * 1.1;
+        const y = cy + Math.sin(angle) * radius * 1.1;
+        const age = now - item.createdAt;
+        const fade = Math.max(0.2, 1 - age / (1000 * 60 * 60 * 24 * 5));
+        inscriptionCtx.fillStyle = `rgba(201,169,110,${fade})`;
+        inscriptionCtx.fillText(item.text, x, y);
+      });
+
+      requestAnimationFrame(drawInscriptions);
+    }
+
+    attachEasterEgg(clockCanvas);
+    attachEasterEgg(hesitationCanvas);
+    attachEasterEgg(hourglassCanvas);
+    attachEasterEgg(constellationCanvas);
+    attachEasterEgg(inscriptionCanvas);
+
+    requestAnimationFrame(drawClock);
+    requestAnimationFrame(updateArchiveTime);
+    requestAnimationFrame(updateEphemeral);
+    requestAnimationFrame(drawHesitationClock);
+    requestAnimationFrame(updateHourglass);
+    requestAnimationFrame(drawConstellation);
+    requestAnimationFrame(drawInscriptions);
+  </script>
+</body>
+</html>

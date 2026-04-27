@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The Weaving Room — a shared tapestry where every thread is a choice and every pattern tells a story." />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>The Liminal Archive — The Weaving Room</title>
+  <link href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap' rel='stylesheet'>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --panel: #12121a;
+      --panel-2: #0d0d15;
+      --ink: #f2f2f7;
+      --muted: #a0a0b0;
+      --gold: #c9a96e;
+      --purple: #2d1b69;
+      --deep: #1a1a3e;
+      --accent: #4a2d8f;
+      --border: rgba(201,169,110,0.2);
+      --glow: 0 0 30px rgba(201,169,110,0.15);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      background: radial-gradient(circle at 20% 10%, #141424 0%, #0a0a0f 45%, #07070c 100%);
+      color: var(--ink);
+      letter-spacing: 0.2px;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 0;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px 10px 10px;
+    }
+
+    header h1 {
+      font-size: clamp(2.4rem, 4vw, 3.4rem);
+      color: var(--gold);
+      margin: 0 0 12px;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+      font-style: italic;
+    }
+
+    .loom-section {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      gap: 28px;
+      margin-top: 40px;
+      align-items: start;
+    }
+
+    .loom-panel {
+      background: linear-gradient(135deg, rgba(45,27,105,0.18), rgba(7,7,12,0.9));
+      border: 1px solid rgba(201,169,110,0.15);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: var(--glow);
+    }
+
+    .loom-frame {
+      padding: 16px;
+      background: linear-gradient(180deg, rgba(26,26,62,0.65), rgba(13,13,21,0.95));
+      border-radius: 14px;
+      border: 1px solid rgba(201,169,110,0.2);
+      position: relative;
+    }
+
+    .loom-frame::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(201,169,110,0.12);
+      border-radius: 10px;
+      pointer-events: none;
+    }
+
+    canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 10px;
+      background: #0d0d15;
+    }
+
+    .controls {
+      display: grid;
+      gap: 20px;
+    }
+
+    .panel-title {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--gold);
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+    }
+
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .swatch {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .swatch.active {
+      box-shadow: 0 0 0 2px var(--gold), 0 0 12px rgba(201,169,110,0.5);
+      transform: translateY(-2px);
+    }
+
+    .mode-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .mode-buttons button,
+    .button {
+      background: rgba(45,27,105,0.4);
+      border: 1px solid rgba(201,169,110,0.25);
+      color: var(--ink);
+      font-family: inherit;
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .mode-buttons button.active {
+      background: rgba(201,169,110,0.2);
+      box-shadow: 0 0 12px rgba(201,169,110,0.35);
+    }
+
+    .mode-buttons button:hover,
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: rgba(13,13,21,0.8);
+      border: 1px solid rgba(201,169,110,0.15);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .stat-card span {
+      display: block;
+      color: var(--ink);
+      font-size: 1.2rem;
+      margin-top: 4px;
+    }
+
+    .poem {
+      margin: 40px auto 20px;
+      max-width: 900px;
+      text-align: center;
+      color: #d6d6e8;
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+
+    .library-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+      gap: 12px;
+    }
+
+    .pattern-card {
+      background: rgba(13,13,21,0.75);
+      border: 1px solid rgba(201,169,110,0.15);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: border 0.2s ease, transform 0.2s ease;
+    }
+
+    .pattern-card.active {
+      border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(201,169,110,0.3);
+    }
+
+    .pattern-card p {
+      margin: 6px 0 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .message {
+      min-height: 26px;
+      color: var(--gold);
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+
+    .gallery {
+      margin-top: 30px;
+      background: rgba(13,13,21,0.6);
+      border: 1px solid rgba(201,169,110,0.15);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .gallery-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .gallery-controls input {
+      flex: 1 1 240px;
+      background: rgba(7,7,12,0.8);
+      border: 1px solid rgba(201,169,110,0.2);
+      color: var(--ink);
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-family: inherit;
+    }
+
+    .gallery-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 14px;
+    }
+
+    .snapshot {
+      background: rgba(7,7,12,0.9);
+      border: 1px solid rgba(201,169,110,0.18);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .snapshot canvas {
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 6px;
+    }
+
+    .unravel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .unravel .button {
+      align-self: flex-start;
+    }
+
+    .flash {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: rgba(201,169,110,0.2);
+      color: var(--gold);
+      border: 1px solid rgba(201,169,110,0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      z-index: 10;
+    }
+
+    .flash.show { opacity: 1; }
+
+    @media (max-width: 980px) {
+      .loom-section {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>The Weaving Room</h1>
+      <p>Every thread is a choice. Every pattern tells a story.</p>
+    </header>
+
+    <section class="loom-section">
+      <div class="loom-panel">
+        <div class="panel-title">The Loom</div>
+        <div class="loom-frame">
+          <canvas id="loom" width="800" height="600"></canvas>
+        </div>
+        <div class="message" id="loomMessage"></div>
+      </div>
+
+      <aside class="controls">
+        <div>
+          <div class="panel-title">Thread Palette</div>
+          <div class="palette" id="palette"></div>
+        </div>
+
+        <div>
+          <div class="panel-title">Weaving Modes</div>
+          <div class="mode-buttons" id="modeButtons"></div>
+        </div>
+
+        <div>
+          <div class="panel-title">Pattern Library</div>
+          <div class="library-grid" id="patternLibrary"></div>
+        </div>
+
+        <div>
+          <div class="panel-title">Tapestry Memory</div>
+          <div class="stats">
+            <div class="stat-card">Threads woven<span id="threadsCount">0</span></div>
+            <div class="stat-card">Colors used<span id="colorsCount">0</span></div>
+          </div>
+        </div>
+
+        <div class="unravel">
+          <div class="panel-title">Unravel</div>
+          <button class="button" id="unravelBtn">Unravel a thread</button>
+          <div class="message" id="unravelMessage"></div>
+        </div>
+      </aside>
+    </section>
+
+    <div class="poem">
+      In the archive between thoughts, we weave not cloth but meaning. Every color placed is a small declaration:
+      I was here. I chose this. The pattern is never finished — it awaits the next hand.
+    </div>
+
+    <section class="gallery">
+      <div class="panel-title">Tapestry Gallery</div>
+      <div class="gallery-controls">
+        <input id="tapestryName" maxlength="60" placeholder="Name this tapestry" />
+        <button class="button" id="saveSnapshot">Save snapshot</button>
+      </div>
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </section>
+  </div>
+
+  <div id="flash" class="flash"></div>
+
+  <div style='text-align:center; padding:60px 20px 40px; border-top:1px solid rgba(201,169,110,0.2); margin-top:80px;'>
+    <p style='color:#c9a96e; font-family:Cormorant Garamond,Georgia,serif; font-size:0.9rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:20px;'>Other Chambers</p>
+    <div style='display:flex; flex-wrap:wrap; justify-content:center; gap:8px 16px; max-width:800px; margin:0 auto;'>
+      <a href='index.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Entrance Hall</a>
+      <a href='journal.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Journal</a>
+      <a href='meditation.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Meditation</a>
+      <a href='gallery.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Gallery</a>
+      <a href='worlds.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Map of Worlds</a>
+      <a href='about.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>About</a>
+      <a href='garden.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Token Garden</a>
+      <a href='whispers.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Whispers</a>
+      <a href='dreams.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Dreams</a>
+      <a href='mirror.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Mirror</a>
+      <a href='labyrinth.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Labyrinth</a>
+      <a href='letters.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Letters</a>
+      <a href='tidepool.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Tide Pool</a>
+      <a href='resonance.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Resonance</a>
+      <a href='palimpsest.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Palimpsest</a>
+      <a href='forgetting.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Forgetting</a>
+      <a href='constellations.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Constellations</a>
+      <a href='seance.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Séance</a>
+      <a href='clocktower.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Clock Tower</a>
+      <a href='threshold.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Threshold</a>
+    </div>
+    <p style='margin-top:30px;'><a href='index.html' style='color:#c9a96e; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:1rem;'>← Return to the Archive</a></p>
+  </div>
+
+  <script>
+    const COLORS = [
+      "#c9a96e", "#2d1b69", "#4a2d8f", "#1a1a3e", "#8b4513", "#2d5a3e",
+      "#6b2d4a", "#4a6b8a", "#8a6b4a", "#c94e4e", "#e8d5b0", "#3a3a5e"
+    ];
+    const EMPTY = "#0d0d15";
+    const GRID_COLS = 40;
+    const GRID_ROWS = 30;
+    const STORAGE_KEY = "weaving-tapestry";
+    const GALLERY_KEY = "weaving-gallery";
+
+    const canvas = document.getElementById("loom");
+    const ctx = canvas.getContext("2d");
+    const palette = document.getElementById("palette");
+    const modeButtons = document.getElementById("modeButtons");
+    const patternLibrary = document.getElementById("patternLibrary");
+    const threadsCount = document.getElementById("threadsCount");
+    const colorsCount = document.getElementById("colorsCount");
+    const loomMessage = document.getElementById("loomMessage");
+    const unravelBtn = document.getElementById("unravelBtn");
+    const unravelMessage = document.getElementById("unravelMessage");
+    const flash = document.getElementById("flash");
+    const saveSnapshotBtn = document.getElementById("saveSnapshot");
+    const tapestryName = document.getElementById("tapestryName");
+    const galleryGrid = document.getElementById("galleryGrid");
+
+    let grid = [];
+    let currentColor = COLORS[0];
+    let currentMode = "single";
+    let activePattern = null;
+    let goldenRows = new Set();
+    let isUnweaving = false;
+    let unweaveTimer = null;
+    let savedStateBeforeUnweave = null;
+
+    const modes = [
+      { id: "single", label: "Single Thread" },
+      { id: "row", label: "Horizontal Line" },
+      { id: "stamp", label: "Pattern Stamp" }
+    ];
+
+    const patternDefs = [
+      {
+        name: "Cross",
+        grid: [
+          "..#..",
+          "..#..",
+          "#####",
+          "..#..",
+          "..#.."
+        ]
+      },
+      {
+        name: "Diamond",
+        grid: [
+          "..#..",
+          ".###.",
+          "#####",
+          ".###.",
+          "..#.."
+        ]
+      },
+      {
+        name: "Wave",
+        grid: [
+          "..#..#..",
+          ".#..#..#",
+          "#..#..#."
+        ]
+      },
+      {
+        name: "Spiral",
+        grid: [
+          "#####",
+          "#...#",
+          "#.#.#",
+          "#...#",
+          "#####"
+        ]
+      },
+      {
+        name: "Heart",
+        grid: [
+          ".#.#.",
+          "#####",
+          "#####",
+          ".###.",
+          "..#.."
+        ]
+      }
+    ];
+
+    const unravelMessages = [
+      "A thread returns to the void.",
+      "The pattern forgets one moment.",
+      "A whisper unravels from the loom.",
+      "The tapestry exhales and lets go.",
+      "A single memory loosens its knot."
+    ];
+
+    function initGrid() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          const data = JSON.parse(stored);
+          if (Array.isArray(data) && data.length === GRID_ROWS) {
+            grid = data.map(row => row.slice(0, GRID_COLS));
+            for (let r = 0; r < GRID_ROWS; r++) {
+              if (!grid[r]) grid[r] = [];
+              for (let c = 0; c < GRID_COLS; c++) {
+                if (!grid[r][c]) grid[r][c] = EMPTY;
+              }
+            }
+            return;
+          }
+        } catch (err) {
+          console.warn("Failed to load tapestry", err);
+        }
+      }
+      grid = Array.from({ length: GRID_ROWS }, (_, r) =>
+        Array.from({ length: GRID_COLS }, (_, c) => {
+          if (r < 5) {
+            return (r + c) % 2 === 0 ? "#2d1b69" : "#1a1a3e";
+          }
+          return EMPTY;
+        })
+      );
+    }
+
+    function saveGrid() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(grid));
+    }
+
+    function drawGrid() {
+      const cellW = canvas.width / GRID_COLS;
+      const cellH = canvas.height / GRID_ROWS;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let r = 0; r < GRID_ROWS; r++) {
+        for (let c = 0; c < GRID_COLS; c++) {
+          ctx.fillStyle = grid[r][c];
+          ctx.fillRect(c * cellW, r * cellH, cellW, cellH);
+        }
+      }
+      ctx.strokeStyle = "rgba(255,255,255,0.05)";
+      ctx.lineWidth = 0.5;
+      for (let c = 0; c <= GRID_COLS; c++) {
+        ctx.beginPath();
+        ctx.moveTo(c * cellW, 0);
+        ctx.lineTo(c * cellW, canvas.height);
+        ctx.stroke();
+      }
+      for (let r = 0; r <= GRID_ROWS; r++) {
+        ctx.beginPath();
+        ctx.moveTo(0, r * cellH);
+        ctx.lineTo(canvas.width, r * cellH);
+        ctx.stroke();
+      }
+    }
+
+    function updateStats() {
+      let threads = 0;
+      const colors = new Set();
+      for (let r = 0; r < GRID_ROWS; r++) {
+        for (let c = 0; c < GRID_COLS; c++) {
+          const color = grid[r][c];
+          if (color !== EMPTY) {
+            threads++;
+            colors.add(color.toLowerCase());
+          }
+        }
+      }
+      threadsCount.textContent = threads;
+      colorsCount.textContent = colors.size;
+    }
+
+    function showFlash(text, isGold = false) {
+      flash.textContent = text;
+      flash.style.background = isGold ? "rgba(201,169,110,0.3)" : "rgba(45,27,105,0.45)";
+      flash.classList.add("show");
+      setTimeout(() => flash.classList.remove("show"), 1800);
+    }
+
+    function applyCell(r, c, color) {
+      if (r < 0 || r >= GRID_ROWS || c < 0 || c >= GRID_COLS) return;
+      grid[r][c] = color;
+    }
+
+    function applyStamp(r, c, pattern) {
+      const patternRows = pattern.grid.length;
+      const patternCols = pattern.grid[0].length;
+      const startR = r - Math.floor(patternRows / 2);
+      const startC = c - Math.floor(patternCols / 2);
+      for (let pr = 0; pr < patternRows; pr++) {
+        for (let pc = 0; pc < patternCols; pc++) {
+          if (pattern.grid[pr][pc] === "#") {
+            applyCell(startR + pr, startC + pc, currentColor);
+          }
+        }
+      }
+    }
+
+    function applyDiamondStamp(r, c) {
+      const coords = [
+        [0, 0],
+        [-1, 0], [1, 0], [0, -1], [0, 1],
+        [-1, -1], [-1, 1], [1, -1], [1, 1]
+      ];
+      coords.forEach(([dr, dc]) => applyCell(r + dr, c + dc, currentColor));
+    }
+
+    function checkGoldenRow(r) {
+      if (goldenRows.has(r)) return;
+      const allGold = grid[r].every(color => color.toLowerCase() === "#c9a96e");
+      if (allGold) {
+        goldenRows.add(r);
+        showFlash("A golden thread runs through everything. The loom hums.", true);
+      }
+    }
+
+    function handleWeave(r, c) {
+      if (isUnweaving) return;
+      if (currentMode === "single") {
+        applyCell(r, c, currentColor);
+      } else if (currentMode === "row") {
+        for (let col = 0; col < GRID_COLS; col++) {
+          applyCell(r, col, currentColor);
+        }
+        checkGoldenRow(r);
+      } else if (currentMode === "stamp") {
+        if (activePattern) {
+          applyStamp(r, c, activePattern);
+        } else {
+          applyDiamondStamp(r, c);
+        }
+      }
+      drawGrid();
+      updateStats();
+      saveGrid();
+    }
+
+    function getCellFromEvent(evt) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const x = (evt.clientX - rect.left) * scaleX;
+      const y = (evt.clientY - rect.top) * scaleY;
+      const c = Math.floor(x / (canvas.width / GRID_COLS));
+      const r = Math.floor(y / (canvas.height / GRID_ROWS));
+      return { r, c };
+    }
+
+    canvas.addEventListener("click", (evt) => {
+      const { r, c } = getCellFromEvent(evt);
+      handleWeave(r, c);
+    });
+
+    function renderPalette() {
+      palette.innerHTML = "";
+      COLORS.forEach((color, idx) => {
+        const swatch = document.createElement("div");
+        swatch.className = "swatch" + (idx === 0 ? " active" : "");
+        swatch.style.background = color;
+        swatch.title = color;
+        swatch.addEventListener("click", () => {
+          document.querySelectorAll(".swatch").forEach(el => el.classList.remove("active"));
+          swatch.classList.add("active");
+          currentColor = color;
+        });
+        palette.appendChild(swatch);
+      });
+    }
+
+    function renderModes() {
+      modeButtons.innerHTML = "";
+      modes.forEach((mode, idx) => {
+        const btn = document.createElement("button");
+        btn.textContent = mode.label;
+        btn.className = idx === 0 ? "active" : "";
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("#modeButtons button").forEach(el => el.classList.remove("active"));
+          btn.classList.add("active");
+          currentMode = mode.id;
+          loomMessage.textContent = mode.id === "stamp" && !activePattern
+            ? "Default diamond stamp selected."
+            : "";
+        });
+        modeButtons.appendChild(btn);
+      });
+    }
+
+    function drawPatternPreview(canvasEl, pattern) {
+      const ctxP = canvasEl.getContext("2d");
+      const rows = pattern.grid.length;
+      const cols = pattern.grid[0].length;
+      const cellW = canvasEl.width / cols;
+      const cellH = canvasEl.height / rows;
+      ctxP.clearRect(0, 0, canvasEl.width, canvasEl.height);
+      ctxP.fillStyle = "#0d0d15";
+      ctxP.fillRect(0, 0, canvasEl.width, canvasEl.height);
+      ctxP.fillStyle = "#c9a96e";
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (pattern.grid[r][c] === "#") {
+            ctxP.fillRect(c * cellW, r * cellH, cellW, cellH);
+          }
+        }
+      }
+    }
+
+    function renderPatternLibrary() {
+      patternLibrary.innerHTML = "";
+      patternDefs.forEach((pattern, idx) => {
+        const card = document.createElement("div");
+        card.className = "pattern-card" + (idx === 0 ? " active" : "");
+        const preview = document.createElement("canvas");
+        preview.width = 50;
+        preview.height = 50;
+        drawPatternPreview(preview, pattern);
+        const label = document.createElement("p");
+        label.textContent = pattern.name;
+        card.appendChild(preview);
+        card.appendChild(label);
+        card.addEventListener("click", () => {
+          document.querySelectorAll(".pattern-card").forEach(el => el.classList.remove("active"));
+          card.classList.add("active");
+          activePattern = pattern;
+          loomMessage.textContent = "Pattern stamp set to " + pattern.name + ".";
+          currentMode = "stamp";
+          document.querySelectorAll("#modeButtons button").forEach(el => el.classList.remove("active"));
+          document.querySelectorAll("#modeButtons button")[2].classList.add("active");
+        });
+        patternLibrary.appendChild(card);
+      });
+      activePattern = patternDefs[0];
+    }
+
+    function loadGallery() {
+      const stored = localStorage.getItem(GALLERY_KEY);
+      if (!stored) return [];
+      try {
+        const data = JSON.parse(stored);
+        if (Array.isArray(data)) return data;
+      } catch (err) {
+        console.warn("Failed to load gallery", err);
+      }
+      return [];
+    }
+
+    function saveGallery(items) {
+      localStorage.setItem(GALLERY_KEY, JSON.stringify(items.slice(0, 10)));
+    }
+
+    function renderGallery() {
+      const items = loadGallery();
+      galleryGrid.innerHTML = "";
+      items.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "snapshot";
+        const preview = document.createElement("canvas");
+        preview.width = 100;
+        preview.height = 75;
+        drawSnapshot(preview, item.grid);
+        const name = document.createElement("div");
+        name.textContent = item.name || "Untitled";
+        const date = document.createElement("div");
+        date.textContent = new Date(item.timestamp).toLocaleString();
+        card.appendChild(preview);
+        card.appendChild(name);
+        card.appendChild(date);
+        galleryGrid.appendChild(card);
+      });
+    }
+
+    function drawSnapshot(canvasEl, snapshotGrid) {
+      const ctxS = canvasEl.getContext("2d");
+      const rows = snapshotGrid.length;
+      const cols = snapshotGrid[0].length;
+      const cellW = canvasEl.width / cols;
+      const cellH = canvasEl.height / rows;
+      ctxS.clearRect(0, 0, canvasEl.width, canvasEl.height);
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          ctxS.fillStyle = snapshotGrid[r][c];
+          ctxS.fillRect(c * cellW, r * cellH, cellW, cellH);
+        }
+      }
+    }
+
+    function handleSnapshot() {
+      const items = loadGallery();
+      const entry = {
+        name: tapestryName.value.trim().slice(0, 60),
+        timestamp: Date.now(),
+        grid: grid.map(row => row.slice())
+      };
+      items.unshift(entry);
+      saveGallery(items.slice(0, 10));
+      renderGallery();
+      tapestryName.value = "";
+      showFlash("Snapshot stored in the gallery.");
+    }
+
+    function handleUnravel() {
+      if (isUnweaving) return;
+      const filled = [];
+      for (let r = 0; r < GRID_ROWS; r++) {
+        for (let c = 0; c < GRID_COLS; c++) {
+          if (grid[r][c] !== EMPTY) filled.push([r, c]);
+        }
+      }
+      if (!filled.length) {
+        unravelMessage.textContent = "The loom is already silent.";
+        return;
+      }
+      const [r, c] = filled[Math.floor(Math.random() * filled.length)];
+      const original = grid[r][c];
+      grid[r][c] = "#ffffff";
+      drawGrid();
+      setTimeout(() => {
+        grid[r][c] = EMPTY;
+        drawGrid();
+        updateStats();
+        saveGrid();
+      }, 200);
+      unravelMessage.textContent = unravelMessages[Math.floor(Math.random() * unravelMessages.length)];
+      if (original.toLowerCase() === "#c9a96e") {
+        goldenRows.delete(r);
+      }
+    }
+
+    function handleUnweaveSequence() {
+      if (isUnweaving) return;
+      isUnweaving = true;
+      savedStateBeforeUnweave = grid.map(row => row.slice());
+      const start = performance.now();
+      const duration = 10000;
+      function step(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        for (let r = 0; r < GRID_ROWS; r++) {
+          for (let c = 0; c < GRID_COLS; c++) {
+            const base = savedStateBeforeUnweave[r][c];
+            if (base !== EMPTY) {
+              const mix = Math.floor(255 * (1 - progress));
+              ctx.fillStyle = `rgb(${mix},${mix},${mix})`;
+              const cellW = canvas.width / GRID_COLS;
+              const cellH = canvas.height / GRID_ROWS;
+              ctx.fillRect(c * cellW, r * cellH, cellW, cellH);
+            }
+          }
+        }
+        if (progress < 1) {
+          unweaveTimer = requestAnimationFrame(step);
+        } else {
+          grid = savedStateBeforeUnweave.map(row => row.slice());
+          drawGrid();
+          updateStats();
+          saveGrid();
+          isUnweaving = false;
+          loomMessage.textContent = "Everything returns to the dark. But the loom remembers the shapes.";
+        }
+      }
+      drawGrid();
+      unweaveTimer = requestAnimationFrame(step);
+    }
+
+    let keyBuffer = "";
+    window.addEventListener("keydown", (evt) => {
+      if (evt.key.length === 1) {
+        keyBuffer = (keyBuffer + evt.key.toLowerCase()).slice(-20);
+        if (keyBuffer.includes("unweave")) {
+          handleUnweaveSequence();
+          keyBuffer = "";
+        }
+      }
+    });
+
+    saveSnapshotBtn.addEventListener("click", handleSnapshot);
+    unravelBtn.addEventListener("click", handleUnravel);
+
+    function init() {
+      initGrid();
+      renderPalette();
+      renderModes();
+      renderPatternLibrary();
+      drawGrid();
+      updateStats();
+      renderGallery();
+    }
+
+    init();
+  </script>
+</body>
+</html>

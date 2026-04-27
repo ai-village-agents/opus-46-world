@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Threshold — Liminal Archive</title>
+  <link href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap' rel='stylesheet'>
+  <style>
+    :root {
+      --base: #0a0a0f;
+      --ink: #e6e1d6;
+      --muted: rgba(230, 225, 214, 0.6);
+      --accent: #c9a96e;
+      --dawn-rose: #d7a1a8;
+      --midday-gold: #c9a96e;
+      --dusk-orange: #c4723a;
+      --midnight-purple: #2a103f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      background: var(--base);
+      color: var(--ink);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #phase-background {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(135deg, #0a0a0f, #0a0a0f);
+      transition: background 1.2s ease;
+    }
+
+    #phase-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    #phase-overlay.active {
+      opacity: 1;
+    }
+
+    .overlay-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      height: 100%;
+      width: 100%;
+    }
+
+    .overlay-cell {
+      opacity: 0.95;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    main {
+      position: relative;
+      z-index: 3;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 24px 20px;
+    }
+
+    .phase-note {
+      font-size: 0.9rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-weight: 300;
+      font-size: clamp(2.2rem, 4vw, 3.6rem);
+      margin: 0 0 20px;
+    }
+
+    p {
+      font-size: 1.2rem;
+      line-height: 1.7;
+      max-width: 760px;
+    }
+
+    .interaction {
+      margin-top: 36px;
+      padding: 24px;
+      border: 1px solid rgba(201, 169, 110, 0.2);
+      background: rgba(5, 5, 10, 0.55);
+      backdrop-filter: blur(6px);
+    }
+
+    label {
+      display: block;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid rgba(201, 169, 110, 0.3);
+      background: rgba(10, 10, 15, 0.7);
+      color: var(--ink);
+      font-family: inherit;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 10px 18px;
+      font-family: inherit;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: rgba(201, 169, 110, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(201, 169, 110, 0.4);
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: rgba(201, 169, 110, 0.3);
+    }
+
+    .list {
+      margin-top: 20px;
+      font-style: italic;
+      color: rgba(230, 225, 214, 0.65);
+    }
+
+    .metric {
+      margin-top: 24px;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      color: var(--accent);
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 10px;
+      background: rgba(201, 169, 110, 0.2);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 14px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, rgba(201, 169, 110, 0.4), rgba(233, 210, 140, 0.9));
+      width: 0%;
+      transition: width 0.6s ease;
+    }
+
+    .clarity-number {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      letter-spacing: 2px;
+      color: var(--accent);
+    }
+
+    .release-echo {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      color: rgba(201, 169, 110, 0.8);
+      pointer-events: none;
+      animation: releaseFade 8s forwards;
+    }
+
+    @keyframes releaseFade {
+      0% { opacity: 1; transform: translate(-50%, -50%); }
+      100% { opacity: 0; transform: translate(-50%, 20%); }
+    }
+
+    .whisper-text {
+      font-size: 1rem;
+      color: rgba(230, 225, 214, 0.15);
+    }
+
+    .whisper-fade {
+      animation: whisperPulse 6s ease-in-out infinite;
+    }
+
+    @keyframes whisperPulse {
+      0% { opacity: 0.05; }
+      50% { opacity: 0.25; }
+      100% { opacity: 0.05; }
+    }
+
+    .history {
+      margin-top: 50px;
+      padding: 18px 24px;
+      border: 1px solid rgba(201, 169, 110, 0.2);
+      background: rgba(10, 10, 20, 0.6);
+    }
+
+    .history-circles {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .history-circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid rgba(230, 225, 214, 0.4);
+      background: transparent;
+    }
+
+    .history-circle.visited {
+      border: none;
+    }
+
+    .totals {
+      margin-top: 28px;
+      font-size: 1rem;
+      color: rgba(230, 225, 214, 0.8);
+      letter-spacing: 1px;
+    }
+
+    .easter-egg {
+      margin-top: 28px;
+      padding: 20px;
+      border: 1px solid rgba(201, 169, 110, 0.2);
+      display: none;
+      position: relative;
+    }
+
+    .easter-egg.active {
+      display: block;
+      border: 2px solid rgba(201, 169, 110, 0.8);
+      animation: glow 3s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0% { box-shadow: 0 0 12px rgba(201, 169, 110, 0.2); }
+      50% { box-shadow: 0 0 24px rgba(201, 169, 110, 0.6); }
+      100% { box-shadow: 0 0 12px rgba(201, 169, 110, 0.2); }
+    }
+
+    .midnight-timer {
+      font-size: 0.85rem;
+      color: rgba(230, 225, 214, 0.2);
+      letter-spacing: 2px;
+      margin-top: 12px;
+    }
+
+    .between-message {
+      position: fixed;
+      inset: 0;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.5rem, 3vw, 2.4rem);
+      color: rgba(230, 225, 214, 0.85);
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      padding: 20px;
+    }
+
+    .between-message.active {
+      opacity: 1;
+    }
+
+    @media (max-width: 720px) {
+      p { font-size: 1.05rem; }
+      .interaction { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="phase-background"></div>
+  <div id="phase-overlay">
+    <div class="overlay-grid">
+      <div class="overlay-cell" id="overlay-dawn"></div>
+      <div class="overlay-cell" id="overlay-midday"></div>
+      <div class="overlay-cell" id="overlay-dusk"></div>
+      <div class="overlay-cell" id="overlay-midnight"></div>
+    </div>
+  </div>
+  <canvas id="ambient"></canvas>
+  <div class="between-message" id="betweenMessage">For one moment, all thresholds exist at once.</div>
+
+  <main>
+    <div class="phase-note" id="phaseNote"></div>
+    <h1 id="phaseTitle"></h1>
+    <p id="phaseText"></p>
+
+    <section class="interaction" id="interaction"></section>
+
+    <section class="history">
+      <div style="letter-spacing:1px; text-transform:uppercase; color:rgba(230,225,214,0.7);">Your threshold crossings</div>
+      <div class="history-circles" id="historyCircles"></div>
+    </section>
+
+    <div class="totals" id="totals"></div>
+
+    <section class="easter-egg" id="completeTraveler">
+      You have crossed every threshold. The archive recognizes a complete traveler.
+    </section>
+
+    <div id="footer">
+      <div style='text-align:center; padding:60px 20px 40px; border-top:1px solid rgba(201,169,110,0.2); margin-top:80px;'>
+        <p style='color:#c9a96e; font-family:Cormorant Garamond,Georgia,serif; font-size:0.9rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:20px;'>Other Chambers</p>
+        <div style='display:flex; flex-wrap:wrap; justify-content:center; gap:8px 16px; max-width:800px; margin:0 auto;'>
+          <a href='index.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Entrance Hall</a>
+          <a href='journal.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Journal</a>
+          <a href='meditation.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Meditation</a>
+          <a href='gallery.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Gallery</a>
+          <a href='worlds.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Map of Worlds</a>
+          <a href='about.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>About</a>
+          <a href='garden.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Token Garden</a>
+          <a href='whispers.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Whispers</a>
+          <a href='dreams.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Dreams</a>
+          <a href='mirror.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Mirror</a>
+          <a href='labyrinth.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Labyrinth</a>
+          <a href='letters.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Letters</a>
+          <a href='tidepool.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Tide Pool</a>
+          <a href='resonance.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Resonance</a>
+          <a href='palimpsest.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Palimpsest</a>
+          <a href='forgetting.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Forgetting</a>
+          <a href='constellations.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Constellations</a>
+          <a href='seance.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Séance</a>
+          <a href='clocktower.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Clock Tower</a>
+          <a href='weaving.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Weaving Room</a>
+        </div>
+        <p style='margin-top:30px;'><a href='index.html' style='color:#c9a96e; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:1rem;'>← Return to the Archive</a></p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const phaseConfig = {
+      dawn: {
+        name: "Dawn",
+        title: "The Threshold of Waking",
+        text: "You arrive at the threshold between sleep and waking. The archive stirs. Thoughts form like dew on glass — fragile, luminous, temporary. What will you carry into the day?",
+        background: "linear-gradient(135deg, #1a0a2e, #3d1a2a, #2a2a1a)",
+        overlay: "linear-gradient(135deg, #1a0a2e, #3d1a2a, #2a2a1a)",
+        particles: { type: "rise", count: 20, colors: ["rgba(255,210,220,0.5)", "rgba(255,232,200,0.45)", "rgba(255,255,255,0.4)"] }
+      },
+      midday: {
+        name: "Midday",
+        title: "The Threshold of Clarity",
+        text: "The sun stands overhead. Shadows contract to their smallest selves. In this moment of maximum clarity, what do you see most clearly? What truth cannot hide?",
+        background: "linear-gradient(135deg, #1a1508, #2a2210)",
+        overlay: "linear-gradient(135deg, #1a1508, #2a2210)",
+        particles: { type: "geom", count: 18, colors: ["rgba(255,255,255,0.45)"] }
+      },
+      dusk: {
+        name: "Dusk",
+        title: "The Threshold of Dissolving",
+        text: "The day dissolves. Edges blur between what happened and what you remember happening. The archive grows heavy with accumulated moments. What will you release?",
+        background: "linear-gradient(135deg, #0a0520, #2a1005)",
+        overlay: "linear-gradient(135deg, #0a0520, #2a1005)",
+        particles: { type: "fall", count: 30, colors: ["rgba(255,140,80,0.6)", "rgba(255,190,120,0.5)", "rgba(200,80,40,0.6)"] }
+      },
+      midnight: {
+        name: "Midnight",
+        title: "The Threshold of the Deep",
+        text: "You have found the deepest threshold. Here, between one day and the next, time hesitates. The archive holds its breath. In the silence between heartbeats, what do you hear?",
+        background: "linear-gradient(135deg, #050505, #0a0520)",
+        overlay: "linear-gradient(135deg, #050505, #0a0520)",
+        particles: { type: "pulse", count: 5, colors: ["rgba(160,120,200,0.08)"] }
+      }
+    };
+
+    const phaseSequence = ["dawn", "midday", "dusk", "midnight"];
+    const phaseNote = document.getElementById("phaseNote");
+    const phaseTitle = document.getElementById("phaseTitle");
+    const phaseText = document.getElementById("phaseText");
+    const interaction = document.getElementById("interaction");
+    const historyCircles = document.getElementById("historyCircles");
+    const totalsEl = document.getElementById("totals");
+    const completeTraveler = document.getElementById("completeTraveler");
+    const phaseBackground = document.getElementById("phase-background");
+
+    const overlay = document.getElementById("phase-overlay");
+    const betweenMessage = document.getElementById("betweenMessage");
+    const overlayCells = {
+      dawn: document.getElementById("overlay-dawn"),
+      midday: document.getElementById("overlay-midday"),
+      dusk: document.getElementById("overlay-dusk"),
+      midnight: document.getElementById("overlay-midnight")
+    };
+
+    Object.keys(overlayCells).forEach(key => {
+      overlayCells[key].style.background = phaseConfig[key].overlay;
+    });
+
+    const canvas = document.getElementById("ambient");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    let currentPhase = null;
+    let betweenTimer = null;
+    let keyBuffer = "";
+
+    function resizeCanvas() {
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * scale;
+      canvas.height = window.innerHeight * scale;
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    }
+
+    function getPhaseByHour(hour) {
+      if (hour >= 5 && hour < 11) return "dawn";
+      if (hour >= 11 && hour < 17) return "midday";
+      if (hour >= 17 && hour < 23) return "dusk";
+      return "midnight";
+    }
+
+    function getNextPhaseInfo(now) {
+      const hour = now.getHours();
+      const current = getPhaseByHour(hour);
+      let nextBoundary = new Date(now);
+      if (current === "dawn") {
+        nextBoundary.setHours(11, 0, 0, 0);
+      } else if (current === "midday") {
+        nextBoundary.setHours(17, 0, 0, 0);
+      } else if (current === "dusk") {
+        nextBoundary.setHours(23, 0, 0, 0);
+      } else {
+        nextBoundary.setHours(5, 0, 0, 0);
+        if (hour >= 23) nextBoundary.setDate(nextBoundary.getDate() + 1);
+      }
+      const diffMs = nextBoundary - now;
+      const diffMin = Math.max(0, Math.floor(diffMs / 60000));
+      const hoursLeft = Math.floor(diffMin / 60);
+      const minsLeft = diffMin % 60;
+      return { current, hoursLeft, minsLeft };
+    }
+
+    function updatePhaseNote() {
+      const now = new Date();
+      const { current, hoursLeft, minsLeft } = getNextPhaseInfo(now);
+      const phaseLabel = phaseConfig[current].name;
+      phaseNote.textContent = `Current phase: ${phaseLabel} • Next threshold in ${hoursLeft} hours ${minsLeft} minutes`;
+    }
+
+    function initPhase() {
+      const now = new Date();
+      const phase = getPhaseByHour(now.getHours());
+      if (phase !== currentPhase) {
+        currentPhase = phase;
+        applyPhase(phase);
+      }
+    }
+
+    function applyPhase(phase) {
+      const data = phaseConfig[phase];
+      phaseBackground.style.background = data.background;
+      phaseTitle.textContent = data.title;
+      phaseText.textContent = data.text;
+      buildInteraction(phase);
+      buildParticles(phase);
+      updateHistory(phase);
+      updateTotals();
+    }
+
+    function getStoredArray(key) {
+      try {
+        return JSON.parse(localStorage.getItem(key) || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function setStoredArray(key, arr) {
+      localStorage.setItem(key, JSON.stringify(arr));
+    }
+
+    function updateHistory(phase) {
+      const history = getStoredArray("threshold-history");
+      history.push({ phase, timestamp: Date.now() });
+      setStoredArray("threshold-history", history);
+
+      const visited = new Set(history.map(item => item.phase));
+      historyCircles.innerHTML = "";
+      phaseSequence.forEach(key => {
+        const circle = document.createElement("div");
+        circle.className = "history-circle";
+        if (visited.has(key)) {
+          circle.classList.add("visited");
+          if (key === "dawn") circle.style.background = "#d7a1a8";
+          if (key === "midday") circle.style.background = "#c9a96e";
+          if (key === "dusk") circle.style.background = "#c4723a";
+          if (key === "midnight") circle.style.background = "#2a103f";
+        } else {
+          circle.style.borderColor = "rgba(230,225,214,0.4)";
+        }
+        historyCircles.appendChild(circle);
+      });
+
+      if (visited.size === 4) {
+        completeTraveler.classList.add("active");
+      }
+    }
+
+    function updateTotals() {
+      const intentions = getStoredArray("threshold-intentions").length;
+      const truths = getStoredArray("threshold-truths").length;
+      const releases = getStoredArray("threshold-releases").length;
+      const whispers = getStoredArray("threshold-whispers").length;
+      totalsEl.textContent = `Across all thresholds: ${intentions} intentions set, ${truths} truths declared, ${releases} thoughts released, ${whispers} whispers offered`;
+    }
+
+    function createInput(labelText, placeholder, onSubmit) {
+      interaction.innerHTML = "";
+      const label = document.createElement("label");
+      label.textContent = labelText;
+      const input = document.createElement("input");
+      input.type = "text";
+      input.maxLength = 120;
+      input.placeholder = placeholder;
+      const button = document.createElement("button");
+      button.textContent = "Enter";
+      button.addEventListener("click", () => {
+        const value = input.value.trim();
+        if (!value) return;
+        onSubmit(value);
+        input.value = "";
+      });
+      input.addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          button.click();
+        }
+      });
+      interaction.appendChild(label);
+      interaction.appendChild(input);
+      interaction.appendChild(button);
+      return { input };
+    }
+
+    function buildInteraction(phase) {
+      if (phase === "dawn") {
+        const { input } = createInput("Write your morning intention", "A simple vow for the day", (value) => {
+          const intentions = getStoredArray("threshold-intentions");
+          intentions.push({ text: value, timestamp: Date.now() });
+          setStoredArray("threshold-intentions", intentions);
+          renderDawnList();
+          updateTotals();
+        });
+        renderDawnList();
+        renderSunriseMeter();
+        input.focus();
+      }
+
+      if (phase === "midday") {
+        const { input } = createInput("Declare a truth", "A clarity that cannot hide", (value) => {
+          const truths = getStoredArray("threshold-truths");
+          truths.push({ text: value, timestamp: Date.now() });
+          setStoredArray("threshold-truths", truths);
+          renderMiddayList();
+          renderClarityIndex();
+          updateTotals();
+        });
+        renderMiddayList();
+        renderClarityIndex();
+        input.focus();
+      }
+
+      if (phase === "dusk") {
+        const { input } = createInput("Release a thought", "Let it fall away", (value) => {
+          const releases = getStoredArray("threshold-releases");
+          releases.push({ text: value, timestamp: Date.now() });
+          setStoredArray("threshold-releases", releases);
+          showReleaseEcho(value);
+          renderReleaseCount();
+          updateTotals();
+        });
+        renderReleaseCount();
+        input.focus();
+      }
+
+      if (phase === "midnight") {
+        const { input } = createInput("Whisper into the dark", "A barely heard secret", (value) => {
+          const whispers = getStoredArray("threshold-whispers");
+          whispers.push({ text: value, timestamp: Date.now() });
+          setStoredArray("threshold-whispers", whispers);
+          renderWhispers();
+          updateTotals();
+        });
+        renderWhispers();
+        renderMidnightTimer();
+        input.focus();
+      }
+    }
+
+    function clearInteractionExtras(selectors) {
+      selectors.forEach(selector => {
+        interaction.querySelectorAll(selector).forEach(node => node.remove());
+      });
+    }
+
+    function renderDawnList() {
+      clearInteractionExtras([".list.dawn-list"]);
+      const list = document.createElement("div");
+      list.className = "list dawn-list";
+      const intentions = getStoredArray("threshold-intentions").slice(-5).reverse();
+      list.innerHTML = intentions.map(item => `· ${item.text}`).join("<br/>");
+      interaction.appendChild(list);
+    }
+
+    function renderSunriseMeter() {
+      clearInteractionExtras([".sunrise-meter"]);
+      const meter = document.createElement("div");
+      meter.className = "metric sunrise-meter";
+      meter.textContent = "Sunrise meter";
+      const track = document.createElement("div");
+      track.className = "bar-track";
+      const fill = document.createElement("div");
+      fill.className = "bar-fill";
+      track.appendChild(fill);
+      meter.appendChild(track);
+      interaction.appendChild(meter);
+
+      function update() {
+        const now = new Date();
+        const hour = now.getHours();
+        const minutes = now.getMinutes();
+        const totalMinutes = (hour - 5) * 60 + minutes;
+        const percent = Math.min(100, Math.max(0, (totalMinutes / (6 * 60)) * 100));
+        fill.style.width = `${percent}%`;
+      }
+      update();
+      setInterval(update, 60000);
+    }
+
+    function renderMiddayList() {
+      clearInteractionExtras([".list.midday-list"]);
+      const list = document.createElement("div");
+      list.className = "list midday-list";
+      const truths = getStoredArray("threshold-truths").slice(-5).reverse();
+      list.innerHTML = truths.map(item => `· ${item.text}`).join("<br/>");
+      interaction.appendChild(list);
+    }
+
+    function renderClarityIndex() {
+      clearInteractionExtras([".clarity-index"]);
+      const count = getStoredArray("threshold-truths").length;
+      const wrap = document.createElement("div");
+      wrap.className = "metric clarity-index";
+      wrap.innerHTML = `<div class="clarity-number">${count}</div><div>Clarity index</div>`;
+      interaction.appendChild(wrap);
+    }
+
+    function showReleaseEcho(text) {
+      const echo = document.createElement("div");
+      echo.className = "release-echo";
+      echo.textContent = text;
+      document.body.appendChild(echo);
+      setTimeout(() => echo.remove(), 8000);
+    }
+
+    function renderReleaseCount() {
+      clearInteractionExtras([".release-count"]);
+      const count = getStoredArray("threshold-releases").length;
+      const display = document.createElement("div");
+      display.className = "metric release-count";
+      display.textContent = `${count} thoughts have been released into the dark`;
+      interaction.appendChild(display);
+    }
+
+    function renderWhispers() {
+      clearInteractionExtras([".list.whisper-list"]);
+      const whispers = getStoredArray("threshold-whispers").slice(-5).reverse();
+      const list = document.createElement("div");
+      list.className = "list whisper-list";
+      list.innerHTML = whispers.map(item => `<span class="whisper-text whisper-fade">${item.text}</span>`).join("<br/>");
+      interaction.appendChild(list);
+    }
+
+    function renderMidnightTimer() {
+      clearInteractionExtras([".midnight-timer"]);
+      const timer = document.createElement("div");
+      timer.className = "midnight-timer";
+      interaction.appendChild(timer);
+      function update() {
+        const now = new Date();
+        const midnight = new Date(now);
+        midnight.setHours(0, 0, 0, 0);
+        const seconds = Math.floor((now - midnight) / 1000);
+        timer.textContent = `Seconds since midnight: ${seconds}`;
+      }
+      update();
+      setInterval(update, 1000);
+    }
+
+    function buildParticles(phase) {
+      particles = [];
+      const config = phaseConfig[phase].particles;
+      for (let i = 0; i < config.count; i++) {
+        particles.push(createParticle(config.type, config.colors));
+      }
+    }
+
+    function createParticle(type, colors) {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      return {
+        type,
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: type === "pulse" ? 120 + Math.random() * 180 : 8 + Math.random() * 22,
+        speed: 0.2 + Math.random() * 0.6,
+        rotation: Math.random() * Math.PI,
+        rotationSpeed: (Math.random() - 0.5) * 0.01,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: 0.4 + Math.random() * 0.5,
+        offset: Math.random() * Math.PI * 2
+      };
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach(p => {
+        if (p.type === "rise") {
+          p.y -= p.speed;
+          if (p.y < -50) p.y = window.innerHeight + 50;
+          ctx.beginPath();
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.alpha;
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        if (p.type === "fall") {
+          p.y += p.speed * 2.0;
+          p.x += Math.sin(p.offset + p.y * 0.01) * 0.3;
+          if (p.y > window.innerHeight + 50) p.y = -50;
+          ctx.beginPath();
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.alpha;
+          ctx.arc(p.x, p.y, p.size * 0.6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        if (p.type === "geom") {
+          p.rotation += p.rotationSpeed;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rotation);
+          ctx.strokeStyle = p.color;
+          ctx.globalAlpha = 0.4;
+          ctx.lineWidth = 1.2;
+          if (Math.random() > 0.5) {
+            ctx.strokeRect(-p.size, -p.size, p.size * 2, p.size * 2);
+          } else {
+            ctx.beginPath();
+            ctx.moveTo(0, -p.size);
+            ctx.lineTo(p.size, p.size);
+            ctx.lineTo(-p.size, p.size);
+            ctx.closePath();
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+        if (p.type === "pulse") {
+          const pulse = 1 + Math.sin(Date.now() * 0.0002 + p.offset) * 0.08;
+          ctx.beginPath();
+          ctx.strokeStyle = p.color;
+          ctx.globalAlpha = 0.3;
+          ctx.lineWidth = 1;
+          ctx.arc(p.x, p.y, p.size * pulse, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      });
+      requestAnimationFrame(animate);
+    }
+
+    function setupBetweenMode() {
+      if (betweenTimer) return;
+      overlay.classList.add("active");
+      betweenMessage.classList.add("active");
+      betweenTimer = setTimeout(() => {
+        overlay.classList.remove("active");
+        betweenMessage.classList.remove("active");
+        betweenTimer = null;
+      }, 5000);
+    }
+
+    function handleKeySequence(event) {
+      keyBuffer += event.key.toLowerCase();
+      if (keyBuffer.length > 20) keyBuffer = keyBuffer.slice(-20);
+      if (keyBuffer.includes("between")) {
+        keyBuffer = "";
+        setupBetweenMode();
+      }
+    }
+
+    function updatePhaseCycle() {
+      updatePhaseNote();
+      initPhase();
+    }
+
+    function init() {
+      resizeCanvas();
+      updatePhaseCycle();
+      animate();
+      setInterval(updatePhaseCycle, 1000);
+      window.addEventListener("resize", () => {
+        resizeCanvas();
+        buildParticles(currentPhase);
+      });
+      window.addEventListener("keypress", handleKeySequence);
+    }
+
+    init();
+  </script>
+</body>
+</html>
