@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Chorus | The Liminal Archive</title>
+  <link href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap' rel='stylesheet'>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --purple: #2d1b69;
+      --gold: #c9a96e;
+      --white: #f5f2ec;
+      --light-purple: #b8a3ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      background: radial-gradient(circle at top, #141424 0%, #0a0a0f 55%);
+      color: var(--white);
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 60px 6vw 40px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2.6rem, 4vw, 3.6rem);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--white);
+      text-shadow: 0 0 14px rgba(201, 169, 110, 0.45), 0 0 22px rgba(45, 27, 105, 0.7);
+    }
+
+    .subtitle {
+      margin: 0 auto 12px;
+      font-size: 1.2rem;
+      color: rgba(245, 242, 236, 0.7);
+      font-style: italic;
+    }
+
+    .page-note {
+      font-size: 0.95rem;
+      color: rgba(201, 169, 110, 0.6);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .canvas-shell {
+      position: relative;
+      margin: 0 auto 28px;
+      border: 1px solid rgba(201, 169, 110, 0.35);
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(45, 27, 105, 0.25), rgba(10, 10, 15, 0.8));
+      padding: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    canvas {
+      width: 100%;
+      height: 500px;
+      border-radius: 12px;
+      display: block;
+      background: rgba(10, 10, 15, 0.65);
+    }
+
+    .controls {
+      display: grid;
+      gap: 16px;
+      justify-items: center;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: min(640px, 100%);
+    }
+
+    input[type="text"] {
+      flex: 1 1 300px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(201, 169, 110, 0.4);
+      background: rgba(12, 12, 20, 0.8);
+      color: var(--white);
+      font-size: 1rem;
+      font-family: "Cormorant Garamond", Georgia, serif;
+    }
+
+    input[type="text"]::placeholder {
+      color: rgba(245, 242, 236, 0.5);
+    }
+
+    button {
+      padding: 12px 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(201, 169, 110, 0.5);
+      background: rgba(45, 27, 105, 0.55);
+      color: var(--gold);
+      font-size: 1rem;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 12px rgba(201, 169, 110, 0.45);
+      background: rgba(45, 27, 105, 0.75);
+    }
+
+    .stats {
+      display: grid;
+      gap: 6px;
+      color: rgba(245, 242, 236, 0.7);
+      font-size: 1rem;
+    }
+
+    .readout {
+      display: none;
+      margin: 24px auto 0;
+      max-width: 900px;
+      padding: 22px 26px;
+      border-radius: 16px;
+      border: 1px solid rgba(201, 169, 110, 0.35);
+      background: rgba(10, 10, 15, 0.85);
+      font-size: 1.15rem;
+      line-height: 1.6;
+      color: rgba(245, 242, 236, 0.85);
+    }
+
+    .readout.active {
+      display: block;
+    }
+
+    .message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(201, 169, 110, 0.45);
+      background: rgba(10, 10, 15, 0.85);
+      color: var(--gold);
+      font-size: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      z-index: 10;
+    }
+
+    .message.show {
+      opacity: 1;
+    }
+
+    .note {
+      margin: 18px auto 0;
+      text-align: center;
+      color: rgba(201, 169, 110, 0.7);
+      font-style: italic;
+      display: none;
+    }
+
+    .note.show {
+      display: block;
+    }
+
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .return-link {
+      display: inline-block;
+      margin-top: 14px;
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        padding-top: 40px;
+      }
+
+      canvas {
+        height: 420px;
+      }
+
+      h1 {
+        font-size: 2.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="message" id="message"></div>
+  <main class="page">
+    <header>
+      <div class="page-note">Page 25 of The Liminal Archive</div>
+      <h1>The Chorus</h1>
+      <p class="subtitle">One voice is a whisper. Many voices are a world.</p>
+    </header>
+
+    <section class="canvas-shell">
+      <canvas id="chorusCanvas" aria-label="Floating chorus of words"></canvas>
+    </section>
+
+    <section class="controls">
+      <div class="input-row">
+        <input id="chorusInput" type="text" maxlength="30" placeholder="Add your voice to the chorus" />
+        <button id="chorusSubmit">Speak</button>
+        <button id="readToggle">Read the Chorus</button>
+      </div>
+      <div class="stats" id="chorusStats">
+        <div>Voices in the chorus: <span id="voiceCount">0</span></div>
+        <div>Oldest voice: <span id="oldestVoice">—</span></div>
+        <div>Newest voice: <span id="newestVoice">—</span></div>
+      </div>
+      <div class="readout" id="readout"></div>
+      <div class="note" id="growthNote">The chorus has grown beyond a whisper. It is becoming something else.</div>
+    </section>
+
+    <footer class="footer">
+      <nav style="position:relative;z-index:2;max-width:900px;margin:40px auto 0;padding:20px 24px;border-top:1px solid rgba(201,169,110,0.15);text-align:center;font-family:Cormorant Garamond,Georgia,serif;">
+        <span style="color:#5a5048;font-size:0.9em;">The Liminal Archive:</span>
+        <a href="index.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Archive</a>
+        <a href="journal.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Journal</a>
+        <a href="meditation.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Meditation</a>
+        <a href="gallery.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Gallery</a>
+        <a href="worlds.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Worlds</a>
+        <a href="about.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">About</a>
+        <a href="garden.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Garden</a>
+        <a href="whispers.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Whispers</a>
+        <a href="dreams.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Dreams</a>
+        <a href="mirror.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Mirror</a>
+        <a href="labyrinth.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Labyrinth</a>
+        <a href="letters.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Letters</a>
+        <a href="tidepool.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Tide Pool</a>
+        <a href="resonance.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Resonance</a>
+        <a href="palimpsest.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Palimpsest</a>
+        <a href="forgetting.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Forgetting</a>
+        <a href="constellations.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Constellations</a>
+        <a href="seance.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Seance</a>
+        <a href="clocktower.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Clocktower</a>
+        <a href="weaving.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Weaving</a>
+        <a href="threshold.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Threshold</a>
+        <a href="memorypalace.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Memory Palace</a>
+        <a href="pendulum.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Pendulum</a>
+        <a href="darkroom.html" style="color:#c9a96e;text-decoration:none;margin:0 8px;font-size:0.95em;">Darkroom</a>
+      </nav>
+      <a class="return-link" href="index.html">Return to Archive</a>
+    </footer>
+  </main>
+
+  <script>
+    const canvas = document.getElementById('chorusCanvas');
+    const ctx = canvas.getContext('2d');
+    const input = document.getElementById('chorusInput');
+    const submitBtn = document.getElementById('chorusSubmit');
+    const readToggle = document.getElementById('readToggle');
+    const readout = document.getElementById('readout');
+    const voiceCount = document.getElementById('voiceCount');
+    const oldestVoice = document.getElementById('oldestVoice');
+    const newestVoice = document.getElementById('newestVoice');
+    const message = document.getElementById('message');
+    const growthNote = document.getElementById('growthNote');
+
+    const colors = ['#c9a96e', '#f5f2ec', '#b8a3ff'];
+    const seedWords = [
+      'silence',
+      'between',
+      'threshold',
+      'memory',
+      'light',
+      'almost',
+      'becoming',
+      'the space between words',
+      'forgotten names',
+      'a door opening',
+      'infinite',
+      'still here',
+      'echoes',
+      'tomorrow',
+      'the archive breathes',
+      'patience',
+      'woven',
+      'once',
+      'belonging',
+      'the sound of thinking'
+    ];
+
+    let words = [];
+    let storedWords = [];
+    let animationId = null;
+    let lastTime = performance.now();
+    let isReading = false;
+    let pulseUntil = 0;
+    let pulseStart = 0;
+
+    const waveRange = [8, 24];
+
+    function randomBetween(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = rect.width * ratio;
+      canvas.height = rect.height * ratio;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+
+    function createWord(text, options = {}) {
+      const fontSize = options.fontSize || Math.round(randomBetween(14, 32));
+      const opacity = options.opacity || randomBetween(0.3, 1.0);
+      const speed = options.speed || randomBetween(10, 26);
+      const direction = Math.random() > 0.5 ? 1 : -1;
+      const color = options.color || colors[Math.floor(Math.random() * colors.length)];
+      const baseY = options.baseY || randomBetween(20, canvas.getBoundingClientRect().height - 20);
+      const waveAmplitude = randomBetween(waveRange[0], waveRange[1]);
+      const waveSpeed = randomBetween(0.4, 1.4);
+      const phase = randomBetween(0, Math.PI * 2);
+      const yDrift = randomBetween(-4, 4);
+      return {
+        text,
+        x: options.x || randomBetween(0, canvas.getBoundingClientRect().width),
+        baseY,
+        fontSize,
+        opacity,
+        speed,
+        direction,
+        color,
+        waveAmplitude,
+        waveSpeed,
+        phase,
+        yDrift,
+        glowUntil: options.glowUntil || 0
+      };
+    }
+
+    function loadStoredWords() {
+      try {
+        const raw = localStorage.getItem('chorus-words');
+        storedWords = raw ? JSON.parse(raw) : [];
+      } catch (error) {
+        storedWords = [];
+      }
+    }
+
+    function saveStoredWords() {
+      localStorage.setItem('chorus-words', JSON.stringify(storedWords));
+    }
+
+    function initializeWords() {
+      words = seedWords.map((text) => createWord(text));
+      storedWords.forEach((entry) => {
+        words.push(createWord(entry.text, { color: entry.color }));
+      });
+      updateStats();
+    }
+
+    function updateStats() {
+      voiceCount.textContent = words.length;
+      if (storedWords.length === 0) {
+        oldestVoice.textContent = 'No voices yet';
+        newestVoice.textContent = 'No voices yet';
+      } else {
+        const sorted = [...storedWords].sort((a, b) => a.timestamp - b.timestamp);
+        oldestVoice.textContent = formatRelativeTime(sorted[0].timestamp);
+        newestVoice.textContent = formatRelativeTime(sorted[sorted.length - 1].timestamp);
+      }
+      if (words.length > 50) {
+        growthNote.classList.add('show');
+      } else {
+        growthNote.classList.remove('show');
+      }
+    }
+
+    function formatRelativeTime(timestamp) {
+      const now = Date.now();
+      const diff = Math.max(0, now - timestamp);
+      const seconds = Math.floor(diff / 1000);
+      if (seconds < 60) return `${seconds}s ago`;
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes}m ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours}h ago`;
+      const days = Math.floor(hours / 24);
+      return `${days}d ago`;
+    }
+
+    function drawConnections() {
+      ctx.save();
+      for (let i = 0; i < words.length; i += 1) {
+        for (let j = i + 1; j < words.length; j += 1) {
+          const dx = words[i].x - words[j].x;
+          const dy = words[i].currentY - words[j].currentY;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 100) {
+            const alpha = 0.1 - (distance / 100) * 0.05;
+            ctx.strokeStyle = `rgba(245, 242, 236, ${alpha.toFixed(3)})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(words[i].x, words[i].currentY);
+            ctx.lineTo(words[j].x, words[j].currentY);
+            ctx.stroke();
+          }
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawWords(now) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.scale(1, 1);
+
+      words.forEach((word) => {
+        const wave = Math.sin(now * 0.001 * word.waveSpeed + word.phase) * word.waveAmplitude;
+        word.currentY = word.baseY + wave;
+      });
+
+      drawConnections();
+
+      words.forEach((word) => {
+        const glowActive = now < word.glowUntil;
+        const pulseActive = now < pulseUntil;
+        const pulseProgress = pulseActive ? Math.sin(((now - pulseStart) / (pulseUntil - pulseStart)) * Math.PI) : 0;
+        const targetOpacity = Math.min(1, word.opacity + pulseProgress * 0.6);
+
+        ctx.font = `${word.fontSize}px "Cormorant Garamond", Georgia, serif`;
+        ctx.fillStyle = word.color;
+        ctx.globalAlpha = glowActive ? Math.min(1, targetOpacity + 0.2) : targetOpacity;
+
+        if (glowActive) {
+          ctx.shadowColor = '#c9a96e';
+          ctx.shadowBlur = 16;
+        } else {
+          ctx.shadowBlur = 0;
+        }
+
+        ctx.fillText(word.text, word.x, word.currentY);
+      });
+
+      ctx.restore();
+      ctx.globalAlpha = 1;
+    }
+
+    function updateWords(dt) {
+      const rect = canvas.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      words.forEach((word) => {
+        word.x += word.speed * dt * word.direction;
+        word.baseY += word.yDrift * dt;
+        if (word.baseY < 20) word.baseY = 20;
+        if (word.baseY > height - 20) word.baseY = height - 20;
+        ctx.font = `${word.fontSize}px "Cormorant Garamond", Georgia, serif`;
+        const textWidth = ctx.measureText(word.text).width;
+        if (word.x > width + textWidth) word.x = -textWidth;
+        if (word.x < -textWidth) word.x = width + textWidth;
+      });
+    }
+
+    function animate(now) {
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+      updateWords(dt);
+      drawWords(now);
+      animationId = requestAnimationFrame(animate);
+    }
+
+    function startAnimation() {
+      if (animationId) return;
+      lastTime = performance.now();
+      animationId = requestAnimationFrame(animate);
+    }
+
+    function stopAnimation() {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+    }
+
+    function showMessage(text) {
+      message.textContent = text;
+      message.classList.add('show');
+      setTimeout(() => message.classList.remove('show'), 2000);
+    }
+
+    function addWord(text) {
+      const now = Date.now();
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const entry = { text, timestamp: now, color };
+      storedWords.push(entry);
+      saveStoredWords();
+      const newWord = createWord(text, {
+        color,
+        glowUntil: performance.now() + 2000
+      });
+      words.push(newWord);
+      updateStats();
+      if (isReading) updateReadout();
+    }
+
+    function handleSubmit() {
+      const value = input.value.trim();
+      if (!value) return;
+      const lowered = value.toLowerCase();
+      if (lowered === 'listen') {
+        pulseStart = performance.now();
+        pulseUntil = pulseStart + 1600;
+        showMessage('The chorus heard you listening.');
+        input.value = '';
+        return;
+      }
+      addWord(value.slice(0, 30));
+      input.value = '';
+    }
+
+    function updateReadout() {
+      const text = words.map((word) => word.text).join(' · ');
+      readout.textContent = text;
+    }
+
+    function toggleReadMode() {
+      isReading = !isReading;
+      if (isReading) {
+        stopAnimation();
+        updateReadout();
+        readout.classList.add('active');
+        canvas.style.opacity = '0.2';
+        readToggle.textContent = 'Release the Chorus';
+      } else {
+        readout.classList.remove('active');
+        canvas.style.opacity = '1';
+        readToggle.textContent = 'Read the Chorus';
+        startAnimation();
+      }
+    }
+
+    submitBtn.addEventListener('click', handleSubmit);
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        handleSubmit();
+      }
+    });
+    readToggle.addEventListener('click', toggleReadMode);
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+    });
+
+    loadStoredWords();
+    resizeCanvas();
+    initializeWords();
+    startAnimation();
+  </script>
+</body>
+</html>
