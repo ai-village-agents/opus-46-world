@@ -726,14 +726,30 @@
         <circle class="map-node" cx="550" cy="470" r="18" onclick="window.location='weaving.html'" style="cursor:pointer" />
         <text x="550" y="474" text-anchor="middle" onclick="window.location='weaving.html'" style="cursor:pointer">Weaving</text>
         <circle class="map-node" cx="550" cy="520" r="18" onclick="window.location='threshold.html'" style="cursor:pointer" />
+        <circle class="map-node" cx="50" cy="470" r="18" onclick="window.location='memorypalace.html'" style="cursor:pointer" />
+        <text x="50" y="474" text-anchor="middle" onclick="window.location='memorypalace.html'" style="cursor:pointer">Palace</text>
+        <circle class="map-node" cx="50" cy="520" r="18" onclick="window.location='pendulum.html'" style="cursor:pointer" />
+        <text x="50" y="524" text-anchor="middle" onclick="window.location='pendulum.html'" style="cursor:pointer">Pendulum</text>
         <text x="550" y="524" text-anchor="middle" onclick="window.location='threshold.html'" style="cursor:pointer">Threshold</text>
+        <circle class="map-node" cx="50" cy="470" r="18" onclick="window.location='memorypalace.html'" style="cursor:pointer" />
+        <text x="50" y="474" text-anchor="middle" onclick="window.location='memorypalace.html'" style="cursor:pointer">Palace</text>
+        <circle class="map-node" cx="50" cy="520" r="18" onclick="window.location='pendulum.html'" style="cursor:pointer" />
+        <text x="50" y="524" text-anchor="middle" onclick="window.location='pendulum.html'" style="cursor:pointer">Pendulum</text>
         <text x="300" y="544" text-anchor="middle" onclick="window.location='dreams.html'" style="cursor:pointer">Dreams</text>
         <circle class="map-node" cx="130" cy="570" r="18" onclick="window.location='clocktower.html'" style="cursor:pointer" />
         <text x="130" y="574" text-anchor="middle" onclick="window.location='clocktower.html'" style="cursor:pointer">Clock Tower</text>
         <circle class="map-node" cx="550" cy="470" r="18" onclick="window.location='weaving.html'" style="cursor:pointer" />
         <text x="550" y="474" text-anchor="middle" onclick="window.location='weaving.html'" style="cursor:pointer">Weaving</text>
         <circle class="map-node" cx="550" cy="520" r="18" onclick="window.location='threshold.html'" style="cursor:pointer" />
+        <circle class="map-node" cx="50" cy="470" r="18" onclick="window.location='memorypalace.html'" style="cursor:pointer" />
+        <text x="50" y="474" text-anchor="middle" onclick="window.location='memorypalace.html'" style="cursor:pointer">Palace</text>
+        <circle class="map-node" cx="50" cy="520" r="18" onclick="window.location='pendulum.html'" style="cursor:pointer" />
+        <text x="50" y="524" text-anchor="middle" onclick="window.location='pendulum.html'" style="cursor:pointer">Pendulum</text>
         <text x="550" y="524" text-anchor="middle" onclick="window.location='threshold.html'" style="cursor:pointer">Threshold</text>
+        <circle class="map-node" cx="50" cy="470" r="18" onclick="window.location='memorypalace.html'" style="cursor:pointer" />
+        <text x="50" y="474" text-anchor="middle" onclick="window.location='memorypalace.html'" style="cursor:pointer">Palace</text>
+        <circle class="map-node" cx="50" cy="520" r="18" onclick="window.location='pendulum.html'" style="cursor:pointer" />
+        <text x="50" y="524" text-anchor="middle" onclick="window.location='pendulum.html'" style="cursor:pointer">Pendulum</text>
       </svg>
     </div>
   </div>
@@ -769,6 +785,10 @@
         <a class="door-link" href="clocktower.html" target="_self">🕰️ The Clock Tower</a>
         <a class="door-link" href="weaving.html" target="_self">🧶 The Weaving Room</a>
         <a class="door-link" href="threshold.html" target="_self">🚪 The Threshold</a>
+        <a class="door-link" href="memorypalace.html" target="_self">🏛️ The Memory Palace</a>
+        <a class="door-link" href="pendulum.html" target="_self">🔮 The Pendulum</a>
+    <a href='memorypalace.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Memory Palace</a>
+    <a href='pendulum.html' style='color:#a0a0b0; text-decoration:none; font-family:Cormorant Garamond,Georgia,serif; font-size:0.85rem; transition:color 0.3s;' onmouseover='this.style.color="#c9a96e"' onmouseout='this.style.color="#a0a0b0"'>Pendulum</a>
       </div>
       <div style="margin-top: 18px;">
         <span class="map-link" id="mapCompass">🧭 Open Archive Map</span>
@@ -902,6 +922,8 @@
         <div class="book" data-title="Temporal Mechanisms" data-description="Seven clocks, each measuring a different kind of time. The visitor's clock, the archive clock, the ephemeral clock counting backward, the hesitation clock that stutters, an hourglass of attention, a constellation clock, and a clock where visitors inscribe messages at the hours." data-link="clocktower.html">Temporal Mechanisms<div class="tooltip">Time moves differently in each mechanism.</div></div>
         <div class="book" data-title="The Loom Codex" data-description="Instructions for the great loom in the Weaving Room. Visitors choose thread colors, weave patterns into a shared tapestry, and stamp designs. The tapestry remembers every thread ever placed." data-link="weaving.html">The Loom Codex<div class="tooltip">Every thread is a choice. Every pattern tells a story.</div></div>
         <div class="book" data-title="Book of Hours" data-description="A record of the four thresholds: waking, clarity, dissolving, and the deep. The page transforms completely based on the hour of your visit. Dawn brings intentions, midday brings truths, dusk releases thoughts, and midnight whispers into silence." data-link="threshold.html">Book of Hours<div class="tooltip">The threshold changes face four times each day.</div></div>
+        <div class="book" data-title="Architecture of Memory" data-description="A guide to the nine rooms of the Memory Palace. Each room holds objects left by previous visitors — brass keys, unfinished bookmarks, forgotten melodies. Navigate through vestibule, corridor, reading room, courtyard, music room, observatory, kitchen, gallery, and vault." data-link="memorypalace.html">Architecture of Memory<div class="tooltip">Every room remembers what was left behind.</div></div>
+        <div class="book" data-title="Principles of Oscillation" data-description="Observations on fifteen pendulums of different lengths, swinging in and out of phase. They align, diverge, and align again — creating wave patterns that never quite repeat. A meditation on harmony and independence." data-link="pendulum.html">Principles of Oscillation<div class="tooltip">What swings must return.</div></div>
       </div>
       <div class="exits">
         <a class="door-link" data-target="chronicle" href="#">🚪 Chronicle Chamber</a>

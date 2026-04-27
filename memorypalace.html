@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Liminal Archive — The Memory Palace</title>
+  <link href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap' rel='stylesheet'>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --purple: #2d1b69;
+      --gold: #c9a96e;
+      --text: #ffffff;
+      --muted: #a0a0b0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 20px 60px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .room-title {
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      color: var(--gold);
+      letter-spacing: 0.02em;
+      text-align: center;
+      margin: 12px 0 18px;
+    }
+
+    .room-description {
+      max-width: 820px;
+      font-style: italic;
+      font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+      line-height: 1.6;
+      border: 1px solid #23194c;
+      padding: 18px 20px;
+      border-radius: 4px;
+      text-align: center;
+      margin-bottom: 22px;
+      background: rgba(45, 27, 105, 0.12);
+    }
+
+    .nav-doors {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .nav-doors a {
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 1.2rem;
+      letter-spacing: 0.02em;
+      padding: 6px 10px;
+      border: 1px solid rgba(201, 169, 110, 0.4);
+      border-radius: 999px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      background: rgba(201, 169, 110, 0.08);
+    }
+
+    .nav-doors a:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 12px rgba(201, 169, 110, 0.2);
+      background: rgba(201, 169, 110, 0.16);
+    }
+
+    .memory-section {
+      width: min(900px, 92vw);
+      margin: 10px auto 18px;
+      border-top: 1px solid rgba(201, 169, 110, 0.2);
+      padding-top: 16px;
+    }
+
+    .memory-section h3 {
+      margin: 0 0 8px;
+      color: var(--gold);
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .memory-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 40px;
+      margin-bottom: 14px;
+    }
+
+    .memory-item {
+      color: var(--text);
+      font-size: 1.05rem;
+    }
+
+    .memory-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .memory-form input {
+      flex: 1 1 320px;
+      max-width: 480px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(201, 169, 110, 0.35);
+      color: var(--text);
+      font-size: 1rem;
+      border-radius: 6px;
+      font-family: inherit;
+    }
+
+    .memory-form button {
+      padding: 10px 18px;
+      background: var(--purple);
+      color: var(--gold);
+      border: 1px solid rgba(201, 169, 110, 0.5);
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .memory-form button:hover {
+      box-shadow: 0 0 14px rgba(201, 169, 110, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .flash {
+      animation: flash 0.6s ease;
+    }
+
+    @keyframes flash {
+      0% { opacity: 1; }
+      50% { opacity: 0.2; }
+      100% { opacity: 1; }
+    }
+
+    .visited-counter {
+      margin-top: auto;
+      padding-top: 18px;
+      font-size: 1rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .minimap {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 200px;
+      height: 200px;
+      border: 1px solid rgba(201, 169, 110, 0.25);
+      border-radius: 8px;
+      background: rgba(45, 27, 105, 0.2);
+      padding: 6px;
+    }
+
+    .minimap svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .fade {
+      animation: fade 0.5s ease;
+    }
+
+    @keyframes fade {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .easter-egg {
+      margin-top: 16px;
+      color: var(--gold);
+      font-size: 1.2rem;
+      text-align: center;
+      padding: 10px 14px;
+      border: 1px solid rgba(201, 169, 110, 0.4);
+      border-radius: 6px;
+      animation: glow 2.5s ease-in-out infinite;
+      background: rgba(201, 169, 110, 0.08);
+    }
+
+    @keyframes glow {
+      0% { box-shadow: 0 0 6px rgba(201, 169, 110, 0.2); }
+      50% { box-shadow: 0 0 18px rgba(201, 169, 110, 0.6); }
+      100% { box-shadow: 0 0 6px rgba(201, 169, 110, 0.2); }
+    }
+
+    footer {
+      width: 100%;
+      max-width: 1000px;
+      margin: 40px auto 0;
+      text-align: center;
+      padding-top: 18px;
+      border-top: 1px solid rgba(201, 169, 110, 0.15);
+    }
+
+    footer h4 {
+      color: var(--gold);
+      font-size: 1.3rem;
+      margin: 0 0 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px 18px;
+      margin-bottom: 12px;
+    }
+
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--gold);
+    }
+
+    .return-link {
+      display: inline-block;
+      margin-top: 8px;
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 1.05rem;
+    }
+
+    @media (max-width: 700px) {
+      .minimap {
+        position: static;
+        margin: 0 auto 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page" id="page">
+    <div class="minimap" id="minimap"></div>
+
+    <h1 class="room-title" id="roomTitle"></h1>
+    <div class="room-description" id="roomDescription"></div>
+
+    <div class="nav-doors" id="navDoors"></div>
+
+    <section class="memory-section">
+      <h3>Objects left here:</h3>
+      <div class="memory-list" id="memoryList"></div>
+      <div class="memory-form">
+        <input type="text" id="memoryInput" maxlength="80" placeholder="Leave a memory object" />
+        <button id="memoryButton">Place</button>
+      </div>
+    </section>
+
+    <div id="easterEggContainer"></div>
+
+    <div class="visited-counter" id="visitedCounter"></div>
+
+    <footer>
+      <h4>Other Chambers</h4>
+      <div class="footer-links">
+        <a href="index.html">index</a>
+        <a href="journal.html">journal</a>
+        <a href="meditation.html">meditation</a>
+        <a href="gallery.html">gallery</a>
+        <a href="worlds.html">worlds</a>
+        <a href="about.html">about</a>
+        <a href="garden.html">garden</a>
+        <a href="whispers.html">whispers</a>
+        <a href="dreams.html">dreams</a>
+        <a href="mirror.html">mirror</a>
+        <a href="labyrinth.html">labyrinth</a>
+        <a href="letters.html">letters</a>
+        <a href="tidepool.html">tidepool</a>
+        <a href="resonance.html">resonance</a>
+        <a href="palimpsest.html">palimpsest</a>
+        <a href="forgetting.html">forgetting</a>
+        <a href="constellations.html">constellations</a>
+        <a href="seance.html">seance</a>
+        <a href="clocktower.html">clocktower</a>
+        <a href="weaving.html">weaving</a>
+        <a href="threshold.html">threshold</a>
+        <a href="pendulum.html">pendulum</a>
+      </div>
+      <a class="return-link" href="index.html">Return to Archive</a>
+    </footer>
+  </div>
+
+  <script>
+    const rooms = {
+      vestibule: {
+        id: 'vestibule',
+        name: 'The Vestibule',
+        description: 'A small antechamber. The air smells of dust and old paper. Three doorways lead deeper into the palace — north to a corridor of mirrors, east to a reading room, west to a garden courtyard.',
+        connections: ['corridor', 'reading', 'courtyard']
+      },
+      corridor: {
+        id: 'corridor',
+        name: 'The Corridor of Mirrors',
+        description: 'Mirrors line both walls, each reflecting a slightly different version of you. Some reflections move a half-second behind. The corridor stretches north to a music room, and south returns to the vestibule.',
+        connections: ['music', 'vestibule']
+      },
+      reading: {
+        id: 'reading',
+        name: 'The Reading Room',
+        description: 'Books are stacked everywhere — on shelves, on the floor, balanced on the arms of chairs. None have titles on their spines. A door leads north to the observatory, west to the vestibule.',
+        connections: ['observatory', 'vestibule']
+      },
+      courtyard: {
+        id: 'courtyard',
+        name: 'The Garden Courtyard',
+        description: 'Open to a sky that is always twilight. Stone paths wind between overgrown hedges. A fountain burbles quietly in the center, but the water runs upward. Doors lead east to the vestibule and north to the kitchen.',
+        connections: ['vestibule', 'kitchen']
+      },
+      music: {
+        id: 'music',
+        name: 'The Music Room',
+        description: 'A grand piano sits in the center, its keys moving by themselves — playing something almost recognizable. Sheet music covers the walls. South returns to the corridor, east leads to the observatory.',
+        connections: ['corridor', 'observatory']
+      },
+      observatory: {
+        id: 'observatory',
+        name: 'The Observatory',
+        description: 'The domed ceiling shows stars, but they move too quickly — whole constellations rising and setting in minutes. Telescopes point in every direction, including down. Doors lead south to the reading room, west to the music room, north to the vault.',
+        connections: ['reading', 'music', 'vault']
+      },
+      kitchen: {
+        id: 'kitchen',
+        name: 'The Kitchen of Lost Recipes',
+        description: 'Copper pots hang from the ceiling. The stove is warm but nothing cooks. Recipe cards flutter in a breeze from nowhere, each describing a dish that has been forgotten. South returns to the courtyard, east leads to the gallery.',
+        connections: ['courtyard', 'gallery_room']
+      },
+      gallery_room: {
+        id: 'gallery_room',
+        name: 'The Portrait Gallery',
+        description: 'Paintings of people who might have lived here once. Their eyes follow you, but kindly. Some frames are empty, waiting. West returns to the kitchen, north leads to the vault.',
+        connections: ['kitchen', 'vault']
+      },
+      vault: {
+        id: 'vault',
+        name: 'The Vault of Echoes',
+        description: 'The deepest room. Every sound made here repeats, softer each time, but never quite stops. The walls are carved with names you almost recognize. South returns to the observatory, west to the portrait gallery.',
+        connections: ['observatory', 'gallery_room']
+      }
+    };
+
+    const roomPositions = {
+      vestibule: { x: 100, y: 120 },
+      corridor: { x: 100, y: 60 },
+      reading: { x: 150, y: 120 },
+      courtyard: { x: 50, y: 120 },
+      music: { x: 70, y: 30 },
+      observatory: { x: 150, y: 60 },
+      kitchen: { x: 50, y: 170 },
+      gallery_room: { x: 100, y: 170 },
+      vault: { x: 150, y: 20 }
+    };
+
+    const seedObjects = {
+      vestibule: ['a brass key that fits no lock'],
+      reading: ['a bookmark from a book I never finished'],
+      vault: ['the sound of my own name, spoken by someone I\'ve forgotten'],
+      music: ['a melody that reminds me of rain']
+    };
+
+    const page = document.getElementById('page');
+    const roomTitle = document.getElementById('roomTitle');
+    const roomDescription = document.getElementById('roomDescription');
+    const navDoors = document.getElementById('navDoors');
+    const memoryList = document.getElementById('memoryList');
+    const memoryInput = document.getElementById('memoryInput');
+    const memoryButton = document.getElementById('memoryButton');
+    const visitedCounter = document.getElementById('visitedCounter');
+    const minimap = document.getElementById('minimap');
+    const easterEggContainer = document.getElementById('easterEggContainer');
+
+    let currentRoomId = 'vestibule';
+
+    function loadRoom(roomId) {
+      const room = rooms[roomId];
+      if (!room) return;
+      currentRoomId = roomId;
+      page.classList.remove('fade');
+      void page.offsetWidth;
+      page.classList.add('fade');
+
+      roomTitle.textContent = room.name;
+      roomDescription.textContent = room.description;
+
+      navDoors.innerHTML = '';
+      room.connections.forEach(conn => {
+        const link = document.createElement('a');
+        link.href = '#';
+        link.textContent = `→ ${rooms[conn].name}`;
+        link.addEventListener('click', (event) => {
+          event.preventDefault();
+          transitionToRoom(conn);
+        });
+        navDoors.appendChild(link);
+      });
+
+      ensureSeedObjects(roomId);
+      renderObjects(roomId);
+      trackVisited(roomId);
+      renderVisitedCounter();
+      renderMinimap();
+      renderEasterEgg();
+    }
+
+    function transitionToRoom(roomId) {
+      page.classList.remove('fade');
+      page.style.opacity = '0';
+      setTimeout(() => {
+        page.style.opacity = '1';
+        loadRoom(roomId);
+      }, 500);
+    }
+
+    function ensureSeedObjects(roomId) {
+      const key = `palace-room-${roomId}`;
+      const existing = localStorage.getItem(key);
+      if (existing) return;
+      const seeds = seedObjects[roomId] || [];
+      const payload = seeds.map(text => ({ text, timestamp: Date.now() }));
+      localStorage.setItem(key, JSON.stringify(payload));
+    }
+
+    function getObjects(roomId) {
+      const key = `palace-room-${roomId}`;
+      const stored = localStorage.getItem(key);
+      if (!stored) return [];
+      try {
+        return JSON.parse(stored) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function setObjects(roomId, objects) {
+      const key = `palace-room-${roomId}`;
+      localStorage.setItem(key, JSON.stringify(objects));
+    }
+
+    function renderObjects(roomId) {
+      const objects = getObjects(roomId);
+      memoryList.innerHTML = '';
+      if (!objects.length) {
+        const empty = document.createElement('div');
+        empty.className = 'memory-item';
+        empty.textContent = 'No objects yet.';
+        memoryList.appendChild(empty);
+        return;
+      }
+      objects.forEach(obj => {
+        const item = document.createElement('div');
+        item.className = 'memory-item';
+        item.textContent = `🏺 "${obj.text}" — left ${relativeTime(obj.timestamp)}`;
+        memoryList.appendChild(item);
+      });
+    }
+
+    function relativeTime(timestamp) {
+      const diff = Math.max(0, Date.now() - timestamp);
+      const minutes = Math.floor(diff / 60000);
+      if (minutes < 1) return 'just now';
+      if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+      const days = Math.floor(hours / 24);
+      return `${days} day${days === 1 ? '' : 's'} ago`;
+    }
+
+    function trackVisited(roomId) {
+      const key = 'palace-visited';
+      const stored = localStorage.getItem(key);
+      let visited = [];
+      if (stored) {
+        try {
+          visited = JSON.parse(stored) || [];
+        } catch {
+          visited = [];
+        }
+      }
+      if (!visited.includes(roomId)) {
+        visited.push(roomId);
+        localStorage.setItem(key, JSON.stringify(visited));
+      }
+    }
+
+    function getVisited() {
+      const stored = localStorage.getItem('palace-visited');
+      if (!stored) return [];
+      try {
+        return JSON.parse(stored) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function renderVisitedCounter() {
+      const visited = getVisited();
+      visitedCounter.textContent = `Rooms visited: ${visited.length}/9`;
+    }
+
+    function renderMinimap() {
+      const visited = getVisited();
+      const svgParts = [];
+      svgParts.push('<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">');
+
+      const drawn = new Set();
+      Object.values(rooms).forEach(room => {
+        room.connections.forEach(conn => {
+          const pair = [room.id, conn].sort().join('-');
+          if (drawn.has(pair)) return;
+          drawn.add(pair);
+          const from = roomPositions[room.id];
+          const to = roomPositions[conn];
+          svgParts.push(`<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" stroke="rgba(201,169,110,0.25)" stroke-width="1" />`);
+        });
+      });
+
+      Object.keys(rooms).forEach(id => {
+        const pos = roomPositions[id];
+        let fill = 'rgba(255,255,255,0.08)';
+        let stroke = 'rgba(255,255,255,0.08)';
+        if (id === currentRoomId) {
+          fill = '#c9a96e';
+          stroke = '#c9a96e';
+        } else if (visited.includes(id)) {
+          fill = '#2d1b69';
+          stroke = '#50308e';
+        }
+        svgParts.push(`<circle cx="${pos.x}" cy="${pos.y}" r="6" fill="${fill}" stroke="${stroke}" stroke-width="2" />`);
+      });
+
+      svgParts.push('</svg>');
+      minimap.innerHTML = svgParts.join('');
+    }
+
+    function renderEasterEgg() {
+      const visited = getVisited();
+      easterEggContainer.innerHTML = '';
+      if (currentRoomId === 'vault' && visited.length === 9) {
+        const message = document.createElement('div');
+        message.className = 'easter-egg';
+        message.textContent = 'You have walked every room of the palace. It was always your palace. It was always you.';
+        easterEggContainer.appendChild(message);
+      }
+    }
+
+    function handleMemoryPlace() {
+      const text = memoryInput.value.trim();
+      if (!text) return;
+      const objects = getObjects(currentRoomId);
+      const entry = { text, timestamp: Date.now() };
+      objects.unshift(entry);
+      setObjects(currentRoomId, objects);
+      memoryInput.value = '';
+      renderObjects(currentRoomId);
+
+      if (text.toLowerCase() === 'forget') {
+        memoryList.classList.remove('flash');
+        void memoryList.offsetWidth;
+        memoryList.classList.add('flash');
+        const notice = document.createElement('div');
+        notice.className = 'memory-item';
+        notice.textContent = 'Memory resists forgetting. The objects remain.';
+        memoryList.prepend(notice);
+        setTimeout(() => {
+          renderObjects(currentRoomId);
+        }, 900);
+      }
+    }
+
+    memoryButton.addEventListener('click', handleMemoryPlace);
+    memoryInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleMemoryPlace();
+      }
+    });
+
+    loadRoom(currentRoomId);
+  </script>
+</body>
+</html>

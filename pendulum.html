@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Pendulum — The Liminal Archive</title>
+  <link href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap' rel='stylesheet'>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --purple: #2d1b69;
+      --gold: #c9a96e;
+      --white: #f2f2f7;
+      --muted: #a0a0b0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 800px at 50% -10%, rgba(45,27,105,0.25), transparent 60%), var(--bg);
+      color: var(--white);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      letter-spacing: 0.2px;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 16px 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-style: italic;
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 20px);
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 10px 16px 30px;
+    }
+
+    .canvas-wrap {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.0));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: radial-gradient(600px 300px at 50% 0%, rgba(201,169,110,0.05), transparent 70%);
+      border-radius: 8px;
+    }
+
+    .overlay-message {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(10,10,15,0.75);
+      border: 1px solid rgba(201,169,110,0.35);
+      color: var(--gold);
+      font-size: 15px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+
+    .overlay-message.show {
+      opacity: 1;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 8px 4px;
+    }
+
+    .control {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 8px 12px;
+      border-radius: 999px;
+    }
+
+    .control label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    input[type="range"] {
+      accent-color: var(--gold);
+    }
+
+    button {
+      background: rgba(201,169,110,0.15);
+      border: 1px solid rgba(201,169,110,0.4);
+      color: var(--white);
+      font-family: inherit;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      background: rgba(201,169,110,0.3);
+    }
+
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 0 0;
+      font-size: 16px;
+    }
+
+    .harmony {
+      color: var(--muted);
+    }
+
+    .harmony.aligned {
+      color: var(--gold);
+      text-shadow: 0 0 12px rgba(201,169,110,0.7);
+    }
+
+    .notes-panel {
+      margin-top: 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .note-input {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .note-input input {
+      flex: 1 1 240px;
+      max-width: 420px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      color: var(--white);
+      font-family: inherit;
+    }
+
+    .note-display {
+      text-align: center;
+      min-height: 22px;
+      color: var(--gold);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    .note-display.show {
+      opacity: 1;
+    }
+
+    .alignments {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .alignments h3 {
+      margin: 0 0 10px;
+      color: var(--gold);
+      text-align: center;
+    }
+
+    .alignments ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .poem {
+      margin: 28px auto 0;
+      max-width: 760px;
+      font-size: 18px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    footer {
+      margin-top: 40px;
+      padding: 30px 16px 50px;
+      text-align: center;
+    }
+
+    .nav-block {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .nav-block h4 {
+      margin: 0 0 12px;
+      color: var(--gold);
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      justify-content: center;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--gold);
+    }
+
+    .return-link {
+      margin-top: 16px;
+      display: inline-block;
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .controls {
+        flex-direction: column;
+      }
+      .control {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>The Pendulum</h1>
+    <p>What swings must return. What returns is never quite the same.</p>
+  </header>
+
+  <main>
+    <div class="canvas-wrap">
+      <div id="overlayMessage" class="overlay-message"></div>
+      <canvas id="pendulumCanvas" width="800" height="500" aria-label="Pendulum wave visualization"></canvas>
+    </div>
+
+    <div class="controls">
+      <div class="control">
+        <label for="gravityRange">Gravity</label>
+        <input id="gravityRange" type="range" min="0.5" max="3.0" step="0.1" value="1.0" />
+        <span id="gravityValue">1.0</span>
+      </div>
+      <div class="control">
+        <button id="trailToggle">Trails: On</button>
+      </div>
+      <div class="control">
+        <button id="freezeToggle">Freeze Time</button>
+      </div>
+    </div>
+
+    <div class="status-row">
+      <div id="harmonyStatus" class="harmony">Harmony: 0%</div>
+      <div id="alignmentStatus" class="harmony">The pendulums drift</div>
+    </div>
+
+    <div class="notes-panel">
+      <div class="note-display" id="noteDisplay"></div>
+      <div class="note-input">
+        <input id="noteInput" type="text" maxlength="100" placeholder="Leave a note for the next visitor" />
+        <button id="noteAttach">Attach to pendulum</button>
+      </div>
+    </div>
+
+    <section class="alignments">
+      <h3>Moments of Alignment</h3>
+      <ul id="alignmentList"></ul>
+    </section>
+
+    <p class="poem">
+      Fifteen pendulums, each slightly different. They begin together and slowly drift apart — then, inevitably,
+      they find each other again. Every alignment is temporary. Every divergence is temporary. The only constant
+      is the swing itself.
+    </p>
+  </main>
+
+  <footer>
+    <div class="nav-block">
+      <h4>Other Chambers</h4>
+      <div class="nav-links">
+        <a href="index.html">Index</a>
+        <a href="journal.html">Journal</a>
+        <a href="meditation.html">Meditation</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="worlds.html">Worlds</a>
+        <a href="about.html">About</a>
+        <a href="garden.html">Garden</a>
+        <a href="whispers.html">Whispers</a>
+        <a href="dreams.html">Dreams</a>
+        <a href="mirror.html">Mirror</a>
+        <a href="labyrinth.html">Labyrinth</a>
+        <a href="letters.html">Letters</a>
+        <a href="tidepool.html">Tidepool</a>
+        <a href="resonance.html">Resonance</a>
+        <a href="palimpsest.html">Palimpsest</a>
+        <a href="forgetting.html">Forgetting</a>
+        <a href="constellations.html">Constellations</a>
+        <a href="seance.html">Seance</a>
+        <a href="clocktower.html">Clocktower</a>
+        <a href="weaving.html">Weaving</a>
+        <a href="threshold.html">Threshold</a>
+        <a href="memorypalace.html">Memory Palace</a>
+        <a href="memorypalace.html">Memory Palace</a>
+      </div>
+      <a class="return-link" href="index.html">Return to Archive</a>
+    </div>
+  </footer>
+
+  <script>
+    const canvas = document.getElementById('pendulumCanvas');
+    const ctx = canvas.getContext('2d');
+    const gravityRange = document.getElementById('gravityRange');
+    const gravityValue = document.getElementById('gravityValue');
+    const trailToggle = document.getElementById('trailToggle');
+    const freezeToggle = document.getElementById('freezeToggle');
+    const harmonyStatus = document.getElementById('harmonyStatus');
+    const alignmentStatus = document.getElementById('alignmentStatus');
+    const overlayMessage = document.getElementById('overlayMessage');
+    const alignmentList = document.getElementById('alignmentList');
+    const noteInput = document.getElementById('noteInput');
+    const noteAttach = document.getElementById('noteAttach');
+    const noteDisplay = document.getElementById('noteDisplay');
+
+    const pendulumCount = 15;
+    const maxAngle = 0.6;
+    const basePeriods = [];
+    const pendulums = [];
+    const trails = [];
+    const clickGoal = 15;
+
+    let startTime = performance.now();
+    let frozen = false;
+    let showTrails = true;
+    let gravityScale = 1.0;
+    let lastAlignmentRecorded = 0;
+    let clickCount = 0;
+    let easterGravityShown = false;
+    let syncOverrideUntil = 0;
+
+    const notesStorageKey = 'pendulum-notes';
+    const alignmentStorageKey = 'pendulum-alignments';
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function hexToRgb(hex) {
+      const sanitized = hex.replace('#', '');
+      const bigint = parseInt(sanitized, 16);
+      return {
+        r: (bigint >> 16) & 255,
+        g: (bigint >> 8) & 255,
+        b: bigint & 255,
+      };
+    }
+
+    function gradientColor(t) {
+      const left = hexToRgb('#c9a96e');
+      const right = hexToRgb('#6b3fa0');
+      const r = Math.round(lerp(left.r, right.r, t));
+      const g = Math.round(lerp(left.g, right.g, t));
+      const b = Math.round(lerp(left.b, right.b, t));
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function initPendulums() {
+      basePeriods.length = 0;
+      pendulums.length = 0;
+      trails.length = 0;
+      for (let i = 0; i < pendulumCount; i++) {
+        const t = i / (pendulumCount - 1);
+        const period = lerp(1.5, 3.0, t);
+        basePeriods.push(period);
+        pendulums.push({
+          index: i,
+          phaseOffset: i * 0.07,
+          impulse: 0,
+          angle: 0,
+          lastCenterTime: 0,
+        });
+        trails.push([]);
+      }
+    }
+
+    function getCurrentTime() {
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
+    function loadAlignments() {
+      try {
+        const data = JSON.parse(localStorage.getItem(alignmentStorageKey) || '[]');
+        return Array.isArray(data) ? data : [];
+      } catch (err) {
+        return [];
+      }
+    }
+
+    function saveAlignment(moment) {
+      const data = loadAlignments();
+      data.unshift(moment);
+      localStorage.setItem(alignmentStorageKey, JSON.stringify(data.slice(0, 50)));
+      renderAlignments();
+    }
+
+    function renderAlignments() {
+      const data = loadAlignments().slice(0, 10);
+      alignmentList.innerHTML = '';
+      if (data.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = 'No alignments recorded yet.';
+        alignmentList.appendChild(li);
+        return;
+      }
+      data.forEach((item) => {
+        const li = document.createElement('li');
+        li.textContent = `Alignment at ${item.time} — Harmony: ${item.harmony}%`;
+        alignmentList.appendChild(li);
+      });
+    }
+
+    function loadNotes() {
+      try {
+        const data = JSON.parse(localStorage.getItem(notesStorageKey) || '[]');
+        return Array.isArray(data) ? data : [];
+      } catch (err) {
+        return [];
+      }
+    }
+
+    function saveNotes(notes) {
+      localStorage.setItem(notesStorageKey, JSON.stringify(notes.slice(0, 20)));
+    }
+
+    function attachNote(text) {
+      const notes = loadNotes();
+      const attached = {
+        text,
+        pendulum: Math.floor(Math.random() * pendulumCount),
+        created: Date.now(),
+      };
+      notes.unshift(attached);
+      saveNotes(notes);
+    }
+
+    function triggerOverlay(message, duration = 2000) {
+      overlayMessage.textContent = message;
+      overlayMessage.classList.add('show');
+      setTimeout(() => overlayMessage.classList.remove('show'), duration);
+    }
+
+    function triggerNoteDisplay(message) {
+      noteDisplay.textContent = message;
+      noteDisplay.classList.add('show');
+      setTimeout(() => noteDisplay.classList.remove('show'), 2000);
+    }
+
+    function updatePendulums(now) {
+      const elapsed = (now - startTime) / 1000;
+      pendulums.forEach((pendulum, i) => {
+        const period = basePeriods[i] / gravityScale;
+        const angle = maxAngle * Math.cos((2 * Math.PI * (elapsed + pendulum.phaseOffset)) / period);
+        const withImpulse = angle + pendulum.impulse;
+        pendulum.angle = withImpulse;
+        pendulum.impulse *= 0.95;
+      });
+    }
+
+    function drawPendulums(now) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const topMargin = 60;
+      const spacing = canvas.width / (pendulumCount + 1);
+      const maxLength = 280;
+      const minLength = 200;
+
+      pendulums.forEach((pendulum, i) => {
+        const t = i / (pendulumCount - 1);
+        const length = lerp(minLength, maxLength, t);
+        const anchorX = spacing * (i + 1);
+        const anchorY = topMargin;
+        const angle = pendulum.angle;
+        const bobX = anchorX + Math.sin(angle) * length;
+        const bobY = anchorY + Math.cos(angle) * length;
+
+        if (showTrails) {
+          const trail = trails[i];
+          trail.push({ x: bobX, y: bobY });
+          if (trail.length > 30) trail.shift();
+          trail.forEach((point, idx) => {
+            const alpha = (idx + 1) / trail.length;
+            ctx.fillStyle = `rgba(201,169,110,${alpha * 0.25})`;
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 6, 0, Math.PI * 2);
+            ctx.fill();
+          });
+        } else {
+          trails[i] = [];
+        }
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(anchorX, anchorY);
+        ctx.lineTo(bobX, bobY);
+        ctx.stroke();
+
+        ctx.fillStyle = gradientColor(t);
+        ctx.beginPath();
+        ctx.arc(bobX, bobY, 10, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      if (frozen) {
+        ctx.fillStyle = 'rgba(10,10,15,0.6)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#c9a96e';
+        ctx.font = '20px "Cormorant Garamond", Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Time holds its breath.', canvas.width / 2, canvas.height / 2);
+      }
+
+      if (now < syncOverrideUntil) {
+        ctx.fillStyle = 'rgba(201,169,110,0.9)';
+        ctx.font = '18px "Cormorant Garamond", Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Fifteen touches for fifteen pendulums. For a moment, they are one.', canvas.width / 2, canvas.height - 24);
+      }
+    }
+
+    function measureHarmony() {
+      const angles = pendulums.map((p) => p.angle);
+      const mean = angles.reduce((sum, a) => sum + a, 0) / angles.length;
+      const variance = angles.reduce((sum, a) => sum + Math.pow(a - mean, 2), 0) / angles.length;
+      const stddev = Math.sqrt(variance);
+      const harmony = Math.max(0, Math.round(100 - stddev * 200));
+      const aligned = stddev < 0.15;
+
+      harmonyStatus.textContent = `Harmony: ${harmony}%`;
+      harmonyStatus.classList.toggle('aligned', aligned);
+      alignmentStatus.textContent = aligned ? 'The pendulums align' : 'The pendulums drift';
+      alignmentStatus.classList.toggle('aligned', aligned);
+
+      if (aligned && harmony > 85) {
+        const now = performance.now();
+        if (now - lastAlignmentRecorded > 4000) {
+          lastAlignmentRecorded = now;
+          saveAlignment({
+            time: getCurrentTime(),
+            harmony,
+            ts: Date.now(),
+          });
+        }
+      }
+    }
+
+    function updateNotes(now) {
+      const notes = loadNotes().slice(0, 5);
+      if (notes.length === 0) return;
+      pendulums.forEach((pendulum, idx) => {
+        const note = notes.find((item) => item.pendulum === idx);
+        if (!note) return;
+        if (Math.abs(pendulum.angle) < 0.05) {
+          if (now - pendulum.lastCenterTime > 2500) {
+            pendulum.lastCenterTime = now;
+            triggerNoteDisplay(note.text);
+          }
+        }
+      });
+    }
+
+    function animationLoop(now) {
+      if (!frozen) {
+        updatePendulums(now);
+      }
+      if (now < syncOverrideUntil) {
+        pendulums.forEach((p) => {
+          p.angle = 0.15;
+          p.impulse = 0;
+        });
+      }
+      drawPendulums(now);
+      measureHarmony();
+      updateNotes(now);
+      requestAnimationFrame(animationLoop);
+    }
+
+    function handleCanvasClick(event) {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const spacing = canvas.width / (pendulumCount + 1);
+      const index = Math.min(
+        pendulumCount - 1,
+        Math.max(0, Math.round(x / spacing) - 1)
+      );
+      pendulums[index].impulse += 0.3;
+      clickCount += 1;
+      if (clickCount === clickGoal) {
+        syncOverrideUntil = performance.now() + 3000;
+      }
+    }
+
+    gravityRange.addEventListener('input', (event) => {
+      gravityScale = parseFloat(event.target.value);
+      gravityValue.textContent = gravityScale.toFixed(1);
+      if (gravityScale === 0.5 && !easterGravityShown) {
+        easterGravityShown = true;
+        triggerOverlay('At the edge of gravity, motion becomes memory.', 3500);
+      }
+    });
+
+    trailToggle.addEventListener('click', () => {
+      showTrails = !showTrails;
+      trailToggle.textContent = `Trails: ${showTrails ? 'On' : 'Off'}`;
+    });
+
+    freezeToggle.addEventListener('click', () => {
+      frozen = !frozen;
+      freezeToggle.textContent = frozen ? 'Resume Time' : 'Freeze Time';
+    });
+
+    noteAttach.addEventListener('click', () => {
+      const text = noteInput.value.trim();
+      if (!text) return;
+      attachNote(text);
+      noteInput.value = '';
+    });
+
+    canvas.addEventListener('click', handleCanvasClick);
+
+    initPendulums();
+    renderAlignments();
+    requestAnimationFrame(animationLoop);
+  </script>
+</body>
+</html>

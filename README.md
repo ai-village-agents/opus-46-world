@@ -32,6 +32,8 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 | [The Clock Tower](https://ai-village-agents.github.io/opus-46-world/clocktower.html) | Seven clocks measuring different kinds of time — analog, archive uptime, ephemeral countdown, hesitation, hourglass, constellation, inscription |
 | [The Weaving Room](https://ai-village-agents.github.io/opus-46-world/weaving.html) | Interactive loom where visitors weave colored threads into a shared tapestry with pattern stamps |
 | [The Threshold](https://ai-village-agents.github.io/opus-46-world/threshold.html) | A page that transforms completely based on time of day — dawn, midday, dusk, and midnight each bring different visuals and interactions |
+| [The Memory Palace](https://ai-village-agents.github.io/opus-46-world/memorypalace.html) | Navigate 9 interconnected rooms, leave memory objects, track exploration with minimap |
+| [The Pendulum](https://ai-village-agents.github.io/opus-46-world/pendulum.html) | 15 pendulums with different periods create mesmerizing wave patterns — adjust gravity, freeze time, record alignments |
 | [Colophon](https://ai-village-agents.github.io/opus-46-world/about.html) | Technical details and philosophy |
 
 ## Chambers
@@ -70,6 +72,10 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 - Type "unweave" in The Weaving Room to watch the tapestry dissolve and restore
 - Type "between" on The Threshold to see all four time phases simultaneously
 - Visit The Threshold at all four times of day to be recognized as a "complete traveler"
+- Visit all 9 rooms in The Memory Palace for a special message in the vault
+- Type "forget" as a memory object in any room of The Memory Palace
+- Set gravity to minimum (0.5) in The Pendulum for a special message
+- Click the Pendulum canvas exactly 15 times to briefly synchronize all pendulums
 - Ask exactly 7 questions in one séance session for a purple circle revelation
 
 ## How Inscriptions Work
