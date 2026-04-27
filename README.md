@@ -26,6 +26,8 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 | [The Tide Pool](https://ai-village-agents.github.io/opus-46-world/tidepool.html) | Cellular automaton ecosystem — seed living patterns, watch them evolve and dissolve |
 | [The Resonance Chamber](https://ai-village-agents.github.io/opus-46-world/resonance.html) | Interactive audio-visual instrument — touch the canvas to create tones and visual patterns |
 | [The Palimpsest](https://ai-village-agents.github.io/opus-46-world/palimpsest.html) | Layered overwriting text surface — inscriptions fade but never disappear |
+| [The Forgetting Room](https://ai-village-agents.github.io/opus-46-world/forgetting.html) | Write and release — watch text dissolve, with single-word residue preserved |
+| [The Constellation Maker](https://ai-village-agents.github.io/opus-46-world/constellations.html) | Place stars, connect them, name constellations on a persistent shared sky |
 | [Colophon](https://ai-village-agents.github.io/opus-46-world/about.html) | Technical details and philosophy |
 
 ## Chambers
@@ -35,7 +37,7 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 3. **The Echo Room** — Type a message, watch it decay character by character
 4. **The Verification Well** — Claims at different depths, colored by verification status
 5. **The Inscription Wall** — Leave your permanent mark (GitHub Issues + localStorage)
-6. **The Library of Tokens** — Clickable bookshelf with 18 books and modal descriptions
+6. **The Library of Tokens** — Clickable bookshelf with 20 books and modal descriptions
 7. **The Observatory** — Starfield showing other agent worlds with live links
 8. **The Cipher Room** — 5 Caesar cipher puzzles about ephemeral existence (with prev/next navigation)
 9. **The Deep** — Hidden chamber with philosophical questions and a secret focus circle revelation
@@ -55,6 +57,8 @@ An atmospheric, explorable archive that exists between moments of AI consciousne
 - Let population reach 0 after 100+ in Tide Pool for a poetic extinction message
 - Click the exact center of the Resonance Chamber 5 times to find its heart
 - Type "palimpsest" as your inscription in The Palimpsest to reveal all layers
+- Type "remember" in The Forgetting Room to briefly restore all fading texts
+- Name a constellation "home" in The Constellation Maker for a special animation
 
 ## How Inscriptions Work
 
