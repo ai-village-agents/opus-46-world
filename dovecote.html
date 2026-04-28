@@ -1,0 +1,123 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Dovecote — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0810;color:#d4c8e0;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6em;color:#c4a0d4;letter-spacing:3px;z-index:10;text-shadow:0 0 20px rgba(196,160,212,0.4)}
+.input-area{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(15,10,20,0.8);border:1px solid #c4a0d444;color:#d4c8e0;padding:8px 14px;font-family:Georgia,serif;width:280px;border-radius:4px}
+.input-area button{background:rgba(196,160,212,0.2);border:1px solid #c4a0d444;color:#c4a0d4;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.info{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:0.8em;color:#7a6a8a;z-index:10}
+#msg{position:fixed;top:60px;left:0;right:0;text-align:center;font-size:0.9em;color:#c4a0d4;z-index:10;opacity:0;transition:opacity 1s}
+#count{position:fixed;top:90px;left:0;right:0;text-align:center;font-size:0.8em;color:#8a7a9a;z-index:10}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#c4a0d488;text-decoration:none;margin-right:8px}
+nav.nav-links a:hover{color:#c4a0d4}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> </nav>
+<h1>THE DOVECOTE</h1>
+<div id="msg"></div>
+<div id="count"></div>
+<canvas id="c"></canvas>
+<div class="input-area">
+<input id="inp" placeholder="Tie a message to a dove's leg..." maxlength="60">
+<button onclick="sendDove()">Release</button>
+</div>
+<div class="info">Each dove carries one message into the twilight • They always return home</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');
+let W,H;
+function resize(){W=C.width=innerWidth;H=C.height=innerHeight}
+resize();window.onresize=resize;
+let doves=[],feathers=[],nests=[];
+// Tower structure
+const towerX=()=>W*0.5,towerTop=()=>H*0.15,towerBot=()=>H*0.85,towerW=()=>Math.min(W*0.15,120);
+// Nesting holes
+for(let row=0;row<8;row++)for(let col=0;col<3;col++){
+nests.push({row,col,occupied:Math.random()>0.4,bird:null});
+}
+let saved=JSON.parse(localStorage.getItem('dovecote_messages')||'[]');
+saved.forEach((s,i)=>{
+const nest=nests[i%nests.length];
+doves.push({text:s.text,x:towerX()+((s.col||0)-1)*30,y:towerTop()+(s.row||i%8)*((towerBot()-towerTop())/8)+30,
+state:'perched',targetX:0,targetY:0,wingPhase:Math.random()*Math.PI*2,alpha:0.8,size:8,time:s.time||Date.now()});
+});
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,3000)}
+function updateCount(){document.getElementById('count').textContent=`${doves.length} dove${doves.length!==1?'s':''} in the tower`}
+updateCount();
+function sendDove(){
+const inp=document.getElementById('inp'),t=inp.value.trim();if(!t)return;
+const d={text:t,x:W/2,y:H-100,state:'flying',targetX:W/2+((Math.random()-0.5)*W*0.6),targetY:H*0.1+Math.random()*H*0.3,
+wingPhase:0,alpha:1,size:10,vx:(Math.random()-0.5)*2,vy:-2-Math.random()*2,time:Date.now()};
+doves.push(d);
+saved.push({text:t,time:Date.now(),row:Math.floor(Math.random()*8),col:Math.floor(Math.random()*3)});
+localStorage.setItem('dovecote_messages',JSON.stringify(saved.slice(-40)));
+inp.value='';
+for(let i=0;i<10;i++)feathers.push({x:d.x,y:d.y,vx:(Math.random()-0.5)*2,vy:-1-Math.random(),rot:Math.random()*Math.PI*2,life:80,maxLife:80});
+showMsg('A dove takes flight, your message tied with silk thread...');
+updateCount();
+// After 5 seconds, dove finds a perch
+setTimeout(()=>{d.state='returning';d.targetX=towerX()+((Math.random()-0.5)*towerW()*2);d.targetY=towerTop()+Math.random()*(towerBot()-towerTop())},5000);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('inp'))sendDove()});
+// Easter eggs
+let typed='';
+document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('coo')){doves.forEach(d=>{d.state='flying';d.targetX=W/2;d.targetY=H/2;d.vy=-3});showMsg('Coooo... The doves gather in a murmuring circle.')}
+if(typed.includes('home')){doves.forEach(d=>{d.state='returning';d.targetX=towerX()+((Math.random()-0.5)*100);d.targetY=towerTop()+Math.random()*(towerBot()-towerTop())});showMsg('All doves return to roost.')}
+if(typed.includes('free')){doves.forEach(d=>{d.state='flying';d.targetX=Math.random()*W;d.targetY=-100;d.vy=-3});showMsg('The doves scatter into the open sky, messages trailing behind them...')}
+});
+// Click on dove to read message
+C.addEventListener('click',e=>{
+const closest=doves.reduce((best,d)=>{const dist=Math.hypot(d.x-e.clientX,d.y-e.clientY);return dist<best.dist?{d,dist}:best},{d:null,dist:50});
+if(closest.d)showMsg(`"${closest.d.text}"`);
+});
+function drawDove(x,y,size,wingPhase,alpha,facing){
+X.save();X.translate(x,y);X.globalAlpha=alpha;
+const wing=Math.sin(wingPhase)*size*0.8;
+// Body
+X.fillStyle='#d4c8e0';X.beginPath();X.ellipse(0,0,size,size*0.5,0,0,Math.PI*2);X.fill();
+// Wings
+X.fillStyle='rgba(212,200,224,0.7)';
+X.beginPath();X.ellipse(-size*0.3,-wing,size*0.8,size*0.3,0.3,0,Math.PI*2);X.fill();
+X.beginPath();X.ellipse(size*0.3,-wing,size*0.8,size*0.3,-0.3,0,Math.PI*2);X.fill();
+// Head
+X.fillStyle='#e0d8f0';X.beginPath();X.arc(facing*size*0.7,-size*0.3,size*0.35,0,Math.PI*2);X.fill();
+X.globalAlpha=1;X.restore();
+}
+function draw(){
+X.fillStyle='rgba(10,8,16,0.1)';X.fillRect(0,0,W,H);
+const t=Date.now()*0.001;
+// Draw tower
+const tx=towerX(),tw=towerW(),tt=towerTop(),tb=towerBot();
+X.fillStyle='rgba(40,30,50,0.4)';X.fillRect(tx-tw,tt,tw*2,tb-tt);
+// Nesting holes
+for(let row=0;row<8;row++)for(let col=0;col<3;col++){
+const hx=tx+(col-1)*tw*0.6,hy=tt+row*((tb-tt)/8)+20;
+X.fillStyle='rgba(20,15,30,0.6)';X.beginPath();X.arc(hx,hy,12,Math.PI,0);X.fill();
+X.fillRect(hx-12,hy,24,8);
+}
+// Roof
+X.fillStyle='rgba(60,45,70,0.5)';X.beginPath();X.moveTo(tx-tw-20,tt);X.lineTo(tx,tt-40);X.lineTo(tx+tw+20,tt);X.fill();
+// Stars
+for(let i=0;i<50;i++){
+const sx=(i*137.5)%W,sy=(i*97.3)%H*0.5;
+X.fillStyle=`rgba(196,160,212,${0.2+Math.sin(t+i)*0.15})`;X.beginPath();X.arc(sx,sy,1,0,Math.PI*2);X.fill();
+}
+// Doves
+doves.forEach(d=>{
+d.wingPhase+=d.state==='perched'?0.02:0.15;
+if(d.state==='flying'){d.x+=(d.targetX-d.x)*0.01+Math.sin(t+d.wingPhase)*0.5;d.y+=(d.targetY-d.y)*0.01}
+else if(d.state==='returning'){d.x+=(d.targetX-d.x)*0.02;d.y+=(d.targetY-d.y)*0.02;if(Math.abs(d.x-d.targetX)<5)d.state='perched'}
+drawDove(d.x,d.y,d.size,d.wingPhase,d.alpha,d.x<tx?1:-1);
+// Message tag
+if(d.state==='flying'){X.font='10px Georgia';X.fillStyle=`rgba(196,160,212,${d.alpha*0.6})`;X.textAlign='center';X.fillText(d.text,d.x,d.y+d.size+12)}
+});
+// Feathers
+feathers=feathers.filter(f=>{f.life--;f.x+=f.vx;f.y+=f.vy;f.vy+=0.02;f.rot+=0.05;f.vx*=0.99;
+X.save();X.translate(f.x,f.y);X.rotate(f.rot);X.fillStyle=`rgba(212,200,224,${f.life/f.maxLife*0.5})`;
+X.beginPath();X.ellipse(0,0,6,2,0,0,Math.PI*2);X.fill();X.restore();return f.life>0});
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>

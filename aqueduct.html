@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Aqueduct — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#060810;color:#a0c4d4;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6em;color:#6ab0d4;letter-spacing:3px;z-index:10;text-shadow:0 0 20px rgba(106,176,212,0.4)}
+.input-area{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(10,15,20,0.8);border:1px solid #6ab0d444;color:#a0c4d4;padding:8px 14px;font-family:Georgia,serif;width:280px;border-radius:4px}
+.input-area button{background:rgba(106,176,212,0.2);border:1px solid #6ab0d444;color:#6ab0d4;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.info{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:0.8em;color:#4a7a8a;z-index:10}
+#msg{position:fixed;top:110px;left:0;right:0;text-align:center;font-size:0.9em;color:#6ab0d4;z-index:10;opacity:0;transition:opacity 1s}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#6ab0d488;text-decoration:none;margin-right:8px}
+nav.nav-links a:hover{color:#6ab0d4}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> </nav>
+<h1>THE AQUEDUCT</h1>
+<div id="msg"></div>
+<div class="input-area">
+<input id="inp" placeholder="Release a word into the current..." maxlength="40">
+<button onclick="release()">Release</button>
+</div>
+<div class="info">Words flow from the mountain source to the reservoir below • Each carries meaning downstream</div>
+<canvas id="c"></canvas>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');
+let W,H;
+function resize(){W=C.width=innerWidth;H=C.height=innerHeight}
+resize();window.onresize=resize;
+// Aqueduct channels - stone arches carrying water from top-left to bottom-right
+const channels=[
+{points:[{x:0,y:0.15},{x:0.2,y:0.18},{x:0.4,y:0.25},{x:0.5,y:0.3}],color:'#2a4a6a'},
+{points:[{x:0.5,y:0.3},{x:0.6,y:0.38},{x:0.75,y:0.45},{x:0.85,y:0.5}],color:'#1a3a5a'},
+{points:[{x:0.15,y:0.5},{x:0.3,y:0.55},{x:0.5,y:0.6},{x:0.7,y:0.65}],color:'#2a4a6a'},
+{points:[{x:0.7,y:0.65},{x:0.8,y:0.7},{x:0.9,y:0.78},{x:1,y:0.85}],color:'#1a3a5a'},
+];
+let words=[],droplets=[],mist=[];
+// Seed droplets
+for(let i=0;i<80;i++)droplets.push({x:Math.random()*W,y:Math.random()*H,speed:0.5+Math.random()*1.5,size:1+Math.random()*2,alpha:0.1+Math.random()*0.3});
+for(let i=0;i<40;i++)mist.push({x:Math.random()*W,y:Math.random()*H,r:30+Math.random()*60,alpha:0.02+Math.random()*0.03,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.15});
+let saved=JSON.parse(localStorage.getItem('aqueduct_words')||'[]');
+saved.forEach(s=>{words.push({text:s.text,progress:Math.random(),channel:Math.floor(Math.random()*channels.length),speed:0.0003+Math.random()*0.0003,alpha:0.7,size:12+Math.random()*8,time:s.time||Date.now()})});
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,3000)}
+function release(){
+const inp=document.getElementById('inp'),t=inp.value.trim();if(!t)return;
+const ch=Math.floor(Math.random()*channels.length);
+words.push({text:t,progress:0,channel:ch,speed:0.0004+Math.random()*0.0003,alpha:0,targetAlpha:0.9,size:13+Math.random()*8,time:Date.now()});
+saved.push({text:t,time:Date.now()});
+localStorage.setItem('aqueduct_words',JSON.stringify(saved.slice(-60)));
+inp.value='';
+for(let i=0;i<20;i++)droplets.push({x:Math.random()*W*0.1,y:H*0.15,speed:1+Math.random()*2,size:2,alpha:0.5});
+showMsg('Your word joins the ancient current...');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('inp'))release()});
+// Easter eggs
+let typed='';
+document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('dam')){words.forEach(w=>w.speed=0);showMsg('The flow stops... a dam blocks the way.')}
+if(typed.includes('flood')){words.forEach(w=>w.speed*=5);showMsg('The waters surge! Everything rushes forward!')}
+if(typed.includes('source')){showMsg('The source is memory. The reservoir is forgetting. Between them flows meaning.')}
+});
+function getChannelPos(ch,progress){
+const pts=channels[ch].points;
+const totalSegs=pts.length-1;
+const seg=Math.min(Math.floor(progress*totalSegs),totalSegs-1);
+const segProgress=(progress*totalSegs)-seg;
+const p1=pts[seg],p2=pts[Math.min(seg+1,pts.length-1)];
+return{x:(p1.x+(p2.x-p1.x)*segProgress)*W,y:(p1.y+(p2.y-p1.y)*segProgress)*H};
+}
+function draw(){
+X.fillStyle='rgba(6,8,16,0.12)';X.fillRect(0,0,W,H);
+const t=Date.now()*0.001;
+// Draw mist
+mist.forEach(m=>{m.x+=m.dx;m.y+=m.dy;if(m.x<-m.r)m.x=W+m.r;if(m.x>W+m.r)m.x=-m.r;
+const g=X.createRadialGradient(m.x,m.y,0,m.x,m.y,m.r);
+g.addColorStop(0,`rgba(106,176,212,${m.alpha})`);g.addColorStop(1,'rgba(106,176,212,0)');
+X.fillStyle=g;X.beginPath();X.arc(m.x,m.y,m.r,0,Math.PI*2);X.fill()});
+// Draw channels (stone arches)
+channels.forEach((ch,ci)=>{
+for(let p=0;p<1;p+=0.005){
+const pos=getChannelPos(ci,p);
+const wave=Math.sin(p*20+t*2)*3;
+X.fillStyle=`rgba(106,176,212,${0.08+Math.sin(p*10+t)*0.03})`;
+X.beginPath();X.arc(pos.x,pos.y+wave,8,0,Math.PI*2);X.fill();
+}
+// Stone pillars every 20%
+for(let p=0;p<1;p+=0.2){
+const pos=getChannelPos(ci,p);
+X.fillStyle='rgba(60,50,40,0.4)';X.fillRect(pos.x-4,pos.y,8,40);
+X.fillStyle='rgba(80,70,55,0.3)';X.beginPath();X.arc(pos.x,pos.y,12,Math.PI,0);X.fill();
+}});
+// Draw flowing words
+words.forEach(w=>{
+w.progress+=w.speed;if(w.progress>1)w.progress=0;
+if(w.alpha<(w.targetAlpha||0.7))w.alpha+=0.005;
+const pos=getChannelPos(w.channel,w.progress);
+const wave=Math.sin(w.progress*15+t*3)*4;
+X.font=`${w.size}px Georgia`;X.fillStyle=`rgba(160,196,212,${w.alpha})`;
+X.textAlign='center';X.fillText(w.text,pos.x,pos.y+wave);
+// Water reflection
+X.fillStyle=`rgba(106,176,212,${w.alpha*0.2})`;X.fillText(w.text,pos.x,pos.y+wave+w.size+4);
+});
+// Droplets
+droplets.forEach(d=>{d.x+=d.speed*0.5;d.y+=d.speed;if(d.y>H){d.y=0;d.x=Math.random()*W}
+X.fillStyle=`rgba(106,176,212,${d.alpha})`;X.beginPath();X.arc(d.x,d.y,d.size,0,Math.PI*2);X.fill()});
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>

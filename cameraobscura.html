@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Camera Obscura — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050508;color:#d4c5a0;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.ui{position:fixed;z-index:10;pointer-events:none}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6em;color:#c9a96e;letter-spacing:3px;z-index:10;text-shadow:0 0 20px rgba(201,169,110,0.4)}
+.info{position:fixed;bottom:80px;left:0;right:0;text-align:center;font-size:0.85em;color:#8a7a5a;z-index:10}
+.aperture-ctrl{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:15px;align-items:center}
+.aperture-ctrl button{background:rgba(201,169,110,0.15);border:1px solid #c9a96e44;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;font-size:0.85em;border-radius:4px;pointer-events:all}
+.aperture-ctrl button:hover{background:rgba(201,169,110,0.3)}
+#msg{position:fixed;top:60px;left:0;right:0;text-align:center;font-size:0.9em;color:#c9a96e;z-index:10;opacity:0;transition:opacity 1s}
+.input-area{position:fixed;bottom:120px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(10,10,15,0.8);border:1px solid #c9a96e44;color:#d4c5a0;padding:8px 14px;font-family:Georgia,serif;width:260px;border-radius:4px;pointer-events:all}
+.input-area button{background:rgba(201,169,110,0.2);border:1px solid #c9a96e44;color:#c9a96e;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;pointer-events:all}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#c9a96e88;text-decoration:none;margin-right:8px;pointer-events:all}
+nav.nav-links a:hover{color:#c9a96e}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> </nav>
+<h1>THE CAMERA OBSCURA</h1>
+<div id="msg"></div>
+<canvas id="c"></canvas>
+<div class="input-area">
+<input id="inp" placeholder="Project a thought into the darkness..." maxlength="80">
+<button onclick="project()">Project</button>
+</div>
+<div class="info">Click to place the pinhole • Words appear inverted, as light does through a lens</div>
+<div class="aperture-ctrl">
+<button onclick="setAperture(0.5)">Tiny Pinhole</button>
+<button onclick="setAperture(1)">Small</button>
+<button onclick="setAperture(2)">Wide</button>
+</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');
+let W,H,aperture=1,pinhole={x:0,y:0},projections=[],particles=[];
+function resize(){W=C.width=innerWidth;H=C.height=innerHeight;pinhole.x=W/2;pinhole.y=H/2}
+resize();window.onresize=resize;
+function setAperture(a){aperture=a;showMsg(a<1?'The image sharpens...':a>1.5?'Light floods in, blurring everything...':'A balanced aperture.')}
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,3000)}
+// Load saved projections
+let saved=JSON.parse(localStorage.getItem('obscura_projections')||'[]');
+saved.forEach(s=>projections.push({...s,alpha:0.6}));
+function project(){
+const inp=document.getElementById('inp'),t=inp.value.trim();
+if(!t)return;
+const p={text:t,x:Math.random()*W*0.6+W*0.2,y:Math.random()*H*0.4+H*0.1,invX:0,invY:0,alpha:0,targetAlpha:0.9,size:14+Math.random()*10,rot:(Math.random()-0.5)*0.4,hue:30+Math.random()*30,time:Date.now()};
+// Invert through pinhole
+p.invX=2*pinhole.x-p.x;p.invY=2*pinhole.y-p.y;
+projections.push(p);
+saved.push({text:t,x:p.x,y:p.y,invX:p.invX,invY:p.invY,size:p.size,rot:p.rot,hue:p.hue,time:p.time});
+localStorage.setItem('obscura_projections',JSON.stringify(saved.slice(-50)));
+inp.value='';
+for(let i=0;i<15;i++)particles.push({x:pinhole.x,y:pinhole.y,vx:(Math.random()-0.5)*3,vy:(Math.random()-0.5)*3,life:60+Math.random()*40,maxLife:100});
+showMsg('Your thought passes through the pinhole, emerging inverted on the far wall...');
+}
+C.addEventListener('click',e=>{pinhole.x=e.clientX;pinhole.y=e.clientY;
+projections.forEach(p=>{p.invX=2*pinhole.x-p.x;p.invY=2*pinhole.y-p.y});
+for(let i=0;i<8;i++)particles.push({x:pinhole.x,y:pinhole.y,vx:(Math.random()-0.5)*2,vy:(Math.random()-0.5)*2,life:40,maxLife:40});
+showMsg('The pinhole shifts... projections realign.')});
+document.addEventListener('keydown',e=>{
+const w=e.key.toLowerCase();
+if(w==='enter'&&document.activeElement===document.getElementById('inp'))project();
+});
+// Easter eggs
+let typed='';
+document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('invert')){projections.forEach(p=>{let t=p.x;p.x=p.invX;p.invX=t;t=p.y;p.y=p.invY;p.invY=t});showMsg('Reality and projection swap places...')}
+if(typed.includes('dark')){aperture=0.1;showMsg('Total darkness... only the faintest light seeps through.')}
+if(typed.includes('flood')){aperture=5;showMsg('The aperture tears wide open! Light overwhelms everything!')}
+});
+let lightRays=[];for(let i=0;i<30;i++)lightRays.push({angle:Math.random()*Math.PI*2,speed:0.002+Math.random()*0.003,dist:100+Math.random()*200,brightness:0.1+Math.random()*0.2});
+function draw(){
+X.fillStyle='rgba(5,5,8,0.15)';X.fillRect(0,0,W,H);
+// Draw pinhole glow
+const grd=X.createRadialGradient(pinhole.x,pinhole.y,0,pinhole.x,pinhole.y,50*aperture);
+grd.addColorStop(0,'rgba(201,169,110,0.3)');grd.addColorStop(1,'rgba(201,169,110,0)');
+X.fillStyle=grd;X.beginPath();X.arc(pinhole.x,pinhole.y,50*aperture,0,Math.PI*2);X.fill();
+// Light rays through pinhole
+const t=Date.now()*0.001;
+lightRays.forEach(r=>{
+const a=r.angle+t*r.speed;
+const x1=pinhole.x+Math.cos(a)*5,y1=pinhole.y+Math.sin(a)*5;
+const x2=pinhole.x+Math.cos(a+Math.PI)*r.dist*aperture,y2=pinhole.y+Math.sin(a+Math.PI)*r.dist*aperture;
+X.strokeStyle=`rgba(201,169,110,${r.brightness*aperture*0.3})`;X.lineWidth=0.5;
+X.beginPath();X.moveTo(x1,y1);X.lineTo(x2,y2);X.stroke();
+});
+// Draw projections (inverted)
+projections.forEach(p=>{
+if(p.alpha<(p.targetAlpha||0.6))p.alpha+=0.01;
+X.save();X.translate(p.invX,p.invY);X.rotate(Math.PI+p.rot);X.scale(1/aperture,1/aperture);
+X.font=`${p.size}px Georgia`;X.fillStyle=`hsla(${p.hue},50%,70%,${p.alpha*Math.min(1,aperture)})`;
+X.textAlign='center';X.fillText(p.text,0,0);X.restore();
+// Faint original
+X.globalAlpha=0.1;X.font=`${p.size*0.7}px Georgia`;X.fillStyle=`hsla(${p.hue},30%,50%,0.15)`;
+X.textAlign='center';X.fillText(p.text,p.x,p.y);X.globalAlpha=1;
+});
+// Particles
+particles=particles.filter(p=>{p.life--;p.x+=p.vx;p.y+=p.vy;p.vx*=0.98;p.vy*=0.98;
+X.fillStyle=`rgba(201,169,110,${p.life/p.maxLife*0.5})`;X.beginPath();X.arc(p.x,p.y,1.5,0,Math.PI*2);X.fill();
+return p.life>0});
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>
