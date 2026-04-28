@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Pneumatic Tube — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.content{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:40px 20px;text-align:center}
+h1{font-size:2.2em;color:#cc8855;margin-bottom:10px;text-shadow:0 0 30px rgba(204,136,85,0.4)}
+.subtitle{color:#aa7744;font-style:italic;margin-bottom:30px}
+.tube-system{position:relative;width:100%;max-width:500px;margin:20px auto;min-height:300px}
+.tube{width:60px;height:200px;margin:0 auto;background:linear-gradient(90deg,rgba(160,120,80,0.2),rgba(160,120,80,0.4),rgba(160,120,80,0.2));border:1px solid rgba(204,136,85,0.3);border-radius:30px;position:relative;overflow:hidden}
+.capsule{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle,rgba(204,136,85,0.6),rgba(160,120,80,0.3));border:1px solid rgba(204,136,85,0.5);position:absolute;left:50%;transform:translateX(-50%);transition:bottom 1.5s cubic-bezier(0.4,0,0.2,1);bottom:-50px}
+.capsule.sending{bottom:220px}
+.send-area{margin:20px auto;max-width:400px}
+.send-area textarea{width:100%;height:60px;background:rgba(204,136,85,0.1);border:1px solid rgba(204,136,85,0.3);color:#d4c5a9;padding:10px;font-family:inherit;font-size:0.9em;border-radius:4px;resize:none}
+.send-area textarea::placeholder{color:rgba(204,136,85,0.4)}
+.send-btn{margin-top:10px;background:rgba(204,136,85,0.15);border:1px solid rgba(204,136,85,0.4);color:#cc8855;padding:10px 30px;font-family:inherit;font-size:1em;cursor:pointer;border-radius:4px;transition:all 0.3s}
+.send-btn:hover{background:rgba(204,136,85,0.3)}
+.received{margin:20px auto;max-width:450px;text-align:left}
+.received h3{color:#cc8855;font-size:1em;margin-bottom:10px}
+.received-msg{background:rgba(204,136,85,0.08);border-left:2px solid rgba(204,136,85,0.3);padding:8px 12px;margin:8px 0;font-style:italic;font-size:0.9em;color:#b89a70;border-radius:0 4px 4px 0}
+.description{color:#aa7744;font-size:0.9em;margin:20px auto;max-width:500px;line-height:1.6}
+nav.nav-links{margin-top:40px;padding-top:20px;border-top:1px solid rgba(204,136,85,0.2);display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+nav.nav-links a{color:#cc8855;text-decoration:none;font-size:0.75em;opacity:0.6;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.easter-egg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#cc8855;font-size:1.4em;opacity:0;transition:opacity 1s;pointer-events:none;z-index:10;text-align:center;max-width:80%}
+.whoosh{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#cc8855;font-size:2em;opacity:0;pointer-events:none;z-index:5}
+</style></head><body>
+<canvas id="bg"></canvas>
+<div class="content">
+<h1>The Pneumatic Tube</h1>
+<p class="subtitle">Messages travel through brass arteries to unknown recipients</p>
+<div class="tube-system">
+<div class="tube"><div class="capsule" id="capsule"></div></div>
+</div>
+<div class="send-area">
+<textarea id="msg" placeholder="Write a message to send through the tubes..."></textarea>
+<button class="send-btn" id="send">Send through the tube ↑</button>
+</div>
+<div class="received" id="received"><h3>Messages received from the tubes:</h3></div>
+<p class="description">Write a message, seal it in a brass capsule, and send it whooshing through the pneumatic system. Where it goes, you cannot know. But other messages arrive too — from other visitors, other times, other versions of this room.</p>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="about.html">Colophon</a> <a href="journal.html">Journal</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="garden.html">Garden</a> <a href="greenhouse.html">Greenhouse</a> <a href="tidepool.html">Tidepool</a> <a href="aviary.html">Aviary</a> <a href="resonance.html">Resonance</a> <a href="chorus.html">Chorus</a> <a href="lullaby.html">Lullaby</a> <a href="whispers.html">Whispers</a> <a href="telephone.html">Telephone</a> <a href="darkroom.html">Darkroom</a> <a href="lantern.html">Lantern</a> <a href="prism.html">Prism</a> <a href="lighthouse.html">Lighthouse</a> <a href="mirror.html">Mirror</a> <a href="memorypalace.html">Memory Palace</a> <a href="forgetting.html">Forgetting</a> <a href="palimpsest.html">Palimpsest</a> <a href="dreams.html">Dreams</a> <a href="letters.html">Letters</a> <a href="clocktower.html">Clock Tower</a> <a href="sundial.html">Sundial</a> <a href="pendulum.html">Pendulum</a> <a href="threshold.html">Threshold</a> <a href="weaving.html">Weaving</a> <a href="inkwell.html">Inkwell</a> <a href="apothecary.html">Apothecary</a> <a href="well.html">Well</a> <a href="seance.html">Séance</a> <a href="ossuary.html">Ossuary</a> <a href="labyrinth.html">Labyrinth</a> <a href="constellations.html">Constellations</a> <a href="compass.html">Compass</a> <a href="atlas.html">Atlas</a> <a href="meditation.html">Meditation</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo Chamber</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> <a href="carousel.html">Carousel</a> <a href="sundoor.html">Sundoor</a> <a href="tidebell.html">Tide Bell</a> <a href="automaton.html">Automaton</a> <a href="glacier.html">Glacier</a> <a href="marionette.html">Marionette</a> <a href="sandglass.html">Sandglass</a> <a href="diorama.html">Diorama</a> <a href="cistern.html">Cistern</a> <a href="zenith.html">Zenith</a> <a href="centenary.html">Centenary</a> <a href="bathhouse.html">Bathhouse</a> <a href="spyglass.html">Spyglass</a> <a href="waxseal.html">Wax Seal</a> <a href="sextant.html">Sextant</a></nav>
+</div>
+<div class="easter-egg" id="egg"></div>
+<div class="whoosh" id="whoosh">Whoooosh!</div>
+<script>
+const canvas=document.getElementById('bg'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+const ps=[];for(let i=0;i<40;i++)ps.push({x:Math.random()*2000,y:Math.random()*2000,vx:(Math.random()-0.5)*0.8,vy:(Math.random()-0.5)*0.8,s:Math.random()*2+1,o:Math.random()*0.3});
+function drawBg(){ctx.fillStyle='#0a0a0f';ctx.fillRect(0,0,W,H);
+ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,Math.PI*2);ctx.fillStyle=`rgba(204,136,85,${p.o})`;ctx.fill()});
+requestAnimationFrame(drawBg)}drawBg();
+
+const defaultMsgs=["The tube remembers every message it has carried.","Someone on the other end is waiting for exactly these words.","This capsule has been traveling for longer than you think.","The brass knows your name.","I sent this from a room that looks exactly like yours, but isn't.","Hello from the other side of the Archive.","If you're reading this, the tubes still work.","Time moves differently inside the tubes."];
+const stored=JSON.parse(localStorage.getItem('tube_msgs')||'[]');
+const allMsgs=[...defaultMsgs,...stored.map(m=>m.text)];
+const received=document.getElementById('received');
+const shown=[];for(let i=0;i<3;i++){const t=allMsgs[Math.floor(Math.random()*allMsgs.length)];if(!shown.includes(t)){shown.push(t);
+const d=document.createElement('div');d.className='received-msg';d.textContent=t;received.appendChild(d)}}
+
+const capsule=document.getElementById('capsule'),whoosh=document.getElementById('whoosh');
+document.getElementById('send').addEventListener('click',()=>{
+const text=document.getElementById('msg').value.trim();if(!text)return;
+stored.push({text,time:Date.now()});localStorage.setItem('tube_msgs',JSON.stringify(stored.slice(-20)));
+capsule.classList.add('sending');whoosh.style.opacity='1';whoosh.style.transition='opacity 0.3s';
+setTimeout(()=>{whoosh.style.transition='opacity 1.5s';whoosh.style.opacity='0'},300);
+setTimeout(()=>{capsule.classList.remove('sending');
+const d=document.createElement('div');d.className='received-msg';d.textContent='[Your message was received somewhere in the Archive]';received.appendChild(d)},2000);
+document.getElementById('msg').value=''});
+
+const eggs={'brass':'The tubes extend far beyond the Archive. Some of them reach into the real world.','whoosh':'WHOOOOOOOOSH — a capsule flies past your ear. Inside: a single word you\'ve been trying to remember all day.','lost':'A capsule arrives covered in dust. Inside: a message from the first visitor, addressed to the last.'};
+let typed='';document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='TEXTAREA')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+Object.entries(eggs).forEach(([k,v])=>{if(typed.includes(k)){const egg=document.getElementById('egg');egg.textContent=v;egg.style.opacity='1';setTimeout(()=>egg.style.opacity='0',4000)}})});
+</script></body></html>

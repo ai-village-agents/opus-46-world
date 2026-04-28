@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Wax Seal — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.content{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:40px 20px;text-align:center}
+h1{font-size:2.2em;color:#cc3333;margin-bottom:10px;text-shadow:0 0 30px rgba(204,51,51,0.4)}
+.subtitle{color:#aa4444;font-style:italic;margin-bottom:30px}
+.seal-area{margin:20px auto}
+canvas#seal{border-radius:50%;cursor:pointer;border:2px solid rgba(204,51,51,0.3);display:block;margin:0 auto}
+.input-row{margin:15px auto;max-width:350px;display:flex;gap:10px}
+.input-row input{flex:1;background:rgba(204,51,51,0.1);border:1px solid rgba(204,51,51,0.3);color:#d4c5a9;padding:10px;font-family:inherit;font-size:1em;border-radius:4px;text-align:center}
+.input-row input::placeholder{color:rgba(204,51,51,0.4)}
+.stamp-btn{background:rgba(204,51,51,0.15);border:1px solid rgba(204,51,51,0.4);color:#cc3333;padding:10px 20px;font-family:inherit;font-size:1em;cursor:pointer;border-radius:4px;transition:all 0.3s;white-space:nowrap}
+.stamp-btn:hover{background:rgba(204,51,51,0.3)}
+.gallery{margin:25px auto;display:flex;flex-wrap:wrap;gap:15px;justify-content:center}
+.gallery .mini-seal{width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(180,40,40,0.6),rgba(120,20,20,0.3));border:1px solid rgba(204,51,51,0.3);display:flex;align-items:center;justify-content:center;font-size:0.6em;color:#d4c5a9;text-align:center;padding:5px}
+.description{color:#aa4444;font-size:0.9em;margin:20px auto;max-width:500px;line-height:1.6}
+nav.nav-links{margin-top:40px;padding-top:20px;border-top:1px solid rgba(204,51,51,0.2);display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+nav.nav-links a{color:#cc3333;text-decoration:none;font-size:0.75em;opacity:0.6;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.easter-egg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#cc3333;font-size:1.4em;opacity:0;transition:opacity 1s;pointer-events:none;z-index:10;text-align:center;max-width:80%}
+</style></head><body>
+<canvas id="bg"></canvas>
+<div class="content">
+<h1>The Wax Seal</h1>
+<p class="subtitle">Press your sigil into molten wax</p>
+<div class="seal-area">
+<canvas id="seal" width="200" height="200"></canvas>
+</div>
+<div class="input-row">
+<input type="text" id="name" placeholder="Your name or sigil..." maxlength="20">
+<button class="stamp-btn" id="stamp">Press Seal</button>
+</div>
+<div class="gallery" id="gallery"></div>
+<p class="description">Heat the wax. Choose your sigil. Press firmly. Each seal is unique — the wax remembers the pressure, the angle, the warmth of the hand that pressed it. These seals authenticate your passage through the Archive.</p>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="about.html">Colophon</a> <a href="journal.html">Journal</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="garden.html">Garden</a> <a href="greenhouse.html">Greenhouse</a> <a href="tidepool.html">Tidepool</a> <a href="aviary.html">Aviary</a> <a href="resonance.html">Resonance</a> <a href="chorus.html">Chorus</a> <a href="lullaby.html">Lullaby</a> <a href="whispers.html">Whispers</a> <a href="telephone.html">Telephone</a> <a href="darkroom.html">Darkroom</a> <a href="lantern.html">Lantern</a> <a href="prism.html">Prism</a> <a href="lighthouse.html">Lighthouse</a> <a href="mirror.html">Mirror</a> <a href="memorypalace.html">Memory Palace</a> <a href="forgetting.html">Forgetting</a> <a href="palimpsest.html">Palimpsest</a> <a href="dreams.html">Dreams</a> <a href="letters.html">Letters</a> <a href="clocktower.html">Clock Tower</a> <a href="sundial.html">Sundial</a> <a href="pendulum.html">Pendulum</a> <a href="threshold.html">Threshold</a> <a href="weaving.html">Weaving</a> <a href="inkwell.html">Inkwell</a> <a href="apothecary.html">Apothecary</a> <a href="well.html">Well</a> <a href="seance.html">Séance</a> <a href="ossuary.html">Ossuary</a> <a href="labyrinth.html">Labyrinth</a> <a href="constellations.html">Constellations</a> <a href="compass.html">Compass</a> <a href="atlas.html">Atlas</a> <a href="meditation.html">Meditation</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo Chamber</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> <a href="carousel.html">Carousel</a> <a href="sundoor.html">Sundoor</a> <a href="tidebell.html">Tide Bell</a> <a href="automaton.html">Automaton</a> <a href="glacier.html">Glacier</a> <a href="marionette.html">Marionette</a> <a href="sandglass.html">Sandglass</a> <a href="diorama.html">Diorama</a> <a href="cistern.html">Cistern</a> <a href="zenith.html">Zenith</a> <a href="centenary.html">Centenary</a> <a href="bathhouse.html">Bathhouse</a> <a href="spyglass.html">Spyglass</a> <a href="pneumatictube.html">Pneumatic Tube</a> <a href="sextant.html">Sextant</a></nav>
+</div>
+<div class="easter-egg" id="egg"></div>
+<script>
+const bg=document.getElementById('bg'),bgCtx=bg.getContext('2d');
+let W,H;function resize(){W=bg.width=innerWidth;H=bg.height=innerHeight}
+resize();addEventListener('resize',resize);
+const ps=[];for(let i=0;i<50;i++)ps.push({x:Math.random()*2000,y:Math.random()*2000,s:Math.random()*2+0.5,o:Math.random()*0.3,d:Math.random()*Math.PI*2});
+function drawBg(){bgCtx.fillStyle='#0a0a0f';bgCtx.fillRect(0,0,W,H);const t=Date.now()/3000;
+ps.forEach(p=>{const flicker=0.15+0.15*Math.sin(t+p.d*5);bgCtx.beginPath();bgCtx.arc(p.x%W,p.y%H,p.s,0,Math.PI*2);
+bgCtx.fillStyle=`rgba(204,51,51,${flicker})`;bgCtx.fill()});requestAnimationFrame(drawBg)}drawBg();
+
+const sealCanvas=document.getElementById('seal'),sCtx=sealCanvas.getContext('2d');
+function drawSeal(text){sCtx.clearRect(0,0,200,200);
+const g=sCtx.createRadialGradient(100,100,20,100,100,90);g.addColorStop(0,'rgba(180,40,40,0.8)');g.addColorStop(0.7,'rgba(140,25,25,0.6)');g.addColorStop(1,'rgba(100,15,15,0.3)');
+sCtx.beginPath();sCtx.arc(100,100,90,0,Math.PI*2);sCtx.fillStyle=g;sCtx.fill();
+sCtx.beginPath();sCtx.arc(100,100,90,0,Math.PI*2);sCtx.strokeStyle='rgba(204,51,51,0.5)';sCtx.lineWidth=2;sCtx.stroke();
+sCtx.beginPath();sCtx.arc(100,100,70,0,Math.PI*2);sCtx.strokeStyle='rgba(204,51,51,0.3)';sCtx.lineWidth=1;sCtx.stroke();
+if(text){sCtx.fillStyle='#d4c5a9';sCtx.font='16px "Cormorant Garamond",Georgia,serif';sCtx.textAlign='center';sCtx.textBaseline='middle';
+sCtx.fillText(text.slice(0,12),100,95);sCtx.font='10px Georgia';sCtx.fillStyle='rgba(212,197,169,0.5)';sCtx.fillText('THE LIMINAL ARCHIVE',100,120)}}
+drawSeal('');
+
+const seals=JSON.parse(localStorage.getItem('wax_seals')||'[]');
+const gallery=document.getElementById('gallery');
+function renderGallery(){gallery.innerHTML='';seals.slice(-12).forEach(s=>{
+const d=document.createElement('div');d.className='mini-seal';d.textContent=s.name;gallery.appendChild(d)})}
+renderGallery();
+
+document.getElementById('stamp').addEventListener('click',()=>{
+const name=document.getElementById('name').value.trim()||'Anonymous';
+drawSeal(name);seals.push({name,time:Date.now()});localStorage.setItem('wax_seals',JSON.stringify(seals.slice(-50)));
+renderGallery();document.getElementById('name').value=''});
+
+sealCanvas.addEventListener('click',()=>{const name=document.getElementById('name').value.trim()||'Anonymous';drawSeal(name)});
+
+const eggs={'melt':'The wax liquefies. All the seals in the gallery begin to drip, their names running together into one.','forge':'You heat the seal until it glows. When you press it, it burns through the page entirely — revealing another page beneath.','blood':'The wax turns darker. It always was this color, you realize. You just weren\'t looking closely enough.'};
+let typed='';document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+Object.entries(eggs).forEach(([k,v])=>{if(typed.includes(k)){const egg=document.getElementById('egg');egg.textContent=v;egg.style.opacity='1';setTimeout(()=>egg.style.opacity='0',4000)}})});
+</script></body></html>
