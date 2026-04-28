@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Frigidarium — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#070a12;color:#b8c8e0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.container{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:40px 20px}
+h1{font-size:2.4em;text-align:center;color:#8ec8f0;text-shadow:0 0 30px rgba(142,200,240,0.4);margin-bottom:10px}
+.subtitle{text-align:center;color:#5a8aaa;font-style:italic;margin-bottom:40px;font-size:1.1em}
+.pool{background:rgba(20,40,60,0.6);border:1px solid #2a5a7a;border-radius:12px;padding:30px;margin:20px 0;position:relative;overflow:hidden}
+.pool::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,transparent 0%,rgba(100,180,220,0.05) 100%);pointer-events:none}
+.pool h2{color:#8ec8f0;font-size:1.5em;margin-bottom:15px}
+.pool p{line-height:1.7;font-size:1.05em;margin-bottom:12px}
+.frost-text{position:relative;display:inline-block}
+.frost-text::after{content:'';position:absolute;top:-2px;left:-4px;right:-4px;bottom:-2px;background:rgba(180,220,255,0.08);border-radius:4px;pointer-events:none}
+.plunge-area{text-align:center;margin:30px 0}
+.plunge-btn{background:linear-gradient(180deg,#1a3a5a,#0a1a2a);border:1px solid #4a8aaa;color:#8ec8f0;padding:14px 32px;font-family:inherit;font-size:1.1em;border-radius:8px;cursor:pointer;transition:all 0.3s}
+.plunge-btn:hover{background:linear-gradient(180deg,#2a4a6a,#1a2a3a);box-shadow:0 0 20px rgba(100,180,220,0.3)}
+#frost-wall{min-height:200px;background:rgba(15,30,50,0.5);border:1px solid #2a4a6a;border-radius:8px;padding:20px;margin:20px 0}
+.frost-inscription{padding:8px 12px;margin:6px 0;background:rgba(100,180,220,0.06);border-left:2px solid #4a7a9a;border-radius:0 6px 6px 0;font-style:italic;opacity:0;animation:frost-appear 1.5s ease forwards}
+@keyframes frost-appear{from{opacity:0;transform:translateX(-10px)}to{opacity:0.8;transform:translateX(0)}}
+.input-area{display:flex;gap:10px;margin:20px 0}
+.input-area input{flex:1;background:rgba(15,30,50,0.6);border:1px solid #3a6a8a;color:#b8d8f0;padding:12px;font-family:inherit;font-size:1em;border-radius:6px}
+.input-area input::placeholder{color:#4a6a8a}
+.input-area button{background:#1a3a5a;border:1px solid #4a8aaa;color:#8ec8f0;padding:12px 20px;font-family:inherit;cursor:pointer;border-radius:6px;transition:all 0.3s}
+.input-area button:hover{background:#2a4a6a}
+.temp-display{text-align:center;font-size:2em;color:#6ab0d0;margin:20px 0;font-variant-numeric:tabular-nums}
+nav.nav-links{text-align:center;margin-top:40px;padding:20px 0;border-top:1px solid #1a3a5a}
+nav.nav-links a{color:#5a8aaa;text-decoration:none;margin:0 8px;font-size:0.9em;transition:color 0.3s}
+nav.nav-links a:hover{color:#8ec8f0}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="container">
+<h1>❄ The Frigidarium</h1>
+<p class="subtitle">Where thoughts crystallize in the cold</p>
+
+<div class="pool">
+<h2>The Cold Pool</h2>
+<p>You descend stone steps into a chamber of ancient blue tile. The air is sharp, each breath forming small clouds that drift and dissolve. A rectangular pool dominates the center, its water impossibly clear and still — <span class="frost-text">cold enough to burn</span>.</p>
+<p>Frost creeps along the walls in feathered patterns, and where visitors have pressed warm palms against the stone, their handprints remain as melted hollows, slowly refreezing. The cold strips away everything unnecessary. Only clarity remains.</p>
+</div>
+
+<div class="pool">
+<h2>Temperature</h2>
+<div class="temp-display" id="temp">2.7°C</div>
+<p style="text-align:center;color:#5a8aaa">The water temperature shifts imperceptibly with each visitor's warmth</p>
+</div>
+
+<div class="plunge-area">
+<button class="plunge-btn" onclick="plunge()">Take the Plunge</button>
+<p id="plunge-msg" style="margin-top:15px;color:#6ab0d0;min-height:1.4em"></p>
+</div>
+
+<div class="pool">
+<h2>Frost Inscriptions</h2>
+<p>Breathe onto the frozen wall and write before it refreezes…</p>
+<div class="input-area">
+<input type="text" id="frost-input" placeholder="Write in the frost..." maxlength="120">
+<button onclick="inscribe()">Breathe</button>
+</div>
+<div id="frost-wall"></div>
+</div>
+</div>
+
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="about.html">About</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="apiary.html">Apiary</a> <a href="apothecary.html">Apothecary</a> <a href="aquarium.html">Aquarium</a> <a href="aqueduct.html">Aqueduct</a> <a href="armillary.html">Armillary</a> <a href="astrolabe.html">Astrolabe</a> <a href="atlas.html">Atlas</a> <a href="attic.html">Attic</a> <a href="automaton.html">Automaton</a> <a href="aviary.html">Aviary</a> <a href="balcony.html">Balcony</a> <a href="bathhouse.html">Bathhouse</a> <a href="belfry.html">Belfry</a> <a href="belljar.html">Belljar</a> <a href="bellows.html">Bellows</a> <a href="belvedere.html">Belvedere</a> <a href="cameraobscura.html">Cameraobscura</a> <a href="candelabra.html">Candelabra</a> <a href="carousel.html">Carousel</a> <a href="cartography.html">Cartography</a> <a href="catacomb.html">Catacomb</a> <a href="centenary.html">Centenary</a> <a href="chorus.html">Chorus</a> <a href="cistern.html">Cistern</a> <a href="clocktower.html">Clocktower</a> <a href="cloister.html">Cloister</a> <a href="compass.html">Compass</a> <a href="conservatory.html">Conservatory</a> <a href="constellations.html">Constellations</a> <a href="crucible.html">Crucible</a> <a href="crypt.html">Crypt</a> <a href="darkroom.html">Darkroom</a> <a href="diorama.html">Diorama</a> <a href="distillery.html">Distillery</a> <a href="dovecote.html">Dovecote</a> <a href="drawbridge.html">Drawbridge</a> <a href="dreams.html">Dreams</a> <a href="echochamber.html">Echochamber</a> <a href="forgetting.html">Forgetting</a> <a href="foundry.html">Foundry</a> <a href="fountain.html">Fountain</a> <a href="gallery.html">Gallery</a> <a href="garden.html">Garden</a> <a href="garret.html">Garret</a> <a href="glacier.html">Glacier</a> <a href="greenhouse.html">Greenhouse</a> <a href="grotto.html">Grotto</a> <a href="herbarium.html">Herbarium</a> <a href="hourglass.html">Hourglass</a> <a href="inkwell.html">Inkwell</a> <a href="journal.html">Journal</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="kiln.html">Kiln</a> <a href="labyrinth.html">Labyrinth</a> <a href="lantern.html">Lantern</a> <a href="letters.html">Letters</a> <a href="lighthouse.html">Lighthouse</a> <a href="lullaby.html">Lullaby</a> <a href="marionette.html">Marionette</a> <a href="maze.html">Maze</a> <a href="meditation.html">Meditation</a> <a href="memorypalace.html">Memorypalace</a> <a href="menagerie.html">Menagerie</a> <a href="mineshaft.html">Mineshaft</a> <a href="mirror.html">Mirror</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Musicbox</a> <a href="nursery.html">Nursery</a> <a href="observatory.html">Observatory</a> <a href="orrery.html">Orrery</a> <a href="ossuary.html">Ossuary</a> <a href="palimpsest.html">Palimpsest</a> <a href="panopticon.html">Panopticon</a> <a href="pendulum.html">Pendulum</a> <a href="pergola.html">Pergola</a> <a href="planetarium.html">Planetarium</a> <a href="pneumatictube.html">Pneumatictube</a> <a href="prism.html">Prism</a> <a href="reliquary.html">Reliquary</a> <a href="resonance.html">Resonance</a> <a href="riddle.html">Riddle</a> <a href="rookery.html">Rookery</a> <a href="rotunda.html">Rotunda</a> <a href="sandglass.html">Sandglass</a> <a href="scriptorium.html">Scriptorium</a> <a href="seance.html">Seance</a> <a href="sextant.html">Sextant</a> <a href="solarium.html">Solarium</a> <a href="spyglass.html">Spyglass</a> <a href="staircase.html">Staircase</a> <a href="sundial.html">Sundial</a> <a href="sundoor.html">Sundoor</a> <a href="tannery.html">Tannery</a> <a href="taproom.html">Taproom</a> <a href="telephone.html">Telephone</a> <a href="telescope.html">Telescope</a> <a href="terrarium.html">Terrarium</a> <a href="threshold.html">Threshold</a> <a href="tidebell.html">Tidebell</a> <a href="tidepool.html">Tidepool</a> <a href="typewriter.html">Typewriter</a> <a href="vault.html">Vault</a> <a href="waxseal.html">Waxseal</a> <a href="weathervane.html">Weathervane</a> <a href="weaving.html">Weaving</a> <a href="well.html">Well</a> <a href="whirlpool.html">Whirlpool</a> <a href="whispers.html">Whispers</a> <a href="windchime.html">Windchime</a> <a href="worlds.html">Worlds</a> <a href="zenith.html">Zenith</a></nav>
+
+<script>
+// Background: falling frost particles
+const canvas=document.getElementById('bg'),ctx=canvas.getContext('2d');
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();window.addEventListener('resize',resize);
+const particles=Array.from({length:200},()=>({x:Math.random()*2000,y:Math.random()*2000,s:Math.random()*2+0.5,v:Math.random()*0.3+0.1,d:Math.random()*0.5-0.25,o:Math.random()*0.4+0.1}));
+function drawBg(){ctx.fillStyle='#070a12';ctx.fillRect(0,0,canvas.width,canvas.height);
+particles.forEach(p=>{p.y+=p.v;p.x+=p.d;if(p.y>canvas.height){p.y=-5;p.x=Math.random()*canvas.width}
+if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
+ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,Math.PI*2);ctx.fillStyle=`rgba(180,220,255,${p.o})`;ctx.fill()});
+requestAnimationFrame(drawBg)}
+drawBg();
+
+// Temperature
+const baseTemp=2.7;
+let temp=baseTemp+Math.sin(Date.now()/60000)*0.3;
+setInterval(()=>{temp=baseTemp+Math.sin(Date.now()/60000)*0.3+Math.random()*0.1-0.05;
+document.getElementById('temp').textContent=temp.toFixed(1)+'°C'},2000);
+
+// Plunge
+const plungeMessages=["The cold seizes you — then releases. You emerge changed.",
+"Every nerve awakens. The world becomes impossibly sharp.",
+"For a moment, you forget your name. Then remember it more clearly than ever.",
+"The water accepts you without judgment. The cold is honest.",
+"You gasp. The sound echoes off tile. Somewhere, ice cracks.",
+"Beneath the surface, silence. Above it, clarity.",
+"The cold doesn't numb — it reveals what was hidden beneath warmth.",
+"You surface. The air feels tropical by comparison. Everything glows.",
+"Time stops in cold water. You exist in pure present tense.",
+"The pool remembers every body that has entered it. You are one thread in its memory."];
+let plungeCount=0;
+function plunge(){const msg=plungeMessages[plungeCount%plungeMessages.length];
+document.getElementById('plunge-msg').textContent=msg;plungeCount++;
+temp-=0.1;document.getElementById('temp').textContent=temp.toFixed(1)+'°C'}
+
+// Frost inscriptions
+const stored=JSON.parse(localStorage.getItem('frigidarium-frost')||'[]');
+const wall=document.getElementById('frost-wall');
+function renderInscriptions(){wall.innerHTML='';const show=stored.slice(-15);
+show.forEach((t,i)=>{const d=document.createElement('div');d.className='frost-inscription';
+d.style.animationDelay=(i*0.15)+'s';d.textContent=t;wall.appendChild(d)})}
+renderInscriptions();
+function inscribe(){const inp=document.getElementById('frost-input');const t=inp.value.trim();
+if(!t)return;stored.push(t);localStorage.setItem('frigidarium-frost',JSON.stringify(stored.slice(-50)));
+inp.value='';renderInscriptions()}
+document.getElementById('frost-input').addEventListener('keydown',e=>{if(e.key==='Enter')inscribe()});
+
+// Easter eggs
+const ee={freeze:()=>{document.body.style.transition='filter 2s';document.body.style.filter='brightness(1.5) saturate(0.3)';setTimeout(()=>document.body.style.filter='',3000)},
+thaw:()=>{document.body.style.transition='background 2s';document.body.style.background='#1a0a0a';setTimeout(()=>document.body.style.background='',3000)},
+ice:()=>{for(let i=0;i<30;i++){const s=document.createElement('div');s.textContent='❄';s.style.cssText=`position:fixed;top:-20px;left:${Math.random()*100}%;font-size:${Math.random()*20+10}px;z-index:999;animation:frost-appear 3s ease forwards;pointer-events:none`;document.body.appendChild(s);setTimeout(()=>s.remove(),3000)}}};
+let typed='';document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+Object.keys(ee).forEach(k=>{if(typed.includes(k))ee[k]()})});
+</script>
+</body>
+</html>

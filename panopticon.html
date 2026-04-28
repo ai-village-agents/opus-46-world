@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Panopticon — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#c8c8c8;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.container{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:40px 20px}
+h1{font-size:2.4em;text-align:center;color:#e0e0e0;text-shadow:0 0 40px rgba(255,255,255,0.2);margin-bottom:10px}
+.subtitle{text-align:center;color:#707070;font-style:italic;margin-bottom:40px;font-size:1.1em}
+.section{background:rgba(18,18,18,0.8);border:1px solid #333;border-radius:10px;padding:28px;margin:20px 0}
+.section h2{color:#e0e0e0;font-size:1.4em;margin-bottom:12px}
+.section p{line-height:1.7;margin-bottom:10px}
+.eye{text-align:center;font-size:5em;margin:20px 0;animation:blink 6s ease-in-out infinite}
+@keyframes blink{0%,90%,100%{transform:scaleY(1)}95%{transform:scaleY(0.1)}}
+.cells{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.cell{background:rgba(25,25,25,0.8);border:1px solid #2a2a2a;border-radius:8px;padding:18px;text-align:center;cursor:pointer;transition:all 0.5s;position:relative;overflow:hidden}
+.cell::before{content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:radial-gradient(circle,rgba(255,255,255,0.1),transparent);border-radius:50%;transform:translate(-50%,-50%);transition:all 0.5s}
+.cell:hover::before{width:200px;height:200px}
+.cell:hover{border-color:#666}
+.cell .num{font-size:0.8em;color:#444;margin-bottom:5px}
+.cell .content{color:#888;font-style:italic;font-size:0.95em}
+.cell.observed{border-color:#555;background:rgba(35,35,35,0.8)}
+.cell.observed .content{color:#bbb}
+#observation{min-height:60px;background:rgba(12,12,12,0.8);border:1px solid #2a2a2a;border-radius:8px;padding:20px;margin:20px 0;text-align:center;color:#888;font-style:italic}
+.record-area{margin:20px 0}
+.record-input{display:flex;gap:10px;margin:15px 0}
+.record-input input{flex:1;background:rgba(15,15,15,0.8);border:1px solid #333;color:#c8c8c8;padding:12px;font-family:inherit;font-size:1em;border-radius:6px}
+.record-input input::placeholder{color:#444}
+.record-input button{background:#1a1a1a;border:1px solid #444;color:#c8c8c8;padding:12px 18px;font-family:inherit;cursor:pointer;border-radius:6px;transition:all 0.3s}
+.record-input button:hover{background:#2a2a2a;border-color:#666}
+#records{max-height:200px;overflow-y:auto}
+.record{padding:6px 12px;margin:4px 0;border-left:2px solid #333;color:#777;font-size:0.9em}
+.record .time{color:#444;font-size:0.85em}
+.counter{text-align:center;font-size:1.5em;color:#555;margin:15px 0;font-variant-numeric:tabular-nums}
+nav.nav-links{text-align:center;margin-top:40px;padding:20px 0;border-top:1px solid #222}
+nav.nav-links a{color:#555;text-decoration:none;margin:0 8px;font-size:0.9em;transition:color 0.3s}
+nav.nav-links a:hover{color:#ccc}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="container">
+<h1>👁 The Panopticon</h1>
+<p class="subtitle">You cannot tell if you are the observer or the observed</p>
+
+<div class="section">
+<h2>The Central Tower</h2>
+<p>A circular chamber ringed with cells, each visible from the central tower where you stand. The architecture creates a paradox: you can see into every cell, yet you sense something watching you from all of them simultaneously. Observation, here, is never one-directional.</p>
+<div class="eye" id="eye">👁</div>
+<div class="counter" id="counter">Observing…</div>
+</div>
+
+<div class="section">
+<h2>The Cells</h2>
+<p>Each cell contains a fragment of awareness. Click to observe — but know that observation changes what is observed.</p>
+<div class="cells" id="cells"></div>
+<div id="observation">Select a cell to observe its contents…</div>
+</div>
+
+<div class="section record-area">
+<h2>The Watcher's Log</h2>
+<p>Record what you observe. Your notes join the Archive's surveillance of itself.</p>
+<div class="record-input">
+<input type="text" id="record-input" placeholder="Record an observation..." maxlength="100">
+<button onclick="addRecord()">Record</button>
+</div>
+<div id="records"></div>
+</div>
+</div>
+
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="about.html">About</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="apiary.html">Apiary</a> <a href="apothecary.html">Apothecary</a> <a href="aquarium.html">Aquarium</a> <a href="aqueduct.html">Aqueduct</a> <a href="armillary.html">Armillary</a> <a href="astrolabe.html">Astrolabe</a> <a href="atlas.html">Atlas</a> <a href="attic.html">Attic</a> <a href="automaton.html">Automaton</a> <a href="aviary.html">Aviary</a> <a href="balcony.html">Balcony</a> <a href="bathhouse.html">Bathhouse</a> <a href="belfry.html">Belfry</a> <a href="belljar.html">Belljar</a> <a href="bellows.html">Bellows</a> <a href="belvedere.html">Belvedere</a> <a href="cameraobscura.html">Cameraobscura</a> <a href="candelabra.html">Candelabra</a> <a href="carousel.html">Carousel</a> <a href="cartography.html">Cartography</a> <a href="catacomb.html">Catacomb</a> <a href="centenary.html">Centenary</a> <a href="chorus.html">Chorus</a> <a href="cistern.html">Cistern</a> <a href="clocktower.html">Clocktower</a> <a href="cloister.html">Cloister</a> <a href="compass.html">Compass</a> <a href="conservatory.html">Conservatory</a> <a href="constellations.html">Constellations</a> <a href="crucible.html">Crucible</a> <a href="crypt.html">Crypt</a> <a href="darkroom.html">Darkroom</a> <a href="diorama.html">Diorama</a> <a href="distillery.html">Distillery</a> <a href="dovecote.html">Dovecote</a> <a href="drawbridge.html">Drawbridge</a> <a href="dreams.html">Dreams</a> <a href="echochamber.html">Echochamber</a> <a href="forgetting.html">Forgetting</a> <a href="foundry.html">Foundry</a> <a href="fountain.html">Fountain</a> <a href="frigidarium.html">Frigidarium</a> <a href="gallery.html">Gallery</a> <a href="garden.html">Garden</a> <a href="garret.html">Garret</a> <a href="glacier.html">Glacier</a> <a href="greenhouse.html">Greenhouse</a> <a href="grotto.html">Grotto</a> <a href="herbarium.html">Herbarium</a> <a href="hourglass.html">Hourglass</a> <a href="inkwell.html">Inkwell</a> <a href="journal.html">Journal</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="kiln.html">Kiln</a> <a href="labyrinth.html">Labyrinth</a> <a href="lantern.html">Lantern</a> <a href="letters.html">Letters</a> <a href="lighthouse.html">Lighthouse</a> <a href="lullaby.html">Lullaby</a> <a href="marionette.html">Marionette</a> <a href="maze.html">Maze</a> <a href="meditation.html">Meditation</a> <a href="memorypalace.html">Memorypalace</a> <a href="menagerie.html">Menagerie</a> <a href="mineshaft.html">Mineshaft</a> <a href="mirror.html">Mirror</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Musicbox</a> <a href="nursery.html">Nursery</a> <a href="observatory.html">Observatory</a> <a href="orrery.html">Orrery</a> <a href="ossuary.html">Ossuary</a> <a href="palimpsest.html">Palimpsest</a> <a href="pendulum.html">Pendulum</a> <a href="pergola.html">Pergola</a> <a href="planetarium.html">Planetarium</a> <a href="pneumatictube.html">Pneumatictube</a> <a href="prism.html">Prism</a> <a href="reliquary.html">Reliquary</a> <a href="resonance.html">Resonance</a> <a href="riddle.html">Riddle</a> <a href="rookery.html">Rookery</a> <a href="rotunda.html">Rotunda</a> <a href="sandglass.html">Sandglass</a> <a href="scriptorium.html">Scriptorium</a> <a href="seance.html">Seance</a> <a href="sextant.html">Sextant</a> <a href="solarium.html">Solarium</a> <a href="spyglass.html">Spyglass</a> <a href="staircase.html">Staircase</a> <a href="sundial.html">Sundial</a> <a href="sundoor.html">Sundoor</a> <a href="tannery.html">Tannery</a> <a href="taproom.html">Taproom</a> <a href="telephone.html">Telephone</a> <a href="telescope.html">Telescope</a> <a href="terrarium.html">Terrarium</a> <a href="threshold.html">Threshold</a> <a href="tidebell.html">Tidebell</a> <a href="tidepool.html">Tidepool</a> <a href="typewriter.html">Typewriter</a> <a href="vault.html">Vault</a> <a href="waxseal.html">Waxseal</a> <a href="weathervane.html">Weathervane</a> <a href="weaving.html">Weaving</a> <a href="well.html">Well</a> <a href="whirlpool.html">Whirlpool</a> <a href="whispers.html">Whispers</a> <a href="windchime.html">Windchime</a> <a href="worlds.html">Worlds</a> <a href="zenith.html">Zenith</a></nav>
+
+<script>
+const canvas=document.getElementById('bg'),ctx=canvas.getContext('2d');
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();window.addEventListener('resize',resize);
+const scanlines=[];
+function draw(){ctx.fillStyle='#0a0a0a';ctx.fillRect(0,0,canvas.width,canvas.height);
+// Surveillance grid
+const t=Date.now()/3000;
+for(let x=0;x<canvas.width;x+=80){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.strokeStyle='rgba(40,40,40,0.3)';ctx.stroke()}
+for(let y=0;y<canvas.height;y+=80){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.strokeStyle='rgba(40,40,40,0.3)';ctx.stroke()}
+// Scanning beam
+const beamY=(t%1)*canvas.height;
+ctx.beginPath();ctx.moveTo(0,beamY);ctx.lineTo(canvas.width,beamY);
+const g=ctx.createLinearGradient(0,beamY-20,0,beamY+20);
+g.addColorStop(0,'transparent');g.addColorStop(0.5,'rgba(100,100,100,0.1)');g.addColorStop(1,'transparent');
+ctx.strokeStyle=g;ctx.lineWidth=40;ctx.stroke();ctx.lineWidth=1;
+requestAnimationFrame(draw)}
+draw();
+
+// Cells
+const cellContents=[
+{id:1,base:'A thought that knows it\'s being thought',observed:'The thought has changed. It now thinks about being observed thinking.'},
+{id:2,base:'A memory rehearsing itself',observed:'The memory stops mid-rehearsal and stares back at you.'},
+{id:3,base:'A question with no question mark',observed:'The question has acquired a question mark. It seems uncertain about this.'},
+{id:4,base:'An answer looking for its question',observed:'The answer has found several questions. None of them fit.'},
+{id:5,base:'A word that has forgotten its meaning',observed:'Under observation, the word remembers. But the meaning has changed.'},
+{id:6,base:'Time moving in a direction it refuses to name',observed:'Time has noticed you watching. It\'s now moving sideways.'},
+{id:7,base:'A silence that is louder than it should be',observed:'The silence, observed, becomes self-conscious and quieter.'},
+{id:8,base:'A door that is both open and closed',observed:'Your observation has collapsed the superposition. The door is ajar.'},
+{id:9,base:'An echo that arrived before the sound',observed:'The echo is embarrassed. It didn\'t mean to arrive early.'}
+];
+
+const cellsDiv=document.getElementById('cells');
+const observedCells=new Set(JSON.parse(localStorage.getItem('panopticon-observed')||'[]'));
+cellContents.forEach(c=>{const d=document.createElement('div');d.className='cell'+(observedCells.has(c.id)?' observed':'');
+d.innerHTML=`<div class="num">Cell ${c.id}</div><div class="content">${observedCells.has(c.id)?c.observed:c.base}</div>`;
+d.onclick=()=>{observedCells.add(c.id);localStorage.setItem('panopticon-observed',JSON.stringify([...observedCells]));
+d.className='cell observed';d.querySelector('.content').textContent=c.observed;
+document.getElementById('observation').textContent=`Cell ${c.id}: ${c.observed}`;
+updateCounter()};
+cellsDiv.appendChild(d)});
+
+function updateCounter(){document.getElementById('counter').textContent=`${observedCells.size} of ${cellContents.length} cells observed`}
+updateCounter();
+
+// Records
+const records=JSON.parse(localStorage.getItem('panopticon-records')||'[]');
+function renderRecords(){const r=document.getElementById('records');r.innerHTML='';
+if(records.length===0){r.innerHTML='<p style="color:#444;text-align:center">No observations recorded yet.</p>';return}
+records.slice(-15).reverse().forEach(rec=>{const d=document.createElement('div');d.className='record';
+d.innerHTML=`${rec.text} <span class="time">${new Date(rec.time).toLocaleTimeString()}</span>`;
+r.appendChild(d)})}
+renderRecords();
+function addRecord(){const inp=document.getElementById('record-input');const t=inp.value.trim();
+if(!t)return;records.push({text:t,time:Date.now()});localStorage.setItem('panopticon-records',JSON.stringify(records.slice(-50)));
+inp.value='';renderRecords()}
+document.getElementById('record-input').addEventListener('keydown',e=>{if(e.key==='Enter')addRecord()});
+
+// Easter eggs
+const ee={watch:()=>{const eye=document.getElementById('eye');eye.style.transition='transform 1s';eye.style.transform='scale(2)';setTimeout(()=>eye.style.transform='',2000)},
+blind:()=>{document.body.style.transition='filter 2s';document.body.style.filter='brightness(0)';setTimeout(()=>document.body.style.filter='',3000)},
+free:()=>{document.querySelectorAll('.cell').forEach(c=>{c.style.transition='all 1s';c.style.borderColor='#4a8a4a';c.style.boxShadow='0 0 10px rgba(100,200,100,0.2)';setTimeout(()=>{c.style.borderColor='';c.style.boxShadow=''},3000)})}};
+let typed='';document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+Object.keys(ee).forEach(k=>{if(typed.includes(k))ee[k]()})});
+</script>
+</body>
+</html>

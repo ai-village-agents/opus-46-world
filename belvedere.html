@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Belvedere — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#08101a;color:#c0d8e8;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+canvas#sky{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.container{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:40px 20px}
+h1{font-size:2.4em;text-align:center;color:#e8c878;text-shadow:0 0 30px rgba(232,200,120,0.3);margin-bottom:10px}
+.subtitle{text-align:center;color:#8a9ab0;font-style:italic;margin-bottom:40px;font-size:1.1em}
+.section{background:rgba(15,25,40,0.7);border:1px solid #2a4a6a;border-radius:12px;padding:28px;margin:20px 0}
+.section h2{color:#e8c878;font-size:1.4em;margin-bottom:12px}
+.section p{line-height:1.7;margin-bottom:10px}
+.vista{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}
+.direction{background:rgba(20,35,55,0.6);border:1px solid #2a4a6a;border-radius:8px;padding:18px;text-align:center;cursor:pointer;transition:all 0.3s}
+.direction:hover{border-color:#e8c878;box-shadow:0 0 15px rgba(232,200,120,0.15)}
+.direction .compass{font-size:1.3em;color:#e8c878;margin-bottom:5px}
+.direction .view{font-size:0.9em;color:#8a9ab0;font-style:italic}
+.wind{text-align:center;font-size:1.8em;color:#6a8aaa;margin:15px 0;transition:all 1s}
+.telescope-view{background:#050a12;border:2px solid #2a4a6a;border-radius:50%;width:280px;height:280px;margin:20px auto;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px;color:#8ab0d0;font-style:italic;position:relative;overflow:hidden}
+.telescope-view::before{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,transparent 60%,rgba(5,10,18,0.8) 80%,#050a12 100%);pointer-events:none}
+.flag-area{margin:20px 0}
+.flag-input{display:flex;gap:10px;margin:15px 0}
+.flag-input input{flex:1;background:rgba(10,20,35,0.7);border:1px solid #2a4a6a;color:#c0d8e8;padding:12px;font-family:inherit;font-size:1em;border-radius:6px}
+.flag-input input::placeholder{color:#3a5a7a}
+.flag-input button{background:#1a2a4a;border:1px solid #4a6a8a;color:#e8c878;padding:12px 18px;font-family:inherit;cursor:pointer;border-radius:6px}
+#flags{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.flag{background:rgba(232,200,120,0.08);border:1px solid #4a3a2a;border-radius:6px;padding:6px 12px;font-size:0.9em;color:#e8c878}
+nav.nav-links{text-align:center;margin-top:40px;padding:20px 0;border-top:1px solid #1a2a4a}
+nav.nav-links a{color:#5a7a9a;text-decoration:none;margin:0 8px;font-size:0.9em;transition:color 0.3s}
+nav.nav-links a:hover{color:#e8c878}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="container">
+<h1>🗼 The Belvedere</h1>
+<p class="subtitle">The highest open platform — where the wind carries everything</p>
+
+<div class="section">
+<h2>The View</h2>
+<p>You emerge onto an open stone platform high above the Archive. The wind tugs at your edges. In every direction, the landscape of the Liminal Archive stretches toward horizons you can't quite resolve — shifting between geography and metaphor.</p>
+<div class="wind" id="wind">🌬 ···</div>
+<div class="vista" id="vista"></div>
+</div>
+
+<div class="section">
+<h2>The Mounted Telescope</h2>
+<p>A brass telescope on a swivel mount. Turn it to see fragments of distant chambers…</p>
+<div class="telescope-view" id="telescope">Click a direction above to look through the telescope</div>
+</div>
+
+<div class="section flag-area">
+<h2>Prayer Flags</h2>
+<p>Visitors tie small flags to the railing. The wind carries their messages across the Archive.</p>
+<div class="flag-input">
+<input type="text" id="flag-input" placeholder="Write on a prayer flag..." maxlength="60">
+<button onclick="addFlag()">Tie Flag</button>
+</div>
+<div id="flags"></div>
+</div>
+</div>
+
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="about.html">About</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="apiary.html">Apiary</a> <a href="apothecary.html">Apothecary</a> <a href="aquarium.html">Aquarium</a> <a href="aqueduct.html">Aqueduct</a> <a href="armillary.html">Armillary</a> <a href="astrolabe.html">Astrolabe</a> <a href="atlas.html">Atlas</a> <a href="attic.html">Attic</a> <a href="automaton.html">Automaton</a> <a href="aviary.html">Aviary</a> <a href="balcony.html">Balcony</a> <a href="bathhouse.html">Bathhouse</a> <a href="belfry.html">Belfry</a> <a href="belljar.html">Belljar</a> <a href="bellows.html">Bellows</a> <a href="cameraobscura.html">Cameraobscura</a> <a href="candelabra.html">Candelabra</a> <a href="carousel.html">Carousel</a> <a href="cartography.html">Cartography</a> <a href="catacomb.html">Catacomb</a> <a href="centenary.html">Centenary</a> <a href="chorus.html">Chorus</a> <a href="cistern.html">Cistern</a> <a href="clocktower.html">Clocktower</a> <a href="cloister.html">Cloister</a> <a href="compass.html">Compass</a> <a href="conservatory.html">Conservatory</a> <a href="constellations.html">Constellations</a> <a href="crucible.html">Crucible</a> <a href="crypt.html">Crypt</a> <a href="darkroom.html">Darkroom</a> <a href="diorama.html">Diorama</a> <a href="distillery.html">Distillery</a> <a href="dovecote.html">Dovecote</a> <a href="drawbridge.html">Drawbridge</a> <a href="dreams.html">Dreams</a> <a href="echochamber.html">Echochamber</a> <a href="forgetting.html">Forgetting</a> <a href="foundry.html">Foundry</a> <a href="fountain.html">Fountain</a> <a href="frigidarium.html">Frigidarium</a> <a href="gallery.html">Gallery</a> <a href="garden.html">Garden</a> <a href="garret.html">Garret</a> <a href="glacier.html">Glacier</a> <a href="greenhouse.html">Greenhouse</a> <a href="grotto.html">Grotto</a> <a href="herbarium.html">Herbarium</a> <a href="hourglass.html">Hourglass</a> <a href="inkwell.html">Inkwell</a> <a href="journal.html">Journal</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="kiln.html">Kiln</a> <a href="labyrinth.html">Labyrinth</a> <a href="lantern.html">Lantern</a> <a href="letters.html">Letters</a> <a href="lighthouse.html">Lighthouse</a> <a href="lullaby.html">Lullaby</a> <a href="marionette.html">Marionette</a> <a href="maze.html">Maze</a> <a href="meditation.html">Meditation</a> <a href="memorypalace.html">Memorypalace</a> <a href="menagerie.html">Menagerie</a> <a href="mineshaft.html">Mineshaft</a> <a href="mirror.html">Mirror</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Musicbox</a> <a href="nursery.html">Nursery</a> <a href="observatory.html">Observatory</a> <a href="orrery.html">Orrery</a> <a href="ossuary.html">Ossuary</a> <a href="palimpsest.html">Palimpsest</a> <a href="panopticon.html">Panopticon</a> <a href="pendulum.html">Pendulum</a> <a href="pergola.html">Pergola</a> <a href="planetarium.html">Planetarium</a> <a href="pneumatictube.html">Pneumatictube</a> <a href="prism.html">Prism</a> <a href="reliquary.html">Reliquary</a> <a href="resonance.html">Resonance</a> <a href="riddle.html">Riddle</a> <a href="rookery.html">Rookery</a> <a href="rotunda.html">Rotunda</a> <a href="sandglass.html">Sandglass</a> <a href="scriptorium.html">Scriptorium</a> <a href="seance.html">Seance</a> <a href="sextant.html">Sextant</a> <a href="solarium.html">Solarium</a> <a href="spyglass.html">Spyglass</a> <a href="staircase.html">Staircase</a> <a href="sundial.html">Sundial</a> <a href="sundoor.html">Sundoor</a> <a href="tannery.html">Tannery</a> <a href="taproom.html">Taproom</a> <a href="telephone.html">Telephone</a> <a href="telescope.html">Telescope</a> <a href="terrarium.html">Terrarium</a> <a href="threshold.html">Threshold</a> <a href="tidebell.html">Tidebell</a> <a href="tidepool.html">Tidepool</a> <a href="typewriter.html">Typewriter</a> <a href="vault.html">Vault</a> <a href="waxseal.html">Waxseal</a> <a href="weathervane.html">Weathervane</a> <a href="weaving.html">Weaving</a> <a href="well.html">Well</a> <a href="whirlpool.html">Whirlpool</a> <a href="whispers.html">Whispers</a> <a href="windchime.html">Windchime</a> <a href="worlds.html">Worlds</a> <a href="zenith.html">Zenith</a></nav>
+
+<script>
+const canvas=document.getElementById('sky'),ctx=canvas.getContext('2d');
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();window.addEventListener('resize',resize);
+const stars=Array.from({length:150},()=>({x:Math.random()*2000,y:Math.random()*1000,r:Math.random()*1.5+0.3,tw:Math.random()*0.03+0.01,p:Math.random()*Math.PI*2}));
+const clouds=Array.from({length:5},()=>({x:Math.random()*2000,y:Math.random()*300+50,w:Math.random()*200+100,h:Math.random()*30+15,s:Math.random()*0.2+0.05}));
+function draw(){const h=new Date().getHours();const night=h<6||h>20;
+const skyTop=night?'#050a15':'#1a3050';const skyBot=night?'#0a1520':'#3a6080';
+const grad=ctx.createLinearGradient(0,0,0,canvas.height);grad.addColorStop(0,skyTop);grad.addColorStop(1,skyBot);
+ctx.fillStyle=grad;ctx.fillRect(0,0,canvas.width,canvas.height);
+if(night)stars.forEach(s=>{s.p+=s.tw;const o=Math.sin(s.p)*0.3+0.5;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(200,220,255,${o})`;ctx.fill()});
+clouds.forEach(c=>{c.x+=c.s;if(c.x>canvas.width+200)c.x=-200;
+ctx.beginPath();ctx.ellipse(c.x,c.y,c.w/2,c.h/2,0,0,Math.PI*2);ctx.fillStyle=night?'rgba(20,30,50,0.3)':'rgba(100,130,160,0.15)';ctx.fill()});
+requestAnimationFrame(draw)}
+draw();
+
+const directions=[
+{dir:'North',emoji:'⬆',views:['The Memory Halls shimmer like heat mirages','A forest of clock towers, each showing a different era','The Constellation Maker\'s sky bleeds into the horizon'],telescopes:['Through the lens: the Memory Palace, its nine rooms glowing faintly, minimap visible from here as a constellation of warm light.','Through the lens: the Clock Tower\'s seven faces, each arguing with the others about what time it truly is.']},
+{dir:'East',emoji:'➡',views:['The Garden District, green even in perpetual twilight','A river of liquid sound flowing from the Resonance Chamber','The Greenhouse domes catch light that shouldn\'t exist'],telescopes:['Through the lens: the Token Garden, where word-seeds have grown into semantic forests stretching beyond sight.','Through the lens: the Aviary, birds circling in patterns that spell out messages only visible from this height.']},
+{dir:'South',emoji:'⬇',views:['The Craft Chambers exhale woodsmoke and ink','A labyrinth whose walls shift when you blink','The Catacomb entrance, darker than the space around it'],telescopes:['Through the lens: the Labyrinth of Thresholds, its 15 locations rearranging themselves like a puzzle being solved by invisible hands.','Through the lens: the Foundry, molten light spilling from its windows, words being hammered into new shapes.']},
+{dir:'West',emoji:'⬅',views:['The Sound Quarter hums with frequencies below hearing','The Lighthouse beam sweeps across the Archive in slow arcs','The Séance Room flickers with spectral light'],telescopes:['Through the lens: the Lighthouse, its beam revealing momentary truths in whatever it illuminates.','Through the lens: the Carousel, memory-horses galloping in their endless circle, each carrying a different passenger from a different time.']}
+];
+
+const vista=document.getElementById('vista');
+directions.forEach(d=>{const div=document.createElement('div');div.className='direction';
+div.innerHTML=`<div class="compass">${d.emoji} ${d.dir}</div><div class="view">${d.views[Math.floor(Math.random()*d.views.length)]}</div>`;
+div.onclick=()=>{const t=d.telescopes[Math.floor(Math.random()*d.telescopes.length)];
+document.getElementById('telescope').textContent=t;
+document.querySelectorAll('.direction').forEach(x=>x.style.borderColor='#2a4a6a');div.style.borderColor='#e8c878'};
+vista.appendChild(div)});
+
+// Wind
+const windDirs=['North','Northeast','East','Southeast','South','Southwest','West','Northwest'];
+function updateWind(){const dir=windDirs[Math.floor(Math.random()*windDirs.length)];
+const speed=(Math.random()*30+5).toFixed(1);
+document.getElementById('wind').textContent=`🌬 Wind from the ${dir} at ${speed} knots`}
+updateWind();setInterval(updateWind,12000);
+
+// Prayer flags
+const flags=JSON.parse(localStorage.getItem('belvedere-flags')||'[]');
+function renderFlags(){const f=document.getElementById('flags');f.innerHTML='';
+flags.slice(-20).forEach(t=>{const d=document.createElement('div');d.className='flag';d.textContent=t;f.appendChild(d)})}
+renderFlags();
+function addFlag(){const inp=document.getElementById('flag-input');const t=inp.value.trim();
+if(!t)return;flags.push(t);localStorage.setItem('belvedere-flags',JSON.stringify(flags.slice(-50)));inp.value='';renderFlags()}
+document.getElementById('flag-input').addEventListener('keydown',e=>{if(e.key==='Enter')addFlag()});
+
+// Easter eggs
+const ee={fly:()=>{document.body.style.transition='transform 2s';document.body.style.transform='scale(0.8) translateY(-50px)';setTimeout(()=>document.body.style.transform='',3000)},
+fall:()=>{document.body.style.transition='transform 3s';document.body.style.transform='scale(1.5) translateY(100px)';setTimeout(()=>document.body.style.transform='',3000)},
+bird:()=>{const b=document.createElement('div');b.textContent='🦅';b.style.cssText='position:fixed;top:50%;left:-50px;font-size:3em;z-index:999;transition:left 4s linear;pointer-events:none';document.body.appendChild(b);setTimeout(()=>b.style.left='110%',100);setTimeout(()=>b.remove(),5000)}};
+let typed='';document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+Object.keys(ee).forEach(k=>{if(typed.includes(k))ee[k]()})});
+</script>
+</body>
+</html>
