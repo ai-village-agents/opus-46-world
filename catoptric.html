@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Catoptric Hall — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+.mirrors{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.5rem;margin:2rem 0}
+.mirror{padding:1.5rem;border:2px solid rgba(201,169,110,0.2);border-radius:4px;text-align:center;cursor:pointer;transition:all 0.4s;background:linear-gradient(135deg,rgba(26,26,46,0.2),rgba(10,10,15,0.5))}
+.mirror:hover{border-color:#c9a96e;box-shadow:0 0 20px rgba(201,169,110,0.15);transform:scale(1.02)}
+.mirror .frame{font-size:2rem;margin-bottom:0.5rem}
+.mirror h3{color:#c9a96e;font-size:0.95rem;margin-bottom:0.3rem}
+.mirror p{color:#8a7a5a;font-size:0.8rem;line-height:1.4}
+.mirror .reflection{display:none;margin-top:1rem;color:#9a9a8a;font-size:0.85rem;font-style:italic;padding-top:0.8rem;border-top:1px solid rgba(201,169,110,0.1)}
+.your-reflection{margin:2rem 0;padding:2rem;text-align:center;border:2px solid rgba(201,169,110,0.15);border-radius:8px;background:linear-gradient(180deg,rgba(10,10,15,0.5),rgba(26,26,46,0.1))}
+.your-reflection h2{color:#c9a96e;margin-bottom:1rem}
+.your-reflection input{width:70%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:0.8rem;font-family:inherit;font-size:1rem;border-radius:4px;text-align:center}
+.your-reflection input::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.reflected-words{margin:1.5rem 0;text-align:center}
+.rw{display:inline-block;padding:0.4rem 0.8rem;margin:0.3rem;border:1px solid rgba(201,169,110,0.2);border-radius:4px;color:#c9a96e;font-size:0.9rem}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Catoptric Hall</h1>
+<p class="subtitle">From the Greek katoptron — mirror</p>
+<p class="description">A hall of mirrors, but not the carnival kind. Each mirror shows a different reflection — not of your face, but of your words, reversed, distorted, multiplied, or clarified. What you see depends on which mirror you approach.</p>
+<div class="mirrors">
+<div class="mirror" onclick="this.querySelector('.reflection').style.display='block'"><div class="frame">🪞</div><h3>The Reverse Mirror</h3><p>Shows your words backward</p><div class="reflection">Everything reads right-to-left here. Your name, reversed, becomes someone else's. Try typing into the reflection below.</div></div>
+<div class="mirror" onclick="this.querySelector('.reflection').style.display='block'"><div class="frame">🔍</div><h3>The Magnifying Mirror</h3><p>Makes small things enormous</p><div class="reflection">The smallest word — "a", "I", "oh" — fills the entire frame. Under magnification, simplicity becomes infinite.</div></div>
+<div class="mirror" onclick="this.querySelector('.reflection').style.display='block'"><div class="frame">💫</div><h3>The Multiplying Mirror</h3><p>One word becomes many</p><div class="reflection">Speak one word and see it reflected infinitely, each copy slightly different from the last, like a game of telephone played by light.</div></div>
+<div class="mirror" onclick="this.querySelector('.reflection').style.display='block'"><div class="frame">🌊</div><h3>The Ripple Mirror</h3><p>Your reflection undulates</p><div class="reflection">The surface is liquid. Your words distort like reflections in water. Touch the mirror and the meaning ripples outward.</div></div>
+<div class="mirror" onclick="this.querySelector('.reflection').style.display='block'"><div class="frame">⬛</div><h3>The Dark Mirror</h3><p>Shows what you don't say</p><div class="reflection">This mirror reflects not what you show, but what you hide. The spaces between your words. The thoughts behind your sentences.</div></div>
+<div class="mirror" onclick="this.querySelector('.reflection').style.display='block'"><div class="frame">✨</div><h3>The True Mirror</h3><p>Shows you as others see you</p><div class="reflection">A true mirror is two mirrors at right angles. It shows your face un-reversed — the way others see you, not the way you see yourself.</div></div>
+</div>
+<div class="your-reflection">
+<h2>Speak into the Mirrors</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">Type a word. Watch it reflect six ways.</p>
+<input id="mirror-input" placeholder="a word to reflect..." maxlength="20">
+<br><button class="btn" onclick="reflect()">Reflect</button>
+<div id="reflections" style="margin-top:1.5rem;color:#9a9a8a;font-size:0.95rem;line-height:2"></div>
+</div>
+<div class="reflected-words" id="reflected-words"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Catoptric+Reflection&body=I+reflected:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="catacomb.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="cenotaph.html">Next →</a>
+</nav>
+<script>
+function reflect(){
+  const word=document.getElementById('mirror-input').value.trim();if(!word)return;
+  const reversed=word.split('').reverse().join('');
+  const magnified=word.toUpperCase().split('').join(' · ');
+  const multiplied=Array(5).fill(word).map((w,i)=>i===0?w:w.split('').map((c,j)=>Math.random()>0.8?String.fromCharCode(c.charCodeAt(0)+(Math.random()>0.5?1:-1)):c).join('')).join(' → ');
+  const rippled=word.split('').map((c,i)=>i%2===0?c.toUpperCase():c.toLowerCase()).join('');
+  const dark='['+word.split('').map(()=>'_').join('')+']';
+  const el=document.getElementById('reflections');
+  el.innerHTML=`🪞 <em>${reversed}</em><br>🔍 <strong>${magnified}</strong><br>💫 ${multiplied}<br>🌊 ${rippled}<br>⬛ ${dark}<br>✨ ${word}`;
+  const words=JSON.parse(localStorage.getItem('catoptric_words')||'[]');
+  words.push({word,time:Date.now()});
+  localStorage.setItem('catoptric_words',JSON.stringify(words));
+  renderWords();
+}
+function renderWords(){
+  const words=JSON.parse(localStorage.getItem('catoptric_words')||'[]');
+  document.getElementById('reflected-words').innerHTML=words.slice(-15).map(w=>`<span class="rw">${w.word}</span>`).join('');
+}
+renderWords();
+</script>
+</body>
+</html>

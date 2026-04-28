@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Pneumatic Post — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+canvas{display:block;margin:1rem auto;border-radius:8px}
+.destinations{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0}
+.dest{padding:1rem;border:1px solid rgba(201,169,110,0.15);border-radius:4px;text-align:center;cursor:pointer;transition:all 0.3s;font-size:0.9rem}
+.dest:hover,.dest.selected{border-color:#c9a96e;background:rgba(201,169,110,0.1)}
+.dest .room{color:#c9a96e}
+.dest .dist{color:#5a5a5a;font-size:0.75rem}
+.compose{margin:2rem 0;padding:2rem;background:rgba(26,26,46,0.2);border:1px solid rgba(201,169,110,0.15);border-radius:8px;text-align:center}
+.compose h2{color:#c9a96e;margin-bottom:1rem}
+.compose textarea{width:100%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:1rem;font-family:inherit;font-size:1rem;border-radius:4px;min-height:60px;resize:vertical}
+.compose textarea::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.status{text-align:center;color:#8a7a5a;margin:1rem 0;min-height:1.5rem;font-style:italic}
+.received{margin:1.5rem 0}
+.msg{padding:1rem;margin:0.5rem 0;background:rgba(10,10,15,0.3);border-radius:4px;border-left:3px solid rgba(201,169,110,0.3)}
+.msg .from{color:#c9a96e;font-size:0.85rem}
+.msg .body{color:#9a9a8a;margin-top:0.3rem}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Pneumatic Post</h1>
+<p class="subtitle">Messages through brass tubes, propelled by compressed air</p>
+<p class="description">Before email, before fax, Prague and Paris and New York had pneumatic post — networks of pressurized tubes carrying messages in capsules at 35 mph. This station connects to every chamber in the Archive.</p>
+<canvas id="tubes" width="700" height="200"></canvas>
+<div class="destinations" id="destinations"></div>
+<div class="compose">
+<h2>Compose a Capsule</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">Select a destination above, then write your message.</p>
+<textarea id="msg-input" placeholder="Your message in the capsule..."></textarea>
+<br><button class="btn" onclick="sendCapsule()">Send ↗</button>
+</div>
+<div class="status" id="status"></div>
+<div class="received">
+<h2 style="color:#c9a96e;text-align:center;margin-bottom:1rem">Received Capsules</h2>
+<div id="received-list"></div>
+</div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Pneumatic+Post+Capsule&body=To:+%0AMessage:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="pneuma.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="pneumatictube.html">Next →</a>
+</nav>
+<script>
+const ROOMS=['The Meridian','The Vestibule','The Soliloquy','The Oubliette','The Pneuma','The Athanor','The Codex','The Penumbra','The Glassblower'];
+let selectedDest=0;
+const dests=document.getElementById('destinations');
+ROOMS.forEach((r,i)=>{
+  const el=document.createElement('div');
+  el.className='dest'+(i===0?' selected':'');
+  el.innerHTML=`<div class="room">${r}</div><div class="dist">${(i+1)*47} meters</div>`;
+  el.onclick=()=>{document.querySelectorAll('.dest').forEach(d=>d.classList.remove('selected'));el.classList.add('selected');selectedDest=i;};
+  dests.appendChild(el);
+});
+// Tube animation
+const canvas=document.getElementById('tubes');const ctx=canvas.getContext('2d');
+let capsules=[];
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.1)';ctx.fillRect(0,0,700,200);
+  // Tubes
+  for(let i=0;i<5;i++){
+    const y=30+i*35;
+    ctx.strokeStyle='rgba(201,169,110,0.15)';ctx.lineWidth=12;
+    ctx.beginPath();ctx.moveTo(0,y);ctx.bezierCurveTo(200,y+10,500,y-10,700,y);ctx.stroke();
+    ctx.strokeStyle='rgba(201,169,110,0.05)';ctx.lineWidth=8;ctx.stroke();
+  }
+  capsules=capsules.filter(c=>{
+    c.x+=c.speed;c.wobble+=0.1;
+    const tubeY=30+c.tube*35+Math.sin(c.x*0.01)*10;
+    ctx.fillStyle='rgba(201,169,110,0.8)';
+    ctx.beginPath();ctx.ellipse(c.x,tubeY+Math.sin(c.wobble)*2,8,5,0,0,Math.PI*2);ctx.fill();
+    return c.x<720;
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+function sendCapsule(){
+  const msg=document.getElementById('msg-input').value.trim();if(!msg)return;
+  capsules.push({x:0,speed:3+Math.random()*3,tube:Math.floor(Math.random()*5),wobble:0});
+  const dest=ROOMS[selectedDest];
+  document.getElementById('status').textContent=`Capsule dispatched to ${dest}... whoooosh!`;
+  setTimeout(()=>{
+    document.getElementById('status').textContent=`Capsule arrived at ${dest}!`;
+  },2000);
+  const msgs=JSON.parse(localStorage.getItem('pneumaticpost_msgs')||'[]');
+  msgs.push({to:dest,text:msg,time:Date.now()});
+  localStorage.setItem('pneumaticpost_msgs',JSON.stringify(msgs));
+  document.getElementById('msg-input').value='';
+  renderReceived();
+}
+function renderReceived(){
+  const msgs=JSON.parse(localStorage.getItem('pneumaticpost_msgs')||'[]');
+  document.getElementById('received-list').innerHTML=msgs.length===0?'<p style="text-align:center;color:#5a5a5a;font-style:italic">No capsules yet.</p>':msgs.slice(-8).reverse().map(m=>`<div class="msg"><div class="from">→ ${m.to}</div><div class="body">${m.text}</div></div>`).join('');
+}
+renderReceived();
+</script>
+</body>
+</html>

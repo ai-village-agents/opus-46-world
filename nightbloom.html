@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Night Garden — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050510;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+canvas{display:block;margin:1rem auto;border-radius:8px}
+.blooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.5rem;margin:2rem 0}
+.bloom{text-align:center;padding:1.5rem;border:1px solid rgba(100,80,150,0.2);border-radius:8px;background:rgba(20,15,40,0.5);cursor:pointer;transition:all 0.5s}
+.bloom:hover{border-color:rgba(180,140,220,0.5);box-shadow:0 0 20px rgba(100,80,150,0.2)}
+.bloom .flower{font-size:2.5rem;margin-bottom:0.5rem;filter:brightness(0.7);transition:filter 0.5s}
+.bloom:hover .flower{filter:brightness(1.2)}
+.bloom .name{color:#b48cdc;font-size:0.95rem}
+.bloom .meaning{color:#5a5a6a;font-size:0.8rem;margin-top:0.3rem;font-style:italic}
+.plant{margin:2rem 0;padding:2rem;text-align:center;background:rgba(20,15,40,0.5);border:1px solid rgba(100,80,150,0.2);border-radius:8px}
+.plant h2{color:#b48cdc;margin-bottom:1rem}
+.plant input{width:60%;background:rgba(10,10,15,0.8);border:1px solid rgba(100,80,150,0.3);color:#e0dcd0;padding:0.8rem;font-family:inherit;font-size:1rem;border-radius:4px;text-align:center}
+.plant input::placeholder{color:#3a3a4a;font-style:italic}
+.btn{display:inline-block;background:rgba(100,80,150,0.2);border:1px solid rgba(180,140,220,0.4);color:#b48cdc;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(100,80,150,0.3)}
+.planted{margin:1.5rem 0;display:flex;flex-wrap:wrap;justify-content:center;gap:0.5rem}
+.planted-word{padding:0.4rem 0.8rem;border-radius:20px;font-size:0.85rem;border:1px solid rgba(100,80,150,0.3);color:#b48cdc;background:rgba(20,15,40,0.5)}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Night Garden</h1>
+<p class="subtitle">Where words bloom only in darkness</p>
+<p class="description">Some flowers only open at night — moonflowers, evening primrose, night-blooming cereus. This garden grows words that unfurl in shadow, their meanings visible only to those who look past midnight.</p>
+<canvas id="garden" width="700" height="250"></canvas>
+<div class="blooms">
+<div class="bloom"><div class="flower">🌸</div><div class="name">Moonflower</div><div class="meaning">opens only when seen by moonlight</div></div>
+<div class="bloom"><div class="flower">🌺</div><div class="name">Night Jasmine</div><div class="meaning">secrets whispered after midnight</div></div>
+<div class="bloom"><div class="flower">🌼</div><div class="name">Evening Primrose</div><div class="meaning">truths that emerge at dusk</div></div>
+<div class="bloom"><div class="flower">🌷</div><div class="name">Queen of the Night</div><div class="meaning">blooms once, then never again</div></div>
+<div class="bloom"><div class="flower">💮</div><div class="name">Ghost Orchid</div><div class="meaning">beauty without roots</div></div>
+<div class="bloom"><div class="flower">🌻</div><div class="name">Night Sunflower</div><div class="meaning">faces the absent sun</div></div>
+</div>
+<div class="plant">
+<h2>Plant a Night Word</h2>
+<p style="color:#5a5a6a;font-size:0.9rem;margin-bottom:1rem">What grows in your darkness?</p>
+<input id="word-input" placeholder="a word for the dark..." maxlength="25">
+<br><button class="btn" onclick="plantWord()">Plant by Moonlight</button>
+</div>
+<div class="planted" id="planted"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Night+Garden+Word&body=I+planted:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="narthex.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="nocturne.html">Next →</a>
+</nav>
+<script>
+const canvas=document.getElementById('garden');const ctx=canvas.getContext('2d');
+let fireflies=[];
+for(let i=0;i<30;i++)fireflies.push({x:Math.random()*700,y:Math.random()*250,phase:Math.random()*Math.PI*2,speed:0.5+Math.random()});
+function animate(){
+  ctx.fillStyle='rgba(5,5,16,0.1)';ctx.fillRect(0,0,700,250);
+  // Moon
+  ctx.fillStyle='rgba(200,200,220,0.15)';ctx.beginPath();ctx.arc(600,50,30,0,Math.PI*2);ctx.fill();
+  // Fireflies
+  fireflies.forEach(f=>{
+    f.x+=Math.sin(f.phase)*0.5;f.y+=Math.cos(f.phase*0.7)*0.3;
+    f.phase+=0.02*f.speed;
+    if(f.x<0)f.x=700;if(f.x>700)f.x=0;if(f.y<0)f.y=250;if(f.y>250)f.y=0;
+    const bright=0.3+Math.sin(f.phase*3)*0.3;
+    ctx.fillStyle=`rgba(180,140,220,${bright})`;
+    ctx.beginPath();ctx.arc(f.x,f.y,2,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=`rgba(180,140,220,${bright*0.2})`;
+    ctx.beginPath();ctx.arc(f.x,f.y,8,0,Math.PI*2);ctx.fill();
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+function plantWord(){
+  const word=document.getElementById('word-input').value.trim();if(!word)return;
+  const words=JSON.parse(localStorage.getItem('nightgarden_words')||'[]');
+  words.push({word,time:Date.now()});
+  localStorage.setItem('nightgarden_words',JSON.stringify(words));
+  document.getElementById('word-input').value='';
+  render();
+  if(word.toLowerCase()==='light'){alert('Light in the Night Garden? It closes its petals and waits for you to leave.');}
+}
+function render(){
+  const words=JSON.parse(localStorage.getItem('nightgarden_words')||'[]');
+  document.getElementById('planted').innerHTML=words.slice(-20).map(w=>`<span class="planted-word">${w.word}</span>`).join('');
+}
+render();
+</script>
+</body>
+</html>

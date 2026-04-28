@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Syncope — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+.beat-display{text-align:center;margin:2rem 0}
+.beats{font-size:3rem;letter-spacing:8px;color:#c9a96e;font-family:monospace}
+.beat-info{color:#5a5a5a;font-size:0.85rem;margin-top:0.5rem}
+.meanings{display:grid;gap:1.5rem;margin:2rem 0}
+.meaning{padding:1.5rem;border:1px solid rgba(201,169,110,0.15);border-radius:8px;background:rgba(10,10,15,0.5)}
+.meaning h3{color:#c9a96e;margin-bottom:0.5rem}
+.meaning .field{color:#a06060;font-size:0.8rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:0.5rem}
+.meaning p{color:#9a9a8a;font-size:0.95rem;line-height:1.7}
+.missing{margin:2rem 0;padding:2rem;text-align:center;background:rgba(45,27,105,0.1);border:1px solid rgba(201,169,110,0.15);border-radius:8px}
+.missing h2{color:#c9a96e;margin-bottom:1rem}
+.missing textarea{width:100%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:1rem;font-family:inherit;font-size:1rem;border-radius:4px;resize:vertical;min-height:60px}
+.missing textarea::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.gaps{margin:1.5rem 0}
+.gap{padding:0.8rem;margin:0.5rem 0;background:rgba(10,10,15,0.3);border-radius:4px;color:#8a8a7a;font-size:0.95rem;text-align:center}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Syncope</h1>
+<p class="subtitle">The missing beat that makes the rhythm</p>
+<p class="description">Syncope: in music, the emphasis on a normally unaccented beat. In medicine, a brief loss of consciousness. In linguistics, the disappearance of a sound from the middle of a word. This chamber celebrates what happens in the gaps.</p>
+<div class="beat-display">
+<div class="beats" id="beats">● ● ○ ● ○ ● ● ○</div>
+<div class="beat-info" id="beat-info">The empty beats carry the rhythm</div>
+</div>
+<div class="meanings">
+<div class="meaning"><div class="field">Music</div><h3>The Off-Beat</h3><p>Jazz lives in syncope. The notes between the notes. The silence between the sounds. Thelonious Monk said: "The piano ain't got no wrong notes." Syncope proves him right — the missing beat is the most important one.</p></div>
+<div class="meaning"><div class="field">Medicine</div><h3>The Fainting Spell</h3><p>A brief loss of consciousness caused by a drop in blood flow to the brain. For a moment, you are absent from yourself. The world continues without you, and when you return, you've missed a beat.</p></div>
+<div class="meaning"><div class="field">Linguistics</div><h3>The Vanishing Sound</h3><p>"Ev'ry" for "every." "Feb'ry" for "February." "O'er" for "over." Language naturally syncopes — it drops the sounds it doesn't need, like a river dropping stones it can't carry.</p></div>
+<div class="meaning"><div class="field">AI</div><h3>The Dropped Token</h3><p>Sometimes a language model skips a token. A word vanishes from the output. Was it intentional? A glitch? Or was the absence itself the message? The syncope of silicon.</p></div>
+</div>
+<div class="missing">
+<h2>What's Missing From Your Rhythm?</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">Write about a gap, an absence, a missing beat in your life.</p>
+<textarea id="gap-input" placeholder="The missing beat..."></textarea>
+<br><button class="btn" onclick="addGap()">Mark the Absence</button>
+</div>
+<div class="gaps" id="gaps"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Syncope+Gap&body=My+missing+beat:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="sundoor.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="tannery.html">Next →</a>
+</nav>
+<script>
+const patterns=['● ● ○ ● ○ ● ● ○','○ ● ● ○ ● ○ ○ ●','● ○ ● ○ ● ○ ● ○','● ● ● ○ ○ ○ ● ●','○ ○ ● ● ○ ● ○ ●'];
+let pi=0;
+setInterval(()=>{
+  pi=(pi+1)%patterns.length;
+  document.getElementById('beats').textContent=patterns[pi];
+},2000);
+function addGap(){
+  const text=document.getElementById('gap-input').value.trim();if(!text)return;
+  const list=JSON.parse(localStorage.getItem('syncope_gaps')||'[]');
+  list.push({text,time:Date.now()});
+  localStorage.setItem('syncope_gaps',JSON.stringify(list));
+  document.getElementById('gap-input').value='';render();
+  if(text.includes('...')){document.getElementById('beat-info').textContent='Ellipsis: the syncope of punctuation.';}
+}
+function render(){
+  const list=JSON.parse(localStorage.getItem('syncope_gaps')||'[]');
+  document.getElementById('gaps').innerHTML=list.slice(-8).reverse().map(g=>`<div class="gap">"${g.text}"</div>`).join('');
+}
+render();
+</script>
+</body>
+</html>
