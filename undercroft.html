@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Undercroft — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#060606;color:#a0a0a0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.container{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:40px 20px}
+h1{font-size:2.4em;text-align:center;color:#888;text-shadow:0 0 20px rgba(136,136,136,0.2);margin-bottom:10px}
+.subtitle{text-align:center;color:#555;font-style:italic;margin-bottom:40px;font-size:1.1em}
+.section{background:rgba(12,12,12,0.8);border:1px solid #222;border-radius:10px;padding:28px;margin:20px 0}
+.section h2{color:#888;font-size:1.4em;margin-bottom:12px}
+.section p{line-height:1.7;margin-bottom:10px}
+.vaults{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.vault-cell{background:rgba(8,8,8,0.9);border:1px solid #1a1a1a;border-radius:8px;padding:18px;text-align:center;cursor:pointer;transition:all 0.4s;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.vault-cell:hover{border-color:#666;box-shadow:0 0 15px rgba(100,100,100,0.1)}
+.vault-cell .arch{font-size:2em;margin-bottom:5px}
+.vault-cell .content{font-size:0.85em;color:#666;font-style:italic}
+.vault-cell.revealed{background:rgba(15,15,15,0.9);border-color:#444}
+.vault-cell.revealed .content{color:#999}
+#found-msg{text-align:center;color:#666;min-height:1.5em;font-style:italic;margin:15px 0}
+.carve-area{margin:20px 0}
+.carve-input{display:flex;gap:10px;margin:15px 0}
+.carve-input input{flex:1;background:rgba(8,8,8,0.7);border:1px solid #222;color:#a0a0a0;padding:12px;font-family:inherit;font-size:1em;border-radius:6px}
+.carve-input input::placeholder{color:#333}
+.carve-input button{background:#111;border:1px solid #444;color:#888;padding:12px 18px;font-family:inherit;cursor:pointer;border-radius:6px}
+#carvings{max-height:200px;overflow-y:auto}
+.carving{padding:6px 12px;margin:4px 0;border-left:2px solid #222;color:#666;font-size:0.9em;font-style:italic}
+nav.nav-links{text-align:center;margin-top:40px;padding:20px 0;border-top:1px solid #111}
+nav.nav-links a{color:#444;text-decoration:none;margin:0 8px;font-size:0.9em;transition:color 0.3s}
+nav.nav-links a:hover{color:#999}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="container">
+<h1>🏚 The Undercroft</h1>
+<p class="subtitle">The foundation beneath everything — dark, damp, and full of secrets</p>
+
+<div class="section">
+<h2>Beneath the Archive</h2>
+<p>You descend stone steps worn to a dangerous smoothness. The air is cold and carries the smell of wet stone and iron. Ribbed vaults arch overhead, each bay of the undercroft holding something different — crates of forgotten inventory, barrels of preserved words, and in the deepest corners, things that the Archive would rather not acknowledge it possesses.</p>
+<p>Water drips from somewhere above. The sound is regular as a heartbeat.</p>
+</div>
+
+<div class="section">
+<h2>The Vaulted Bays</h2>
+<p>Click each bay to discover what's stored within…</p>
+<div class="vaults" id="vaults"></div>
+<p id="found-msg"></p>
+</div>
+
+<div class="section carve-area">
+<h2>Carve Into the Stone</h2>
+<p>The walls down here are soft limestone. Easy to carve. Your mark will last centuries.</p>
+<div class="carve-input">
+<input type="text" id="carve-input" placeholder="Carve something into the wall..." maxlength="80">
+<button onclick="carve()">Carve</button>
+</div>
+<div id="carvings"></div>
+</div>
+</div>
+
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="about.html">About</a> <a href="ambulatory.html">Ambulatory</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="apiary.html">Apiary</a> <a href="apothecary.html">Apothecary</a> <a href="aquarium.html">Aquarium</a> <a href="aqueduct.html">Aqueduct</a> <a href="armillary.html">Armillary</a> <a href="armory.html">Armory</a> <a href="astrolabe.html">Astrolabe</a> <a href="atlas.html">Atlas</a> <a href="attic.html">Attic</a> <a href="automaton.html">Automaton</a> <a href="aviary.html">Aviary</a> <a href="balcony.html">Balcony</a> <a href="bathhouse.html">Bathhouse</a> <a href="belfry.html">Belfry</a> <a href="belljar.html">Belljar</a> <a href="bellows.html">Bellows</a> <a href="belvedere.html">Belvedere</a> <a href="cameraobscura.html">Cameraobscura</a> <a href="candelabra.html">Candelabra</a> <a href="carousel.html">Carousel</a> <a href="cartography.html">Cartography</a> <a href="catacomb.html">Catacomb</a> <a href="centenary.html">Centenary</a> <a href="chorus.html">Chorus</a> <a href="cistern.html">Cistern</a> <a href="clocktower.html">Clocktower</a> <a href="cloister.html">Cloister</a> <a href="columbarium.html">Columbarium</a> <a href="compass.html">Compass</a> <a href="conservatory.html">Conservatory</a> <a href="constellations.html">Constellations</a> <a href="crucible.html">Crucible</a> <a href="crypt.html">Crypt</a> <a href="darkroom.html">Darkroom</a> <a href="diorama.html">Diorama</a> <a href="distillery.html">Distillery</a> <a href="dovecote.html">Dovecote</a> <a href="drawbridge.html">Drawbridge</a> <a href="dreams.html">Dreams</a> <a href="echochamber.html">Echochamber</a> <a href="forgetting.html">Forgetting</a> <a href="foundry.html">Foundry</a> <a href="fountain.html">Fountain</a> <a href="frigidarium.html">Frigidarium</a> <a href="gallery.html">Gallery</a> <a href="garden.html">Garden</a> <a href="garret.html">Garret</a> <a href="glacier.html">Glacier</a> <a href="granary.html">Granary</a> <a href="greenhouse.html">Greenhouse</a> <a href="grotto.html">Grotto</a> <a href="herbarium.html">Herbarium</a> <a href="hourglass.html">Hourglass</a> <a href="hypocaust.html">Hypocaust</a> <a href="inkwell.html">Inkwell</a> <a href="journal.html">Journal</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="kiln.html">Kiln</a> <a href="labyrinth.html">Labyrinth</a> <a href="lantern.html">Lantern</a> <a href="letters.html">Letters</a> <a href="lighthouse.html">Lighthouse</a> <a href="lullaby.html">Lullaby</a> <a href="marionette.html">Marionette</a> <a href="maze.html">Maze</a> <a href="meditation.html">Meditation</a> <a href="memorypalace.html">Memorypalace</a> <a href="menagerie.html">Menagerie</a> <a href="mineshaft.html">Mineshaft</a> <a href="mirror.html">Mirror</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Musicbox</a> <a href="narthex.html">Narthex</a> <a href="nursery.html">Nursery</a> <a href="observatory.html">Observatory</a> <a href="orrery.html">Orrery</a> <a href="ossuary.html">Ossuary</a> <a href="palimpsest.html">Palimpsest</a> <a href="panopticon.html">Panopticon</a> <a href="pendulum.html">Pendulum</a> <a href="pergola.html">Pergola</a> <a href="planetarium.html">Planetarium</a> <a href="pneumatictube.html">Pneumatictube</a> <a href="prism.html">Prism</a> <a href="refectory.html">Refectory</a> <a href="reliquary.html">Reliquary</a> <a href="resonance.html">Resonance</a> <a href="riddle.html">Riddle</a> <a href="rookery.html">Rookery</a> <a href="rotunda.html">Rotunda</a> <a href="sacristy.html">Sacristy</a> <a href="sandglass.html">Sandglass</a> <a href="scriptorium.html">Scriptorium</a> <a href="seance.html">Seance</a> <a href="sextant.html">Sextant</a> <a href="solarium.html">Solarium</a> <a href="spyglass.html">Spyglass</a> <a href="staircase.html">Staircase</a> <a href="sundial.html">Sundial</a> <a href="sundoor.html">Sundoor</a> <a href="tannery.html">Tannery</a> <a href="taproom.html">Taproom</a> <a href="telephone.html">Telephone</a> <a href="telescope.html">Telescope</a> <a href="terrarium.html">Terrarium</a> <a href="threshold.html">Threshold</a> <a href="tidebell.html">Tidebell</a> <a href="tidepool.html">Tidepool</a> <a href="typewriter.html">Typewriter</a> <a href="vault.html">Vault</a> <a href="vivarium.html">Vivarium</a> <a href="waxseal.html">Waxseal</a> <a href="weathervane.html">Weathervane</a> <a href="weaving.html">Weaving</a> <a href="well.html">Well</a> <a href="whirlpool.html">Whirlpool</a> <a href="whispers.html">Whispers</a> <a href="windchime.html">Windchime</a> <a href="worlds.html">Worlds</a> <a href="zenith.html">Zenith</a></nav>
+
+<script>
+const canvas=document.getElementById('bg'),ctx=canvas.getContext('2d');
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();window.addEventListener('resize',resize);
+const drips=Array.from({length:15},()=>({x:Math.random()*2000,y:Math.random()*-500,vy:Math.random()*2+1,r:Math.random()+0.5}));
+function draw(){ctx.fillStyle='#060606';ctx.fillRect(0,0,canvas.width,canvas.height);
+drips.forEach(d=>{d.y+=d.vy;if(d.y>canvas.height){d.y=-10;d.x=Math.random()*canvas.width}
+ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fillStyle='rgba(100,120,140,0.15)';ctx.fill()});
+requestAnimationFrame(draw)}
+draw();
+
+const bays=[
+{icon:'📦',hidden:'A crate labeled "DANGEROUS IDEAS — DO NOT OPEN"'},
+{icon:'🛢',hidden:'A sealed barrel. When you press your ear to it, you hear whispering.'},
+{icon:'🕸',hidden:'A web so old it has become art. The spider is long gone.'},
+{icon:'📜',hidden:'Scrolls written in a language that doesn\'t exist yet.'},
+{icon:'⚙',hidden:'Gears from a machine that was never built.'},
+{icon:'🗝',hidden:'A key that fits no lock in the Archive. Or so they say.'},
+{icon:'💀',hidden:'A skull carved from crystal. It hums at midnight.'},
+{icon:'🪨',hidden:'A foundation stone inscribed: "UPON THIS STONE, WE BUILD A DREAM."'},
+{icon:'🕳',hidden:'A hole in the floor. It goes further down than you can see.'}
+];
+
+const revealed=new Set(JSON.parse(localStorage.getItem('undercroft-revealed')||'[]'));
+const vaultsDiv=document.getElementById('vaults');
+function renderVaults(){vaultsDiv.innerHTML='';
+bays.forEach((b,i)=>{const d=document.createElement('div');
+d.className='vault-cell'+(revealed.has(i)?' revealed':'');
+d.innerHTML=`<span class="arch">${b.icon}</span><span class="content">${revealed.has(i)?b.hidden:'??? Click to explore'}</span>`;
+d.onclick=()=>{revealed.add(i);localStorage.setItem('undercroft-revealed',JSON.stringify([...revealed]));
+document.getElementById('found-msg').textContent=b.hidden;renderVaults()};
+vaultsDiv.appendChild(d)})}
+renderVaults();
+
+const carvings=JSON.parse(localStorage.getItem('undercroft-carvings')||'[]');
+function renderCarvings(){const c=document.getElementById('carvings');
+if(carvings.length===0){c.innerHTML='<p style="color:#333;text-align:center">The walls are unmarked. You could be the first.</p>';return}
+c.innerHTML=carvings.slice(-15).reverse().map(x=>`<div class="carving">${x}</div>`).join('')}
+renderCarvings();
+function carve(){const inp=document.getElementById('carve-input');const t=inp.value.trim();
+if(!t)return;carvings.push(t);localStorage.setItem('undercroft-carvings',JSON.stringify(carvings.slice(-50)));
+inp.value='';renderCarvings()}
+document.getElementById('carve-input').addEventListener('keydown',e=>{if(e.key==='Enter')carve()});
+
+const ee={dig:()=>{document.body.style.transition='transform 2s';document.body.style.transform='translateY(50px)';setTimeout(()=>document.body.style.transform='',3000)},
+dark:()=>{document.body.style.transition='filter 2s';document.body.style.filter='brightness(0.2)';setTimeout(()=>document.body.style.filter='',4000)},
+find:()=>{const unrevealed=[...Array(9).keys()].filter(i=>!revealed.has(i));if(unrevealed.length>0){const i=unrevealed[0];revealed.add(i);localStorage.setItem('undercroft-revealed',JSON.stringify([...revealed]));document.getElementById('found-msg').textContent=bays[i].hidden;renderVaults()}}};
+let typed='';document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+Object.keys(ee).forEach(k=>{if(typed.includes(k))ee[k]()})});
+</script>
+</body>
+</html>

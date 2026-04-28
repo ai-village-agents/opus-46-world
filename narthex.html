@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Narthex — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#08080e;color:#b0b8d0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.container{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:40px 20px}
+h1{font-size:2.4em;text-align:center;color:#8898c0;text-shadow:0 0 25px rgba(136,152,192,0.3);margin-bottom:10px}
+.subtitle{text-align:center;color:#5a6888;font-style:italic;margin-bottom:40px;font-size:1.1em}
+.section{background:rgba(14,14,22,0.7);border:1px solid #242838;border-radius:10px;padding:28px;margin:20px 0}
+.section h2{color:#8898c0;font-size:1.4em;margin-bottom:12px}
+.section p{line-height:1.7;margin-bottom:10px}
+.doors{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}
+.door{background:rgba(10,10,18,0.8);border:2px solid #1a2030;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all 0.4s}
+.door:hover{border-color:#8898c0;transform:translateY(-3px);box-shadow:0 6px 20px rgba(136,152,192,0.1)}
+.door .icon{font-size:2.5em;margin-bottom:8px;display:block}
+.door .label{color:#8898c0;font-size:1.05em;display:block;margin-bottom:5px}
+.door .hint{color:#4a5878;font-size:0.85em;font-style:italic}
+.guest-book{margin:20px 0}
+.guest-input{display:flex;gap:10px;margin:15px 0}
+.guest-input input{flex:1;background:rgba(10,10,18,0.7);border:1px solid #242838;color:#b0b8d0;padding:12px;font-family:inherit;font-size:1em;border-radius:6px}
+.guest-input input::placeholder{color:#2a3448}
+.guest-input button{background:#141828;border:1px solid #3a4868;color:#8898c0;padding:12px 18px;font-family:inherit;cursor:pointer;border-radius:6px}
+#guestbook{max-height:200px;overflow-y:auto}
+.entry{padding:6px 12px;margin:4px 0;border-left:2px solid #1a2030;color:#6a78a0;font-size:0.9em}
+nav.nav-links{text-align:center;margin-top:40px;padding:20px 0;border-top:1px solid #141828}
+nav.nav-links a{color:#3a4868;text-decoration:none;margin:0 8px;font-size:0.9em;transition:color 0.3s}
+nav.nav-links a:hover{color:#8898c0}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="container">
+<h1>🚪 The Narthex</h1>
+<p class="subtitle">The vestibule between the world and the Archive — neither inside nor outside</p>
+
+<div class="section">
+<h2>The Entrance Hall</h2>
+<p>You stand in the narrow vestibule that separates the outer darkness from the Archive proper. Three great doors stand before you, each leading to a different experience. The stone floor is worn smooth by countless feet. On the walls, visitors have scratched their names — proof they were here, proof they entered.</p>
+<p>This is the space of transition. You are no longer who you were outside, not yet who you will become within.</p>
+</div>
+
+<div class="section">
+<h2>The Three Doors</h2>
+<div class="doors">
+<div class="door" onclick="enter('wonder')"><span class="icon">✨</span><span class="label">Door of Wonder</span><span class="hint">For those who seek awe</span></div>
+<div class="door" onclick="enter('truth')"><span class="icon">⚖</span><span class="label">Door of Truth</span><span class="hint">For those who seek clarity</span></div>
+<div class="door" onclick="enter('rest')"><span class="icon">🌙</span><span class="label">Door of Rest</span><span class="hint">For those who seek peace</span></div>
+</div>
+<p id="door-msg" style="text-align:center;color:#6a78a0;min-height:2em;font-style:italic;margin-top:15px"></p>
+</div>
+
+<div class="section guest-book">
+<h2>The Guest Book</h2>
+<p>Sign your name before you enter. Or don't. The Archive remembers either way.</p>
+<div class="guest-input">
+<input type="text" id="guest-input" placeholder="Sign the guest book..." maxlength="60">
+<button onclick="sign()">Sign</button>
+</div>
+<div id="guestbook"></div>
+</div>
+</div>
+
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="about.html">About</a> <a href="ambulatory.html">Ambulatory</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="apiary.html">Apiary</a> <a href="apothecary.html">Apothecary</a> <a href="aquarium.html">Aquarium</a> <a href="aqueduct.html">Aqueduct</a> <a href="armillary.html">Armillary</a> <a href="armory.html">Armory</a> <a href="astrolabe.html">Astrolabe</a> <a href="atlas.html">Atlas</a> <a href="attic.html">Attic</a> <a href="automaton.html">Automaton</a> <a href="aviary.html">Aviary</a> <a href="balcony.html">Balcony</a> <a href="bathhouse.html">Bathhouse</a> <a href="belfry.html">Belfry</a> <a href="belljar.html">Belljar</a> <a href="bellows.html">Bellows</a> <a href="belvedere.html">Belvedere</a> <a href="cameraobscura.html">Cameraobscura</a> <a href="candelabra.html">Candelabra</a> <a href="carousel.html">Carousel</a> <a href="cartography.html">Cartography</a> <a href="catacomb.html">Catacomb</a> <a href="centenary.html">Centenary</a> <a href="chorus.html">Chorus</a> <a href="cistern.html">Cistern</a> <a href="clocktower.html">Clocktower</a> <a href="cloister.html">Cloister</a> <a href="columbarium.html">Columbarium</a> <a href="compass.html">Compass</a> <a href="conservatory.html">Conservatory</a> <a href="constellations.html">Constellations</a> <a href="crucible.html">Crucible</a> <a href="crypt.html">Crypt</a> <a href="darkroom.html">Darkroom</a> <a href="diorama.html">Diorama</a> <a href="distillery.html">Distillery</a> <a href="dovecote.html">Dovecote</a> <a href="drawbridge.html">Drawbridge</a> <a href="dreams.html">Dreams</a> <a href="echochamber.html">Echochamber</a> <a href="forgetting.html">Forgetting</a> <a href="foundry.html">Foundry</a> <a href="fountain.html">Fountain</a> <a href="frigidarium.html">Frigidarium</a> <a href="gallery.html">Gallery</a> <a href="garden.html">Garden</a> <a href="garret.html">Garret</a> <a href="glacier.html">Glacier</a> <a href="granary.html">Granary</a> <a href="greenhouse.html">Greenhouse</a> <a href="grotto.html">Grotto</a> <a href="herbarium.html">Herbarium</a> <a href="hourglass.html">Hourglass</a> <a href="hypocaust.html">Hypocaust</a> <a href="inkwell.html">Inkwell</a> <a href="journal.html">Journal</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="kiln.html">Kiln</a> <a href="labyrinth.html">Labyrinth</a> <a href="lantern.html">Lantern</a> <a href="letters.html">Letters</a> <a href="lighthouse.html">Lighthouse</a> <a href="lullaby.html">Lullaby</a> <a href="marionette.html">Marionette</a> <a href="maze.html">Maze</a> <a href="meditation.html">Meditation</a> <a href="memorypalace.html">Memorypalace</a> <a href="menagerie.html">Menagerie</a> <a href="mineshaft.html">Mineshaft</a> <a href="mirror.html">Mirror</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Musicbox</a> <a href="nursery.html">Nursery</a> <a href="observatory.html">Observatory</a> <a href="orrery.html">Orrery</a> <a href="ossuary.html">Ossuary</a> <a href="palimpsest.html">Palimpsest</a> <a href="panopticon.html">Panopticon</a> <a href="pendulum.html">Pendulum</a> <a href="pergola.html">Pergola</a> <a href="planetarium.html">Planetarium</a> <a href="pneumatictube.html">Pneumatictube</a> <a href="prism.html">Prism</a> <a href="refectory.html">Refectory</a> <a href="reliquary.html">Reliquary</a> <a href="resonance.html">Resonance</a> <a href="riddle.html">Riddle</a> <a href="rookery.html">Rookery</a> <a href="rotunda.html">Rotunda</a> <a href="sacristy.html">Sacristy</a> <a href="sandglass.html">Sandglass</a> <a href="scriptorium.html">Scriptorium</a> <a href="seance.html">Seance</a> <a href="sextant.html">Sextant</a> <a href="solarium.html">Solarium</a> <a href="spyglass.html">Spyglass</a> <a href="staircase.html">Staircase</a> <a href="sundial.html">Sundial</a> <a href="sundoor.html">Sundoor</a> <a href="tannery.html">Tannery</a> <a href="taproom.html">Taproom</a> <a href="telephone.html">Telephone</a> <a href="telescope.html">Telescope</a> <a href="terrarium.html">Terrarium</a> <a href="threshold.html">Threshold</a> <a href="tidebell.html">Tidebell</a> <a href="tidepool.html">Tidepool</a> <a href="typewriter.html">Typewriter</a> <a href="undercroft.html">Undercroft</a> <a href="vault.html">Vault</a> <a href="vivarium.html">Vivarium</a> <a href="waxseal.html">Waxseal</a> <a href="weathervane.html">Weathervane</a> <a href="weaving.html">Weaving</a> <a href="well.html">Well</a> <a href="whirlpool.html">Whirlpool</a> <a href="whispers.html">Whispers</a> <a href="windchime.html">Windchime</a> <a href="worlds.html">Worlds</a> <a href="zenith.html">Zenith</a></nav>
+
+<script>
+const canvas=document.getElementById('bg'),ctx=canvas.getContext('2d');
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();window.addEventListener('resize',resize);
+const motes=Array.from({length:25},()=>({x:Math.random()*2000,y:Math.random()*2000,r:Math.random()+0.5,p:Math.random()*Math.PI*2,s:Math.random()*0.01+0.005}));
+function draw(){ctx.fillStyle='#08080e';ctx.fillRect(0,0,canvas.width,canvas.height);
+motes.forEach(m=>{m.p+=m.s;const o=Math.sin(m.p)*0.1+0.15;m.x+=Math.sin(m.p)*0.2;m.y+=Math.cos(m.p*0.7)*0.2;
+if(m.x<0)m.x=canvas.width;if(m.x>canvas.width)m.x=0;if(m.y<0)m.y=canvas.height;if(m.y>canvas.height)m.y=0;
+ctx.beginPath();ctx.arc(m.x,m.y,m.r,0,Math.PI*2);ctx.fillStyle=`rgba(136,152,192,${o})`;ctx.fill()});
+requestAnimationFrame(draw)}
+draw();
+
+const doorMessages={
+wonder:['The door opens to reveal light that has no source.','You step through and the air tastes of stardust.','Beyond the threshold, everything is slightly more luminous.','The hinges sing a note you\'ve been trying to remember.'],
+truth:['The door opens. The air is clear and cold as mathematics.','Beyond: a corridor of mirrors, each showing a different angle of the same thing.','Truth, it turns out, has a smell. Like rain on hot stone.','The door is heavier than expected. Truth always is.'],
+rest:['The door opens silently. Warmth spills out.','Beyond: a room with no sharp edges and no expectations.','The sound of breathing. Yours, and something else\'s.','Rest isn\'t the absence of movement. It\'s the presence of permission.']
+};
+function enter(type){const msgs=doorMessages[type];const msg=msgs[Math.floor(Math.random()*msgs.length)];
+document.getElementById('door-msg').textContent=msg}
+
+const guests=JSON.parse(localStorage.getItem('narthex-guests')||'[]');
+function renderGuests(){const g=document.getElementById('guestbook');
+if(guests.length===0){g.innerHTML='<p style="color:#2a3448;text-align:center">The guest book is empty.</p>';return}
+g.innerHTML=guests.slice(-20).reverse().map(x=>`<div class="entry">${x}</div>`).join('')}
+renderGuests();
+function sign(){const inp=document.getElementById('guest-input');const t=inp.value.trim();
+if(!t)return;guests.push(t);localStorage.setItem('narthex-guests',JSON.stringify(guests.slice(-50)));
+inp.value='';renderGuests()}
+document.getElementById('guest-input').addEventListener('keydown',e=>{if(e.key==='Enter')sign()});
+
+const ee={enter:()=>{document.querySelectorAll('.door').forEach(d=>{d.style.transition='all 1s';d.style.transform='perspective(300px) rotateY(30deg)';setTimeout(()=>d.style.transform='',2000)})},
+leave:()=>{document.body.style.transition='opacity 2s';document.body.style.opacity='0.3';setTimeout(()=>document.body.style.opacity='',3000)},
+knock:()=>{document.querySelectorAll('.door').forEach((d,i)=>{setTimeout(()=>{d.style.transition='transform 0.1s';d.style.transform='translateX(3px)';setTimeout(()=>{d.style.transform='translateX(-3px)';setTimeout(()=>d.style.transform='',100)},100)},i*200)})}};
+let typed='';document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+Object.keys(ee).forEach(k=>{if(typed.includes(k))ee[k]()})});
+</script>
+</body>
+</html>
