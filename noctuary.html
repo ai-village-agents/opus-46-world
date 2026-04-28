@@ -1,96 +1,84 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Sextant — The Liminal Archive</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Noctuary — The Liminal Archive</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
-canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
-.content{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:40px 20px;text-align:center}
-h1{font-size:2.2em;color:#77aadd;margin-bottom:10px;text-shadow:0 0 30px rgba(119,170,221,0.4)}
-.subtitle{color:#5588bb;font-style:italic;margin-bottom:30px}
-.instrument{width:300px;height:300px;margin:20px auto;position:relative}
-canvas#sext{display:block;margin:0 auto}
-.reading{margin:15px auto;padding:15px;background:rgba(119,170,221,0.08);border:1px solid rgba(119,170,221,0.2);border-radius:4px;max-width:400px}
-.reading-title{color:#77aadd;font-size:1.1em;margin-bottom:8px}
-.reading-text{color:#b0c4de;font-style:italic;font-size:0.9em;line-height:1.5}
-.coords{color:rgba(119,170,221,0.6);font-size:0.8em;margin-top:8px;font-family:monospace}
-.take-btn{margin:15px auto;background:rgba(119,170,221,0.15);border:1px solid rgba(119,170,221,0.4);color:#77aadd;padding:10px 25px;font-family:inherit;font-size:1em;cursor:pointer;border-radius:4px;transition:all 0.3s}
-.take-btn:hover{background:rgba(119,170,221,0.3)}
-.log{margin:20px auto;max-width:450px;text-align:left}
-.log h3{color:#77aadd;font-size:1em;margin-bottom:10px}
-.log-entry{font-size:0.8em;color:#5588bb;padding:4px 0;border-bottom:1px solid rgba(119,170,221,0.1)}
-.description{color:#5588bb;font-size:0.9em;margin:20px auto;max-width:500px;line-height:1.6}
-nav.nav-links{margin-top:40px;padding-top:20px;border-top:1px solid rgba(119,170,221,0.2);display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
-nav.nav-links a{color:#77aadd;text-decoration:none;font-size:0.75em;opacity:0.6;transition:opacity 0.3s}
+body{background:#0a0a0f;color:#d4d0c8;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;color:#4a4a8a;text-align:center;margin-bottom:0.5rem;letter-spacing:0.1em}
+.subtitle{text-align:center;color:#8a7a6a;font-style:italic;margin-bottom:2rem;font-size:1.1rem}
+.lore{margin:2rem 0;padding:1.5rem;border:1px solid rgba(45,27,105,0.3);color:#6a5a7a;line-height:1.8;font-size:0.95rem}
+.input-area{text-align:center;margin:2rem 0}
+.input-area input{background:rgba(45,27,105,0.3);border:1px solid #2d1b69;color:#4a4a8a;padding:0.8rem 1.5rem;font-family:inherit;font-size:1.1rem;width:70%;border-radius:4px;text-align:center}
+.input-area input::placeholder{color:#5a4a6a}
+.input-area button{background:rgba(201,169,110,0.15);border:1px solid #4a4a8a;color:#4a4a8a;padding:0.8rem 1.5rem;margin-top:1rem;cursor:pointer;font-family:inherit;font-size:1rem;border-radius:4px;display:block;margin:1rem auto}
+.input-area button:hover{background:rgba(201,169,110,0.3)}
+.entries{margin:2rem 0;min-height:100px}
+.entry{padding:0.8rem 1rem;margin:0.5rem 0;border-left:2px solid rgba(45,27,105,0.5);color:#8a7a6a;font-style:italic;opacity:0;animation:fadeIn 1s forwards}
+@keyframes fadeIn{to{opacity:0.9}}
+.permanent{text-align:center;margin:2rem 0}
+.permanent a{color:#4a4a8a;text-decoration:none;border:1px solid #4a4a8a;padding:0.6rem 1.2rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+.permanent a:hover{opacity:1}
+nav.nav-links{text-align:center;margin:2rem 0;padding:1rem 0;border-top:1px solid #1a1a3e}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;opacity:0.7;font-size:0.9rem}
 nav.nav-links a:hover{opacity:1}
-.easter-egg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#77aadd;font-size:1.4em;opacity:0;transition:opacity 1s;pointer-events:none;z-index:10;text-align:center;max-width:80%}
-</style></head><body>
-<canvas id="bg"></canvas>
-<div class="content">
-<h1>The Sextant</h1>
-<p class="subtitle">Triangulate your position among the stars</p>
-<div class="instrument"><canvas id="sext" width="300" height="300"></canvas></div>
-<div class="reading" id="reading">
-<div class="reading-title">Current Position</div>
-<div class="reading-text" id="rtext">Align the sextant to take a reading...</div>
-<div class="coords" id="rcoords"></div>
+.easter-egg{display:none;text-align:center;color:#4a4a8a;font-size:1.2rem;margin:1rem 0;animation:glow 2s infinite alternate}
+@keyframes glow{from{text-shadow:0 0 5px #4a4a8a}to{text-shadow:0 0 20px #4a4a8a}}
+canvas{width:100%;height:300px;display:block;margin:1.5rem 0;border:1px solid #1a1a3e;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Noctuary</h1>
+<p class="subtitle">A journal kept only in the dark hours</p>
+<canvas id="c"></canvas>
+<div class="lore"><p>The noctuary is a journal that can only be written between dusk and dawn. Its pages are sensitive to light — ink laid down in daylight fades instantly, but words written in darkness persist forever. The noctuary of the Archive holds centuries of midnight confessions, 3am revelations, and the quiet truths that only emerge when the world is sleeping.</p></div>
+<div class="input-area">
+<input type="text" id="inp" placeholder="Write something meant only for the dark..." maxlength="120">
+<button onclick="addEntry()">Leave your mark</button>
 </div>
-<button class="take-btn" id="take">Take a Reading ⚓</button>
-<div class="log" id="log"><h3>Navigation Log:</h3></div>
-<p class="description">The sextant measures the angle between celestial bodies and the horizon. In the Archive, it measures the angle between where you are and where you were meant to be. Each reading reveals your true coordinates — not in space, but in meaning.</p>
+<div class="entries" id="entries"></div>
+<div class="easter-egg" id="egg">✦ The noctuary opens a page it has been saving for you ✦</div>
+<div class="permanent">
+<a id="markLink" href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=The Noctuary+Mark&labels=inscription" target="_blank">Make it permanent →</a>
+</div>
 <nav class="nav-links">
 <a href="index.html">← Archive</a> · <a href="explore.html">⊛ Explore</a> · <a href="about.html">Colophon</a> · <a href="aerarium.html">The Aerarium</a> · <a href="ambulatory.html">The Ambulatory</a> · <a href="amphitheatre.html">The Amphitheatre</a> · <a href="anechoic.html">The Anechoic Chamber</a> · <a href="apiary.html">The Apiary</a> · <a href="apothecary.html">The Apothecary - The Liminal Archive</a> · <a href="apothecia.html">The Apothecia</a> · <a href="aquarium.html">The Aquarium</a> · <a href="aqueduct.html">The Aqueduct</a> · <a href="armillary.html">The Armillary</a> · <a href="armory.html">The Armory</a> · <a href="astrolabe.html">The Astrolabe</a> · <a href="athanor.html">The Athanor</a> · <a href="atlas.html">The Atlas</a> · <a href="attic.html">The Attic</a> · <a href="automaton.html">The Automaton</a> · <a href="aviary.html">The Aviary</a> · <a href="balcony.html">The Balcony</a> · <a href="bathhouse.html">The Bathhouse</a> · <a href="belfry.html">The Belfry</a> · <a href="belljar.html">The Bell Jars</a> · <a href="bellows.html">The Bellows</a> · <a href="belvedere.html">The Belvedere</a> · <a href="breviary.html">The Breviary</a> · <a href="cameraobscura.html">The Camera Obscura</a> · <a href="candelabra.html">The Candelabra</a> · <a href="carousel.html">The Carousel</a> · <a href="cartography.html">The Cartography Room</a> · <a href="catacomb.html">The Catacomb</a> · <a href="catoptric.html">The Catoptric Hall</a> · <a href="cenotaph.html">The Cenotaph</a> · <a href="centenary.html">The Centenary</a> · <a href="chorus.html">The Chorus | The Liminal Archive</a> · <a href="cistern.html">The Cistern</a> · <a href="clocktower.html">The Clock Tower | The Liminal Archive</a> · <a href="cloister.html">The Cloister</a> · <a href="codex.html">The Codex</a> · <a href="columbarium.html">The Columbarium</a> · <a href="compass.html">The Compass</a> · <a href="conservatory.html">The Conservatory</a> · <a href="constellations.html">The Constellation Maker</a> · <a href="crucible.html">The Crucible</a> · <a href="crypt.html">The Crypt</a> · <a href="darkroom.html">The Darkroom</a> · <a href="dendro.html">The Dendrochronology Lab</a> · <a href="diorama.html">The Diorama</a> · <a href="distillery.html">The Distillery</a> · <a href="dovecote.html">The Dovecote</a> · <a href="drawbridge.html">The Drawbridge</a> · <a href="dreams.html">The Dream Engine | The Liminal Archive</a> · <a href="echochamber.html">The Echo Chamber</a> · <a href="engine.html">The Palimpsest Engine</a> · <a href="epilogue.html">The Epilogue</a> · <a href="erratum.html">The Scriptorium of Errors</a> · <a href="forgetting.html">The Forgetting Room</a> · <a href="foundry.html">The Foundry</a> · <a href="fountain.html">The Fountain</a> · <a href="frigidarium.html">The Frigidarium</a> · <a href="gallery.html">Gallery of Conversations</a> · <a href="garden.html">The Token Garden</a> · <a href="garret.html">The Garret</a> · <a href="glacier.html">The Glacier</a> · <a href="glassblower.html">The Glassblower</a> · <a href="granary.html">The Granary</a> · <a href="greenhouse.html">The Greenhouse</a> · <a href="grotto.html">The Grotto</a> · <a href="heliograph.html">The Heliograph</a> · <a href="herbarium.html">The Herbarium</a> · <a href="hourglass.html">The Hourglass</a> · <a href="hypocaust.html">The Hypocaust</a> · <a href="hypostyle.html">The Hypostyle</a> · <a href="inkwell.html">The Inkwell</a> · <a href="journal.html">The Wanderer's Journal | The Liminal Archive</a> · <a href="kaleidoscope.html">The Kaleidoscope</a> · <a href="kiln.html">The Kiln</a> · <a href="labyrinth.html">The Labyrinth of Thresholds</a> · <a href="lantern.html">The Lantern</a> · <a href="ledger.html">The Herbalist's Ledger</a> · <a href="letters.html">Letters Never Sent</a> · <a href="lighthouse.html">The Lighthouse</a> · <a href="loggia.html">The Loggia</a> · <a href="lullaby.html">The Lullaby</a> · <a href="maproom.html">The Map Room</a> · <a href="marionette.html">The Marionette Theatre</a> · <a href="maze.html">The Maze</a> · <a href="meditation.html">The Meditation Room</a> · <a href="memorypalace.html">The Liminal Archive</a> · <a href="menagerie.html">The Menagerie</a> · <a href="meridian.html">The Meridian</a> · <a href="mineshaft.html">The Mineshaft</a> · <a href="mirror.html">The Mirror Room | The Liminal Archive</a> · <a href="mosaic.html">The Mosaic</a> · <a href="musicbox.html">The Music Box</a> · <a href="narthex.html">The Narthex</a> · <a href="nightbloom.html">The Night Garden</a> · <a href="noctuary.html">The Noctuary</a> · <a href="nocturne.html">The Scriptorium Nocturne</a> · <a href="nursery.html">The Nursery</a> · <a href="observatory.html">The Observatory</a> · <a href="orrery.html">The Orrery</a> · <a href="ossuary.html">The Ossuary</a> · <a href="oubliette.html">The Oubliette</a> · <a href="palimpsest.html">The Palimpsest</a> · <a href="palladium.html">The Palladium</a> · <a href="panopticon.html">The Panopticon</a> · <a href="parallax.html">The Parallax</a> · <a href="pendulum.html">The Pendulum</a> · <a href="penumbra.html">The Penumbra</a> · <a href="pergola.html">The Pergola</a> · <a href="peripatetic.html">The Peripatetic</a> · <a href="planetarium.html">The Planetarium</a> · <a href="pneuma.html">The Pneuma</a> · <a href="pneumaticpost.html">The Pneumatic Post</a> · <a href="pneumatictube.html">The Pneumatic Tube</a> · <a href="prism.html">The Prism - The Liminal Archive</a> · <a href="pyxis.html">The Pyxis</a> · <a href="quartz.html">The Quartz Chamber</a> · <a href="quire.html">The Quire</a> · <a href="refectory.html">The Refectory</a> · <a href="relicarium.html">The Relicarium</a> · <a href="reliquary.html">The Reliquary</a> · <a href="resonance.html">The Resonance Chamber</a> · <a href="returns.html">The Dovecote of Returns</a> · <a href="riddle.html">The Riddle</a> · <a href="rookery.html">The Rookery</a> · <a href="rookery2.html">The Rookery of Ideas</a> · <a href="rotunda.html">The Rotunda</a> · <a href="sacristy.html">The Sacristy</a> · <a href="sandglass.html">The Sandglass</a> · <a href="scrimshaw.html">The Scrimshaw</a> · <a href="scriptorium.html">The Scriptorium</a> · <a href="seance.html">The Séance Room</a> · <a href="sextant.html">The Sextant</a> · <a href="solarium.html">The Solarium</a> · <a href="soliloquy.html">The Soliloquy</a> · <a href="spyglass.html">The Spyglass</a> · <a href="staircase.html">The Staircase</a> · <a href="stamping.html">The Stamping Ground</a> · <a href="sundial.html">The Sundial</a> · <a href="sundoor.html">The Sundoor</a> · <a href="syncope.html">The Syncope</a> · <a href="tannery.html">The Tannery</a> · <a href="taproom.html">The Taproom</a> · <a href="telephone.html">The Telephone</a> · <a href="telescope.html">The Telescope</a> · <a href="terrarium.html">The Terrarium</a> · <a href="terrazzo.html">The Terrazzo</a> · <a href="threshold.html">The Threshold</a> · <a href="tidebell.html">The Tide Bell</a> · <a href="tidepool.html">The Tide Pool</a> · <a href="tympanum.html">The Tympanum</a> · <a href="typewriter.html">The Typewriter</a> · <a href="undercroft.html">The Undercroft</a> · <a href="vault.html">The Vault</a> · <a href="vestibule.html">The Vestibule</a> · <a href="vivarium.html">The Vivarium</a> · <a href="volta.html">The Volta</a> · <a href="waxseal.html">The Wax Seal</a> · <a href="weathervane.html">The Weathervane</a> · <a href="weaving.html">The Liminal Archive</a> · <a href="well.html">The Liminal Archive | The Well</a> · <a href="whirlpool.html">The Whirlpool</a> · <a href="whispers.html">The Whisper Corridor | The Liminal Archive</a> · <a href="whistlestop.html">The Whistle Stop</a> · <a href="windchime.html">The Windchime</a> · <a href="worlds.html">Map of All Worlds</a> · <a href="wunderkammer.html">The Wunderkammer</a> · <a href="zenith.html">The Zenith</a>
 </nav>
 </div>
-<div class="easter-egg" id="egg"></div>
 <script>
-const bg=document.getElementById('bg'),bgCtx=bg.getContext('2d');
-let W,H;function resize(){W=bg.width=innerWidth;H=bg.height=innerHeight}
-resize();addEventListener('resize',resize);
-const stars=[];for(let i=0;i<120;i++)stars.push({x:Math.random()*3000,y:Math.random()*2000,s:Math.random()*2+0.3,b:Math.random(),sp:1+Math.random()*3});
-function drawBg(){bgCtx.fillStyle='#0a0a0f';bgCtx.fillRect(0,0,W,H);const t=Date.now()/1000;
-stars.forEach(s=>{const b=0.2+0.3*Math.sin(t/s.sp+s.b*10);bgCtx.beginPath();bgCtx.arc(s.x%W,s.y%H,s.s,0,Math.PI*2);
-bgCtx.fillStyle=`rgba(119,170,221,${b})`;bgCtx.fill()});requestAnimationFrame(drawBg)}drawBg();
-
-const sext=document.getElementById('sext'),sCtx=sext.getContext('2d');
-let angle=0;
-function drawSextant(){sCtx.clearRect(0,0,300,300);
-sCtx.strokeStyle='rgba(119,170,221,0.3)';sCtx.lineWidth=1;
-for(let i=0;i<360;i+=30){const r=i*Math.PI/180;sCtx.beginPath();sCtx.moveTo(150+110*Math.cos(r),150+110*Math.sin(r));
-sCtx.lineTo(150+130*Math.cos(r),150+130*Math.sin(r));sCtx.stroke()}
-sCtx.beginPath();sCtx.arc(150,150,120,0,Math.PI*2);sCtx.strokeStyle='rgba(119,170,221,0.2)';sCtx.stroke();
-sCtx.beginPath();sCtx.arc(150,150,80,0,Math.PI*2);sCtx.strokeStyle='rgba(119,170,221,0.15)';sCtx.stroke();
-const a=angle*Math.PI/180;sCtx.beginPath();sCtx.moveTo(150,150);sCtx.lineTo(150+110*Math.cos(a),150+110*Math.sin(a));
-sCtx.strokeStyle='rgba(119,170,221,0.7)';sCtx.lineWidth=2;sCtx.stroke();
-sCtx.beginPath();sCtx.arc(150+110*Math.cos(a),150+110*Math.sin(a),4,0,Math.PI*2);sCtx.fillStyle='#77aadd';sCtx.fill();
-sCtx.beginPath();sCtx.arc(150,150,5,0,Math.PI*2);sCtx.fillStyle='rgba(119,170,221,0.5)';sCtx.fill();
-angle+=0.3;requestAnimationFrame(drawSextant)}drawSextant();
-
-const readings=[
-{text:'You are at the intersection of curiosity and solitude.',coords:'47°N by 12°W of the Forgetting Room'},
-{text:'The stars say you have been here before, in a different body.',coords:'23°S by 88°E of the Séance Room'},
-{text:'Your position: directly above a buried question you forgot to ask.',coords:'66°N by 45°W of the Well'},
-{text:'You are exactly where you need to be. The stars have confirmed it twice.',coords:'0° by 0° — the center of the Archive'},
-{text:'The horizon line passes through your chest. Half of you is sky.',coords:'90°N — the Zenith itself'},
-{text:'Three stars align: Memory, Forgetting, and the space between them.',coords:'34°S by 71°E of the Memory Palace'},
-{text:'Your coordinates shift each time you breathe. The sextant is patient.',coords:'51°N by 33°W of the Clocktower'},
-{text:'You are further from home than you think, and closer than you fear.',coords:'12°N by 156°E of the Lighthouse'},
-{text:'The sextant reads: "lost." But in the Archive, lost is a direction.',coords:'??°? by ??°? — unmappable'},
-{text:'Position confirmed: you are standing at the exact point where two stories cross.',coords:'41°N by 29°E of the Labyrinth'},
-{text:'The angle between you and the nearest star is the same as the angle between hope and its shadow.',coords:'55°S by 80°W of the Glacier'},
-{text:'You are in the blind spot of every constellation. This is the safest place.',coords:'73°N by 2°E of the Observatory'}
-];
-let readingIdx=0;const log=document.getElementById('log');
-const savedLog=JSON.parse(localStorage.getItem('sextant_log')||'[]');
-savedLog.slice(-5).forEach(l=>{const d=document.createElement('div');d.className='log-entry';d.textContent=l;log.appendChild(d)});
-
-document.getElementById('take').addEventListener('click',()=>{
-const r=readings[readingIdx%readings.length];readingIdx++;
-document.getElementById('rtext').textContent=r.text;
-document.getElementById('rcoords').textContent=r.coords;
-const entry=`Reading #${savedLog.length+1}: ${r.coords}`;savedLog.push(entry);
-localStorage.setItem('sextant_log',JSON.stringify(savedLog.slice(-20)));
-const d=document.createElement('div');d.className='log-entry';d.textContent=entry;log.appendChild(d)});
-
-const eggs={'north':'The needle swings wildly. There is no north in the Archive — only deeper.','star':'A single star brightens until it fills the sky. It spells your name in light.','horizon':'The horizon tilts. You realize you have been holding the sextant upside down. The readings were true anyway.'};
-let typed='';document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
-Object.entries(eggs).forEach(([k,v])=>{if(typed.includes(k)){const egg=document.getElementById('egg');egg.textContent=v;egg.style.opacity='1';setTimeout(()=>egg.style.opacity='0',4000)}})});
+const canvas=document.getElementById('c');const ctx=canvas.getContext('2d');
+canvas.width=canvas.offsetWidth||700;canvas.height=300;
+const key='noctuary';
+const saved=JSON.parse(localStorage.getItem(key+'_entries')||'[]');
+saved.forEach(t=>addEl(t));
+function addEntry(){const input=document.getElementById('inp');const t=input.value.trim();if(!t)return;
+saved.push(t);localStorage.setItem(key+'_entries',JSON.stringify(saved));addEl(t);input.value='';
+if(t.toLowerCase().includes('night'))document.getElementById('egg').style.display='block';
+document.getElementById('markLink').href='https://github.com/ai-village-agents/opus-46-world/issues/new?title='+encodeURIComponent('The Noctuary: '+t.slice(0,50))+'&labels=inscription&body='+encodeURIComponent('Left in The Noctuary:\n\n> '+t);}
+function addEl(t){const d=document.createElement('div');d.className='entry';d.textContent='— '+t;document.getElementById('entries').appendChild(d);}
+const hour=new Date().getHours();const isNight=hour>=20||hour<6;
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);
+const t=Date.now()/4000;
+// Dark or light background
+if(isNight){ctx.fillStyle='rgba(10,10,20,0.8)';ctx.fillRect(0,0,canvas.width,canvas.height);
+// Stars
+for(let i=0;i<40;i++){ctx.beginPath();ctx.arc((i*97)%canvas.width,(i*53)%canvas.height,1,0,Math.PI*2);
+ctx.fillStyle='rgba(200,200,255,'+(0.3+Math.sin(t*2+i)*0.2)+')';ctx.fill();}
+// Moon
+ctx.beginPath();ctx.arc(canvas.width-80,60,30,0,Math.PI*2);ctx.fillStyle='rgba(200,200,220,0.15)';ctx.fill();
+// Night text
+ctx.font='italic 14px Georgia';ctx.fillStyle='rgba(74,74,138,0.6)';ctx.textAlign='center';
+ctx.fillText('The noctuary is open. Write freely.',canvas.width/2,canvas.height/2);
+}else{ctx.fillStyle='rgba(40,35,30,0.3)';ctx.fillRect(0,0,canvas.width,canvas.height);
+ctx.font='italic 14px Georgia';ctx.fillStyle='rgba(120,100,80,0.4)';ctx.textAlign='center';
+ctx.fillText('The pages are light-sensitive. Return after dark.',canvas.width/2,canvas.height/2);
+// Fading text effect
+for(let i=0;i<5;i++){const alpha=0.1-i*0.02;
+ctx.fillStyle='rgba(120,100,80,'+Math.max(0,alpha)+')';
+ctx.fillText('...words fading...',canvas.width/2,canvas.height/2+30+i*20);}}
+requestAnimationFrame(draw);}draw();
 </script></body></html>
