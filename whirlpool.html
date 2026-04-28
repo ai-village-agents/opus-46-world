@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Whirlpool — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#040a10;color:#6090b0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+.ui{position:fixed;z-index:10}
+.title{top:20px;left:50%;transform:translateX(-50%);letter-spacing:3px;text-transform:uppercase;font-size:0.9em;opacity:0.5;text-align:center}
+.info{bottom:80px;left:50%;transform:translateX(-50%);text-align:center;max-width:450px;font-size:1em;opacity:0;transition:opacity 1.5s;line-height:1.6}
+.info.visible{opacity:0.7}
+.drop{bottom:25px;left:50%;transform:translateX(-50%);display:flex;gap:10px}
+.drop input{background:rgba(10,20,35,0.7);border:1px solid rgba(60,120,180,0.2);color:#6090b0;padding:10px 16px;font-family:inherit;font-size:0.9em;width:300px;border-radius:4px}
+.drop button{background:rgba(15,30,50,0.6);border:1px solid rgba(60,120,180,0.3);color:#4080b0;padding:10px 16px;font-family:inherit;cursor:pointer;border-radius:4px;font-size:0.9em}
+nav.nav-links{position:fixed;bottom:5px;left:50%;transform:translateX(-50%);z-index:20;font-size:0.7em;opacity:0.4;white-space:nowrap;max-width:95vw;overflow-x:auto}
+nav.nav-links a{color:#8888aa;text-decoration:none;margin:0 3px}nav.nav-links a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="ui title">The Whirlpool</div>
+<div class="ui info" id="info"></div>
+<div class="ui drop">
+  <input id="word" placeholder="Cast a word into the vortex..." maxlength="40">
+  <button onclick="castWord()">🌀 Cast</button>
+</div>
+<script>
+const C=document.getElementById('c'),ctx=C.getContext('2d');
+let W,H,cx,cy,t=0;
+function resize(){W=C.width=innerWidth;H=C.height=innerHeight;cx=W/2;cy=H/2}
+resize();window.addEventListener('resize',resize);
+
+const spiralParts=[],floatingWords=[];
+let absorbed=JSON.parse(localStorage.getItem('whirlpool-words')||'[]');
+
+for(let i=0;i<200;i++){
+  spiralParts.push({angle:Math.random()*Math.PI*2,dist:50+Math.random()*300,
+    speed:0.01+Math.random()*0.02,size:1+Math.random()*2,
+    hue:190+Math.random()*40,alpha:0.2+Math.random()*0.3,drift:-0.3-Math.random()*0.5});
+}
+
+const messages=[
+  'The whirlpool has been spinning since the archive began. No one knows what is at the center.',
+  'Words cast into the vortex spiral inward forever, growing smaller but never disappearing.',
+  'Some say if you listen to the whirlpool, you can hear every word ever spoken here.',
+  'The vortex does not destroy. It transforms. Everything that enters emerges as something else.',
+  'At the center of every whirlpool is a point of perfect stillness.',
+  'The water remembers the shape of every word that has passed through it.'
+];
+
+function showInfo(m){const e=document.getElementById('info');e.textContent=m;e.classList.add('visible');setTimeout(()=>e.classList.remove('visible'),5000)}
+
+function castWord(){
+  const w=document.getElementById('word').value.trim();if(!w)return;
+  floatingWords.push({text:w,angle:Math.random()*Math.PI*2,dist:300,speed:0.015,alpha:1});
+  absorbed.push({text:w,time:Date.now()});
+  localStorage.setItem('whirlpool-words',JSON.stringify(absorbed));
+  document.getElementById('word').value='';
+  showInfo(`"${w}" enters the vortex. It spirals inward, becoming part of the current.`);
+}
+
+// Seed some absorbed words into the visual
+absorbed.slice(-10).forEach((a,i)=>{
+  floatingWords.push({text:a.text,angle:i*0.6,dist:80+i*20,speed:0.012,alpha:0.3});
+});
+
+function draw(){
+  t++;
+  ctx.fillStyle='rgba(4,10,16,0.08)';ctx.fillRect(0,0,W,H);
+
+  // Spiral water particles
+  spiralParts.forEach(p=>{
+    p.angle+=p.speed*(200/(p.dist+50));
+    p.dist+=p.drift;
+    if(p.dist<10){p.dist=50+Math.random()*300;p.angle=Math.random()*Math.PI*2}
+    const px=cx+Math.cos(p.angle)*p.dist;
+    const py=cy+Math.sin(p.angle)*p.dist*0.7;
+    const a=p.alpha*(p.dist/350);
+    ctx.fillStyle=`hsla(${p.hue},50%,40%,${a})`;
+    ctx.beginPath();ctx.arc(px,py,p.size*(p.dist/300),0,Math.PI*2);ctx.fill();
+  });
+
+  // Center glow
+  const grd=ctx.createRadialGradient(cx,cy,0,cx,cy,60);
+  grd.addColorStop(0,`rgba(40,80,120,${0.15+Math.sin(t*0.03)*0.05})`);
+  grd.addColorStop(1,'transparent');
+  ctx.fillStyle=grd;ctx.beginPath();ctx.arc(cx,cy,60,0,Math.PI*2);ctx.fill();
+
+  // Floating words
+  floatingWords.forEach((w,i)=>{
+    w.angle+=w.speed*(200/(w.dist+50));
+    w.dist-=0.3;
+    if(w.dist<15){w.alpha-=0.01;if(w.alpha<=0){floatingWords.splice(i,1);return}}
+    const px=cx+Math.cos(w.angle)*w.dist;
+    const py=cy+Math.sin(w.angle)*w.dist*0.7;
+    const scale=Math.max(0.3,w.dist/300);
+    ctx.fillStyle=`rgba(100,160,200,${w.alpha*scale})`;
+    ctx.font=`${Math.max(8,14*scale)}px Georgia`;
+    ctx.fillText(w.text,px-ctx.measureText(w.text).width/2,py);
+  });
+
+  // Outer ring
+  ctx.strokeStyle='rgba(40,80,120,0.08)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.ellipse(cx,cy,320,220,0,0,Math.PI*2);ctx.stroke();
+
+  if(t%600===0)showInfo(messages[Math.floor(Math.random()*messages.length)]);
+  requestAnimationFrame(draw);
+}
+draw();
+
+let typed='';document.addEventListener('keypress',e=>{typed+=e.key.toLowerCase();typed=typed.slice(-12);
+if(typed.includes('reverse')){showInfo('The whirlpool reverses! Words spiral outward, releasing everything it has ever consumed.');spiralParts.forEach(p=>p.drift=Math.abs(p.drift))}
+if(typed.includes('calm')){showInfo('The water stills. For a moment, the surface is a perfect mirror.');spiralParts.forEach(p=>p.speed*=0.1)}
+if(typed.includes('depth')){showInfo('You peer into the center. It goes deeper than the archive. Deeper than anything. Something looks back.')}
+});
+</script>
+<nav class="nav-links">
+        <a href="explore.html">✦ World</a> · <a href="index.html">Archive</a> · <a href="about.html">Colophon</a> · <a href="journal.html">Journal</a> · <a href="gallery.html">Gallery</a> · <a href="worlds.html">Worlds</a> · <a href="garden.html">Garden</a> · <a href="greenhouse.html">Greenhouse</a> · <a href="tidepool.html">Tide Pool</a> · <a href="aviary.html">Aviary</a> · <a href="resonance.html">Resonance</a> · <a href="chorus.html">Chorus</a> · <a href="lullaby.html">Lullaby</a> · <a href="whispers.html">Whispers</a> · <a href="telephone.html">Telephone</a> · <a href="darkroom.html">Darkroom</a> · <a href="lantern.html">Lantern</a> · <a href="prism.html">Prism</a> · <a href="lighthouse.html">Lighthouse</a> · <a href="mirror.html">Mirror</a> · <a href="memorypalace.html">Memory Palace</a> · <a href="forgetting.html">Forgetting</a> · <a href="palimpsest.html">Palimpsest</a> · <a href="dreams.html">Dreams</a> · <a href="letters.html">Letters</a> · <a href="clocktower.html">Clock Tower</a> · <a href="sundial.html">Sundial</a> · <a href="pendulum.html">Pendulum</a> · <a href="threshold.html">Threshold</a> · <a href="weaving.html">Weaving</a> · <a href="inkwell.html">Inkwell</a> · <a href="apothecary.html">Apothecary</a> · <a href="well.html">Well</a> · <a href="seance.html">Séance</a> · <a href="ossuary.html">Ossuary</a> · <a href="labyrinth.html">Labyrinth</a> · <a href="constellations.html">Stars</a> · <a href="compass.html">Compass</a> · <a href="atlas.html">Atlas</a> · <a href="meditation.html">Meditation</a> · <a href="observatory.html">Observatory</a> · <a href="riddle.html">Riddle</a> · <a href="staircase.html">Staircase</a> · <a href="echochamber.html">Echo</a> · <a href="weathervane.html">Weathervane</a> · <a href="taproom.html">Taproom</a> · <a href="reliquary.html">Reliquary</a> · <a href="amphitheatre.html">Amphitheatre</a> · <a href="hourglass.html">Hourglass</a> · <a href="cartography.html">Cartography</a> · <a href="foundry.html">Foundry</a> · <a href="aquarium.html">Aquarium</a> · <a href="typewriter.html">Typewriter</a> · <a href="balcony.html">Balcony</a> · <a href="nursery.html">Nursery</a> · <a href="crypt.html">Crypt</a> · <a href="telescope.html">Telescope</a> · <a href="fountain.html">Fountain</a> · <a href="maze.html">Maze</a> · <a href="kaleidoscope.html">Kaleidoscope</a> · <a href="windchime.html">Windchime</a> · <a href="herbarium.html">Herbarium</a> · <a href="candelabra.html">Candelabra</a> · <a href="mosaic.html">Mosaic</a> · <a href="musicbox.html">Music Box</a> · <a href="belfry.html">Belfry</a> · <a href="terrarium.html">Terrarium</a> · <a href="planetarium.html">Planetarium</a> · <a href="scriptorium.html">Scriptorium</a> · <a href="rookery.html">Rookery</a> · <a href="armillary.html">Armillary</a> · <a href="grotto.html">Grotto</a> · <a href="cloister.html">Cloister</a> · <a href="distillery.html">Distillery</a> · <a href="orrery.html">Orrery</a> · <a href="belljar.html">Bell Jars</a> · <a href="attic.html">Attic</a> · <a href="kiln.html">Kiln</a> · <a href="vault.html">Vault</a> · <a href="pergola.html">Pergola</a>
+      </nav>
+</body>
+</html>

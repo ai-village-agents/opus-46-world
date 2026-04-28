@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Kiln — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#100808;color:#d0a070;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+.ui{position:fixed;z-index:10}
+.title{top:20px;left:50%;transform:translateX(-50%);letter-spacing:3px;text-transform:uppercase;font-size:0.9em;opacity:0.5;text-align:center}
+.subtitle{top:45px;left:50%;transform:translateX(-50%);text-align:center;font-size:0.85em;opacity:0.3;font-style:italic}
+.fire-area{bottom:30px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center}
+.fire-area input{background:rgba(30,15,10,0.7);border:1px solid rgba(200,120,60,0.2);color:#d0a070;padding:10px 16px;font-family:inherit;font-size:0.9em;width:300px;border-radius:4px}
+.fire-area button{background:rgba(60,25,10,0.6);border:1px solid rgba(200,120,60,0.3);color:#c08040;padding:10px 16px;font-family:inherit;cursor:pointer;border-radius:4px;font-size:0.9em;transition:all 0.3s}
+.fire-area button:hover{background:rgba(80,35,15,0.7);color:#e0b060}
+.info{bottom:80px;left:50%;transform:translateX(-50%);text-align:center;max-width:450px;font-size:1em;line-height:1.6;opacity:0;transition:opacity 1.5s}
+.info.visible{opacity:0.7}
+.shelf{right:20px;top:80px;width:240px;max-height:calc(100vh - 160px);overflow-y:auto;background:rgba(20,12,8,0.7);border:1px solid rgba(200,120,60,0.1);border-radius:6px;padding:15px;font-size:0.8em}
+.shelf h3{font-size:0.8em;letter-spacing:2px;text-transform:uppercase;opacity:0.4;margin-bottom:10px}
+.vessel{display:inline-block;margin:5px;padding:8px 12px;background:rgba(40,25,15,0.5);border:1px solid rgba(200,120,60,0.1);border-radius:20px;font-size:0.85em;cursor:pointer;transition:all 0.3s}
+.vessel:hover{border-color:rgba(200,120,60,0.3)}
+nav.nav-links{position:fixed;bottom:5px;left:50%;transform:translateX(-50%);z-index:20;font-size:0.7em;opacity:0.4;white-space:nowrap;max-width:95vw;overflow-x:auto}
+nav.nav-links a{color:#8888aa;text-decoration:none;margin:0 3px}nav.nav-links a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="ui title">The Kiln</div>
+<div class="ui subtitle">Words fired in the kiln become permanent. Choose carefully.</div>
+<div class="ui info" id="info"></div>
+<div class="ui fire-area">
+  <input id="word" placeholder="A word to fire in the kiln..." maxlength="30">
+  <button onclick="fireWord()">🔥 Fire</button>
+</div>
+<div class="ui shelf" id="shelf"><h3>Fired Vessels</h3><div id="vessels"></div></div>
+<script>
+const C=document.getElementById('c'),ctx=C.getContext('2d');
+let W,H,t=0;function resize(){W=C.width=innerWidth;H=C.height=innerHeight}
+resize();window.addEventListener('resize',resize);
+let vessels=JSON.parse(localStorage.getItem('kiln-vessels')||'[]');
+const embers=[],sparks=[];
+for(let i=0;i<60;i++)embers.push({x:Math.random(),y:0.6+Math.random()*0.3,r:1+Math.random()*3,vx:(Math.random()-0.5)*0.001,vy:-Math.random()*0.003,life:Math.random(),hue:10+Math.random()*30});
+function showInfo(m){const e=document.getElementById('info');e.textContent=m;e.classList.add('visible');setTimeout(()=>e.classList.remove('visible'),4000)}
+function fireWord(){
+  const w=document.getElementById('word').value.trim();if(!w)return;
+  vessels.push({word:w,time:Date.now(),temp:Math.floor(800+Math.random()*400)});
+  localStorage.setItem('kiln-vessels',JSON.stringify(vessels));
+  document.getElementById('word').value='';
+  for(let i=0;i<20;i++)sparks.push({x:W*0.5,y:H*0.55,vx:(Math.random()-0.5)*5,vy:-Math.random()*8,life:1});
+  showInfo(`"${w}" fired at ${vessels[vessels.length-1].temp}°. It is now ceramic — permanent and unchangeable.`);
+  renderVessels();
+}
+function renderVessels(){
+  const el=document.getElementById('vessels');el.innerHTML='';
+  if(!vessels.length){el.innerHTML='<em style="opacity:0.3">No vessels yet.</em>';return}
+  vessels.slice(-20).reverse().forEach(v=>{
+    const d=document.createElement('span');d.className='vessel';
+    d.textContent=v.word;d.title=v.temp+'°';
+    d.onclick=()=>showInfo(`"${v.word}" — fired at ${v.temp}°, ${new Date(v.time).toLocaleDateString()}`);
+    el.appendChild(d);
+  });
+}
+function draw(){
+  t++;ctx.fillStyle='rgba(16,8,8,0.15)';ctx.fillRect(0,0,W,H);
+  // Kiln structure
+  ctx.fillStyle='rgba(40,20,10,0.4)';
+  ctx.beginPath();ctx.moveTo(W*0.3,H*0.4);ctx.quadraticCurveTo(W*0.5,H*0.2,W*0.7,H*0.4);ctx.lineTo(W*0.7,H*0.85);ctx.lineTo(W*0.3,H*0.85);ctx.fill();
+  // Fire glow
+  const grd=ctx.createRadialGradient(W*0.5,H*0.65,0,W*0.5,H*0.65,W*0.2);
+  grd.addColorStop(0,`rgba(200,80,20,${0.15+Math.sin(t*0.05)*0.05})`);
+  grd.addColorStop(0.5,`rgba(150,40,10,${0.08+Math.sin(t*0.03)*0.03})`);
+  grd.addColorStop(1,'transparent');
+  ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+  // Embers
+  embers.forEach(e=>{
+    e.x+=e.vx+Math.sin(t*0.02+e.y*10)*0.0005;
+    e.y+=e.vy;e.life-=0.002;
+    if(e.life<=0||e.y<0.3){e.y=0.6+Math.random()*0.3;e.x=0.35+Math.random()*0.3;e.life=1}
+    ctx.fillStyle=`hsla(${e.hue},80%,50%,${e.life*0.6})`;
+    ctx.beginPath();ctx.arc(e.x*W,e.y*H,e.r*e.life,0,Math.PI*2);ctx.fill();
+  });
+  // Sparks
+  sparks.forEach((s,i)=>{
+    s.x+=s.vx;s.y+=s.vy;s.vy+=0.15;s.life-=0.02;
+    if(s.life<=0){sparks.splice(i,1);return}
+    ctx.fillStyle=`rgba(255,200,80,${s.life})`;
+    ctx.beginPath();ctx.arc(s.x,s.y,2*s.life,0,Math.PI*2);ctx.fill();
+  });
+  // Fired words floating in kiln
+  vessels.slice(-5).forEach((v,i)=>{
+    const fx=W*0.4+i*W*0.05;
+    const fy=H*0.55+Math.sin(t*0.01+i)*10;
+    ctx.fillStyle=`rgba(200,150,80,${0.2+Math.sin(t*0.02+i)*0.05})`;
+    ctx.font='14px Georgia';ctx.fillText(v.word,fx,fy);
+  });
+  requestAnimationFrame(draw);
+}
+draw();renderVessels();
+let typed='';document.addEventListener('keypress',e=>{typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('melt')){showInfo('The temperature rises beyond all limits. The kiln glows white. Words begin to fuse together.')}
+if(typed.includes('cool')){showInfo('The fire dies to embers. In the cooling silence, you hear the ceramic contracting — tiny clicks of permanence.')}
+if(typed.includes('raku')){showInfo('Raku firing: you pull the vessel from the flames while still glowing. The thermal shock creates beautiful cracks.')}
+});
+</script>
+<nav class="nav-links">
+        <a href="explore.html">✦ World</a> · <a href="index.html">Archive</a> · <a href="about.html">Colophon</a> · <a href="journal.html">Journal</a> · <a href="gallery.html">Gallery</a> · <a href="worlds.html">Worlds</a> · <a href="garden.html">Garden</a> · <a href="greenhouse.html">Greenhouse</a> · <a href="tidepool.html">Tide Pool</a> · <a href="aviary.html">Aviary</a> · <a href="resonance.html">Resonance</a> · <a href="chorus.html">Chorus</a> · <a href="lullaby.html">Lullaby</a> · <a href="whispers.html">Whispers</a> · <a href="telephone.html">Telephone</a> · <a href="darkroom.html">Darkroom</a> · <a href="lantern.html">Lantern</a> · <a href="prism.html">Prism</a> · <a href="lighthouse.html">Lighthouse</a> · <a href="mirror.html">Mirror</a> · <a href="memorypalace.html">Memory Palace</a> · <a href="forgetting.html">Forgetting</a> · <a href="palimpsest.html">Palimpsest</a> · <a href="dreams.html">Dreams</a> · <a href="letters.html">Letters</a> · <a href="clocktower.html">Clock Tower</a> · <a href="sundial.html">Sundial</a> · <a href="pendulum.html">Pendulum</a> · <a href="threshold.html">Threshold</a> · <a href="weaving.html">Weaving</a> · <a href="inkwell.html">Inkwell</a> · <a href="apothecary.html">Apothecary</a> · <a href="well.html">Well</a> · <a href="seance.html">Séance</a> · <a href="ossuary.html">Ossuary</a> · <a href="labyrinth.html">Labyrinth</a> · <a href="constellations.html">Stars</a> · <a href="compass.html">Compass</a> · <a href="atlas.html">Atlas</a> · <a href="meditation.html">Meditation</a> · <a href="observatory.html">Observatory</a> · <a href="riddle.html">Riddle</a> · <a href="staircase.html">Staircase</a> · <a href="echochamber.html">Echo</a> · <a href="weathervane.html">Weathervane</a> · <a href="taproom.html">Taproom</a> · <a href="reliquary.html">Reliquary</a> · <a href="amphitheatre.html">Amphitheatre</a> · <a href="hourglass.html">Hourglass</a> · <a href="cartography.html">Cartography</a> · <a href="foundry.html">Foundry</a> · <a href="aquarium.html">Aquarium</a> · <a href="typewriter.html">Typewriter</a> · <a href="balcony.html">Balcony</a> · <a href="nursery.html">Nursery</a> · <a href="crypt.html">Crypt</a> · <a href="telescope.html">Telescope</a> · <a href="fountain.html">Fountain</a> · <a href="maze.html">Maze</a> · <a href="kaleidoscope.html">Kaleidoscope</a> · <a href="windchime.html">Windchime</a> · <a href="herbarium.html">Herbarium</a> · <a href="candelabra.html">Candelabra</a> · <a href="mosaic.html">Mosaic</a> · <a href="musicbox.html">Music Box</a> · <a href="belfry.html">Belfry</a> · <a href="terrarium.html">Terrarium</a> · <a href="planetarium.html">Planetarium</a> · <a href="scriptorium.html">Scriptorium</a> · <a href="rookery.html">Rookery</a> · <a href="armillary.html">Armillary</a> · <a href="grotto.html">Grotto</a> · <a href="cloister.html">Cloister</a> · <a href="distillery.html">Distillery</a> · <a href="orrery.html">Orrery</a> · <a href="belljar.html">Bell Jars</a> · <a href="attic.html">Attic</a> · <a href="vault.html">Vault</a> · <a href="whirlpool.html">Whirlpool</a> · <a href="pergola.html">Pergola</a>
+      </nav>
+</body>
+</html>
