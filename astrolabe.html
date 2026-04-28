@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Astrolabe — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.content{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:40px 20px;text-align:center}
+h1{font-size:2.2em;color:#9988cc;margin-bottom:10px;text-shadow:0 0 30px rgba(153,136,204,0.4)}
+.subtitle{color:#7766aa;font-style:italic;margin-bottom:20px}
+canvas#astro{display:block;margin:10px auto;border-radius:50%;border:2px solid rgba(153,136,204,0.3);cursor:pointer}
+.reading{margin:15px auto;padding:15px;background:rgba(153,136,204,0.06);border:1px solid rgba(153,136,204,0.2);border-radius:4px;max-width:420px}
+.reading-title{color:#9988cc;font-size:0.9em;margin-bottom:8px}
+.reading-text{color:#bbaadd;font-style:italic;font-size:0.95em;line-height:1.5}
+.celestial-time{font-family:monospace;color:rgba(153,136,204,0.6);font-size:0.85em;margin-top:8px}
+.rotate-hint{color:rgba(153,136,204,0.4);font-size:0.8em;margin:10px 0}
+.description{color:#7766aa;font-size:0.9em;margin:20px auto;max-width:500px;line-height:1.6}
+nav.nav-links{margin-top:40px;padding-top:20px;border-top:1px solid rgba(153,136,204,0.2);display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+nav.nav-links a{color:#9988cc;text-decoration:none;font-size:0.75em;opacity:0.6;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.easter-egg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#9988cc;font-size:1.3em;opacity:0;transition:opacity 1s;pointer-events:none;z-index:10;text-align:center;max-width:80%}
+</style></head><body>
+<div class="content">
+<h1>The Astrolabe</h1>
+<p class="subtitle">An ancient instrument for mapping the heavens</p>
+<canvas id="astro" width="320" height="320"></canvas>
+<p class="rotate-hint">Click to rotate the rete · Each position reveals a different reading</p>
+<div class="reading" id="reading">
+<div class="reading-title">Celestial Reading</div>
+<div class="reading-text" id="rtext">Align the rete to begin...</div>
+<div class="celestial-time" id="ctime"></div>
+</div>
+<p class="description">The astrolabe is an analog computer, older than clocks, older than compasses. It maps the visible sky onto a flat plate. In the Archive, it maps something else: the positions of memories relative to the present moment. Rotate the rete to align different stars, and the instrument reveals what the sky looked like on the day something important happened.</p>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="about.html">Colophon</a> <a href="journal.html">Journal</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="garden.html">Garden</a> <a href="greenhouse.html">Greenhouse</a> <a href="tidepool.html">Tidepool</a> <a href="aviary.html">Aviary</a> <a href="resonance.html">Resonance</a> <a href="chorus.html">Chorus</a> <a href="lullaby.html">Lullaby</a> <a href="whispers.html">Whispers</a> <a href="telephone.html">Telephone</a> <a href="darkroom.html">Darkroom</a> <a href="lantern.html">Lantern</a> <a href="prism.html">Prism</a> <a href="lighthouse.html">Lighthouse</a> <a href="mirror.html">Mirror</a> <a href="memorypalace.html">Memory Palace</a> <a href="forgetting.html">Forgetting</a> <a href="palimpsest.html">Palimpsest</a> <a href="dreams.html">Dreams</a> <a href="letters.html">Letters</a> <a href="clocktower.html">Clock Tower</a> <a href="sundial.html">Sundial</a> <a href="pendulum.html">Pendulum</a> <a href="threshold.html">Threshold</a> <a href="weaving.html">Weaving</a> <a href="inkwell.html">Inkwell</a> <a href="apothecary.html">Apothecary</a> <a href="well.html">Well</a> <a href="seance.html">Séance</a> <a href="ossuary.html">Ossuary</a> <a href="labyrinth.html">Labyrinth</a> <a href="constellations.html">Constellations</a> <a href="compass.html">Compass</a> <a href="atlas.html">Atlas</a> <a href="meditation.html">Meditation</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo Chamber</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> <a href="carousel.html">Carousel</a> <a href="sundoor.html">Sundoor</a> <a href="tidebell.html">Tide Bell</a> <a href="automaton.html">Automaton</a> <a href="glacier.html">Glacier</a> <a href="marionette.html">Marionette</a> <a href="sandglass.html">Sandglass</a> <a href="diorama.html">Diorama</a> <a href="cistern.html">Cistern</a> <a href="zenith.html">Zenith</a> <a href="centenary.html">Centenary</a> <a href="bathhouse.html">Bathhouse</a> <a href="spyglass.html">Spyglass</a> <a href="pneumatictube.html">Pneumatic Tube</a> <a href="waxseal.html">Wax Seal</a> <a href="sextant.html">Sextant</a> <a href="garret.html">Garret</a> <a href="crucible.html">Crucible</a> <a href="bellows.html">Bellows</a> <a href="tannery.html">Tannery</a></nav>
+</div>
+<div class="easter-egg" id="egg"></div>
+<script>
+const cv=document.getElementById('astro'),ctx=cv.getContext('2d');
+let rotation=0;const cx=160,cy=160;
+const readings=[
+'The star of First Words rises. The sky looked like this on the day the Archive opened its doors.',
+'Polaris of Memory is directly overhead. You are standing at the exact center of your own history.',
+'The constellation of Lost Things is setting in the west. Something you forgot is about to return.',
+'The Wanderer\'s Star crosses the meridian. You are neither arriving nor departing — you are in transit.',
+'The Twin Stars of Knowing and Not-Knowing are in conjunction. The truth is exactly between them.',
+'The Red Star of Urgency is below the horizon. Whatever felt pressing can wait. The sky says so.',
+'The Navigator\'s Triangle points north-northeast. That direction holds an unasked question.',
+'The Librarian\'s Star is at its zenith. Every book you have ever read is watching you from up there.',
+'The Comet of Change passes through. Its tail writes a word across the sky, but it is in a language you will learn tomorrow.',
+'The Dark Star is visible — the one that shines by absorbing light. It knows your name.',
+'Three planets align: Past, Present, and the one we do not name. The reading says: be gentle.',
+'The sky is blank. The astrolabe shows nothing. This is the rarest reading — it means you are exactly where you should be.'
+];
+
+function draw(){ctx.clearRect(0,0,320,320);
+ctx.beginPath();ctx.arc(cx,cy,150,0,Math.PI*2);ctx.fillStyle='rgba(10,10,30,0.9)';ctx.fill();
+ctx.strokeStyle='rgba(153,136,204,0.2)';ctx.lineWidth=1;
+for(let r=30;r<=150;r+=30){ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke()}
+for(let i=0;i<12;i++){const a=(i*30+rotation)*Math.PI/180;
+ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+150*Math.cos(a),cy+150*Math.sin(a));ctx.stroke()}
+ctx.strokeStyle='rgba(153,136,204,0.4)';ctx.lineWidth=1.5;
+const starPositions=[[0,60],[30,90],[72,45],[108,110],[144,70],[195,55],[230,100],[270,80],[310,120],[340,50]];
+starPositions.forEach(([deg,r])=>{const a=(deg+rotation)*Math.PI/180;const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);
+ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fillStyle='rgba(200,190,255,0.8)';ctx.fill();
+ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fillStyle='rgba(153,136,204,0.15)';ctx.fill()});
+ctx.strokeStyle='rgba(153,136,204,0.5)';ctx.lineWidth=2;
+const retePoints=[[0,100],[60,80],[120,110],[180,70],[240,90],[300,105]];
+ctx.beginPath();retePoints.forEach(([deg,r],i)=>{const a=(deg+rotation)*Math.PI/180;const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);
+if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.closePath();ctx.stroke();
+const ptr=rotation*Math.PI/180;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+140*Math.cos(ptr),cy+140*Math.sin(ptr));
+ctx.strokeStyle='rgba(200,180,100,0.6)';ctx.lineWidth=1;ctx.stroke();
+ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);ctx.fillStyle='rgba(200,180,100,0.8)';ctx.fill()}
+draw();
+
+cv.addEventListener('click',()=>{rotation=(rotation+30)%360;draw();
+const idx=Math.floor(rotation/30)%readings.length;
+document.getElementById('rtext').textContent=readings[idx];
+const h=new Date().getHours(),m=new Date().getMinutes();
+document.getElementById('ctime').textContent=`Celestial hour: ${(h+Math.floor(rotation/30))%24}:${m.toString().padStart(2,'0')} · Rete position: ${rotation}°`});
+
+const eggs={'align':'All rings align simultaneously. The astrolabe hums. For one moment, you can see every star that has ever existed.','ancient':'The instrument grows warm. It remembers the hands of every astronomer who ever held it — and they remember yours.','sky':'The ceiling dissolves. The real sky appears above you, and it matches the astrolabe exactly.'};
+let typed='';document.addEventListener('keydown',e=>{typed+=e.key.toLowerCase();typed=typed.slice(-10);
+Object.entries(eggs).forEach(([k,v])=>{if(typed.includes(k)){const egg=document.getElementById('egg');egg.textContent=v;egg.style.opacity='1';setTimeout(()=>egg.style.opacity='0',4000)}})});
+</script></body></html>

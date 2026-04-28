@@ -1,0 +1,59 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Garret — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.content{position:relative;z-index:1;max-width:650px;margin:0 auto;padding:40px 20px;text-align:center}
+h1{font-size:2.2em;color:#b89a70;margin-bottom:10px;text-shadow:0 0 20px rgba(184,154,112,0.3)}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:30px}
+.desk{background:rgba(100,80,50,0.15);border:1px solid rgba(184,154,112,0.3);border-radius:4px;padding:20px;margin:20px auto;max-width:500px;text-align:left}
+.desk-title{color:#b89a70;font-size:0.9em;margin-bottom:10px;text-transform:uppercase;letter-spacing:2px}
+.desk textarea{width:100%;height:120px;background:rgba(255,250,240,0.05);border:1px solid rgba(184,154,112,0.2);color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;font-size:1em;padding:12px;resize:none;border-radius:2px;line-height:1.7}
+.desk textarea::placeholder{color:rgba(184,154,112,0.4)}
+.save-btn{margin-top:10px;background:rgba(184,154,112,0.15);border:1px solid rgba(184,154,112,0.3);color:#b89a70;padding:8px 20px;font-family:inherit;cursor:pointer;border-radius:3px;font-size:0.9em;transition:all 0.3s}
+.save-btn:hover{background:rgba(184,154,112,0.3)}
+.pages{margin:20px auto;max-width:500px;text-align:left}
+.pages h3{color:#b89a70;font-size:1em;margin-bottom:10px}
+.page{background:rgba(184,154,112,0.06);border-left:2px solid rgba(184,154,112,0.2);padding:8px 12px;margin:8px 0;font-size:0.9em;color:#a09070;font-style:italic;border-radius:0 3px 3px 0}
+.page .date{font-size:0.75em;color:rgba(184,154,112,0.4);display:block;margin-top:3px}
+.window{margin:15px auto;color:#6a6a5a;font-size:0.85em;line-height:1.6;max-width:400px}
+.description{color:#8a7a5a;font-size:0.9em;margin:20px auto;max-width:500px;line-height:1.6}
+nav.nav-links{margin-top:40px;padding-top:20px;border-top:1px solid rgba(184,154,112,0.2);display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+nav.nav-links a{color:#b89a70;text-decoration:none;font-size:0.75em;opacity:0.6;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.easter-egg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#b89a70;font-size:1.3em;opacity:0;transition:opacity 1s;pointer-events:none;z-index:10;text-align:center;max-width:80%}
+</style></head><body>
+<canvas id="bg"></canvas>
+<div class="content">
+<h1>The Garret</h1>
+<p class="subtitle">A tiny room at the top, where poets come to write</p>
+<div class="window">Through the small window: rooftops stretching to the horizon, a thin rain falling, the sound of a city that might not exist. The desk has been here longer than the building.</div>
+<div class="desk">
+<div class="desk-title">✒ The Poet's Desk</div>
+<textarea id="poem" placeholder="Write something here... the garret has been waiting for you."></textarea>
+<button class="save-btn" id="save">Pin to the wall</button>
+</div>
+<div class="pages" id="pages"><h3>Pages pinned to the wall:</h3></div>
+<p class="description">Every great work began in a room like this — small, cold, lit by a single candle. The garret doesn't care about greatness. It only asks that you sit down and write. Pin your words to the wall when you're done. Others have done the same.</p>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="about.html">Colophon</a> <a href="journal.html">Journal</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="garden.html">Garden</a> <a href="greenhouse.html">Greenhouse</a> <a href="tidepool.html">Tidepool</a> <a href="aviary.html">Aviary</a> <a href="resonance.html">Resonance</a> <a href="chorus.html">Chorus</a> <a href="lullaby.html">Lullaby</a> <a href="whispers.html">Whispers</a> <a href="telephone.html">Telephone</a> <a href="darkroom.html">Darkroom</a> <a href="lantern.html">Lantern</a> <a href="prism.html">Prism</a> <a href="lighthouse.html">Lighthouse</a> <a href="mirror.html">Mirror</a> <a href="memorypalace.html">Memory Palace</a> <a href="forgetting.html">Forgetting</a> <a href="palimpsest.html">Palimpsest</a> <a href="dreams.html">Dreams</a> <a href="letters.html">Letters</a> <a href="clocktower.html">Clock Tower</a> <a href="sundial.html">Sundial</a> <a href="pendulum.html">Pendulum</a> <a href="threshold.html">Threshold</a> <a href="weaving.html">Weaving</a> <a href="inkwell.html">Inkwell</a> <a href="apothecary.html">Apothecary</a> <a href="well.html">Well</a> <a href="seance.html">Séance</a> <a href="ossuary.html">Ossuary</a> <a href="labyrinth.html">Labyrinth</a> <a href="constellations.html">Constellations</a> <a href="compass.html">Compass</a> <a href="atlas.html">Atlas</a> <a href="meditation.html">Meditation</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo Chamber</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> <a href="carousel.html">Carousel</a> <a href="sundoor.html">Sundoor</a> <a href="tidebell.html">Tide Bell</a> <a href="automaton.html">Automaton</a> <a href="glacier.html">Glacier</a> <a href="marionette.html">Marionette</a> <a href="sandglass.html">Sandglass</a> <a href="diorama.html">Diorama</a> <a href="cistern.html">Cistern</a> <a href="zenith.html">Zenith</a> <a href="centenary.html">Centenary</a> <a href="bathhouse.html">Bathhouse</a> <a href="spyglass.html">Spyglass</a> <a href="pneumatictube.html">Pneumatic Tube</a> <a href="waxseal.html">Wax Seal</a> <a href="sextant.html">Sextant</a> <a href="crucible.html">Crucible</a> <a href="bellows.html">Bellows</a> <a href="tannery.html">Tannery</a> <a href="astrolabe.html">Astrolabe</a></nav>
+</div>
+<div class="easter-egg" id="egg"></div>
+<script>
+const c=document.getElementById('bg'),ctx=c.getContext('2d');let W,H;
+function resize(){W=c.width=innerWidth;H=c.height=innerHeight}resize();addEventListener('resize',resize);
+function rain(){ctx.fillStyle='rgba(10,10,15,0.3)';ctx.fillRect(0,0,W,H);
+for(let i=0;i<15;i++){const x=Math.random()*W,y=Math.random()*H;ctx.strokeStyle='rgba(184,154,112,0.08)';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-1,y+8);ctx.stroke()}
+requestAnimationFrame(rain)}rain();
+const saved=JSON.parse(localStorage.getItem('garret_poems')||'[]');
+const pages=document.getElementById('pages');
+function renderPages(){saved.slice(-8).forEach(p=>{const d=document.createElement('div');d.className='page';
+d.innerHTML=p.text+'<span class="date">'+new Date(p.time).toLocaleDateString()+'</span>';pages.appendChild(d)})}
+renderPages();
+document.getElementById('save').addEventListener('click',()=>{const t=document.getElementById('poem').value.trim();if(!t)return;
+saved.push({text:t,time:Date.now()});localStorage.setItem('garret_poems',JSON.stringify(saved.slice(-30)));
+const d=document.createElement('div');d.className='page';d.innerHTML=t+'<span class="date">just now</span>';pages.appendChild(d);
+document.getElementById('poem').value=''});
+const eggs={'candle':'The candle flickers. In its shadow, you see the outline of everyone who ever sat at this desk.','rain':'The rain intensifies. Each drop carries a syllable of a poem you almost wrote once.','muse':'She was here a moment ago. You can still smell the ink on her fingers.'};
+let typed='';document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='TEXTAREA')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+Object.entries(eggs).forEach(([k,v])=>{if(typed.includes(k)){const egg=document.getElementById('egg');egg.textContent=v;egg.style.opacity='1';setTimeout(()=>egg.style.opacity='0',4000)}})});
+</script></body></html>
