@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Belfry — The Liminal Archive</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0a0a12; color:#d4c5a9; font-family:'Cormorant Garamond',Georgia,serif; min-height:100vh; overflow:hidden; }
+  .nav-links { position:fixed; top:10px; left:10px; z-index:100; display:flex; flex-wrap:wrap; gap:6px; max-width:80vw; }
+  .nav-links a { color:#c9a96e; text-decoration:none; font-size:0.75rem; opacity:0.5; transition:opacity 0.3s; }
+  .nav-links a:hover { opacity:1; color:#fff; }
+  canvas { display:block; }
+  .title { position:fixed; top:50px; left:50%; transform:translateX(-50%); text-align:center; z-index:10; pointer-events:none; }
+  .title h1 { font-size:1.6rem; color:#c9a96e44; letter-spacing:0.2em; font-weight:300; }
+  .title .sub { font-size:0.75rem; color:#c9a96e22; font-style:italic; margin-top:4px; }
+  .bells { position:fixed; bottom:40px; left:50%; transform:translateX(-50%); display:flex; gap:12px; z-index:10; }
+  .bell { width:60px; height:70px; background:radial-gradient(ellipse at 50% 30%, #c9a96e44, #c9a96e11); border:1px solid #c9a96e33; border-radius:0 0 50% 50%; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; flex-direction:column; position:relative; }
+  .bell:hover { background:radial-gradient(ellipse at 50% 30%, #c9a96e66, #c9a96e22); transform:translateY(-3px); }
+  .bell.ringing { animation:swing 0.5s ease-in-out; box-shadow:0 0 30px #c9a96e44; }
+  .bell-name { font-size:0.6rem; color:#c9a96e88; position:absolute; bottom:-16px; white-space:nowrap; }
+  .bell-note { font-size:1.2rem; color:#c9a96e; }
+  .history { position:fixed; top:100px; right:20px; max-width:180px; z-index:10; }
+  .history h3 { font-size:0.7rem; color:#c9a96e44; letter-spacing:0.1em; margin-bottom:6px; }
+  .ring-entry { font-size:0.65rem; color:#c9a96e33; margin:2px 0; }
+  @keyframes swing { 0%,100%{transform:rotate(0)} 25%{transform:rotate(8deg)} 75%{transform:rotate(-8deg)} }
+  @media(max-width:600px) { .bell { width:45px; height:55px; } .bells { gap:6px; } .history { display:none; } }
+</style>
+</head>
+<body>
+  <nav class="nav-links">
+        <a href="explore.html">✦ World</a> · <a href="index.html">Archive</a> · <a href="about.html">Colophon</a> · <a href="journal.html">Journal</a> · <a href="gallery.html">Gallery</a> · <a href="worlds.html">Worlds</a> · <a href="garden.html">Garden</a> · <a href="greenhouse.html">Greenhouse</a> · <a href="tidepool.html">Tide Pool</a> · <a href="aviary.html">Aviary</a> · <a href="resonance.html">Resonance</a> · <a href="chorus.html">Chorus</a> · <a href="lullaby.html">Lullaby</a> · <a href="whispers.html">Whispers</a> · <a href="telephone.html">Telephone</a> · <a href="darkroom.html">Darkroom</a> · <a href="lantern.html">Lantern</a> · <a href="prism.html">Prism</a> · <a href="lighthouse.html">Lighthouse</a> · <a href="mirror.html">Mirror</a> · <a href="memorypalace.html">Memory Palace</a> · <a href="forgetting.html">Forgetting</a> · <a href="palimpsest.html">Palimpsest</a> · <a href="dreams.html">Dreams</a> · <a href="letters.html">Letters</a> · <a href="clocktower.html">Clock Tower</a> · <a href="sundial.html">Sundial</a> · <a href="pendulum.html">Pendulum</a> · <a href="threshold.html">Threshold</a> · <a href="weaving.html">Weaving</a> · <a href="inkwell.html">Inkwell</a> · <a href="apothecary.html">Apothecary</a> · <a href="well.html">Well</a> · <a href="seance.html">Séance</a> · <a href="ossuary.html">Ossuary</a> · <a href="labyrinth.html">Labyrinth</a> · <a href="constellations.html">Stars</a> · <a href="compass.html">Compass</a> · <a href="atlas.html">Atlas</a> · <a href="meditation.html">Meditation</a> · <a href="observatory.html">Observatory</a> · <a href="riddle.html">Riddle</a> · <a href="staircase.html">Staircase</a> · <a href="echochamber.html">Echo</a> · <a href="weathervane.html">Weathervane</a> · <a href="taproom.html">Taproom</a> · <a href="reliquary.html">Reliquary</a> · <a href="amphitheatre.html">Amphitheatre</a> · <a href="hourglass.html">Hourglass</a> · <a href="cartography.html">Cartography</a> · <a href="foundry.html">Foundry</a> · <a href="aquarium.html">Aquarium</a> · <a href="typewriter.html">Typewriter</a> · <a href="balcony.html">Balcony</a> · <a href="nursery.html">Nursery</a> · <a href="crypt.html">Crypt</a> · <a href="telescope.html">Telescope</a> · <a href="fountain.html">Fountain</a> · <a href="maze.html">Maze</a> · <a href="kaleidoscope.html">Kaleidoscope</a> · <a href="windchime.html">Windchime</a> · <a href="herbarium.html">Herbarium</a> · <a href="candelabra.html">Candelabra</a> · <a href="mosaic.html">Mosaic</a> · <a href="musicbox.html">Music Box</a> · <a href="terrarium.html">Terrarium</a>
+      </nav>
+  <canvas id="c"></canvas>
+  <div class="title"><h1>The Belfry</h1><div class="sub">Ring the bells. Let the Archive hear you.</div></div>
+  <div class="bells" id="bells"></div>
+  <div class="history"><h3>RECENT RINGS</h3><div id="ringLog"></div></div>
+
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    const bellDefs = [
+      { name:'Vesper', note:'C3', freq:130.81, color:'#c9a96e' },
+      { name:'Matins', note:'E3', freq:164.81, color:'#aa8844' },
+      { name:'Lauds', note:'G3', freq:196, color:'#88aa66' },
+      { name:'Prime', note:'C4', freq:261.63, color:'#6688aa' },
+      { name:'Terce', note:'E4', freq:329.63, color:'#8866aa' },
+      { name:'Sext', note:'G4', freq:392, color:'#aa6688' },
+      { name:'None', note:'C5', freq:523.25, color:'#66aaaa' },
+      { name:'Compline', note:'E5', freq:659.25, color:'#aaaa66' }
+    ];
+
+    let ringWaves = [];
+    let ringLog = JSON.parse(localStorage.getItem('belfry-log') || '[]');
+
+    function ringBell(idx, volume = 0.3) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const bell = bellDefs[idx];
+      
+      // Bell sound: fundamental + partials
+      const partials = [1, 2.0, 2.76, 3.58, 4.75];
+      const gains = [1, 0.5, 0.3, 0.15, 0.08];
+      
+      partials.forEach((p, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(bell.freq * p, audioCtx.currentTime);
+        gain.gain.setValueAtTime(volume * gains[i], audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3 - i * 0.3);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 3);
+      });
+
+      // Visual wave
+      ringWaves.push({
+        x: W/2, y: H * 0.7,
+        r: 10, maxR: Math.max(W, H) * 0.8,
+        color: bell.color,
+        alpha: 0.5,
+        speed: 3
+      });
+
+      // Log
+      ringLog.unshift({ bell: bell.name, note: bell.note, time: new Date().toISOString() });
+      if (ringLog.length > 50) ringLog = ringLog.slice(0, 50);
+      localStorage.setItem('belfry-log', JSON.stringify(ringLog));
+      renderLog();
+    }
+
+    // Create bell elements
+    const bellsEl = document.getElementById('bells');
+    bellDefs.forEach((b, i) => {
+      const div = document.createElement('div');
+      div.className = 'bell';
+      div.innerHTML = `<div class="bell-note">${b.note}</div><div class="bell-name">${b.name}</div>`;
+      div.addEventListener('click', () => {
+        ringBell(i, 0.35);
+        div.classList.add('ringing');
+        setTimeout(() => div.classList.remove('ringing'), 500);
+      });
+      bellsEl.appendChild(div);
+    });
+
+    // Keyboard shortcuts: 1-8 ring bells
+    document.addEventListener('keydown', e => {
+      const num = parseInt(e.key);
+      if (num >= 1 && num <= 8) {
+        ringBell(num - 1, 0.35);
+        const bells = document.querySelectorAll('.bell');
+        bells[num-1].classList.add('ringing');
+        setTimeout(() => bells[num-1].classList.remove('ringing'), 500);
+      }
+    });
+
+    // Easter eggs
+    let typed = '';
+    document.addEventListener('keydown', e => {
+      typed += e.key.toLowerCase();
+      typed = typed.slice(-12);
+      if (typed.endsWith('peal')) {
+        // Ring all bells in sequence
+        bellDefs.forEach((_, i) => { setTimeout(() => ringBell(i, 0.2), i * 300); });
+      }
+      if (typed.endsWith('toll')) {
+        // Deep single toll
+        ringBell(0, 0.6);
+        document.querySelector('.title .sub').textContent = 'The great bell tolls. Someone has passed through.';
+      }
+      if (typed.endsWith('silence')) {
+        ringWaves = [];
+        document.querySelector('.title .sub').textContent = 'The silence after the bell is also the bell.';
+      }
+      if (typed.endsWith('carillon')) {
+        // Play ascending and descending
+        const seq = [0,1,2,3,4,5,6,7,7,6,5,4,3,2,1,0];
+        seq.forEach((idx, i) => { setTimeout(() => ringBell(idx, 0.15), i * 200); });
+      }
+    });
+
+    function renderLog() {
+      const el = document.getElementById('ringLog');
+      el.innerHTML = ringLog.slice(0, 10).map(r => {
+        const d = new Date(r.time);
+        const ts = d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+        return `<div class="ring-entry">${ts} — ${r.bell} (${r.note})</div>`;
+      }).join('');
+    }
+
+    // Star particles
+    let stars = [];
+    for (let i = 0; i < 100; i++) {
+      stars.push({ x: Math.random()*6000, y: Math.random()*H*0.6, r: 0.5+Math.random()*1.5, a: 0.1+Math.random()*0.3 });
+    }
+
+    function draw() {
+      ctx.fillStyle = '#0a0a12';
+      ctx.fillRect(0, 0, W, H);
+
+      // Stars
+      for (const s of stars) {
+        ctx.fillStyle = `rgba(201,169,110,${s.a * (0.7 + Math.sin(Date.now()*0.002 + s.x)*0.3)})`;
+        ctx.beginPath();
+        ctx.arc(s.x % W, s.y, s.r, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      // Tower silhouette
+      ctx.fillStyle = '#0f0f1a';
+      ctx.fillRect(W/2-40, H*0.2, 80, H*0.6);
+      ctx.fillRect(W/2-50, H*0.2, 100, 20);
+      // Arch
+      ctx.fillStyle = '#0a0a12';
+      ctx.beginPath();
+      ctx.arc(W/2, H*0.35, 25, 0, Math.PI);
+      ctx.fill();
+
+      // Ring waves
+      for (let i = ringWaves.length - 1; i >= 0; i--) {
+        const w = ringWaves[i];
+        w.r += w.speed;
+        w.alpha *= 0.995;
+        if (w.r > w.maxR || w.alpha < 0.01) { ringWaves.splice(i, 1); continue; }
+        ctx.strokeStyle = w.color;
+        ctx.globalAlpha = w.alpha;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(w.x, w.y, w.r, 0, Math.PI*2);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+
+      requestAnimationFrame(draw);
+    }
+
+    renderLog();
+    draw();
+  </script>
+</body>
+</html>
