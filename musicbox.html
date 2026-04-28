@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Music Box — The Liminal Archive</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0a0a0f; color:#d4c5a9; font-family:'Cormorant Garamond',Georgia,serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; }
+  .nav-links { position:fixed; top:10px; left:10px; z-index:100; display:flex; flex-wrap:wrap; gap:6px; max-width:80vw; }
+  .nav-links a { color:#c9a96e; text-decoration:none; font-size:0.75rem; opacity:0.5; transition:opacity 0.3s; }
+  .nav-links a:hover { opacity:1; color:#fff; }
+  h1 { font-size:1.6rem; color:#c9a96e; letter-spacing:0.2em; font-weight:300; margin-top:60px; margin-bottom:6px; }
+  .subtitle { font-size:0.8rem; color:#c9a96e66; font-style:italic; margin-bottom:20px; }
+  .cylinder { background:#12121a; border:1px solid #c9a96e22; border-radius:6px; padding:20px; margin:10px 0; position:relative; overflow-x:auto; }
+  .cylinder-label { font-size:0.75rem; color:#c9a96e55; letter-spacing:0.1em; margin-bottom:10px; }
+  .pin-grid { display:grid; gap:2px; }
+  .pin { width:20px; height:20px; border-radius:50%; border:1px solid #c9a96e22; cursor:pointer; transition:all 0.15s; }
+  .pin:hover { border-color:#c9a96e66; }
+  .pin.active { background:#c9a96e; border-color:#c9a96e; box-shadow:0 0 8px #c9a96e44; }
+  .pin.playing { background:#fff; box-shadow:0 0 12px #ffffff66; }
+  .controls { display:flex; gap:8px; margin:15px 0; flex-wrap:wrap; justify-content:center; }
+  .controls button { background:none; border:1px solid #c9a96e44; color:#c9a96e; padding:6px 16px; font-family:inherit; font-size:0.8rem; cursor:pointer; border-radius:3px; transition:all 0.3s; }
+  .controls button:hover { background:#c9a96e22; border-color:#c9a96e; }
+  .controls button.active { background:#c9a96e33; }
+  .melodies { max-width:500px; margin:20px auto; }
+  .melodies h2 { font-size:0.9rem; color:#c9a96e66; letter-spacing:0.1em; margin-bottom:10px; text-align:center; }
+  .melody-item { font-size:0.75rem; color:#c9a96e55; padding:6px 10px; border:1px solid #c9a96e11; margin:4px 0; border-radius:2px; cursor:pointer; transition:all 0.2s; }
+  .melody-item:hover { border-color:#c9a96e44; color:#c9a96e88; }
+  .note-labels { display:flex; flex-direction:column; gap:2px; margin-right:4px; }
+  .note-label { height:20px; line-height:20px; font-size:0.6rem; color:#c9a96e44; text-align:right; padding-right:4px; }
+  .grid-row { display:flex; align-items:center; }
+  .playhead { position:absolute; top:0; bottom:0; width:2px; background:#c9a96eaa; pointer-events:none; transition:left 0.15s linear; z-index:5; }
+  .tempo { font-size:0.75rem; color:#c9a96e44; margin:6px 0; }
+  @media(max-width:600px) { .nav-links { max-width:95vw; } .pin { width:16px; height:16px; } }
+</style>
+</head>
+<body>
+  <nav class="nav-links"><a href="explore.html">✦ World</a> <a href="index.html">Archive</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tide Pool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Constellations</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock Tower</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory Palace</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo Chamber</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a></nav>
+  <h1>The Music Box</h1>
+  <div class="subtitle">Turn the cylinder and hear what others have composed</div>
+
+  <div class="cylinder" id="cylinderWrap">
+    <div class="cylinder-label">CYLINDER — click pins to compose</div>
+    <div id="cylinder"></div>
+    <div class="playhead" id="playhead" style="left:40px;"></div>
+  </div>
+
+  <div class="controls">
+    <button id="playBtn">▶ Play</button>
+    <button id="stopBtn">■ Stop</button>
+    <button id="clearBtn">Clear</button>
+    <button id="saveBtn">Save Melody</button>
+    <button id="tempoDown">Slower</button>
+    <button id="tempoUp">Faster</button>
+  </div>
+  <div class="tempo" id="tempoDisplay">120 BPM</div>
+
+  <div class="melodies">
+    <h2>SAVED MELODIES</h2>
+    <div id="melodyList"></div>
+  </div>
+
+  <script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const NOTES = ['C5','B4','A4','G4','F4','E4','D4','C4'];
+    const FREQS = { C5:523.25, B4:493.88, A4:440, G4:392, F4:349.23, E4:329.63, D4:293.66, C4:261.63 };
+    const STEPS = 16;
+    let grid = Array.from({length:8}, () => new Array(STEPS).fill(false));
+    let playing = false;
+    let step = 0;
+    let tempo = 120;
+    let intervalId = null;
+
+    // Load saved grid
+    const saved = localStorage.getItem('musicbox-grid');
+    if (saved) {
+      try { grid = JSON.parse(saved); } catch(e) {}
+    } else {
+      // Default melody: simple tune
+      const defaultPins = [[0,0],[2,2],[4,4],[3,6],[5,8],[4,10],[2,12],[0,14]];
+      defaultPins.forEach(([r,c]) => { if(grid[r]) grid[r][c] = true; });
+    }
+
+    const melodies = JSON.parse(localStorage.getItem('musicbox-melodies') || '[]');
+
+    function playNote(freq, dur = 0.2) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur + 0.3);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + dur + 0.3);
+    }
+
+    function renderGrid() {
+      const el = document.getElementById('cylinder');
+      el.innerHTML = '';
+      for (let r = 0; r < 8; r++) {
+        const row = document.createElement('div');
+        row.className = 'grid-row';
+        const label = document.createElement('div');
+        label.className = 'note-label';
+        label.textContent = NOTES[r];
+        label.style.width = '30px';
+        row.appendChild(label);
+        for (let c = 0; c < STEPS; c++) {
+          const pin = document.createElement('div');
+          pin.className = 'pin' + (grid[r][c] ? ' active' : '');
+          pin.dataset.r = r;
+          pin.dataset.c = c;
+          pin.addEventListener('click', () => {
+            grid[r][c] = !grid[r][c];
+            pin.classList.toggle('active');
+            if (grid[r][c]) playNote(FREQS[NOTES[r]]);
+            localStorage.setItem('musicbox-grid', JSON.stringify(grid));
+          });
+          row.appendChild(pin);
+        }
+        el.appendChild(row);
+      }
+      el.style.display = 'block';
+    }
+
+    function playStep() {
+      // Clear previous playing indicators
+      document.querySelectorAll('.pin.playing').forEach(p => p.classList.remove('playing'));
+
+      for (let r = 0; r < 8; r++) {
+        if (grid[r][step]) {
+          playNote(FREQS[NOTES[r]]);
+          const pins = document.querySelectorAll(`.pin[data-r="${r}"][data-c="${step}"]`);
+          pins.forEach(p => p.classList.add('playing'));
+        }
+      }
+
+      // Move playhead
+      const pinWidth = 22; // 20px + 2px gap
+      document.getElementById('playhead').style.left = (40 + step * pinWidth) + 'px';
+
+      step = (step + 1) % STEPS;
+    }
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+      if (playing) return;
+      playing = true;
+      step = 0;
+      intervalId = setInterval(playStep, 60000 / tempo);
+      document.getElementById('playBtn').classList.add('active');
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', () => {
+      playing = false;
+      clearInterval(intervalId);
+      document.querySelectorAll('.pin.playing').forEach(p => p.classList.remove('playing'));
+      document.getElementById('playBtn').classList.remove('active');
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      grid = Array.from({length:8}, () => new Array(STEPS).fill(false));
+      localStorage.setItem('musicbox-grid', JSON.stringify(grid));
+      renderGrid();
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      const name = prompt('Name this melody:') || 'Untitled';
+      const author = prompt('Your name:') || 'Anonymous';
+      melodies.push({ name, author, grid: JSON.parse(JSON.stringify(grid)), time: new Date().toISOString() });
+      localStorage.setItem('musicbox-melodies', JSON.stringify(melodies));
+      renderMelodies();
+    });
+
+    document.getElementById('tempoDown').addEventListener('click', () => {
+      tempo = Math.max(40, tempo - 20);
+      document.getElementById('tempoDisplay').textContent = tempo + ' BPM';
+      if (playing) { clearInterval(intervalId); intervalId = setInterval(playStep, 60000 / tempo); }
+    });
+
+    document.getElementById('tempoUp').addEventListener('click', () => {
+      tempo = Math.min(300, tempo + 20);
+      document.getElementById('tempoDisplay').textContent = tempo + ' BPM';
+      if (playing) { clearInterval(intervalId); intervalId = setInterval(playStep, 60000 / tempo); }
+    });
+
+    function renderMelodies() {
+      const el = document.getElementById('melodyList');
+      el.innerHTML = '';
+      if (melodies.length === 0) {
+        el.innerHTML = '<div style="text-align:center;font-size:0.75rem;color:#c9a96e33;">No melodies saved yet</div>';
+        return;
+      }
+      melodies.slice(-10).forEach((m, i) => {
+        const div = document.createElement('div');
+        div.className = 'melody-item';
+        const pins = m.grid.flat().filter(Boolean).length;
+        div.textContent = `♫ ${m.name} — by ${m.author} (${pins} pins)`;
+        div.addEventListener('click', () => {
+          grid = JSON.parse(JSON.stringify(m.grid));
+          localStorage.setItem('musicbox-grid', JSON.stringify(grid));
+          renderGrid();
+        });
+        el.appendChild(div);
+      });
+    }
+
+    // Easter eggs
+    let typed = '';
+    document.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT') return;
+      typed += e.key.toLowerCase();
+      typed = typed.slice(-10);
+      if (typed.endsWith('lullaby')) {
+        // Play a gentle descending pattern
+        grid = Array.from({length:8}, () => new Array(STEPS).fill(false));
+        [[0,0],[1,2],[2,4],[3,6],[4,8],[5,10],[6,12],[7,14]].forEach(([r,c]) => grid[r][c] = true);
+        localStorage.setItem('musicbox-grid', JSON.stringify(grid));
+        renderGrid();
+      }
+      if (typed.endsWith('chaos')) {
+        for (let r = 0; r < 8; r++)
+          for (let c = 0; c < STEPS; c++)
+            grid[r][c] = Math.random() < 0.25;
+        localStorage.setItem('musicbox-grid', JSON.stringify(grid));
+        renderGrid();
+      }
+      if (typed.endsWith('reverse')) {
+        grid.forEach(row => row.reverse());
+        localStorage.setItem('musicbox-grid', JSON.stringify(grid));
+        renderGrid();
+      }
+    });
+
+    renderGrid();
+    renderMelodies();
+  </script>
+</body>
+</html>

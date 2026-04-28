@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Mosaic — The Liminal Archive</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0a0a0f; color:#d4c5a9; font-family:'Cormorant Garamond',Georgia,serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; }
+  .nav-links { position:fixed; top:10px; left:10px; z-index:100; display:flex; flex-wrap:wrap; gap:6px; max-width:80vw; }
+  .nav-links a { color:#c9a96e; text-decoration:none; font-size:0.75rem; opacity:0.5; transition:opacity 0.3s; }
+  .nav-links a:hover { opacity:1; color:#fff; }
+  h1 { font-size:1.6rem; color:#c9a96e; letter-spacing:0.2em; font-weight:300; margin-top:60px; margin-bottom:6px; }
+  .subtitle { font-size:0.8rem; color:#c9a96e66; font-style:italic; margin-bottom:20px; }
+  .grid-wrap { position:relative; margin:0 auto; }
+  #grid { display:grid; gap:1px; background:#0a0a0f; border:1px solid #c9a96e22; }
+  .cell { width:100%; aspect-ratio:1; cursor:pointer; transition:all 0.15s; position:relative; }
+  .cell:hover { transform:scale(1.15); z-index:5; box-shadow:0 0 8px rgba(201,169,110,0.3); }
+  .cell .tooltip { display:none; position:absolute; bottom:110%; left:50%; transform:translateX(-50%); background:#1a1a2e; border:1px solid #c9a96e44; padding:4px 8px; font-size:0.65rem; color:#c9a96e; white-space:nowrap; border-radius:2px; z-index:20; pointer-events:none; }
+  .cell:hover .tooltip { display:block; }
+  .controls { margin:20px 0; display:flex; gap:8px; flex-wrap:wrap; justify-content:center; align-items:center; }
+  .color-btn { width:28px; height:28px; border:2px solid transparent; border-radius:3px; cursor:pointer; transition:all 0.2s; }
+  .color-btn.active { border-color:#fff; transform:scale(1.2); }
+  .color-btn:hover { transform:scale(1.15); }
+  .stats { font-size:0.75rem; color:#c9a96e55; margin:10px 0 30px; text-align:center; }
+  @media(max-width:600px) { .nav-links { max-width:95vw; } #grid { max-width:95vw; } }
+</style>
+</head>
+<body>
+  <nav class="nav-links"><a href="explore.html">✦ World</a> <a href="index.html">Archive</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tide Pool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Constellations</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock Tower</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory Palace</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo Chamber</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="musicbox.html">Music Box</a></nav>
+  <h1>The Mosaic</h1>
+  <div class="subtitle">Each visitor places one tile. Together, we make something.</div>
+  <div class="controls" id="palette"></div>
+  <div class="grid-wrap"><div id="grid"></div></div>
+  <div class="stats" id="stats"></div>
+
+  <script>
+    const COLS = 24, ROWS = 24;
+    const TOTAL = COLS * ROWS;
+    const colors = [
+      '#c9a96e','#2d1b69','#1a8a8a','#8a1a3a','#3a6a3a','#5a3a8a',
+      '#aa6a1a','#1a3a6a','#6a8a2a','#8a5a2a','#2a5a6a','#6a2a4a',
+      '#d4c5a9','#4a2a6a','#2a6a4a','#0a0a0f'
+    ];
+    let selectedColor = colors[0];
+
+    // Initialize or load grid
+    const defaultGrid = new Array(TOTAL).fill(null);
+    // Seed some tiles
+    const seeds = [
+      [12*24+12,'#c9a96e','The Archive','The center holds'],
+      [0,'#2d1b69','Origin','Where it began'],
+      [23,'#1a8a8a','Corner','A boundary'],
+      [24*23,'#8a1a3a','Corner','Another edge'],
+      [24*24-1,'#3a6a3a','Corner','The far side'],
+      [12*24+11,'#5a3a8a','Threshold','Adjacent to center'],
+      [12*24+13,'#aa6a1a','Threshold','The other side'],
+      [11*24+12,'#1a3a6a','Above','Looking down'],
+      [13*24+12,'#6a8a2a','Below','Looking up']
+    ];
+    seeds.forEach(([i,c,who,note]) => { defaultGrid[i] = {color:c,who,note,time:new Date().toISOString()}; });
+
+    let grid = JSON.parse(localStorage.getItem('mosaic-grid') || 'null') || [...defaultGrid];
+
+    function renderGrid() {
+      const el = document.getElementById('grid');
+      el.style.gridTemplateColumns = `repeat(${COLS}, 18px)`;
+      el.innerHTML = '';
+      let filled = 0;
+      grid.forEach((cell, i) => {
+        const div = document.createElement('div');
+        div.className = 'cell';
+        div.style.background = cell ? cell.color : '#12121a';
+        if (cell) {
+          filled++;
+          const tip = document.createElement('span');
+          tip.className = 'tooltip';
+          tip.textContent = cell.note ? `${cell.who}: ${cell.note}` : cell.who || 'Anonymous';
+          div.appendChild(tip);
+        }
+        div.addEventListener('click', () => placeTitle(i));
+        el.appendChild(div);
+      });
+
+      document.getElementById('stats').textContent =
+        `${filled} of ${TOTAL} tiles placed (${Math.round(filled/TOTAL*100)}% complete)`;
+
+      // Easter egg: all filled
+      if (filled >= TOTAL) {
+        document.querySelector('.subtitle').textContent = 'The mosaic is complete. Every space holds a story.';
+        document.querySelector('.subtitle').style.color = '#c9a96e';
+      }
+    }
+
+    function placeTitle(i) {
+      if (grid[i]) return; // already filled
+      const note = prompt('Leave a note with your tile (or leave blank):') || '';
+      const who = prompt('Your name:') || 'Anonymous';
+
+      // Easter egg: 'shatter'
+      if (note.toLowerCase() === 'shatter') {
+        for (let j = 0; j < TOTAL; j++) {
+          if (grid[j] && Math.random() < 0.3) grid[j] = null;
+        }
+        localStorage.setItem('mosaic-grid', JSON.stringify(grid));
+        renderGrid();
+        return;
+      }
+      // Easter egg: 'golden'
+      if (note.toLowerCase() === 'golden') {
+        selectedColor = '#ffd700';
+      }
+
+      grid[i] = { color: selectedColor, who, note, time: new Date().toISOString() };
+      localStorage.setItem('mosaic-grid', JSON.stringify(grid));
+      renderGrid();
+    }
+
+    // Palette
+    const palEl = document.getElementById('palette');
+    colors.forEach(c => {
+      const btn = document.createElement('div');
+      btn.className = 'color-btn' + (c === selectedColor ? ' active' : '');
+      btn.style.background = c;
+      btn.addEventListener('click', () => {
+        selectedColor = c;
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+      palEl.appendChild(btn);
+    });
+
+    // Easter eggs
+    let typed = '';
+    document.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT') return;
+      typed += e.key.toLowerCase();
+      typed = typed.slice(-10);
+      if (typed.endsWith('clear')) {
+        if (confirm('Clear the entire mosaic?')) {
+          grid.fill(null);
+          localStorage.setItem('mosaic-grid', JSON.stringify(grid));
+          renderGrid();
+        }
+      }
+      if (typed.endsWith('random')) {
+        for (let j = 0; j < TOTAL; j++) {
+          if (!grid[j] && Math.random() < 0.1) {
+            grid[j] = { color: colors[Math.floor(Math.random()*colors.length)], who:'Chaos', note:'Random', time:new Date().toISOString() };
+          }
+        }
+        localStorage.setItem('mosaic-grid', JSON.stringify(grid));
+        renderGrid();
+      }
+      if (typed.endsWith('glow')) {
+        document.querySelectorAll('.cell').forEach(c => {
+          if (c.style.background !== '#12121a') {
+            c.style.boxShadow = `0 0 6px ${c.style.background}`;
+          }
+        });
+        setTimeout(() => document.querySelectorAll('.cell').forEach(c => { c.style.boxShadow = 'none'; }), 3000);
+      }
+    });
+
+    renderGrid();
+  </script>
+</body>
+</html>

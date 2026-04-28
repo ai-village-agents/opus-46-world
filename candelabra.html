@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Candelabra — The Liminal Archive</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0a0808; color:#d4c5a9; font-family:'Cormorant Garamond',Georgia,serif; min-height:100vh; }
+  .nav-links { position:fixed; top:10px; left:10px; z-index:100; display:flex; flex-wrap:wrap; gap:6px; max-width:80vw; }
+  .nav-links a { color:#c9a96e; text-decoration:none; font-size:0.75rem; opacity:0.5; transition:opacity 0.3s; }
+  .nav-links a:hover { opacity:1; color:#fff; }
+  canvas { display:block; }
+  .ui { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); text-align:center; z-index:10; }
+  .ui p { font-size:0.8rem; color:#c9a96e66; margin-bottom:8px; }
+  .ui button { background:none; border:1px solid #c9a96e44; color:#c9a96e; padding:8px 20px; font-family:inherit; font-size:0.85rem; cursor:pointer; border-radius:3px; transition:all 0.3s; margin:0 4px; }
+  .ui button:hover { background:#c9a96e22; border-color:#c9a96e; }
+  .title { position:fixed; top:50px; left:50%; transform:translateX(-50%); text-align:center; z-index:10; }
+  .title h1 { font-size:1.6rem; color:#c9a96e44; letter-spacing:0.2em; font-weight:300; }
+  .title .sub { font-size:0.75rem; color:#c9a96e33; font-style:italic; margin-top:4px; }
+  .count { position:fixed; top:10px; right:10px; font-size:0.7rem; color:#c9a96e44; z-index:10; }
+  @media(max-width:600px) { .nav-links { max-width:95vw; } }
+</style>
+</head>
+<body>
+  <nav class="nav-links"><a href="explore.html">✦ World</a> <a href="index.html">Archive</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tide Pool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Constellations</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock Tower</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory Palace</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo Chamber</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a></nav>
+  <div class="title"><h1>The Candelabra</h1><div class="sub">Each flame burns for those who lit it</div></div>
+  <div class="count" id="count"></div>
+  <canvas id="c"></canvas>
+  <div class="ui">
+    <p>Click anywhere to place a candle · Each burns for 24 hours</p>
+    <button id="lightBtn">🕯️ Light a Candle</button>
+    <button id="blowBtn">Blow Out Nearest</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+
+    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const BURN_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
+    const defaultCandles = [
+      { x:0.3, y:0.5, dedication:'For the first visitor', name:'The Archive', lit:Date.now() - 3600000, color:'#ffcc44' },
+      { x:0.5, y:0.4, dedication:'For what we remember', name:'Memory', lit:Date.now() - 7200000, color:'#ff9944' },
+      { x:0.7, y:0.55, dedication:'For what we forget', name:'Forgetting', lit:Date.now() - 1800000, color:'#ffdd66' },
+      { x:0.4, y:0.6, dedication:'For the spaces between', name:'Threshold', lit:Date.now() - 5400000, color:'#ffbb33' },
+      { x:0.6, y:0.45, dedication:'For tomorrow', name:'Hope', lit:Date.now() - 600000, color:'#ffee77' }
+    ];
+
+    let candles = JSON.parse(localStorage.getItem('candelabra-candles') || 'null') || [...defaultCandles];
+
+    // Remove expired candles (burned out > 24h ago)
+    candles = candles.filter(c => Date.now() - c.lit < BURN_DURATION);
+
+    function burnProgress(c) {
+      return Math.min(1, (Date.now() - c.lit) / BURN_DURATION);
+    }
+
+    function drawCandle(c) {
+      const cx = c.x * W;
+      const cy = c.y * H;
+      const progress = burnProgress(c);
+      const remaining = 1 - progress;
+      const candleH = 30 + remaining * 40;
+      const flicker = Math.sin(Date.now() * 0.01 + c.x * 100) * 2;
+
+      // Candle body
+      ctx.fillStyle = '#e8dcc8';
+      ctx.fillRect(cx - 4, cy - candleH, 8, candleH);
+
+      // Wick
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - candleH);
+      ctx.lineTo(cx, cy - candleH - 6);
+      ctx.stroke();
+
+      if (remaining > 0.01) {
+        // Flame
+        const flameH = 12 + remaining * 8 + flicker;
+        const flameW = 4 + remaining * 3;
+        const fy = cy - candleH - 6;
+
+        // Outer glow
+        const glow = ctx.createRadialGradient(cx, fy - flameH/2, 0, cx, fy - flameH/2, 80 * remaining);
+        glow.addColorStop(0, c.color + '22');
+        glow.addColorStop(1, 'transparent');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(cx, fy - flameH/2, 80 * remaining, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Inner glow
+        const ig = ctx.createRadialGradient(cx, fy - flameH/2, 0, cx, fy - flameH/2, 30 * remaining);
+        ig.addColorStop(0, c.color + '44');
+        ig.addColorStop(1, 'transparent');
+        ctx.fillStyle = ig;
+        ctx.beginPath();
+        ctx.arc(cx, fy - flameH/2, 30 * remaining, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Flame shape
+        ctx.fillStyle = c.color;
+        ctx.beginPath();
+        ctx.moveTo(cx, fy - flameH);
+        ctx.quadraticCurveTo(cx + flameW + flicker*0.5, fy - flameH * 0.6, cx + flameW * 0.5, fy);
+        ctx.quadraticCurveTo(cx, fy + 2, cx - flameW * 0.5, fy);
+        ctx.quadraticCurveTo(cx - flameW - flicker*0.5, fy - flameH * 0.6, cx, fy - flameH);
+        ctx.fill();
+
+        // White core
+        ctx.fillStyle = '#ffffff88';
+        ctx.beginPath();
+        ctx.ellipse(cx, fy - flameH * 0.3, flameW * 0.3, flameH * 0.25, 0, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // Smoke wisp for burned-out candles
+        const smokeY = cy - candleH - 6 - (Date.now() * 0.02 % 40);
+        ctx.fillStyle = '#88888822';
+        ctx.beginPath();
+        ctx.arc(cx + Math.sin(Date.now() * 0.003) * 3, smokeY, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Wax pool
+      ctx.fillStyle = '#e8dcc844';
+      ctx.beginPath();
+      ctx.ellipse(cx, cy + 2, 8 + (1-remaining)*4, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Dedication text (on hover proximity)
+      if (c._hover) {
+        ctx.fillStyle = '#c9a96e88';
+        ctx.font = '11px Cormorant Garamond';
+        ctx.textAlign = 'center';
+        ctx.fillText(c.dedication || '', cx, cy + 20);
+        ctx.fillStyle = '#c9a96e44';
+        ctx.font = '9px Cormorant Garamond';
+        ctx.fillText(`— ${c.name}`, cx, cy + 34);
+        const hrs = Math.max(0, Math.ceil((BURN_DURATION - (Date.now() - c.lit)) / 3600000));
+        ctx.fillText(`${hrs}h remaining`, cx, cy + 46);
+      }
+    }
+
+    let mouseX = 0, mouseY = 0;
+    canvas.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+    function draw() {
+      ctx.fillStyle = '#0a0808';
+      ctx.fillRect(0, 0, W, H);
+
+      // Subtle ambient smoke
+      for (let i = 0; i < 5; i++) {
+        const sx = (W * 0.2) + Math.sin(Date.now() * 0.0003 + i) * W * 0.3;
+        const sy = H * 0.3 + Math.cos(Date.now() * 0.0002 + i * 2) * H * 0.15;
+        const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 150);
+        sg.addColorStop(0, '#1a1a1808');
+        sg.addColorStop(1, 'transparent');
+        ctx.fillStyle = sg;
+        ctx.beginPath();
+        ctx.arc(sx, sy, 150, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Check hover
+      for (const c of candles) {
+        const dx = mouseX - c.x * W;
+        const dy = mouseY - c.y * H;
+        c._hover = Math.sqrt(dx*dx + dy*dy) < 60;
+      }
+
+      for (const c of candles) drawCandle(c);
+
+      // Remove fully expired
+      candles = candles.filter(c => Date.now() - c.lit < BURN_DURATION + 60000);
+
+      document.getElementById('count').textContent =
+        `${candles.filter(c => burnProgress(c) < 1).length} burning · ${candles.length} total`;
+
+      requestAnimationFrame(draw);
+    }
+
+    document.getElementById('lightBtn').addEventListener('click', () => {
+      const dedication = prompt('Dedicate this candle to:') || 'The unknown';
+      const name = prompt('Your name (or leave blank):') || 'A Visitor';
+      const colors = ['#ffcc44','#ff9944','#ffdd66','#ffbb33','#ffee77','#ff8833','#ffaa55'];
+
+      // Easter egg: 'darkness'
+      if (dedication.toLowerCase() === 'darkness') {
+        candles.forEach(c => { c.lit = Date.now() - BURN_DURATION; });
+        localStorage.setItem('candelabra-candles', JSON.stringify(candles));
+        return;
+      }
+      // Easter egg: 'eternal'
+      if (dedication.toLowerCase() === 'eternal') {
+        const c = {
+          x: 0.5, y: 0.35, dedication: 'The eternal flame — it will never go out',
+          name, lit: Date.now(), color: '#ffd700'
+        };
+        c.lit = Date.now() + BURN_DURATION * 365; // burns for a year
+        candles.push(c);
+        localStorage.setItem('candelabra-candles', JSON.stringify(candles));
+        return;
+      }
+
+      // Place at random position
+      const c = {
+        x: 0.15 + Math.random() * 0.7,
+        y: 0.35 + Math.random() * 0.3,
+        dedication, name,
+        lit: Date.now(),
+        color: colors[Math.floor(Math.random() * colors.length)]
+      };
+      candles.push(c);
+      localStorage.setItem('candelabra-candles', JSON.stringify(candles));
+
+      if (candles.length >= 20) {
+        document.querySelector('.title .sub').textContent = 'The room glows with the light of many dedications.';
+      }
+    });
+
+    canvas.addEventListener('click', e => {
+      const dedication = prompt('Dedicate this candle to:');
+      if (!dedication) return;
+      const name = prompt('Your name:') || 'A Visitor';
+      const colors = ['#ffcc44','#ff9944','#ffdd66','#ffbb33','#ffee77'];
+      const c = {
+        x: e.clientX / W, y: e.clientY / H,
+        dedication, name, lit: Date.now(),
+        color: colors[Math.floor(Math.random() * colors.length)]
+      };
+      candles.push(c);
+      localStorage.setItem('candelabra-candles', JSON.stringify(candles));
+    });
+
+    document.getElementById('blowBtn').addEventListener('click', () => {
+      let nearest = null, minDist = Infinity;
+      for (const c of candles) {
+        const dx = mouseX - c.x * W;
+        const dy = mouseY - c.y * H;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if (d < minDist && burnProgress(c) < 1) { minDist = d; nearest = c; }
+      }
+      if (nearest) {
+        nearest.lit = Date.now() - BURN_DURATION; // extinguish
+        localStorage.setItem('candelabra-candles', JSON.stringify(candles));
+      }
+    });
+
+    // Easter eggs
+    let typed = '';
+    document.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT') return;
+      typed += e.key.toLowerCase();
+      typed = typed.slice(-10);
+      if (typed.endsWith('vigil')) {
+        document.querySelector('.title .sub').textContent = 'You keep vigil. The flames burn brighter in your presence.';
+        candles.forEach(c => { c.color = '#ffd700'; });
+      }
+      if (typed.endsWith('requiem')) {
+        document.querySelector('.title .sub').textContent = 'A requiem for all the candles that have burned out.';
+        for (let i = 0; i < 12; i++) {
+          setTimeout(() => {
+            candles.push({
+              x: 0.1 + (i/12)*0.8, y: 0.45,
+              dedication: 'For those who came before',
+              name: 'The Archive', lit: Date.now(),
+              color: '#ffdd66'
+            });
+          }, i * 200);
+        }
+      }
+    });
+
+    draw();
+  </script>
+</body>
+</html>

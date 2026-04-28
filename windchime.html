@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Windchime — The Liminal Archive</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0a0a0f; color:#d4c5a9; font-family:'Cormorant Garamond',Georgia,serif; min-height:100vh; overflow-x:hidden; }
+  .nav-links { position:fixed; top:10px; left:10px; z-index:100; display:flex; flex-wrap:wrap; gap:6px; max-width:80vw; }
+  .nav-links a { color:#c9a96e; text-decoration:none; font-size:0.75rem; opacity:0.5; transition:opacity 0.3s; }
+  .nav-links a:hover { opacity:1; color:#fff; }
+  canvas { display:block; position:fixed; top:0; left:0; z-index:0; }
+  .overlay { position:relative; z-index:10; text-align:center; padding:60px 20px 40px; }
+  h1 { font-size:1.8rem; color:#c9a96e; letter-spacing:0.2em; margin-bottom:8px; font-weight:300; }
+  .subtitle { font-size:0.85rem; color:#c9a96e66; font-style:italic; margin-bottom:30px; }
+  .wind-status { font-size:0.8rem; color:#7a9aba; margin-bottom:20px; }
+  .chimes-container { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; max-width:800px; margin:0 auto 30px; }
+  .chime { background:#12121a; border:1px solid #c9a96e22; border-radius:4px; padding:12px 16px; cursor:pointer; transition:all 0.3s; min-width:80px; text-align:center; }
+  .chime:hover { border-color:#c9a96e66; background:#1a1a2a; transform:translateY(-2px); }
+  .chime.ringing { border-color:#c9a96e; background:#2a2a3a; box-shadow:0 0 20px #c9a96e33; }
+  .chime-note { font-size:1.4rem; margin-bottom:4px; }
+  .chime-name { font-size:0.7rem; color:#c9a96e88; }
+  .chime-msg { font-size:0.65rem; color:#c9a96e44; margin-top:4px; font-style:italic; max-width:100px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .hang-section { margin:30px auto; max-width:500px; }
+  .hang-section h2 { font-size:1rem; color:#c9a96e88; letter-spacing:0.1em; margin-bottom:12px; }
+  .hang-form { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .hang-form input { background:#0a0a15; border:1px solid #c9a96e33; color:#d4c5a9; padding:8px 12px; font-family:inherit; font-size:0.85rem; border-radius:3px; width:200px; }
+  .hang-form select { background:#0a0a15; border:1px solid #c9a96e33; color:#d4c5a9; padding:8px; font-family:inherit; font-size:0.85rem; border-radius:3px; }
+  .hang-form button { background:none; border:1px solid #c9a96e44; color:#c9a96e; padding:8px 20px; font-family:inherit; cursor:pointer; border-radius:3px; transition:all 0.3s; }
+  .hang-form button:hover { background:#c9a96e22; border-color:#c9a96e; }
+  .wind-log { margin:30px auto; max-width:500px; text-align:left; }
+  .wind-log h2 { font-size:1rem; color:#c9a96e88; letter-spacing:0.1em; margin-bottom:12px; text-align:center; }
+  .log-entry { font-size:0.75rem; color:#c9a96e55; margin:4px 0; padding:4px 8px; border-left:2px solid #c9a96e22; }
+  @media(max-width:600px) { .nav-links { max-width:95vw; } .chimes-container { gap:6px; } .chime { min-width:60px; padding:8px; } }
+</style>
+</head>
+<body>
+  <nav class="nav-links"><a href="explore.html">✦ World</a> <a href="index.html">Archive</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tide Pool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Constellations</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock Tower</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory Palace</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo Chamber</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a></nav>
+  <canvas id="bg"></canvas>
+  <div class="overlay">
+    <h1>The Windchime</h1>
+    <div class="subtitle">Each chime carries a note from someone who passed through</div>
+    <div class="wind-status" id="windStatus">Wind: still</div>
+    <div class="chimes-container" id="chimes"></div>
+    <div class="hang-section">
+      <h2>HANG A CHIME</h2>
+      <div class="hang-form">
+        <input type="text" id="chimeMsg" placeholder="A note for the wind..." maxlength="60">
+        <select id="chimeNote">
+          <option value="C4">C</option><option value="D4">D</option><option value="E4">E</option>
+          <option value="F4">F</option><option value="G4">G</option><option value="A4">A</option>
+          <option value="B4">B</option><option value="C5">C♯</option>
+        </select>
+        <button id="hangBtn">Hang</button>
+      </div>
+    </div>
+    <div class="wind-log">
+      <h2>WIND LOG</h2>
+      <div id="logEntries"></div>
+    </div>
+  </div>
+
+  <script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const noteFreqs = { C4:261.63, D4:293.66, E4:329.63, F4:349.23, G4:392, A4:440, B4:493.88, C5:523.25 };
+    const noteSymbols = { C4:'♩', D4:'♪', E4:'♫', F4:'♬', G4:'♩', A4:'♪', B4:'♫', C5:'♬' };
+
+    const defaultChimes = [
+      { note:'C4', msg:'The first sound', name:'The Archive' },
+      { note:'E4', msg:'Between thoughts', name:'A Passing Wind' },
+      { note:'G4', msg:'Listen carefully', name:'The Silence' },
+      { note:'A4', msg:'I was here', name:'Someone' },
+      { note:'D4', msg:'What remains when the wind stops?', name:'An Echo' },
+      { note:'F4', msg:'', name:'The Unnamed' },
+      { note:'B4', msg:'Remember this sound', name:'Tomorrow' },
+      { note:'C5', msg:'The last note is never really the last', name:'The End' }
+    ];
+
+    let chimes = JSON.parse(localStorage.getItem('windchime-chimes') || 'null') || [...defaultChimes];
+    let windLog = JSON.parse(localStorage.getItem('windchime-log') || '[]');
+    let windStrength = 0;
+    let windTarget = 0;
+    let windTimer = 0;
+
+    function playNote(note, volume = 0.3) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const freq = noteFreqs[note] || 440;
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.5);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 2.5);
+
+      // Add harmonic
+      const osc2 = audioCtx.createOscillator();
+      const gain2 = audioCtx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(freq * 2, audioCtx.currentTime);
+      gain2.gain.setValueAtTime(volume * 0.2, audioCtx.currentTime);
+      gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
+      osc2.connect(gain2);
+      gain2.connect(audioCtx.destination);
+      osc2.start();
+      osc2.stop(audioCtx.currentTime + 1.5);
+    }
+
+    function renderChimes() {
+      const container = document.getElementById('chimes');
+      container.innerHTML = '';
+      chimes.forEach((ch, i) => {
+        const div = document.createElement('div');
+        div.className = 'chime';
+        div.innerHTML = `<div class="chime-note">${noteSymbols[ch.note] || '♩'}</div>
+          <div class="chime-name">${ch.name}</div>
+          ${ch.msg ? `<div class="chime-msg" title="${ch.msg}">${ch.msg}</div>` : ''}`;
+        div.addEventListener('click', () => {
+          playNote(ch.note, 0.4);
+          div.classList.add('ringing');
+          setTimeout(() => div.classList.remove('ringing'), 2000);
+          addLog(`${ch.name}'s chime rang: ${ch.note}`);
+        });
+        container.appendChild(div);
+      });
+    }
+
+    function addLog(text) {
+      windLog.unshift({ text, time: new Date().toISOString() });
+      if (windLog.length > 30) windLog = windLog.slice(0, 30);
+      localStorage.setItem('windchime-log', JSON.stringify(windLog));
+      renderLog();
+    }
+
+    function renderLog() {
+      const el = document.getElementById('logEntries');
+      el.innerHTML = windLog.slice(0, 12).map(l => {
+        const d = new Date(l.time);
+        const ts = d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+        return `<div class="log-entry">${ts} — ${l.text}</div>`;
+      }).join('');
+    }
+
+    document.getElementById('hangBtn').addEventListener('click', () => {
+      const msg = document.getElementById('chimeMsg').value.trim();
+      const note = document.getElementById('chimeNote').value;
+      const name = prompt('Name your chime (or leave blank):') || 'A Visitor';
+
+      // Easter egg: 'silence'
+      if (msg.toLowerCase() === 'silence') {
+        addLog('Someone hung the chime of silence. All others fell still.');
+        document.querySelectorAll('.chime').forEach(c => { c.style.opacity = '0.3'; });
+        setTimeout(() => document.querySelectorAll('.chime').forEach(c => { c.style.opacity = '1'; }), 5000);
+        return;
+      }
+
+      chimes.push({ note, msg: msg || '', name });
+      localStorage.setItem('windchime-chimes', JSON.stringify(chimes));
+      renderChimes();
+      playNote(note, 0.5);
+      addLog(`${name} hung a new chime (${note})`);
+      document.getElementById('chimeMsg').value = '';
+
+      // Easter egg: 10+ chimes
+      if (chimes.length >= 16) {
+        addLog('The wind frame groans under the weight of so many chimes.');
+      }
+    });
+
+    // Wind simulation
+    function updateWind() {
+      windTimer++;
+      if (windTimer % 200 === 0) {
+        windTarget = Math.random() * 0.8;
+        if (Math.random() < 0.1) windTarget = 1; // occasional gust
+      }
+      windStrength += (windTarget - windStrength) * 0.01;
+
+      const statusEl = document.getElementById('windStatus');
+      if (windStrength < 0.1) statusEl.textContent = 'Wind: still';
+      else if (windStrength < 0.3) statusEl.textContent = 'Wind: gentle breeze';
+      else if (windStrength < 0.6) statusEl.textContent = 'Wind: steady wind';
+      else if (windStrength < 0.8) statusEl.textContent = 'Wind: strong gusts';
+      else statusEl.textContent = 'Wind: howling gale';
+
+      // Wind rings random chimes
+      if (windStrength > 0.2 && Math.random() < windStrength * 0.02) {
+        const idx = Math.floor(Math.random() * chimes.length);
+        const ch = chimes[idx];
+        playNote(ch.note, windStrength * 0.25);
+        const els = document.querySelectorAll('.chime');
+        if (els[idx]) {
+          els[idx].classList.add('ringing');
+          setTimeout(() => els[idx].classList.remove('ringing'), 1500);
+        }
+      }
+    }
+
+    // Easter eggs via keyboard
+    let typed = '';
+    document.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT') return;
+      typed += e.key.toLowerCase();
+      typed = typed.slice(-10);
+      if (typed.endsWith('storm')) {
+        windTarget = 1; windStrength = 0.9;
+        addLog('A sudden storm! All chimes ring at once.');
+        chimes.forEach((ch, i) => {
+          setTimeout(() => playNote(ch.note, 0.2), i * 150);
+        });
+      }
+      if (typed.endsWith('harmony')) {
+        addLog('Harmony found. The chimes align.');
+        ['C4','E4','G4','C5'].forEach((n, i) => {
+          setTimeout(() => playNote(n, 0.35), i * 400);
+        });
+      }
+      if (typed.endsWith('hush')) {
+        windTarget = 0; windStrength = 0;
+        addLog('Silence descends. Even the wind holds its breath.');
+      }
+    });
+
+    // Background canvas
+    const bgCanvas = document.getElementById('bg');
+    const bgCtx = bgCanvas.getContext('2d');
+    let particles = [];
+
+    function resizeBg() {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+    }
+    resizeBg();
+    window.addEventListener('resize', resizeBg);
+
+    for (let i = 0; i < 60; i++) {
+      particles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        size: 1 + Math.random() * 2,
+        speed: 0.3 + Math.random() * 0.5,
+        alpha: 0.1 + Math.random() * 0.2
+      });
+    }
+
+    function animateBg() {
+      bgCtx.fillStyle = 'rgba(10,10,15,0.15)';
+      bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+      for (const p of particles) {
+        p.x += windStrength * p.speed * 3 + p.speed * 0.2;
+        p.y += Math.sin(Date.now() * 0.001 + p.x * 0.01) * 0.3;
+        if (p.x > bgCanvas.width + 10) p.x = -10;
+        bgCtx.fillStyle = `rgba(201,169,110,${p.alpha * (0.5 + windStrength * 0.5)})`;
+        bgCtx.beginPath();
+        bgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        bgCtx.fill();
+      }
+      updateWind();
+      requestAnimationFrame(animateBg);
+    }
+
+    renderChimes();
+    renderLog();
+    animateBg();
+  </script>
+</body>
+</html>
