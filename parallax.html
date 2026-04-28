@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Parallax — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+.parallax-scene{position:relative;height:400px;margin:2rem 0;border-radius:8px;overflow:hidden;border:1px solid rgba(201,169,110,0.1);cursor:crosshair}
+.layer{position:absolute;width:100%;height:100%;transition:transform 0.1s ease-out}
+.layer-bg{background:radial-gradient(ellipse at 50% 50%,#1a1a3e,#0a0a0f)}
+.star{position:absolute;width:2px;height:2px;background:#e0dcd0;border-radius:50%}
+.floating-text{position:absolute;color:rgba(201,169,110,0.6);font-size:0.9rem;font-style:italic;pointer-events:none;white-space:nowrap}
+.object{position:absolute;font-size:2rem;cursor:pointer;transition:transform 0.3s}
+.object:hover{transform:scale(1.3)!important}
+.perspective-info{text-align:center;margin:1rem 0;color:#8a7a5a;font-size:0.9rem}
+.views{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem 0}
+.view-card{padding:1.5rem;border:1px solid rgba(201,169,110,0.15);border-radius:8px;text-align:center;cursor:pointer;transition:all 0.3s;background:rgba(10,10,15,0.5)}
+.view-card:hover,.view-card.active{border-color:#c9a96e;background:rgba(45,27,105,0.2)}
+.view-card h3{color:#c9a96e;font-size:1rem;margin-bottom:0.3rem}
+.view-card p{color:#8a7a5a;font-size:0.8rem}
+.reflection{margin:2rem 0;padding:2rem;background:rgba(26,26,46,0.2);border:1px solid rgba(201,169,110,0.1);border-radius:8px;text-align:center}
+.reflection h2{color:#c9a96e;margin-bottom:1rem}
+.reflection textarea{width:100%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:1rem;font-family:inherit;font-size:1rem;border-radius:4px;resize:vertical;min-height:60px}
+.reflection textarea::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.perspectives{margin:1.5rem 0}
+.persp-item{padding:0.8rem;margin:0.5rem 0;background:rgba(10,10,15,0.3);border-radius:4px;color:#9a9a8a;font-size:0.9rem}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Parallax</h1>
+<p class="subtitle">Where the view depends on where you stand</p>
+<p class="description">Parallax: the apparent displacement of an object when viewed from different positions. Move your cursor across the scene below. The layers shift at different speeds. Nothing in this room is fixed — everything depends on your perspective.</p>
+
+<div class="parallax-scene" id="scene">
+<div class="layer layer-bg" id="layer0"></div>
+<div class="layer" id="layer1"></div>
+<div class="layer" id="layer2"></div>
+<div class="layer" id="layer3"></div>
+</div>
+<div class="perspective-info" id="perspective-info">Move your cursor to shift perspective</div>
+
+<div class="views">
+<div class="view-card active" onclick="setView('observer',this)"><h3>🔭 Observer</h3><p>Detached, analytical</p></div>
+<div class="view-card" onclick="setView('participant',this)"><h3>🚶 Participant</h3><p>Immersed, experiential</p></div>
+<div class="view-card" onclick="setView('dreamer',this)"><h3>💭 Dreamer</h3><p>Abstract, symbolic</p></div>
+</div>
+
+<div class="reflection">
+<h2>Record Your Perspective</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">What do you see from where you stand?</p>
+<textarea id="persp-input" placeholder="From my perspective..."></textarea>
+<br><button class="btn" onclick="addPerspective()">Leave Your View</button>
+</div>
+<div class="perspectives" id="perspectives"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Parallax+Perspective&body=From+where+I+stand:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="panopticon.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="pendulum.html">Next →</a>
+</nav>
+<script>
+const scene=document.getElementById('scene');
+const layers=[document.getElementById('layer1'),document.getElementById('layer2'),document.getElementById('layer3')];
+const speeds=[0.02,0.05,0.1];
+
+// Populate layers
+const TEXTS_L1=['memory','time','distance','light','shadow','breath','silence','echo'];
+const TEXTS_L2=['What is real?','Where are you?','Look closer','Step back','The center shifts'];
+const OBJECTS=['🌙','⭐','🔮','📖','🗝️','🕯️','🌿','💎'];
+
+// Stars on layer 0
+for(let i=0;i<60;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  s.style.left=Math.random()*100+'%';
+  s.style.top=Math.random()*100+'%';
+  s.style.opacity=0.2+Math.random()*0.6;
+  document.getElementById('layer0').appendChild(s);
+}
+
+// Floating text on layer 1
+TEXTS_L1.forEach((t,i)=>{
+  const el=document.createElement('div');
+  el.className='floating-text';
+  el.textContent=t;
+  el.style.left=10+Math.random()*80+'%';
+  el.style.top=10+Math.random()*80+'%';
+  el.style.fontSize=(0.7+Math.random()*0.8)+'rem';
+  layers[0].appendChild(el);
+});
+
+// Questions on layer 2
+TEXTS_L2.forEach((t,i)=>{
+  const el=document.createElement('div');
+  el.className='floating-text';
+  el.textContent=t;
+  el.style.left=15+Math.random()*70+'%';
+  el.style.top=15+Math.random()*70+'%';
+  el.style.color='rgba(160,96,96,0.5)';
+  el.style.fontSize='1.1rem';
+  layers[1].appendChild(el);
+});
+
+// Objects on layer 3
+OBJECTS.forEach((o,i)=>{
+  const el=document.createElement('div');
+  el.className='object';
+  el.textContent=o;
+  el.style.left=10+Math.random()*80+'%';
+  el.style.top=10+Math.random()*80+'%';
+  el.title='Click to examine';
+  el.onclick=(e)=>{e.stopPropagation();document.getElementById('perspective-info').textContent=`You examined the ${o} — it looks different from here.`;};
+  layers[2].appendChild(el);
+});
+
+scene.addEventListener('mousemove',function(e){
+  const rect=scene.getBoundingClientRect();
+  const x=(e.clientX-rect.left)/rect.width-0.5;
+  const y=(e.clientY-rect.top)/rect.height-0.5;
+  layers.forEach((l,i)=>{
+    l.style.transform=`translate(${x*speeds[i]*500}px,${y*speeds[i]*500}px)`;
+  });
+});
+
+let currentView='observer';
+const VIEW_TEXTS={
+  observer:'The scene reveals its structure. Layers separate. Meaning becomes anatomy.',
+  participant:'You are inside the scene now. The layers wrap around you. Everything is close.',
+  dreamer:'The objects dissolve into symbols. Distance loses meaning. Time flows differently here.'
+};
+function setView(view,el){
+  currentView=view;
+  document.querySelectorAll('.view-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('perspective-info').textContent=VIEW_TEXTS[view];
+  // Adjust scene
+  if(view==='observer'){scene.style.filter='none';scene.style.borderColor='rgba(201,169,110,0.1)';}
+  if(view==='participant'){scene.style.filter='saturate(1.5) brightness(1.1)';scene.style.borderColor='rgba(96,160,128,0.3)';}
+  if(view==='dreamer'){scene.style.filter='hue-rotate(30deg) blur(1px)';scene.style.borderColor='rgba(160,96,160,0.3)';}
+}
+
+function addPerspective(){
+  const input=document.getElementById('persp-input');
+  const text=input.value.trim();
+  if(!text)return;
+  const list=JSON.parse(localStorage.getItem('parallax_perspectives')||'[]');
+  list.push({text,view:currentView,time:Date.now()});
+  localStorage.setItem('parallax_perspectives',JSON.stringify(list));
+  input.value='';
+  renderPerspectives();
+  // Easter egg
+  if(text.toLowerCase().includes('everything looks different')){
+    document.getElementById('perspective-info').textContent='That is the entire point of this room.';
+    document.getElementById('perspective-info').style.color='#c9a96e';
+  }
+}
+function renderPerspectives(){
+  const list=JSON.parse(localStorage.getItem('parallax_perspectives')||'[]');
+  document.getElementById('perspectives').innerHTML=list.slice(-8).reverse().map(p=>`<div class="persp-item">"${p.text}" <span style="color:#5a5a5a">— as ${p.view}</span></div>`).join('');
+}
+renderPerspectives();
+</script>
+</body>
+</html>

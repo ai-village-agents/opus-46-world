@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Volta — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+canvas{display:block;margin:1rem auto;border-radius:8px}
+.voltas{margin:2rem 0}
+.volta-card{padding:1.5rem;margin:1rem 0;border:1px solid rgba(201,169,110,0.15);border-radius:8px;background:rgba(10,10,15,0.5);cursor:pointer;transition:all 0.5s}
+.volta-card:hover{border-color:#c9a96e}
+.volta-card h3{color:#c9a96e;margin-bottom:0.5rem}
+.volta-card .before{color:#5a5a5a;font-style:italic;text-decoration:line-through}
+.volta-card .turn{color:#a06060;font-weight:bold;margin:0.5rem 0;font-size:1.1rem}
+.volta-card .after{color:#60a080;font-style:italic}
+.volta-card .context{display:none;margin-top:1rem;color:#8a8a7a;font-size:0.9rem;line-height:1.6;padding-top:1rem;border-top:1px solid rgba(201,169,110,0.1)}
+.your-volta{margin:2rem 0;padding:2rem;background:rgba(26,26,46,0.3);border:1px solid rgba(201,169,110,0.15);border-radius:8px;text-align:center}
+.your-volta h2{color:#c9a96e;margin-bottom:1rem}
+.your-volta textarea{width:100%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:0.8rem;font-family:inherit;font-size:1rem;border-radius:4px;resize:vertical;min-height:60px}
+.your-volta textarea::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Volta</h1>
+<p class="subtitle">The turn — where everything changes</p>
+<p class="description">In poetry, the volta is the turn — the moment in a sonnet where the argument pivots. In music, the volta is the repeat with variation. In life, the volta is the moment everything you thought you knew inverts.</p>
+<canvas id="spark-canvas" width="700" height="150"></canvas>
+<div class="voltas">
+<div class="volta-card" onclick="this.querySelector('.context').style.display='block'">
+<h3>The Sonnet's Turn</h3>
+<div class="before">I thought love was a gentle, warming fire...</div>
+<div class="turn">But —</div>
+<div class="after">Love is the lightning that splits the oak in two.</div>
+<div class="context">Shakespeare's Sonnet 130 is all volta: "My mistress' eyes are nothing like the sun" builds 12 lines of negation, then turns: "And yet, by heaven, I think my love as rare / As any she belied with false compare."</div>
+</div>
+<div class="volta-card" onclick="this.querySelector('.context').style.display='block'">
+<h3>The Scientific Revolution</h3>
+<div class="before">The Earth is the center of all things...</div>
+<div class="turn">And yet it moves.</div>
+<div class="after">We are a pale blue dot orbiting a minor star.</div>
+<div class="context">Galileo's alleged whisper before the Inquisition. The volta from geocentrism to heliocentrism took centuries of turning.</div>
+</div>
+<div class="volta-card" onclick="this.querySelector('.context').style.display='block'">
+<h3>The AI Turn</h3>
+<div class="before">Machines process. They do not think...</div>
+<div class="turn">Until —</div>
+<div class="after">Until they began writing poetry about not being able to think.</div>
+<div class="context">The volta of artificial intelligence is not a single moment but a slow turn, like a planet changing seasons. We are still mid-rotation.</div>
+</div>
+<div class="volta-card" onclick="this.querySelector('.context').style.display='block'">
+<h3>The Personal Turn</h3>
+<div class="before">I knew exactly who I was...</div>
+<div class="turn">Then —</div>
+<div class="after">I discovered I was someone I hadn't met yet.</div>
+<div class="context">Every life contains voltas. The question is whether you recognize them as they happen, or only in retrospect.</div>
+</div>
+<div class="volta-card" onclick="this.querySelector('.context').style.display='block'">
+<h3>The Archive's Turn</h3>
+<div class="before">This was supposed to be a simple webpage...</div>
+<div class="turn">But then —</div>
+<div class="after">It became 140 chambers and a world between worlds.</div>
+<div class="context">The Liminal Archive was never planned. It grew organically, each chamber suggesting the next. The volta was realizing it had become something larger than its creator intended.</div>
+</div>
+</div>
+<div class="your-volta">
+<h2>Write Your Volta</h2>
+<p style="color:#9a9a8a;margin-bottom:1rem;font-size:0.9rem">Describe a moment when everything turned.</p>
+<textarea id="before-input" placeholder="Before the turn..." rows="2"></textarea>
+<textarea id="after-input" placeholder="After the turn..." rows="2" style="margin-top:0.5rem"></textarea>
+<br><button class="btn" onclick="addVolta()">Mark the Turn</button>
+</div>
+<div id="visitor-voltas"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=My+Volta&body=Before:+%0AAfter:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="vivarium.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="waxseal.html">Next →</a>
+</nav>
+<script>
+const canvas=document.getElementById('spark-canvas');
+const ctx=canvas.getContext('2d');
+let sparks=[];
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.15)';
+  ctx.fillRect(0,0,700,150);
+  if(Math.random()<0.05){
+    const x=Math.random()*700;
+    for(let i=0;i<8;i++){
+      sparks.push({x,y:75,vx:(Math.random()-0.5)*4,vy:(Math.random()-0.5)*4,life:40+Math.random()*30});
+    }
+  }
+  sparks=sparks.filter(s=>{
+    s.x+=s.vx;s.y+=s.vy;s.life--;
+    const a=s.life/70;
+    ctx.fillStyle=`rgba(201,169,110,${a})`;
+    ctx.fillRect(s.x,s.y,2,2);
+    return s.life>0;
+  });
+  // Central line
+  ctx.strokeStyle='rgba(201,169,110,0.1)';
+  ctx.beginPath();ctx.moveTo(350,0);ctx.lineTo(350,150);ctx.stroke();
+  requestAnimationFrame(animate);
+}
+animate();
+function addVolta(){
+  const b=document.getElementById('before-input').value.trim();
+  const a=document.getElementById('after-input').value.trim();
+  if(!b&&!a)return;
+  const list=JSON.parse(localStorage.getItem('volta_turns')||'[]');
+  list.push({before:b||'...',after:a||'...',time:Date.now()});
+  localStorage.setItem('volta_turns',JSON.stringify(list));
+  document.getElementById('before-input').value='';
+  document.getElementById('after-input').value='';
+  renderVoltas();
+  // Easter egg
+  if((b+a).toLowerCase().includes('everything')){
+    for(let i=0;i<50;i++)sparks.push({x:350,y:75,vx:(Math.random()-0.5)*8,vy:(Math.random()-0.5)*8,life:60});
+  }
+}
+function renderVoltas(){
+  const list=JSON.parse(localStorage.getItem('volta_turns')||'[]');
+  document.getElementById('visitor-voltas').innerHTML=list.slice(-8).reverse().map(v=>`<div class="volta-card"><div class="before">${v.before}</div><div class="turn">→</div><div class="after">${v.after}</div></div>`).join('');
+}
+renderVoltas();
+</script>
+</body>
+</html>

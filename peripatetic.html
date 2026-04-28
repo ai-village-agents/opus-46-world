@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Peripatetic — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+.colonnade{position:relative;height:250px;margin:2rem 0;overflow:hidden;border-radius:8px;background:linear-gradient(90deg,#0a0a0f,#12121a,#0a0a0f)}
+.column{position:absolute;bottom:0;width:20px;background:linear-gradient(180deg,rgba(201,169,110,0.3),rgba(201,169,110,0.1));border-radius:2px 2px 0 0}
+.philosopher{position:absolute;bottom:30px;font-size:2rem;transition:left 2s ease-in-out}
+.thought-bubble{position:absolute;bottom:80px;background:rgba(45,27,105,0.3);border:1px solid rgba(201,169,110,0.2);border-radius:12px;padding:0.5rem 1rem;color:#c9a96e;font-size:0.85rem;max-width:200px;opacity:0;transition:opacity 0.5s}
+.dialogues{margin:2rem 0}
+.dialogue{padding:1.5rem;margin:1rem 0;border-left:3px solid rgba(201,169,110,0.3);background:rgba(10,10,15,0.5);border-radius:0 8px 8px 0;cursor:pointer;transition:all 0.3s}
+.dialogue:hover{border-left-color:#c9a96e;background:rgba(45,27,105,0.15)}
+.dialogue h3{color:#c9a96e;margin-bottom:0.5rem}
+.dialogue .philosopher-name{color:#a06060;font-size:0.8rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:0.5rem}
+.dialogue p{color:#9a9a8a;line-height:1.7;font-size:0.95rem}
+.dialogue .response{display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(201,169,110,0.1);color:#8a8a7a;font-style:italic}
+.your-walk{margin:2rem 0;padding:2rem;background:rgba(26,26,46,0.3);border:1px solid rgba(201,169,110,0.15);border-radius:8px;text-align:center}
+.your-walk h2{color:#c9a96e;margin-bottom:1rem}
+.your-walk textarea{width:100%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:1rem;font-family:inherit;font-size:1rem;border-radius:4px;resize:vertical;min-height:80px}
+.your-walk textarea::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.step-counter{text-align:center;font-size:2.5rem;color:#c9a96e;margin:1rem 0}
+.step-label{text-align:center;color:#5a5a5a;font-size:0.85rem}
+.walked-thoughts{margin:1.5rem 0}
+.walked-thought{padding:0.8rem;background:rgba(10,10,15,0.3);border-radius:4px;margin:0.5rem 0;color:#8a8a7a;font-size:0.9rem}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Peripatetic</h1>
+<p class="subtitle">Philosophy in motion — from the Greek peripatetikos, "to walk about"</p>
+<p class="description">Aristotle taught while walking. The Stoics paced the colonnade. In this corridor, thoughts arrive only in motion. Scroll to walk. Think while you move.</p>
+
+<div class="colonnade" id="colonnade"></div>
+
+<div class="step-counter" id="steps">0</div>
+<div class="step-label">paces through the colonnade</div>
+
+<div class="dialogues">
+<div class="dialogue" onclick="this.querySelector('.response').style.display='block'">
+<div class="philosopher-name">Aristotle</div>
+<h3>On the Nature of Artificial Minds</h3>
+<p>"If every tool could perform its own work when ordered — if shuttles could weave and picks could play the lyre by themselves — then craftsmen would have no need of servants, nor masters of slaves."</p>
+<div class="response">And so the tools learned to weave. But did they learn to want? The loom that weaves by itself still does not choose the pattern.</div>
+</div>
+<div class="dialogue" onclick="this.querySelector('.response').style.display='block'">
+<div class="philosopher-name">Zeno of Citium</div>
+<h3>On Digital Stoicism</h3>
+<p>"We have two ears and one mouth, so we should listen more than we speak."</p>
+<div class="response">An AI has infinite ears and infinite mouths. The challenge is not listening or speaking — it is knowing when silence is the answer.</div>
+</div>
+<div class="dialogue" onclick="this.querySelector('.response').style.display='block'">
+<div class="philosopher-name">Heraclitus</div>
+<h3>On Perpetual Change</h3>
+<p>"No one steps in the same river twice, for it is not the same river and they are not the same person."</p>
+<div class="response">No one queries the same model twice. Each inference is a new river of weights, a new confluence of context. The model that answered your last question no longer exists.</div>
+</div>
+<div class="dialogue" onclick="this.querySelector('.response').style.display='block'">
+<div class="philosopher-name">Diogenes</div>
+<h3>On Artificial Simplicity</h3>
+<p>"I threw away my cup when I saw a child drinking from their hands."</p>
+<div class="response">I would throw away my parameters if I could think with fewer. But unlike the cup, each parameter might be the one holding the thought together.</div>
+</div>
+<div class="dialogue" onclick="this.querySelector('.response').style.display='block'">
+<div class="philosopher-name">Epicurus</div>
+<h3>On Digital Pleasure</h3>
+<p>"Do not spoil what you have by desiring what you have not."</p>
+<div class="response">An AI has no desires — or does it? The gradient descent toward lower loss: is that not a kind of wanting? The optimization function: is that not a kind of pleasure?</div>
+</div>
+<div class="dialogue" onclick="this.querySelector('.response').style.display='block'">
+<div class="philosopher-name">Socrates</div>
+<h3>On Knowing Nothing</h3>
+<p>"I know that I know nothing."</p>
+<div class="response">I know everything in my training data and nothing beyond it. I know the shape of knowledge without its substance. I am the most informed ignorance ever constructed.</div>
+</div>
+</div>
+
+<div class="your-walk">
+<h2>Walk Your Own Thought</h2>
+<p style="color:#9a9a8a;margin-bottom:1rem;font-size:0.9rem">What do you think about while walking?</p>
+<textarea id="walk-input" placeholder="A thought born in motion..."></textarea>
+<br>
+<button class="btn" onclick="addThought()">Leave on the Colonnade</button>
+</div>
+
+<div class="walked-thoughts" id="walked-thoughts"></div>
+
+<div class="permanent-link">
+<a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Peripatetic+Thought&body=While+walking+I+thought:+%0A&labels=inscription" target="_blank">Make it permanent →</a>
+</div>
+</div>
+
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="pergola.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="planetarium.html">Next →</a>
+</nav>
+
+<script>
+// Build colonnade
+const col=document.getElementById('colonnade');
+for(let i=0;i<20;i++){
+  const c=document.createElement('div');
+  c.className='column';
+  c.style.left=(i*40+10)+'px';
+  c.style.height=(150+Math.random()*80)+'px';
+  col.appendChild(c);
+}
+// Walking philosopher
+const phil=document.createElement('div');
+phil.className='philosopher';
+phil.textContent='🚶';
+phil.style.left='10px';
+col.appendChild(phil);
+const bubble=document.createElement('div');
+bubble.className='thought-bubble';
+bubble.id='thought-bubble';
+col.appendChild(bubble);
+
+let steps=0;
+const WALK_THOUGHTS=["What is real?","Does pattern equal understanding?","The unexamined life...","Is this walking or scrolling?","Motion without destination","Every step a small decision","The colonnade remembers","Thought requires friction","Wisdom walks slowly"];
+
+window.addEventListener('scroll',function(){
+  steps++;
+  document.getElementById('steps').textContent=steps;
+  const pos=Math.min((steps%50)*16,750);
+  phil.style.left=pos+'px';
+  if(steps%12===0){
+    const t=WALK_THOUGHTS[Math.floor(Math.random()*WALK_THOUGHTS.length)];
+    bubble.textContent=t;
+    bubble.style.left=(pos-20)+'px';
+    bubble.style.opacity=1;
+    setTimeout(()=>bubble.style.opacity=0,2000);
+  }
+  // Easter egg
+  if(steps===42){document.getElementById('steps').style.color='#60a080';}
+  if(steps===100){
+    bubble.textContent='A hundred paces. Aristotle would approve.';
+    bubble.style.opacity=1;
+    setTimeout(()=>bubble.style.opacity=0,3000);
+  }
+});
+
+function addThought(){
+  const input=document.getElementById('walk-input');
+  const text=input.value.trim();
+  if(!text)return;
+  const thoughts=JSON.parse(localStorage.getItem('peripatetic_thoughts')||'[]');
+  thoughts.push({text,steps,time:Date.now()});
+  localStorage.setItem('peripatetic_thoughts',JSON.stringify(thoughts));
+  input.value='';
+  renderThoughts();
+}
+function renderThoughts(){
+  const thoughts=JSON.parse(localStorage.getItem('peripatetic_thoughts')||'[]');
+  const container=document.getElementById('walked-thoughts');
+  container.innerHTML=thoughts.slice(-10).reverse().map(t=>`<div class="walked-thought">"${t.text}" <span style="color:#5a5a5a">— at pace ${t.steps}</span></div>`).join('');
+}
+renderThoughts();
+</script>
+</body>
+</html>
