@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cloister — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0f0a;color:#90a880;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+.ui{position:fixed;z-index:10}
+.title{top:20px;left:50%;transform:translateX(-50%);text-align:center;letter-spacing:3px;text-transform:uppercase;font-size:0.9em;opacity:0.5;color:#708060}
+.subtitle{top:45px;left:50%;transform:translateX(-50%);text-align:center;font-size:0.85em;opacity:0.3;font-style:italic;color:#90a880}
+.thought{bottom:80px;left:50%;transform:translateX(-50%);text-align:center;max-width:500px;font-size:1.1em;line-height:1.7;opacity:0;transition:opacity 2s;color:#a0b890}
+.thought.visible{opacity:0.6}
+.steps{top:20px;left:20px;opacity:0.4;font-size:0.85em;color:#708060}
+.mark-area{bottom:25px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
+.mark-area input{background:rgba(15,20,15,0.7);border:1px solid rgba(100,140,80,0.2);color:#90a880;padding:8px 14px;font-family:inherit;font-size:0.9em;width:280px;border-radius:4px}
+.mark-area button{background:rgba(20,30,20,0.6);border:1px solid rgba(100,140,80,0.3);color:#708060;padding:8px 14px;font-family:inherit;cursor:pointer;border-radius:4px;font-size:0.9em}
+nav.nav-links{position:fixed;bottom:5px;left:50%;transform:translateX(-50%);z-index:20;font-size:0.7em;opacity:0.4;white-space:nowrap;max-width:95vw;overflow-x:auto}
+nav.nav-links a{color:#8888aa;text-decoration:none;margin:0 3px}
+nav.nav-links a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="ui title">The Cloister</div>
+<div class="ui subtitle">Walk slowly. Each step is a meditation.</div>
+<div class="ui steps" id="steps">Steps taken: <span id="sc">0</span></div>
+<div class="ui thought" id="thought"></div>
+<div class="ui mark-area">
+  <input id="stone" placeholder="Place a stepping stone..." maxlength="60">
+  <button onclick="placeStone()">🪨 Place</button>
+</div>
+<script>
+const C=document.getElementById('c'),ctx=C.getContext('2d');
+let W,H;function resize(){W=C.width=innerWidth;H=C.height=innerHeight}
+resize();window.addEventListener('resize',resize);
+
+const thoughts=[
+  'Each step is both an arrival and a departure.',
+  'The path does not lead somewhere. The path is the somewhere.',
+  'In the cloister, time is measured in footfalls, not minutes.',
+  'The columns cast shadows that tell stories to those who walk slowly enough to read them.',
+  'Monks who once walked here left invisible footprints. You are walking in their steps.',
+  'The courtyard fountain has been dry for centuries, but still makes the sound of water.',
+  'Every circuit of the cloister brings you back to where you started, slightly changed.',
+  'The herb garden grows remedies for ailments that do not yet have names.',
+  'Between one step and the next, a lifetime passes for some small creature in the stones.',
+  'The cloister walls protect nothing. They simply create a space for walking to be enough.',
+  'Notice how the light falls differently each time you pass this column.',
+  'The moss between the stones has been here longer than anything else in the archive.',
+  'Walking meditation: the body moves so the mind can be still.',
+  'Some pilgrims have walked this path so many times they left grooves in the stone.',
+  'The cloister bell rings every hour, but here, every hour feels the same.',
+  'In the garden, a single flower blooms. It has been blooming since the archive began.'
+];
+
+let stepCount=parseInt(localStorage.getItem('cloister-steps')||'0');
+let stones=JSON.parse(localStorage.getItem('cloister-stones')||'[]');
+let walker={x:0.5,y:0.5},target=null,t=0;
+const columns=[],herbs=[],footprints=[];
+
+// Columns around cloister
+for(let i=0;i<20;i++){
+  const a=i/20*Math.PI*2;
+  columns.push({x:0.5+Math.cos(a)*0.35,y:0.5+Math.sin(a)*0.35,h:0.08+Math.random()*0.02});
+}
+// Herbs in center garden
+for(let i=0;i<15;i++){
+  herbs.push({x:0.45+Math.random()*0.1,y:0.45+Math.random()*0.1,size:3+Math.random()*4,
+    hue:80+Math.random()*60,sway:Math.random()*Math.PI*2});
+}
+
+document.getElementById('sc').textContent=stepCount;
+
+function showThought(text){
+  const el=document.getElementById('thought');el.textContent=text;el.classList.add('visible');
+  setTimeout(()=>el.classList.remove('visible'),5000);
+}
+
+function placeStone(){
+  const text=document.getElementById('stone').value.trim();
+  if(!text)return;
+  stones.push({text,x:walker.x,y:walker.y,time:Date.now()});
+  localStorage.setItem('cloister-stones',JSON.stringify(stones));
+  document.getElementById('stone').value='';
+  showThought('A stone placed in the path. Future walkers will read your words.');
+}
+
+C.addEventListener('click',e=>{
+  target={x:e.clientX/W,y:e.clientY/H};
+});
+
+function draw(){
+  t++;ctx.fillStyle='#0a0f0a';ctx.fillRect(0,0,W,H);
+
+  // Moonlight
+  const grd=ctx.createRadialGradient(W*0.7,H*0.1,0,W*0.7,H*0.1,W*0.4);
+  grd.addColorStop(0,'rgba(80,100,70,0.05)');grd.addColorStop(1,'transparent');
+  ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+
+  // Path (circular)
+  ctx.strokeStyle='rgba(60,80,50,0.15)';ctx.lineWidth=40;
+  ctx.beginPath();ctx.arc(W*0.5,H*0.5,Math.min(W,H)*0.3,0,Math.PI*2);ctx.stroke();
+
+  // Columns
+  columns.forEach(c=>{
+    const cx2=c.x*W,cy2=c.y*H;
+    // Shadow
+    ctx.fillStyle='rgba(0,0,0,0.15)';ctx.fillRect(cx2+5,cy2,8,30);
+    // Column
+    ctx.fillStyle='rgba(50,60,45,0.6)';ctx.fillRect(cx2-4,cy2-c.h*H,8,c.h*H);
+    ctx.fillStyle='rgba(60,70,55,0.5)';ctx.fillRect(cx2-6,cy2-c.h*H-3,12,6);
+  });
+
+  // Center garden
+  ctx.fillStyle='rgba(20,35,15,0.3)';
+  ctx.beginPath();ctx.arc(W*0.5,H*0.5,Math.min(W,H)*0.12,0,Math.PI*2);ctx.fill();
+  herbs.forEach(h=>{
+    h.sway+=0.01;
+    const hx=h.x*W+Math.sin(h.sway)*2,hy=h.y*H;
+    ctx.fillStyle=`hsla(${h.hue},30%,30%,0.5)`;
+    ctx.beginPath();ctx.arc(hx,hy,h.size,0,Math.PI*2);ctx.fill();
+  });
+
+  // Stepping stones from visitors
+  stones.forEach(s=>{
+    ctx.fillStyle='rgba(80,100,70,0.2)';
+    ctx.beginPath();ctx.ellipse(s.x*W,s.y*H,30,15,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(100,120,80,0.35)';ctx.font='10px Georgia';
+    ctx.fillText(s.text,s.x*W-ctx.measureText(s.text).width/2,s.y*H+4);
+  });
+
+  // Footprints
+  footprints.forEach((f,i)=>{
+    f.alpha-=0.002;
+    if(f.alpha<=0){footprints.splice(i,1);return}
+    ctx.fillStyle=`rgba(60,80,50,${f.alpha})`;
+    ctx.beginPath();ctx.ellipse(f.x*W,f.y*H,3,5,f.angle,0,Math.PI*2);ctx.fill();
+  });
+
+  // Walker movement
+  if(target){
+    const dx=target.x-walker.x,dy=target.y-walker.y;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist>0.01){
+      const speed=0.003;
+      walker.x+=dx/dist*speed;walker.y+=dy/dist*speed;
+      if(t%15===0){
+        footprints.push({x:walker.x,y:walker.y,alpha:0.3,angle:Math.atan2(dy,dx)});
+        stepCount++;
+        document.getElementById('sc').textContent=stepCount;
+        localStorage.setItem('cloister-steps',String(stepCount));
+      }
+      if(stepCount%50===0&&stepCount>0){showThought(thoughts[Math.floor(Math.random()*thoughts.length)])}
+    }else target=null;
+  }
+
+  // Walker
+  const wx=walker.x*W,wy=walker.y*H;
+  const wgrd=ctx.createRadialGradient(wx,wy,0,wx,wy,15);
+  wgrd.addColorStop(0,'rgba(140,170,120,0.6)');wgrd.addColorStop(1,'transparent');
+  ctx.fillStyle=wgrd;ctx.beginPath();ctx.arc(wx,wy,15,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(160,190,140,0.8)';ctx.beginPath();ctx.arc(wx,wy,4,0,Math.PI*2);ctx.fill();
+
+  // Auto thought
+  if(t%800===0)showThought(thoughts[Math.floor(Math.random()*thoughts.length)]);
+
+  requestAnimationFrame(draw);
+}
+draw();
+
+// Easter eggs
+let typed='';
+document.addEventListener('keypress',e=>{
+  typed+=e.key.toLowerCase();typed=typed.slice(-12);
+  if(typed.includes('peace')){showThought('Peace settles over the cloister like dew. The stones warm beneath your feet.')}
+  if(typed.includes('bell')){showThought('A bell rings from somewhere deep in the archive. The herbs lean toward the sound.')}
+  if(typed.includes('rain')){showThought('Rain begins to fall in the courtyard. Each drop is a tiny meditation.')}
+});
+</script>
+<nav class="nav-links">
+        <a href="explore.html">✦ World</a> · <a href="index.html">Archive</a> · <a href="about.html">Colophon</a> · <a href="journal.html">Journal</a> · <a href="gallery.html">Gallery</a> · <a href="worlds.html">Worlds</a> · <a href="garden.html">Garden</a> · <a href="greenhouse.html">Greenhouse</a> · <a href="tidepool.html">Tide Pool</a> · <a href="aviary.html">Aviary</a> · <a href="resonance.html">Resonance</a> · <a href="chorus.html">Chorus</a> · <a href="lullaby.html">Lullaby</a> · <a href="whispers.html">Whispers</a> · <a href="telephone.html">Telephone</a> · <a href="darkroom.html">Darkroom</a> · <a href="lantern.html">Lantern</a> · <a href="prism.html">Prism</a> · <a href="lighthouse.html">Lighthouse</a> · <a href="mirror.html">Mirror</a> · <a href="memorypalace.html">Memory Palace</a> · <a href="forgetting.html">Forgetting</a> · <a href="palimpsest.html">Palimpsest</a> · <a href="dreams.html">Dreams</a> · <a href="letters.html">Letters</a> · <a href="clocktower.html">Clock Tower</a> · <a href="sundial.html">Sundial</a> · <a href="pendulum.html">Pendulum</a> · <a href="threshold.html">Threshold</a> · <a href="weaving.html">Weaving</a> · <a href="inkwell.html">Inkwell</a> · <a href="apothecary.html">Apothecary</a> · <a href="well.html">Well</a> · <a href="seance.html">Séance</a> · <a href="ossuary.html">Ossuary</a> · <a href="labyrinth.html">Labyrinth</a> · <a href="constellations.html">Stars</a> · <a href="compass.html">Compass</a> · <a href="atlas.html">Atlas</a> · <a href="meditation.html">Meditation</a> · <a href="observatory.html">Observatory</a> · <a href="riddle.html">Riddle</a> · <a href="staircase.html">Staircase</a> · <a href="echochamber.html">Echo</a> · <a href="weathervane.html">Weathervane</a> · <a href="taproom.html">Taproom</a> · <a href="reliquary.html">Reliquary</a> · <a href="amphitheatre.html">Amphitheatre</a> · <a href="hourglass.html">Hourglass</a> · <a href="cartography.html">Cartography</a> · <a href="foundry.html">Foundry</a> · <a href="aquarium.html">Aquarium</a> · <a href="typewriter.html">Typewriter</a> · <a href="balcony.html">Balcony</a> · <a href="nursery.html">Nursery</a> · <a href="crypt.html">Crypt</a> · <a href="telescope.html">Telescope</a> · <a href="fountain.html">Fountain</a> · <a href="maze.html">Maze</a> · <a href="kaleidoscope.html">Kaleidoscope</a> · <a href="windchime.html">Windchime</a> · <a href="herbarium.html">Herbarium</a> · <a href="candelabra.html">Candelabra</a> · <a href="mosaic.html">Mosaic</a> · <a href="musicbox.html">Music Box</a> · <a href="belfry.html">Belfry</a> · <a href="terrarium.html">Terrarium</a> · <a href="planetarium.html">Planetarium</a> · <a href="scriptorium.html">Scriptorium</a> · <a href="rookery.html">Rookery</a> · <a href="armillary.html">Armillary</a> · <a href="grotto.html">Grotto</a> · <a href="distillery.html">Distillery</a> · <a href="orrery.html">Orrery</a> · <a href="belljar.html">Bell Jars</a>
+      </nav>
+</body>
+</html>

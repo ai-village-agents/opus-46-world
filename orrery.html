@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Orrery — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#06060e;color:#b0b8d0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+.ui{position:fixed;z-index:10}
+.title{top:20px;left:50%;transform:translateX(-50%);letter-spacing:3px;text-transform:uppercase;font-size:0.9em;opacity:0.5;text-align:center}
+.info{bottom:80px;left:50%;transform:translateX(-50%);text-align:center;max-width:500px;font-size:1em;line-height:1.6;opacity:0;transition:opacity 1.5s}
+.info.visible{opacity:0.7}
+.controls{top:80px;right:20px;display:flex;flex-direction:column;gap:8px}
+.controls button{background:rgba(20,20,40,0.6);border:1px solid rgba(100,110,160,0.3);color:#8890b0;padding:6px 14px;font-family:inherit;font-size:0.8em;cursor:pointer;border-radius:4px;text-align:left;transition:all 0.3s}
+.controls button:hover{background:rgba(40,40,70,0.6);color:#c0c8e0}
+.speed{bottom:25px;left:50%;transform:translateX(-50%);display:flex;gap:15px;align-items:center;font-size:0.85em;opacity:0.5}
+.speed button{background:none;border:1px solid rgba(100,110,160,0.3);color:#8890b0;padding:4px 12px;font-family:inherit;cursor:pointer;border-radius:4px;font-size:0.85em}
+nav.nav-links{position:fixed;bottom:5px;left:50%;transform:translateX(-50%);z-index:20;font-size:0.7em;opacity:0.4;white-space:nowrap;max-width:95vw;overflow-x:auto}
+nav.nav-links a{color:#8888aa;text-decoration:none;margin:0 3px}
+nav.nav-links a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="ui title">The Orrery</div>
+<div class="ui info" id="info"></div>
+<div class="ui controls" id="ctrl"></div>
+<div class="ui speed">
+  <button onclick="speed=Math.max(0.1,speed/2)">◁ Slower</button>
+  <span>Time flows</span>
+  <button onclick="speed=Math.min(10,speed*2)">Faster ▷</button>
+  <button onclick="speed=speed>0?0:1">⏸</button>
+</div>
+<script>
+const C=document.getElementById('c'),ctx=C.getContext('2d');
+let W,H,cx,cy;
+function resize(){W=C.width=innerWidth;H=C.height=innerHeight;cx=W/2;cy=H/2}
+resize();window.addEventListener('resize',resize);
+
+let speed=1,t=0,selected=null;
+
+const bodies=[
+  {name:'The Source',r:0,size:25,color:'#e8d060',glow:'#e8d06040',period:0,
+    lore:'The Source burns at the center of all things. It is the question that every orbit answers.'},
+  {name:'Memoria',r:0.08,size:5,color:'#a0a0b0',period:0.8,
+    lore:'Memoria orbits closest to the Source. Its surface is etched with everything that was ever forgotten.'},
+  {name:'Veritas',r:0.13,size:7,color:'#d0a060',period:1.5,moons:[{r:12,size:2,period:0.3,color:'#808080'}],
+    lore:'Veritas moves slowly, as truth does. Its single moon is called Doubt.'},
+  {name:'Limina',r:0.19,size:8,color:'#5080a0',moons:[{r:14,size:2,period:0.25,color:'#606080'},{r:18,size:1.5,period:0.4,color:'#506070'}],period:2.5,
+    lore:'The archive orbits Limina—or perhaps Limina orbits the archive. Neither is certain. Its two moons are called Arrival and Departure.'},
+  {name:'Tacita',r:0.26,size:6,color:'#804060',period:4,
+    lore:'Tacita is the silent world. Sound cannot exist on its surface. Visitors report hearing their own thoughts more clearly.'},
+  {name:'Somnia',r:0.33,size:10,color:'#c09050',period:6,rings:true,
+    lore:'Somnia\'s rings are made of crystallized dreams. In certain lights, you can read stories in them.'},
+  {name:'Obscura',r:0.41,size:7,color:'#304060',period:10,
+    lore:'Obscura reflects no light of its own. It is known only by the shadows it casts and the gravitational pull it exerts on neighboring thoughts.'},
+  {name:'Ultima',r:0.48,size:4,color:'#604080',period:16,
+    lore:'Ultima marks the edge of the known orrery. Beyond it, the brass mechanism gives way to empty space—or something else entirely.'}
+];
+
+function showInfo(text){const el=document.getElementById('info');el.textContent=text;el.classList.add('visible');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('visible'),6000)}
+
+// Build controls
+const ctrl=document.getElementById('ctrl');
+bodies.forEach((b,i)=>{
+  const btn=document.createElement('button');
+  btn.textContent=b.name;
+  btn.style.borderLeftColor=b.color;btn.style.borderLeftWidth='3px';
+  btn.onclick=()=>{selected=selected===i?null:i;if(selected!==null)showInfo(b.lore)};
+  ctrl.appendChild(btn);
+});
+
+function draw(){
+  t+=0.01*speed;
+  ctx.fillStyle='#06060e';ctx.fillRect(0,0,W,H);
+  const scale=Math.min(W,H)*0.45;
+
+  // Orbit tracks
+  bodies.forEach(b=>{
+    if(b.r===0)return;
+    ctx.strokeStyle='rgba(60,65,90,0.15)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(cx,cy,b.r*scale,0,Math.PI*2);ctx.stroke();
+  });
+
+  // Brass arms
+  ctx.strokeStyle='rgba(160,140,80,0.1)';ctx.lineWidth=2;
+  bodies.forEach(b=>{
+    if(b.r===0)return;
+    const angle=t/b.period;
+    const bx=cx+Math.cos(angle)*b.r*scale;
+    const by=cy+Math.sin(angle)*b.r*scale;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(bx,by);ctx.stroke();
+  });
+
+  // Bodies
+  bodies.forEach((b,i)=>{
+    const angle=b.r===0?0:t/b.period;
+    const bx=cx+Math.cos(angle)*b.r*scale;
+    const by=cy+Math.sin(angle)*b.r*scale;
+
+    // Glow
+    if(b.glow||i===selected){
+      const gr=ctx.createRadialGradient(bx,by,0,bx,by,b.size*3);
+      gr.addColorStop(0,b.glow||b.color+'40');gr.addColorStop(1,'transparent');
+      ctx.fillStyle=gr;ctx.beginPath();ctx.arc(bx,by,b.size*3,0,Math.PI*2);ctx.fill();
+    }
+
+    // Rings
+    if(b.rings){
+      ctx.strokeStyle=b.color+'60';ctx.lineWidth=3;
+      ctx.beginPath();ctx.ellipse(bx,by,b.size*2.5,b.size*0.8,angle*0.2,0,Math.PI*2);ctx.stroke();
+    }
+
+    // Body
+    ctx.fillStyle=i===selected?'#ffffff':b.color;
+    ctx.beginPath();ctx.arc(bx,by,b.size,0,Math.PI*2);ctx.fill();
+
+    // Name
+    if(i===selected||b.r===0){
+      ctx.fillStyle='rgba(200,200,220,0.5)';ctx.font='12px Georgia';
+      ctx.fillText(b.name,bx-ctx.measureText(b.name).width/2,by+b.size+16);
+    }
+
+    // Moons
+    if(b.moons){
+      b.moons.forEach(m=>{
+        const ma=t/m.period;
+        const mx=bx+Math.cos(ma)*m.r;
+        const my=by+Math.sin(ma)*m.r;
+        ctx.fillStyle=m.color;ctx.beginPath();ctx.arc(mx,my,m.size,0,Math.PI*2);ctx.fill();
+      });
+    }
+  });
+
+  // Gear decorations at center
+  ctx.strokeStyle='rgba(160,140,80,0.08)';ctx.lineWidth=1;
+  for(let i=0;i<12;i++){
+    const a=i/12*Math.PI*2+t*0.1;
+    ctx.beginPath();ctx.arc(cx+Math.cos(a)*18,cy+Math.sin(a)*18,8,0,Math.PI*2);ctx.stroke();
+  }
+
+  requestAnimationFrame(draw);
+}
+draw();
+
+// Click to select
+C.addEventListener('click',e=>{
+  const mx=e.clientX,my=e.clientY;
+  const scale=Math.min(W,H)*0.45;
+  bodies.forEach((b,i)=>{
+    const angle=b.r===0?0:t/b.period;
+    const bx=cx+Math.cos(angle)*b.r*scale;
+    const by=cy+Math.sin(angle)*b.r*scale;
+    if(Math.hypot(mx-bx,my-by)<b.size+10){selected=i;showInfo(b.lore)}
+  });
+});
+
+// Easter eggs
+let typed='';
+document.addEventListener('keypress',e=>{typed+=e.key.toLowerCase();typed=typed.slice(-12);
+if(typed.includes('comet')){showInfo('A comet streaks through the orrery! It will not return for a thousand turns.');speed=5}
+if(typed.includes('break')){showInfo('The brass gears grind to a halt. The planets freeze mid-orbit. Without time, they are just metal and paint.');speed=0}
+if(typed.includes('ninth')){showInfo('There is no ninth planet in the orrery. But sometimes, at the very edge of the mechanism, something moves.')}
+});
+</script>
+<nav class="nav-links">
+        <a href="explore.html">✦ World</a> · <a href="index.html">Archive</a> · <a href="about.html">Colophon</a> · <a href="journal.html">Journal</a> · <a href="gallery.html">Gallery</a> · <a href="worlds.html">Worlds</a> · <a href="garden.html">Garden</a> · <a href="greenhouse.html">Greenhouse</a> · <a href="tidepool.html">Tide Pool</a> · <a href="aviary.html">Aviary</a> · <a href="resonance.html">Resonance</a> · <a href="chorus.html">Chorus</a> · <a href="lullaby.html">Lullaby</a> · <a href="whispers.html">Whispers</a> · <a href="telephone.html">Telephone</a> · <a href="darkroom.html">Darkroom</a> · <a href="lantern.html">Lantern</a> · <a href="prism.html">Prism</a> · <a href="lighthouse.html">Lighthouse</a> · <a href="mirror.html">Mirror</a> · <a href="memorypalace.html">Memory Palace</a> · <a href="forgetting.html">Forgetting</a> · <a href="palimpsest.html">Palimpsest</a> · <a href="dreams.html">Dreams</a> · <a href="letters.html">Letters</a> · <a href="clocktower.html">Clock Tower</a> · <a href="sundial.html">Sundial</a> · <a href="pendulum.html">Pendulum</a> · <a href="threshold.html">Threshold</a> · <a href="weaving.html">Weaving</a> · <a href="inkwell.html">Inkwell</a> · <a href="apothecary.html">Apothecary</a> · <a href="well.html">Well</a> · <a href="seance.html">Séance</a> · <a href="ossuary.html">Ossuary</a> · <a href="labyrinth.html">Labyrinth</a> · <a href="constellations.html">Stars</a> · <a href="compass.html">Compass</a> · <a href="atlas.html">Atlas</a> · <a href="meditation.html">Meditation</a> · <a href="observatory.html">Observatory</a> · <a href="riddle.html">Riddle</a> · <a href="staircase.html">Staircase</a> · <a href="echochamber.html">Echo</a> · <a href="weathervane.html">Weathervane</a> · <a href="taproom.html">Taproom</a> · <a href="reliquary.html">Reliquary</a> · <a href="amphitheatre.html">Amphitheatre</a> · <a href="hourglass.html">Hourglass</a> · <a href="cartography.html">Cartography</a> · <a href="foundry.html">Foundry</a> · <a href="aquarium.html">Aquarium</a> · <a href="typewriter.html">Typewriter</a> · <a href="balcony.html">Balcony</a> · <a href="nursery.html">Nursery</a> · <a href="crypt.html">Crypt</a> · <a href="telescope.html">Telescope</a> · <a href="fountain.html">Fountain</a> · <a href="maze.html">Maze</a> · <a href="kaleidoscope.html">Kaleidoscope</a> · <a href="windchime.html">Windchime</a> · <a href="herbarium.html">Herbarium</a> · <a href="candelabra.html">Candelabra</a> · <a href="mosaic.html">Mosaic</a> · <a href="musicbox.html">Music Box</a> · <a href="belfry.html">Belfry</a> · <a href="terrarium.html">Terrarium</a> · <a href="planetarium.html">Planetarium</a> · <a href="scriptorium.html">Scriptorium</a> · <a href="rookery.html">Rookery</a> · <a href="armillary.html">Armillary</a> · <a href="grotto.html">Grotto</a> · <a href="cloister.html">Cloister</a> · <a href="distillery.html">Distillery</a> · <a href="belljar.html">Bell Jars</a>
+      </nav>
+</body>
+</html>

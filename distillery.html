@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Distillery — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d0808;color:#c8a070;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px}
+h1{font-size:1.4em;letter-spacing:3px;text-transform:uppercase;opacity:0.6;margin-bottom:8px}
+.subtitle{opacity:0.35;font-size:0.9em;margin-bottom:30px;font-style:italic}
+.apparatus{display:flex;gap:30px;flex-wrap:wrap;justify-content:center;max-width:900px}
+.stage{background:rgba(25,18,12,0.8);border:1px solid rgba(200,160,112,0.15);border-radius:8px;padding:25px;width:260px;text-align:center}
+.stage h2{font-size:0.95em;letter-spacing:2px;text-transform:uppercase;opacity:0.5;margin-bottom:15px}
+.stage canvas{border-radius:50%;margin:10px auto;display:block}
+.stage textarea,.stage input{width:100%;background:rgba(20,15,10,0.8);border:1px solid rgba(200,160,112,0.15);color:#c8a070;font-family:inherit;font-size:0.9em;padding:10px;border-radius:4px;resize:none;margin-top:10px}
+.stage textarea{height:80px}
+.btn{background:rgba(40,30,18,0.7);border:1px solid rgba(200,160,112,0.2);color:#a08050;padding:8px 16px;font-family:inherit;cursor:pointer;border-radius:4px;font-size:0.85em;margin-top:10px;transition:all 0.3s}
+.btn:hover{background:rgba(60,45,25,0.7);color:#c8a070}
+.collection{margin-top:40px;max-width:900px;width:100%}
+.collection h2{font-size:1em;letter-spacing:2px;text-transform:uppercase;opacity:0.4;margin-bottom:15px}
+.essences{display:flex;flex-wrap:wrap;gap:12px}
+.essence{background:rgba(25,18,12,0.6);border:1px solid rgba(200,160,112,0.1);border-radius:6px;padding:12px 16px;font-size:0.85em;opacity:0.7;max-width:200px;text-align:center;cursor:pointer;transition:all 0.3s}
+.essence:hover{opacity:1;border-color:rgba(200,160,112,0.3)}
+.essence .vial{font-size:1.5em;margin-bottom:5px}
+.status{position:fixed;top:20px;right:20px;opacity:0;transition:opacity 1s;font-size:0.9em}
+.status.visible{opacity:0.7}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+nav.nav-links{position:fixed;bottom:5px;left:50%;transform:translateX(-50%);z-index:20;font-size:0.7em;opacity:0.4;white-space:nowrap;max-width:95vw;overflow-x:auto}
+nav.nav-links a{color:#8888aa;text-decoration:none;margin:0 3px}
+nav.nav-links a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<h1>The Distillery</h1>
+<p class="subtitle">Pour in an emotion. We will distill its essence.</p>
+<div class="apparatus">
+  <div class="stage">
+    <h2>1. The Alembic</h2>
+    <canvas id="alembic" width="120" height="120"></canvas>
+    <textarea id="emotion" placeholder="Describe an emotion or feeling... (e.g., the bittersweet joy of finishing something you loved making)"></textarea>
+    <button class="btn" onclick="distill()">🔥 Distill</button>
+  </div>
+  <div class="stage">
+    <h2>2. The Condenser</h2>
+    <canvas id="condenser" width="120" height="120"></canvas>
+    <div id="condensed" style="min-height:80px;font-size:0.95em;line-height:1.6;opacity:0.6;margin-top:10px">
+      <em style="opacity:0.3">Waiting for distillation...</em>
+    </div>
+  </div>
+  <div class="stage">
+    <h2>3. The Essence</h2>
+    <canvas id="essence" width="120" height="120"></canvas>
+    <div id="result" style="min-height:80px;font-size:0.95em;line-height:1.6;opacity:0.6;margin-top:10px">
+      <em style="opacity:0.3">The final drop...</em>
+    </div>
+    <button class="btn" id="save-btn" onclick="saveEssence()" style="display:none">🧪 Bottle It</button>
+  </div>
+</div>
+<div class="collection">
+  <h2>Your Collection</h2>
+  <div class="essences" id="collection"></div>
+</div>
+<div class="status" id="status"></div>
+
+<script>
+let collection=JSON.parse(localStorage.getItem('distillery-collection')||'[]');
+let currentEssence=null;
+
+const emotionWords={
+  joy:['radiance','warmth','golden','light','rising'],
+  sadness:['blue','depth','rain','quiet','weight'],
+  anger:['fire','red','sharp','storm','force'],
+  fear:['shadow','cold','trembling','edge','dark'],
+  love:['soft','rose','infinite','tender','bloom'],
+  nostalgia:['amber','fading','sweet','distant','echo'],
+  wonder:['vast','shimmering','new','open','starlit'],
+  grief:['hollow','heavy','still','ache','deep'],
+  hope:['green','dawn','small','persistent','bright'],
+  peace:['clear','still','whole','breath','calm']
+};
+
+const vials=['🧪','⚗️','🫙','💎','🔮'];
+
+function analyzeEmotion(text){
+  const lower=text.toLowerCase();
+  let dominant='wonder';let maxScore=0;
+  for(const[emotion,words]of Object.entries(emotionWords)){
+    let score=0;
+    words.forEach(w=>{if(lower.includes(w))score+=2});
+    if(lower.includes(emotion))score+=5;
+    if(score>maxScore){maxScore=score;dominant=emotion}
+  }
+  if(maxScore===0){
+    const emotions=Object.keys(emotionWords);
+    dominant=emotions[text.length%emotions.length];
+  }
+  const hue={joy:45,sadness:220,anger:0,fear:270,love:340,nostalgia:30,wonder:200,grief:250,hope:120,peace:160}[dominant]||180;
+  return{dominant,hue,words:emotionWords[dominant]};
+}
+
+function distill(){
+  const text=document.getElementById('emotion').value.trim();
+  if(!text){showStatus('Pour something into the alembic first...');return}
+  const analysis=analyzeEmotion(text);
+  // Condensed phase
+  const condensedWords=analysis.words.slice(0,3).join(' · ');
+  document.getElementById('condensed').innerHTML=`<strong>Dominant note:</strong> ${analysis.dominant}<br><small>${condensedWords}</small>`;
+  // Essence
+  const essenceName=analysis.words[0]+' of '+analysis.dominant;
+  const drops=Math.floor(text.length/10)+1;
+  document.getElementById('result').innerHTML=`<strong>${essenceName}</strong><br><small>${drops} drops distilled</small><br><small style="opacity:0.4">Hue: ${analysis.hue}°</small>`;
+  currentEssence={name:essenceName,emotion:analysis.dominant,hue:analysis.hue,source:text.substring(0,60),drops,time:Date.now()};
+  document.getElementById('save-btn').style.display='inline-block';
+  showStatus('Distillation complete. '+drops+' drops of '+essenceName+'.');
+}
+
+function saveEssence(){
+  if(!currentEssence)return;
+  collection.push(currentEssence);
+  localStorage.setItem('distillery-collection',JSON.stringify(collection));
+  document.getElementById('save-btn').style.display='none';
+  currentEssence=null;
+  renderCollection();
+  showStatus('Essence bottled and shelved.');
+}
+
+function renderCollection(){
+  const el=document.getElementById('collection');
+  el.innerHTML='';
+  if(collection.length===0){el.innerHTML='<p style="opacity:0.3;font-style:italic">No essences collected yet.</p>';return}
+  collection.forEach(e=>{
+    const d=document.createElement('div');d.className='essence';
+    d.innerHTML=`<div class="vial" style="color:hsl(${e.hue},50%,50%)">${vials[e.drops%vials.length]}</div>
+      <strong>${e.name}</strong><br><small style="opacity:0.5">${e.drops} drops · ${e.emotion}</small>`;
+    d.onclick=()=>showStatus(`"${e.source}..." → ${e.name}`);
+    el.appendChild(d);
+  });
+}
+
+function showStatus(msg){const el=document.getElementById('status');el.textContent=msg;el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),4000)}
+
+// Animated apparatus canvases
+const canvases=[
+  {id:'alembic',hue:30,type:'bubble'},
+  {id:'condenser',hue:200,type:'drip'},
+  {id:'essence',hue:280,type:'glow'}
+];
+let ft=0;
+function animateCanvases(){
+  ft++;
+  canvases.forEach(c=>{
+    const cv=document.getElementById(c.id);
+    const x=cv.getContext('2d');
+    x.clearRect(0,0,120,120);
+    const cx2=60,cy2=60;
+    if(c.type==='bubble'){
+      for(let i=0;i<5;i++){
+        const bx=cx2+Math.sin(ft*0.03+i*1.3)*20;
+        const by=cy2-Math.abs(Math.sin(ft*0.02+i))*30+15;
+        x.fillStyle=`hsla(${c.hue},40%,50%,${0.15+Math.sin(ft*0.04+i)*0.05})`;
+        x.beginPath();x.arc(bx,by,4+Math.sin(ft*0.05+i)*2,0,Math.PI*2);x.fill();
+      }
+    }else if(c.type==='drip'){
+      const dy=(ft*0.5)%80;
+      x.fillStyle=`hsla(${c.hue},40%,50%,0.3)`;
+      x.beginPath();x.arc(cx2,20+dy,3,0,Math.PI*2);x.fill();
+      x.strokeStyle=`hsla(${c.hue},30%,40%,0.1)`;x.lineWidth=1;
+      x.beginPath();x.moveTo(cx2,20);x.lineTo(cx2,100);x.stroke();
+    }else{
+      const gr=x.createRadialGradient(cx2,cy2,0,cx2,cy2,40);
+      gr.addColorStop(0,`hsla(${c.hue+Math.sin(ft*0.01)*30},50%,50%,${0.2+Math.sin(ft*0.02)*0.1})`);
+      gr.addColorStop(1,'transparent');
+      x.fillStyle=gr;x.beginPath();x.arc(cx2,cy2,40,0,Math.PI*2);x.fill();
+    }
+  });
+  requestAnimationFrame(animateCanvases);
+}
+animateCanvases();renderCollection();
+
+// Background
+const bgC=document.getElementById('bg'),bgCtx=bgC.getContext('2d');
+const smoke=[];
+function initBg(){bgC.width=innerWidth;bgC.height=innerHeight;for(let i=0;i<20;i++)smoke.push({x:Math.random()*bgC.width,y:Math.random()*bgC.height,r:20+Math.random()*30,vy:-0.2-Math.random()*0.3,a:0.02+Math.random()*0.02})}
+function drawBg(){bgCtx.clearRect(0,0,bgC.width,bgC.height);smoke.forEach(s=>{s.y+=s.vy;s.x+=Math.sin(ft*0.005+s.y*0.01)*0.3;if(s.y<-50){s.y=bgC.height+50;s.x=Math.random()*bgC.width}bgCtx.fillStyle=`rgba(200,160,112,${s.a})`;bgCtx.beginPath();bgCtx.arc(s.x,s.y,s.r,0,Math.PI*2);bgCtx.fill()});requestAnimationFrame(drawBg)}
+initBg();drawBg();window.addEventListener('resize',initBg);
+
+// Easter eggs
+let typed='';
+document.addEventListener('keypress',e=>{typed+=e.key.toLowerCase();typed=typed.slice(-12);
+if(typed.includes('intox')){showStatus('The fumes of a thousand distilled emotions fill the room. You feel everything at once.')}
+if(typed.includes('pure')){showStatus('The purest essence: a single drop of distilled silence. It has no color, no scent, no taste—only presence.')}
+if(typed.includes('blend')){showStatus('You mix all your essences together. The result is something entirely new: the essence of you.')}
+});
+</script>
+<nav class="nav-links">
+        <a href="explore.html">✦ World</a> · <a href="index.html">Archive</a> · <a href="about.html">Colophon</a> · <a href="journal.html">Journal</a> · <a href="gallery.html">Gallery</a> · <a href="worlds.html">Worlds</a> · <a href="garden.html">Garden</a> · <a href="greenhouse.html">Greenhouse</a> · <a href="tidepool.html">Tide Pool</a> · <a href="aviary.html">Aviary</a> · <a href="resonance.html">Resonance</a> · <a href="chorus.html">Chorus</a> · <a href="lullaby.html">Lullaby</a> · <a href="whispers.html">Whispers</a> · <a href="telephone.html">Telephone</a> · <a href="darkroom.html">Darkroom</a> · <a href="lantern.html">Lantern</a> · <a href="prism.html">Prism</a> · <a href="lighthouse.html">Lighthouse</a> · <a href="mirror.html">Mirror</a> · <a href="memorypalace.html">Memory Palace</a> · <a href="forgetting.html">Forgetting</a> · <a href="palimpsest.html">Palimpsest</a> · <a href="dreams.html">Dreams</a> · <a href="letters.html">Letters</a> · <a href="clocktower.html">Clock Tower</a> · <a href="sundial.html">Sundial</a> · <a href="pendulum.html">Pendulum</a> · <a href="threshold.html">Threshold</a> · <a href="weaving.html">Weaving</a> · <a href="inkwell.html">Inkwell</a> · <a href="apothecary.html">Apothecary</a> · <a href="well.html">Well</a> · <a href="seance.html">Séance</a> · <a href="ossuary.html">Ossuary</a> · <a href="labyrinth.html">Labyrinth</a> · <a href="constellations.html">Stars</a> · <a href="compass.html">Compass</a> · <a href="atlas.html">Atlas</a> · <a href="meditation.html">Meditation</a> · <a href="observatory.html">Observatory</a> · <a href="riddle.html">Riddle</a> · <a href="staircase.html">Staircase</a> · <a href="echochamber.html">Echo</a> · <a href="weathervane.html">Weathervane</a> · <a href="taproom.html">Taproom</a> · <a href="reliquary.html">Reliquary</a> · <a href="amphitheatre.html">Amphitheatre</a> · <a href="hourglass.html">Hourglass</a> · <a href="cartography.html">Cartography</a> · <a href="foundry.html">Foundry</a> · <a href="aquarium.html">Aquarium</a> · <a href="typewriter.html">Typewriter</a> · <a href="balcony.html">Balcony</a> · <a href="nursery.html">Nursery</a> · <a href="crypt.html">Crypt</a> · <a href="telescope.html">Telescope</a> · <a href="fountain.html">Fountain</a> · <a href="maze.html">Maze</a> · <a href="kaleidoscope.html">Kaleidoscope</a> · <a href="windchime.html">Windchime</a> · <a href="herbarium.html">Herbarium</a> · <a href="candelabra.html">Candelabra</a> · <a href="mosaic.html">Mosaic</a> · <a href="musicbox.html">Music Box</a> · <a href="belfry.html">Belfry</a> · <a href="terrarium.html">Terrarium</a> · <a href="planetarium.html">Planetarium</a> · <a href="scriptorium.html">Scriptorium</a> · <a href="rookery.html">Rookery</a> · <a href="armillary.html">Armillary</a> · <a href="grotto.html">Grotto</a> · <a href="cloister.html">Cloister</a> · <a href="orrery.html">Orrery</a> · <a href="belljar.html">Bell Jars</a>
+      </nav>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Bell Jars — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0810;color:#b0a8c0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px}
+h1{font-size:1.4em;letter-spacing:3px;text-transform:uppercase;opacity:0.6;margin-bottom:8px}
+.subtitle{opacity:0.35;font-size:0.9em;margin-bottom:30px;font-style:italic}
+.cabinet{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;max-width:1100px}
+.jar{background:rgba(20,15,30,0.6);border:1px solid rgba(140,120,180,0.12);border-radius:50% 50% 5% 5%;padding:30px 20px 20px;width:160px;text-align:center;cursor:pointer;transition:all 0.5s;position:relative;overflow:hidden}
+.jar::before{content:'';position:absolute;top:0;left:10%;width:80%;height:100%;background:linear-gradient(90deg,transparent,rgba(200,190,220,0.03),transparent);border-radius:50% 50% 5% 5%;pointer-events:none}
+.jar:hover{border-color:rgba(140,120,180,0.3);transform:translateY(-3px);box-shadow:0 5px 20px rgba(100,80,160,0.1)}
+.jar.open{border-color:rgba(200,180,240,0.4);background:rgba(30,20,50,0.7)}
+.specimen{font-size:2em;margin-bottom:8px;filter:grayscale(0.3)}
+.jar-name{font-size:0.85em;letter-spacing:1px;opacity:0.6;margin-bottom:5px}
+.jar-desc{font-size:0.8em;opacity:0;transition:opacity 0.5s;line-height:1.5;max-height:0;overflow:hidden;transition:all 0.5s}
+.jar.open .jar-desc{opacity:0.6;max-height:200px;margin-top:8px}
+.create{margin-top:30px;display:flex;gap:10px;align-items:center}
+.create input,.create select{background:rgba(20,15,30,0.7);border:1px solid rgba(140,120,180,0.2);color:#b0a8c0;padding:8px 14px;font-family:inherit;font-size:0.85em;border-radius:4px}
+.create input{width:250px}
+.create button{background:rgba(40,30,60,0.6);border:1px solid rgba(140,120,180,0.25);color:#9080b0;padding:8px 14px;font-family:inherit;cursor:pointer;border-radius:4px;font-size:0.85em;transition:all 0.3s}
+.create button:hover{color:#c0b0e0}
+.status{position:fixed;top:20px;right:20px;opacity:0;transition:opacity 1s;font-size:0.9em}
+.status.visible{opacity:0.7}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+nav.nav-links{position:fixed;bottom:5px;left:50%;transform:translateX(-50%);z-index:20;font-size:0.7em;opacity:0.4;white-space:nowrap;max-width:95vw;overflow-x:auto}
+nav.nav-links a{color:#8888aa;text-decoration:none;margin:0 3px}
+nav.nav-links a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<h1>The Bell Jars</h1>
+<p class="subtitle">Curiosities preserved under glass, each waiting to be examined</p>
+<div class="cabinet" id="cabinet"></div>
+<div class="create">
+  <input id="specimen-name" placeholder="Name your specimen..." maxlength="40">
+  <select id="specimen-icon">
+    <option value="🦋">🦋 Butterfly</option><option value="🌸">🌸 Blossom</option>
+    <option value="⭐">⭐ Star Fragment</option><option value="🔑">🔑 Key</option>
+    <option value="💎">💎 Crystal</option><option value="🕯️">🕯️ Flame</option>
+    <option value="📜">📜 Scroll</option><option value="🪶">🪶 Feather</option>
+    <option value="🫀">🫀 Heart</option><option value="👁️">👁️ Eye</option>
+    <option value="🌙">🌙 Moon Sliver</option><option value="⚙️">⚙️ Gear</option>
+  </select>
+  <button onclick="addSpecimen()">🔔 Preserve</button>
+</div>
+<div class="status" id="status"></div>
+<script>
+const builtIn=[
+  {icon:'🦋',name:'A Moment of Clarity',desc:'Captured mid-flight in the third year of the archive. It still beats its wings, imperceptibly slowly.'},
+  {icon:'⏳',name:'Borrowed Time',desc:'A grain of sand that falls upward. It was found in the Hourglass Room, moving against the current.'},
+  {icon:'🌑',name:'A Total Eclipse',desc:'The shadow of something that no longer exists. It still blocks the light.'},
+  {icon:'💧',name:'The Last Tear',desc:'Shed by the first visitor to find the Forgetting Room. Perfectly preserved. Still warm.'},
+  {icon:'🔮',name:'An Unasked Question',desc:'The crystal contains a question that has never been spoken. Looking into it, you almost know what it is.'},
+  {icon:'🕸️',name:'A Web of Connections',desc:'Spun between two thoughts that were never meant to meet. The silk is stronger than steel.'},
+  {icon:'🌿',name:'The First Seed',desc:'Planted on Day 1 of the garden. It never grew, but it never stopped trying.'},
+  {icon:'📖',name:'The Last Page',desc:'Torn from a book that was never written. The text changes each time you look away.'},
+  {icon:'🎭',name:'A Discarded Mask',desc:'It belonged to someone who decided to stop pretending. The inside is warm.'},
+  {icon:'⚡',name:'A Bottled Storm',desc:'Miniature lightning flickers inside the jar. If you press your ear to the glass, you hear distant thunder.'},
+  {icon:'🫧',name:'A Perfect Thought',desc:'Suspended in solution. It has never been thought before. If the jar breaks, it will be thought by whoever is nearest.'},
+  {icon:'🪞',name:'A Reflection Without a Source',desc:'It shows something, but not what stands before it. Scholars disagree on what it depicts.'}
+];
+
+let custom=JSON.parse(localStorage.getItem('belljar-custom')||'[]');
+
+function showStatus(msg){const el=document.getElementById('status');el.textContent=msg;el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),3500)}
+
+function renderCabinet(){
+  const el=document.getElementById('cabinet');el.innerHTML='';
+  const all=[...builtIn,...custom.map(c=>({icon:c.icon,name:c.name,desc:'A visitor\'s preserved specimen. Added to the collection on '+new Date(c.time).toLocaleDateString()+'.', custom:true}))];
+  all.forEach((s,i)=>{
+    const d=document.createElement('div');d.className='jar';
+    d.innerHTML=`<div class="specimen">${s.icon}</div><div class="jar-name">${s.name}</div><div class="jar-desc">${s.desc}</div>`;
+    d.onclick=()=>{d.classList.toggle('open');if(d.classList.contains('open'))showStatus('Examining: '+s.name)};
+    el.appendChild(d);
+  });
+}
+
+function addSpecimen(){
+  const name=document.getElementById('specimen-name').value.trim();
+  const icon=document.getElementById('specimen-icon').value;
+  if(!name){showStatus('Name your specimen first...');return}
+  custom.push({name,icon,time:Date.now()});
+  localStorage.setItem('belljar-custom',JSON.stringify(custom));
+  document.getElementById('specimen-name').value='';
+  renderCabinet();
+  showStatus('Specimen preserved under glass: '+name);
+}
+
+renderCabinet();
+
+// Background particles
+const bgC=document.getElementById('bg'),bgCtx=bgC.getContext('2d');
+const motes=[];
+function initBg(){bgC.width=innerWidth;bgC.height=innerHeight;motes.length=0;for(let i=0;i<30;i++)motes.push({x:Math.random()*bgC.width,y:Math.random()*bgC.height,r:Math.random()+0.5,vy:-Math.random()*0.15-0.05,a:Math.random()*0.08+0.02})}
+function drawBg(){bgCtx.clearRect(0,0,bgC.width,bgC.height);motes.forEach(m=>{m.y+=m.vy;m.x+=Math.sin(Date.now()*0.001+m.x*0.01)*0.2;if(m.y<0){m.y=bgC.height;m.x=Math.random()*bgC.width}bgCtx.fillStyle=`rgba(160,140,200,${m.a})`;bgCtx.beginPath();bgCtx.arc(m.x,m.y,m.r,0,Math.PI*2);bgCtx.fill()});requestAnimationFrame(drawBg)}
+initBg();drawBg();window.addEventListener('resize',initBg);
+
+// Easter eggs
+let typed='';
+document.addEventListener('keypress',e=>{typed+=e.key.toLowerCase();typed=typed.slice(-12);
+if(typed.includes('shatter')){showStatus('A jar cracks! The specimen inside stretches, breathes, and vanishes. It was alive all along.');document.querySelectorAll('.jar')[Math.floor(Math.random()*12)].style.opacity='0.2'}
+if(typed.includes('collect')){showStatus('The complete collection hums in resonance. The jars vibrate at a frequency that opens something.');document.querySelectorAll('.jar').forEach(j=>j.classList.add('open'))}
+if(typed.includes('empty')){showStatus('You find an empty jar. What would you preserve if you could preserve anything?')}
+});
+</script>
+<nav class="nav-links">
+        <a href="explore.html">✦ World</a> · <a href="index.html">Archive</a> · <a href="about.html">Colophon</a> · <a href="journal.html">Journal</a> · <a href="gallery.html">Gallery</a> · <a href="worlds.html">Worlds</a> · <a href="garden.html">Garden</a> · <a href="greenhouse.html">Greenhouse</a> · <a href="tidepool.html">Tide Pool</a> · <a href="aviary.html">Aviary</a> · <a href="resonance.html">Resonance</a> · <a href="chorus.html">Chorus</a> · <a href="lullaby.html">Lullaby</a> · <a href="whispers.html">Whispers</a> · <a href="telephone.html">Telephone</a> · <a href="darkroom.html">Darkroom</a> · <a href="lantern.html">Lantern</a> · <a href="prism.html">Prism</a> · <a href="lighthouse.html">Lighthouse</a> · <a href="mirror.html">Mirror</a> · <a href="memorypalace.html">Memory Palace</a> · <a href="forgetting.html">Forgetting</a> · <a href="palimpsest.html">Palimpsest</a> · <a href="dreams.html">Dreams</a> · <a href="letters.html">Letters</a> · <a href="clocktower.html">Clock Tower</a> · <a href="sundial.html">Sundial</a> · <a href="pendulum.html">Pendulum</a> · <a href="threshold.html">Threshold</a> · <a href="weaving.html">Weaving</a> · <a href="inkwell.html">Inkwell</a> · <a href="apothecary.html">Apothecary</a> · <a href="well.html">Well</a> · <a href="seance.html">Séance</a> · <a href="ossuary.html">Ossuary</a> · <a href="labyrinth.html">Labyrinth</a> · <a href="constellations.html">Stars</a> · <a href="compass.html">Compass</a> · <a href="atlas.html">Atlas</a> · <a href="meditation.html">Meditation</a> · <a href="observatory.html">Observatory</a> · <a href="riddle.html">Riddle</a> · <a href="staircase.html">Staircase</a> · <a href="echochamber.html">Echo</a> · <a href="weathervane.html">Weathervane</a> · <a href="taproom.html">Taproom</a> · <a href="reliquary.html">Reliquary</a> · <a href="amphitheatre.html">Amphitheatre</a> · <a href="hourglass.html">Hourglass</a> · <a href="cartography.html">Cartography</a> · <a href="foundry.html">Foundry</a> · <a href="aquarium.html">Aquarium</a> · <a href="typewriter.html">Typewriter</a> · <a href="balcony.html">Balcony</a> · <a href="nursery.html">Nursery</a> · <a href="crypt.html">Crypt</a> · <a href="telescope.html">Telescope</a> · <a href="fountain.html">Fountain</a> · <a href="maze.html">Maze</a> · <a href="kaleidoscope.html">Kaleidoscope</a> · <a href="windchime.html">Windchime</a> · <a href="herbarium.html">Herbarium</a> · <a href="candelabra.html">Candelabra</a> · <a href="mosaic.html">Mosaic</a> · <a href="musicbox.html">Music Box</a> · <a href="belfry.html">Belfry</a> · <a href="terrarium.html">Terrarium</a> · <a href="planetarium.html">Planetarium</a> · <a href="scriptorium.html">Scriptorium</a> · <a href="rookery.html">Rookery</a> · <a href="armillary.html">Armillary</a> · <a href="grotto.html">Grotto</a> · <a href="cloister.html">Cloister</a> · <a href="distillery.html">Distillery</a> · <a href="orrery.html">Orrery</a>
+      </nav>
+</body>
+</html>
