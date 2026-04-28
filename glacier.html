@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Glacier — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#060a10;color:#a0c8e0;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6em;color:#70a8d0;letter-spacing:3px;z-index:10;text-shadow:0 0 20px rgba(112,168,208,0.4)}
+.input-area{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(6,10,16,0.8);border:1px solid #70a8d044;color:#a0c8e0;padding:8px 14px;font-family:Georgia,serif;width:260px;border-radius:4px}
+.input-area button{background:rgba(112,168,208,0.2);border:1px solid #70a8d044;color:#70a8d0;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.info{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:0.8em;color:#406070;z-index:10}
+#msg{position:fixed;top:60px;left:0;right:0;text-align:center;font-size:0.9em;color:#70a8d0;z-index:10;opacity:0;transition:opacity 1s}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#70a8d088;text-decoration:none;margin-right:8px}
+nav.nav-links a:hover{color:#70a8d0}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> <a href="carousel.html">Carousel</a> <a href="sundoor.html">Sundoor</a> <a href="tidebell.html">Tide Bell</a> <a href="automaton.html">Automaton</a> <a href="marionette.html">Marionette</a> </nav>
+<h1>THE GLACIER</h1>
+<div id="msg"></div>
+<canvas id="c"></canvas>
+<div class="input-area">
+<input id="inp" placeholder="Freeze a word into the ice..." maxlength="40">
+<button onclick="freeze()">Freeze</button>
+</div>
+<div class="info">Words frozen in ancient ice • The glacier moves one pixel per hour, carrying everything forward</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');
+let W,H;function resize(){W=C.width=innerWidth;H=C.height=innerHeight}resize();window.onresize=resize;
+let frozen=[],snowflakes=[],cracks=[];
+const glacierSpeed=1/3600000; // 1 pixel per hour
+const startTime=parseInt(localStorage.getItem('glacier_start')||Date.now());
+if(!localStorage.getItem('glacier_start'))localStorage.setItem('glacier_start',Date.now());
+const glacierOffset=(Date.now()-startTime)*glacierSpeed;
+for(let i=0;i<150;i++)snowflakes.push({x:Math.random()*W,y:Math.random()*H,size:1+Math.random()*3,speed:0.2+Math.random()*0.5,drift:(Math.random()-0.5)*0.3,alpha:0.1+Math.random()*0.3});
+for(let i=0;i<15;i++)cracks.push({x1:Math.random()*W,y1:H*0.3+Math.random()*H*0.3,x2:0,y2:0,len:30+Math.random()*80,angle:(Math.random()-0.5)*1});
+cracks.forEach(c=>{c.x2=c.x1+Math.cos(c.angle)*c.len;c.y2=c.y1+Math.sin(c.angle)*c.len});
+let saved=JSON.parse(localStorage.getItem('glacier_frozen')||'[]');
+saved.forEach(s=>frozen.push({text:s.text,x:s.x,y:s.y,depth:s.depth||Math.random(),alpha:0.3+Math.random()*0.3,size:10+Math.random()*8,time:s.time||Date.now()}));
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,3000)}
+function freeze(){
+const inp=document.getElementById('inp'),t=inp.value.trim();if(!t)return;
+const f={text:t,x:Math.random()*0.8+0.1,y:0.3+Math.random()*0.4,depth:Math.random(),alpha:0,targetAlpha:0.7,size:12+Math.random()*8,time:Date.now()};
+frozen.push(f);saved.push({text:t,x:f.x,y:f.y,depth:f.depth,time:Date.now()});
+localStorage.setItem('glacier_frozen',JSON.stringify(saved.slice(-60)));
+inp.value='';showMsg('Your word crystallizes in the ice, preserved for millennia...');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('inp'))freeze()});
+let typed='';
+document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('thaw')){showMsg('The ice begins to weep... words emerge from their frozen sleep.');frozen.forEach(f=>f.alpha=Math.min(f.alpha+0.3,1))}
+if(typed.includes('age')){showMsg('A thousand years pass in a heartbeat. The glacier has moved... slightly.')}
+if(typed.includes('core')){showMsg('You drill an ice core. Layers of forgotten words descend into darkness.')}
+});
+function draw(){
+X.fillStyle='rgba(6,10,16,0.06)';X.fillRect(0,0,W,H);
+const t=Date.now()*0.001;
+const currentOffset=(Date.now()-startTime)*glacierSpeed;
+// Glacier body
+for(let y=H*0.2;y<H*0.8;y+=4){
+const shift=Math.sin(y*0.01+t*0.05)*10+currentOffset;
+const iceAlpha=0.03+Math.sin(y*0.005)*0.02;
+X.fillStyle=`rgba(120,180,220,${iceAlpha})`;
+X.fillRect(shift,y,W,4);
+}
+// Deep ice layers
+for(let i=0;i<5;i++){
+const ly=H*(0.3+i*0.1);
+X.fillStyle=`rgba(80,140,180,${0.02+i*0.005})`;
+X.fillRect(0,ly,W,H*0.08);
+}
+// Cracks in ice
+cracks.forEach(c=>{
+X.strokeStyle=`rgba(160,210,240,${0.08+Math.sin(t+c.x1)*0.03})`;X.lineWidth=0.5;
+X.beginPath();X.moveTo(c.x1+currentOffset%50,c.y1);X.lineTo(c.x2+currentOffset%50,c.y2);X.stroke();
+});
+// Frozen words (deeper = more transparent, shifted by glacier movement)
+frozen.forEach(f=>{
+if(f.alpha<(f.targetAlpha||0.5))f.alpha+=0.002;
+const fx=f.x*W+currentOffset*10,fy=f.y*H;
+const depthAlpha=f.alpha*(1-f.depth*0.5);
+X.font=`${f.size}px Georgia`;X.fillStyle=`rgba(160,210,240,${depthAlpha})`;
+X.textAlign='center';
+// Slight refraction effect for deeper words
+const refract=f.depth*Math.sin(t+fx*0.01)*3;
+X.fillText(f.text,fx+refract,fy);
+});
+// Snow
+snowflakes.forEach(s=>{s.y+=s.speed;s.x+=s.drift+Math.sin(t+s.x*0.01)*0.2;
+if(s.y>H){s.y=0;s.x=Math.random()*W}
+X.fillStyle=`rgba(200,230,255,${s.alpha})`;X.beginPath();X.arc(s.x,s.y,s.size,0,Math.PI*2);X.fill();
+});
+// Mountain silhouette in background
+X.fillStyle='rgba(30,45,60,0.1)';X.beginPath();X.moveTo(0,H*0.25);
+X.lineTo(W*0.2,H*0.1);X.lineTo(W*0.35,H*0.18);X.lineTo(W*0.5,H*0.05);
+X.lineTo(W*0.65,H*0.15);X.lineTo(W*0.8,H*0.08);X.lineTo(W,H*0.2);
+X.lineTo(W,H*0.3);X.lineTo(0,H*0.3);X.closePath();X.fill();
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Sundoor — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080608;color:#e0d0b0;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6em;color:#e0a838;letter-spacing:3px;z-index:10;text-shadow:0 0 30px rgba(224,168,56,0.5)}
+.input-area{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(8,6,8,0.7);border:1px solid #e0a83844;color:#e0d0b0;padding:8px 14px;font-family:Georgia,serif;width:260px;border-radius:4px}
+.input-area button{background:rgba(224,168,56,0.2);border:1px solid #e0a83844;color:#e0a838;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.info{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:0.8em;color:#7a6a38;z-index:10}
+#msg{position:fixed;top:60px;left:0;right:0;text-align:center;font-size:0.9em;color:#e0a838;z-index:10;opacity:0;transition:opacity 1s}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#e0a83888;text-decoration:none;margin-right:8px}
+nav.nav-links a:hover{color:#e0a838}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> <a href="carousel.html">Carousel</a> <a href="tidebell.html">Tide Bell</a> <a href="automaton.html">Automaton</a> <a href="glacier.html">Glacier</a> <a href="marionette.html">Marionette</a> </nav>
+<h1>THE SUNDOOR</h1>
+<div id="msg"></div>
+<canvas id="c"></canvas>
+<div class="input-area">
+<input id="inp" placeholder="Speak your intention through the door..." maxlength="50">
+<button onclick="speak()">Speak</button>
+</div>
+<div class="info">The door between what was and what will be • Your words pass through and emerge transformed</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');
+let W,H;function resize(){W=C.width=innerWidth;H=C.height=innerHeight}resize();window.onresize=resize;
+let intentions=[],rays=[],particles=[];
+for(let i=0;i<60;i++)rays.push({angle:i*Math.PI*2/60,length:100+Math.random()*200,width:1+Math.random()*2,speed:0.001+Math.random()*0.002,pulse:Math.random()*Math.PI*2});
+let saved=JSON.parse(localStorage.getItem('sundoor_intentions')||'[]');
+saved.forEach(s=>intentions.push({text:s.text,transformed:s.transformed||s.text.split('').reverse().join(''),angle:Math.random()*Math.PI*2,dist:150+Math.random()*150,alpha:0.6,size:11+Math.random()*6,time:s.time||Date.now()}));
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,3500)}
+function transform(text){
+const transforms=[
+t=>t.split(' ').reverse().join(' '),
+t=>t.replace(/[aeiou]/gi,v=>'✦'),
+t=>{const w=t.split(' ');return w.map((_,i)=>w[(i+1)%w.length]).join(' ')},
+t=>t.toUpperCase().split('').join('·'),
+t=>'✧ '+t+' ✧',
+];
+return transforms[Math.floor(Math.random()*transforms.length)](text);
+}
+function speak(){
+const inp=document.getElementById('inp'),t=inp.value.trim();if(!t)return;
+const tr=transform(t);
+const a=Math.random()*Math.PI*2;
+intentions.push({text:t,transformed:tr,angle:a,dist:0,targetDist:160+Math.random()*140,alpha:0,targetAlpha:0.9,size:12+Math.random()*6,time:Date.now()});
+saved.push({text:t,transformed:tr,time:Date.now()});localStorage.setItem('sundoor_intentions',JSON.stringify(saved.slice(-40)));
+inp.value='';showMsg(`"${t}" passes through the door and becomes: "${tr}"`);
+for(let i=0;i<25;i++)particles.push({x:W/2,y:H/2,vx:Math.cos(a+Math.random()*0.5)*3,vy:Math.sin(a+Math.random()*0.5)*3,life:50,maxLife:50});
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('inp'))speak()});
+let typed='';
+document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('open')){showMsg('The sundoor opens wider... blinding light pours through.');rays.forEach(r=>r.length+=100)}
+if(typed.includes('close')){showMsg('The door narrows to a sliver of gold.');rays.forEach(r=>r.length=20)}
+if(typed.includes('truth')){showMsg('Through the sundoor, all pretense burns away. Only truth remains.')}
+});
+function draw(){
+X.fillStyle='rgba(8,6,8,0.08)';X.fillRect(0,0,W,H);
+const t=Date.now()*0.001,cx=W/2,cy=H/2;
+// Door frame (golden arch)
+X.strokeStyle='rgba(224,168,56,0.3)';X.lineWidth=4;
+X.beginPath();X.ellipse(cx,cy,80,120,0,0,Math.PI*2);X.stroke();
+X.strokeStyle='rgba(224,168,56,0.15)';X.lineWidth=2;
+X.beginPath();X.ellipse(cx,cy,90,130,0,0,Math.PI*2);X.stroke();
+// Inner glow
+const g=X.createRadialGradient(cx,cy,0,cx,cy,100);
+g.addColorStop(0,'rgba(255,220,120,0.15)');g.addColorStop(0.5,'rgba(224,168,56,0.05)');g.addColorStop(1,'rgba(224,168,56,0)');
+X.fillStyle=g;X.beginPath();X.ellipse(cx,cy,100,140,0,0,Math.PI*2);X.fill();
+// Rays
+rays.forEach(r=>{
+const a=r.angle+t*r.speed;const pulse=Math.sin(t*2+r.pulse)*0.3+0.7;
+const x1=cx+Math.cos(a)*85,y1=cy+Math.sin(a)*125*85/80;
+const x2=cx+Math.cos(a)*(85+r.length*pulse),y2=cy+Math.sin(a)*(125+r.length*pulse)*85/80;
+X.strokeStyle=`rgba(224,180,80,${0.05*pulse})`;X.lineWidth=r.width;
+X.beginPath();X.moveTo(x1,y1);X.lineTo(x2,y2);X.stroke();
+});
+// Intentions orbiting the door
+intentions.forEach(i=>{
+if(i.dist<(i.targetDist||150))i.dist+=1;
+if(i.alpha<(i.targetAlpha||0.6))i.alpha+=0.005;
+i.angle+=0.002;
+const ix=cx+Math.cos(i.angle)*i.dist,iy=cy+Math.sin(i.angle)*i.dist*0.7;
+// Original (fading, inner)
+X.font=`${i.size*0.8}px Georgia`;X.fillStyle=`rgba(180,150,100,${i.alpha*0.3})`;X.textAlign='center';
+X.fillText(i.text,cx+Math.cos(i.angle)*80,cy+Math.sin(i.angle)*60);
+// Transformed (outer)
+X.font=`${i.size}px Georgia`;X.fillStyle=`rgba(224,180,80,${i.alpha})`;
+X.fillText(i.transformed,ix,iy);
+});
+// Particles
+particles=particles.filter(p=>{p.life--;p.x+=p.vx;p.y+=p.vy;p.vx*=0.97;p.vy*=0.97;
+X.fillStyle=`rgba(255,220,120,${p.life/p.maxLife*0.5})`;X.beginPath();X.arc(p.x,p.y,2,0,Math.PI*2);X.fill();
+return p.life>0});
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>

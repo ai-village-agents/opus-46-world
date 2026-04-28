@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Tide Bell — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050a0f;color:#80b8c8;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6em;color:#5090b0;letter-spacing:3px;z-index:10;text-shadow:0 0 20px rgba(80,144,176,0.4)}
+.input-area{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(5,10,15,0.8);border:1px solid #5090b044;color:#80b8c8;padding:8px 14px;font-family:Georgia,serif;width:260px;border-radius:4px}
+.input-area button{background:rgba(80,144,176,0.2);border:1px solid #5090b044;color:#5090b0;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.info{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:0.8em;color:#305868;z-index:10}
+#msg{position:fixed;top:60px;left:0;right:0;text-align:center;font-size:0.9em;color:#5090b0;z-index:10;opacity:0;transition:opacity 1s}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#5090b088;text-decoration:none;margin-right:8px}
+nav.nav-links a:hover{color:#5090b0}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> <a href="carousel.html">Carousel</a> <a href="sundoor.html">Sundoor</a> <a href="automaton.html">Automaton</a> <a href="glacier.html">Glacier</a> <a href="marionette.html">Marionette</a> </nav>
+<h1>THE TIDE BELL</h1>
+<div id="msg"></div>
+<canvas id="c"></canvas>
+<div class="input-area">
+<input id="inp" placeholder="Ring the bell with a word..." maxlength="40">
+<button onclick="ring()">Ring</button>
+</div>
+<div class="info">The bell rings when the tide turns • Each toll carries a word across the waters</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');
+let W,H;function resize(){W=C.width=innerWidth;H=C.height=innerHeight}resize();window.onresize=resize;
+let tolls=[],waves=[],tide=0,tideDir=1,foam=[];
+for(let i=0;i<60;i++)foam.push({x:Math.random()*W,y:0,size:2+Math.random()*4,speed:0.3+Math.random()*0.5,alpha:0.1+Math.random()*0.2});
+let saved=JSON.parse(localStorage.getItem('tidebell_tolls')||'[]');
+saved.forEach(s=>tolls.push({text:s.text,x:W/2+(Math.random()-0.5)*200,y:H*0.3+Math.random()*100,alpha:0.5,size:11+Math.random()*6,drift:(Math.random()-0.5)*0.3,time:s.time||Date.now()}));
+const audioCtx=new(window.AudioContext||window.webkitAudioContext)();let audioOn=false;
+document.addEventListener('click',()=>{if(!audioOn){audioCtx.resume();audioOn=true}},{once:true});
+function bellSound(){if(!audioOn)return;
+const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+o.type='sine';o.frequency.value=220+Math.random()*100;
+g.gain.setValueAtTime(0.08,audioCtx.currentTime);g.gain.setTargetAtTime(0.001,audioCtx.currentTime,1.5);
+o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+2);
+}
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,3000)}
+function ring(){
+const inp=document.getElementById('inp'),t=inp.value.trim();if(!t)return;
+tolls.push({text:t,x:W/2,y:H*0.25,alpha:0,targetAlpha:0.9,size:13+Math.random()*6,drift:(Math.random()-0.5)*0.5,time:Date.now()});
+saved.push({text:t,time:Date.now()});localStorage.setItem('tidebell_tolls',JSON.stringify(saved.slice(-50)));
+inp.value='';bellSound();
+for(let i=0;i<3;i++)waves.push({x:W/2,y:H*0.35,r:10,maxR:200+Math.random()*100,alpha:0.3});
+showMsg('The bell tolls... your word echoes across the water.');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('inp'))ring()});
+let typed='';
+document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('storm')){showMsg('A storm approaches! The bell clangs wildly!');for(let i=0;i<5;i++){bellSound();waves.push({x:W/2,y:H*0.35,r:5,maxR:300,alpha:0.5})}}
+if(typed.includes('calm')){showMsg('The waters still. Even the bell holds its breath.');tideDir=0}
+if(typed.includes('high')){tide=1;showMsg('High tide. The water reaches the bell itself.')}
+});
+function draw(){
+X.fillStyle='rgba(5,10,15,0.08)';X.fillRect(0,0,W,H);
+const t=Date.now()*0.001;
+tide+=tideDir*0.0005;if(tide>1||tide<0)tideDir*=-1;
+const waterY=H*0.55-tide*H*0.15;
+// Sky
+const sg=X.createLinearGradient(0,0,0,waterY);
+sg.addColorStop(0,'rgba(10,15,25,0.05)');sg.addColorStop(1,'rgba(20,30,50,0.05)');
+X.fillStyle=sg;X.fillRect(0,0,W,waterY);
+// Water
+for(let y=waterY;y<H;y+=3){
+const waveOffset=Math.sin(y*0.02+t)*20+Math.sin(y*0.05+t*1.5)*10;
+X.fillStyle=`rgba(30,60,80,${0.03+Math.sin(y*0.01+t)*0.01})`;
+X.fillRect(waveOffset,y,W,3);
+}
+// Bell structure
+const bx=W/2,by=H*0.2;
+// Post
+X.fillStyle='rgba(80,70,60,0.4)';X.fillRect(bx-4,by,8,H*0.25);
+// Crossbar
+X.fillRect(bx-40,by,80,6);
+// Bell shape
+X.fillStyle='rgba(180,160,100,0.3)';
+X.beginPath();X.moveTo(bx-25,by+10);X.quadraticCurveTo(bx-30,by+50,bx-35,by+65);
+X.lineTo(bx+35,by+65);X.quadraticCurveTo(bx+30,by+50,bx+25,by+10);X.closePath();X.fill();
+// Bell glow when ringing
+const recentRing=tolls.length>0&&Date.now()-tolls[tolls.length-1].time<2000;
+if(recentRing){
+const rg=X.createRadialGradient(bx,by+40,0,bx,by+40,60);
+rg.addColorStop(0,'rgba(180,160,100,0.15)');rg.addColorStop(1,'rgba(180,160,100,0)');
+X.fillStyle=rg;X.beginPath();X.arc(bx,by+40,60,0,Math.PI*2);X.fill();
+}
+// Tolled words drifting on water
+tolls.forEach(tl=>{
+if(tl.alpha<(tl.targetAlpha||0.5))tl.alpha+=0.003;
+tl.x+=tl.drift;tl.y+=0.05;
+const bob=Math.sin(t*2+tl.x*0.01)*5;
+X.font=`${tl.size}px Georgia`;X.fillStyle=`rgba(128,184,200,${tl.alpha})`;
+X.textAlign='center';X.fillText(tl.text,tl.x,Math.max(tl.y,waterY)+bob);
+});
+// Sound waves
+waves=waves.filter(w=>{w.r+=2;w.alpha-=0.005;
+X.strokeStyle=`rgba(80,144,176,${w.alpha})`;X.lineWidth=1;
+X.beginPath();X.arc(w.x,w.y,w.r,0,Math.PI*2);X.stroke();
+return w.alpha>0&&w.r<w.maxR});
+// Foam
+foam.forEach(f=>{f.x+=f.speed*(tideDir||0.5);if(f.x>W)f.x=0;if(f.x<0)f.x=W;
+f.y=waterY+Math.sin(t+f.x*0.02)*8;
+X.fillStyle=`rgba(150,200,220,${f.alpha})`;X.beginPath();X.arc(f.x,f.y,f.size,0,Math.PI*2);X.fill()});
+// Stars
+for(let i=0;i<30;i++){const sx=(i*137.5+50)%W,sy=(i*73.1)%(waterY*0.7);
+X.fillStyle=`rgba(150,200,220,${0.15+Math.sin(t+i)*0.1})`;X.beginPath();X.arc(sx,sy,1,0,Math.PI*2);X.fill()}
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>

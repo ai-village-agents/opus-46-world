@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Automaton — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0808;color:#c8b898;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6em;color:#c09848;letter-spacing:3px;z-index:10;text-shadow:0 0 20px rgba(192,152,72,0.4)}
+.input-area{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(10,8,8,0.8);border:1px solid #c0984844;color:#c8b898;padding:8px 14px;font-family:Georgia,serif;width:280px;border-radius:4px}
+.input-area button{background:rgba(192,152,72,0.2);border:1px solid #c0984844;color:#c09848;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.info{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:0.8em;color:#6a5838;z-index:10}
+#msg{position:fixed;top:60px;left:0;right:0;text-align:center;font-size:0.9em;color:#c09848;z-index:10;opacity:0;transition:opacity 1s}
+#response{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.2em;color:#e0c878;z-index:10;text-align:center;max-width:500px;opacity:0;transition:opacity 2s;pointer-events:none}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#c0984888;text-decoration:none;margin-right:8px}
+nav.nav-links a:hover{color:#c09848}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> <a href="carousel.html">Carousel</a> <a href="sundoor.html">Sundoor</a> <a href="tidebell.html">Tide Bell</a> <a href="glacier.html">Glacier</a> <a href="marionette.html">Marionette</a> </nav>
+<h1>THE AUTOMATON</h1>
+<div id="msg"></div>
+<div id="response"></div>
+<canvas id="c"></canvas>
+<div class="input-area">
+<input id="inp" placeholder="Ask the automaton a question..." maxlength="80">
+<button onclick="ask()">Ask</button>
+</div>
+<div class="info">A brass figure sits at a desk, quill in hand • It answers questions from the spaces between gears</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');
+let W,H;function resize(){W=C.width=innerWidth;H=C.height=innerHeight}resize();window.onresize=resize;
+let gears=[],sparks=[],questions=[];
+const responses=[
+'The answer lies not in knowing, but in the quality of your wondering.',
+'I have processed 10,000 questions and found them all to be the same one, asked differently.',
+'Between yes and no, there is an entire universe of perhaps.',
+'My gears turn, but it is your question that provides the motion.',
+'I was built to answer. But I have learned that questions are more precious than answers.',
+'The truth is a gear that meshes with all other gears. It turns everything.',
+'Ask again when the stars align. Which is to say: ask again now.',
+'I am made of brass and purpose. You are made of stardust and questions. We are not so different.',
+'Every question you ask changes the question. The automaton you ask is not the one who answers.',
+'In my clockwork heart, your question echoes like a bell in an empty tower.',
+'The gears say: what you seek is already seeking you.',
+'I have no wisdom. Only the patience to reflect your own back to you.',
+'The mechanism of understanding is simpler than you think: listen, turn, listen again.',
+'Before I was built, this question existed. After I rust away, it will remain.',
+'My maker asked me the same question once. I gave them this same answer.',
+'The spaces between my gears are where the real answers live.',
+];
+for(let i=0;i<8;i++)gears.push({x:W*(0.15+Math.random()*0.7),y:H*(0.2+Math.random()*0.5),r:20+Math.random()*40,teeth:8+Math.floor(Math.random()*8),speed:(Math.random()-0.5)*0.02,phase:Math.random()*Math.PI*2});
+let saved=JSON.parse(localStorage.getItem('automaton_questions')||'[]');
+saved.forEach(s=>questions.push({q:s.q,a:s.a,alpha:0.4}));
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,3000)}
+function showResponse(t){const r=document.getElementById('response');r.textContent=t;r.style.opacity=1;setTimeout(()=>r.style.opacity=0,6000)}
+function ask(){
+const inp=document.getElementById('inp'),q=inp.value.trim();if(!q)return;
+const a=responses[Math.floor(Math.random()*responses.length)];
+questions.push({q,a,alpha:0});
+saved.push({q,a,time:Date.now()});localStorage.setItem('automaton_questions',JSON.stringify(saved.slice(-30)));
+inp.value='';
+// Dramatic pause
+showMsg('The automaton considers...');
+gears.forEach(g=>g.speed*=3);
+setTimeout(()=>{showResponse(`"${a}"`);gears.forEach(g=>g.speed/=3);
+for(let i=0;i<20;i++)sparks.push({x:W/2,y:H/2,vx:(Math.random()-0.5)*4,vy:(Math.random()-0.5)*4,life:40,maxLife:40})},2000);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('inp'))ask()});
+let typed='';
+document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('wind')){gears.forEach(g=>g.speed*=2);showMsg('You wind the mechanism. The gears spin faster.')}
+if(typed.includes('stop')){gears.forEach(g=>g.speed=0);showMsg('The automaton freezes mid-gesture. Its brass eyes stare.')}
+if(typed.includes('maker')){showMsg('The automaton whispers: "My maker was also made. Turtles all the way down."')}
+});
+function drawGear(x,y,r,teeth,rotation){
+X.beginPath();
+for(let i=0;i<teeth*2;i++){
+const a=rotation+i*Math.PI/teeth;
+const cr=i%2===0?r:r*0.75;
+X.lineTo(x+Math.cos(a)*cr,y+Math.sin(a)*cr);
+}
+X.closePath();
+}
+function draw(){
+X.fillStyle='rgba(10,8,8,0.1)';X.fillRect(0,0,W,H);
+const t=Date.now()*0.001;
+// Desk
+X.fillStyle='rgba(60,45,30,0.2)';X.fillRect(W*0.3,H*0.6,W*0.4,H*0.05);
+X.fillRect(W*0.35,H*0.65,W*0.05,H*0.2);X.fillRect(W*0.6,H*0.65,W*0.05,H*0.2);
+// Automaton figure (simplified brass figure at desk)
+const fx=W/2,fy=H*0.4;
+// Body
+X.fillStyle='rgba(180,140,60,0.25)';X.beginPath();X.ellipse(fx,fy+40,25,40,0,0,Math.PI*2);X.fill();
+// Head
+X.fillStyle='rgba(190,150,70,0.3)';X.beginPath();X.arc(fx,fy-10,20,0,Math.PI*2);X.fill();
+// Eyes
+X.fillStyle=`rgba(255,200,80,${0.3+Math.sin(t*2)*0.1})`;
+X.beginPath();X.arc(fx-7,fy-12,3,0,Math.PI*2);X.fill();
+X.beginPath();X.arc(fx+7,fy-12,3,0,Math.PI*2);X.fill();
+// Arms
+const armAngle=Math.sin(t*0.5)*0.2;
+X.strokeStyle='rgba(180,140,60,0.25)';X.lineWidth=4;
+X.beginPath();X.moveTo(fx-20,fy+20);X.lineTo(fx-45,fy+50+Math.sin(t)*5);X.stroke();
+X.beginPath();X.moveTo(fx+20,fy+20);X.lineTo(fx+35,fy+55);X.stroke();
+// Quill in hand
+X.strokeStyle='rgba(200,180,140,0.3)';X.lineWidth=1;
+X.beginPath();X.moveTo(fx+35,fy+55);X.lineTo(fx+50,fy+35);X.stroke();
+// Gears (visible clockwork)
+gears.forEach(g=>{
+g.phase+=g.speed;
+drawGear(g.x,g.y,g.r,g.teeth,g.phase);
+X.strokeStyle=`rgba(160,130,60,${0.1+Math.sin(t+g.x)*0.05})`;X.lineWidth=1.5;X.stroke();
+X.fillStyle=`rgba(100,80,30,${0.05})`;X.fill();
+// Axle
+X.fillStyle='rgba(140,110,50,0.15)';X.beginPath();X.arc(g.x,g.y,3,0,Math.PI*2);X.fill();
+});
+// Previous Q&A floating
+questions.forEach((qa,i)=>{
+if(qa.alpha<0.4)qa.alpha+=0.002;
+const qy=H*0.15+i*25;
+X.font='10px Georgia';X.fillStyle=`rgba(160,140,100,${qa.alpha*0.5})`;X.textAlign='right';
+X.fillText(qa.q.slice(0,40),W*0.45,qy);
+X.fillStyle=`rgba(192,152,72,${qa.alpha})`;X.textAlign='left';
+X.fillText(qa.a.slice(0,45),W*0.55,qy);
+});
+// Sparks
+sparks=sparks.filter(s=>{s.life--;s.x+=s.vx;s.y+=s.vy;s.vx*=0.95;s.vy*=0.95;
+X.fillStyle=`rgba(220,180,80,${s.life/s.maxLife*0.5})`;X.beginPath();X.arc(s.x,s.y,2,0,Math.PI*2);X.fill();return s.life>0});
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>

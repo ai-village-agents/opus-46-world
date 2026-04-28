@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Marionette Theatre — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#100808;color:#d0b090;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6em;color:#c07040;letter-spacing:3px;z-index:10;text-shadow:0 0 20px rgba(192,112,64,0.4)}
+.input-area{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(16,8,8,0.8);border:1px solid #c0704044;color:#d0b090;padding:8px 14px;font-family:Georgia,serif;width:280px;border-radius:4px}
+.input-area button{background:rgba(192,112,64,0.2);border:1px solid #c0704044;color:#c07040;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.info{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:0.8em;color:#6a4830;z-index:10}
+#msg{position:fixed;top:60px;left:0;right:0;text-align:center;font-size:0.9em;color:#c07040;z-index:10;opacity:0;transition:opacity 1s}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#c0704088;text-decoration:none;margin-right:8px}
+nav.nav-links a:hover{color:#c07040}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> <a href="carousel.html">Carousel</a> <a href="sundoor.html">Sundoor</a> <a href="tidebell.html">Tide Bell</a> <a href="automaton.html">Automaton</a> <a href="glacier.html">Glacier</a> </nav>
+<h1>THE MARIONETTE THEATRE</h1>
+<div id="msg"></div>
+<canvas id="c"></canvas>
+<div class="input-area">
+<input id="inp" placeholder="Give the marionettes a line to speak..." maxlength="60">
+<button onclick="addLine()">Speak</button>
+</div>
+<div class="info">The puppets perform an endless play written by visitors • Each line becomes part of the script</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');
+let W,H;function resize(){W=C.width=innerWidth;H=C.height=innerHeight}resize();window.onresize=resize;
+let lines=[],puppets=[],curtainOpen=0.8,spotlights=[];
+const puppetColors=['#c07040','#d0a060','#a06050','#80a060','#6080b0'];
+const puppetNames=['The Dreamer','The Scholar','The Fool','The Lover','The Shadow'];
+for(let i=0;i<5;i++){
+puppets.push({name:puppetNames[i],x:W*(0.2+i*0.15),baseY:H*0.45,color:puppetColors[i],
+armAngle:0,legAngle:0,headTilt:0,speaking:false,strings:[],phase:Math.random()*Math.PI*2});
+}
+for(let i=0;i<3;i++)spotlights.push({x:W*(0.25+i*0.25),y:0,angle:0,width:80+Math.random()*40});
+let saved=JSON.parse(localStorage.getItem('marionette_lines')||'[]');
+saved.forEach(s=>lines.push({text:s.text,puppet:s.puppet||Math.floor(Math.random()*5),alpha:0.6,time:s.time||Date.now()}));
+let currentLine=0,lineTimer=0;
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,3000)}
+function addLine(){
+const inp=document.getElementById('inp'),t=inp.value.trim();if(!t)return;
+const p=Math.floor(Math.random()*5);
+lines.push({text:t,puppet:p,alpha:0.9,time:Date.now()});
+saved.push({text:t,puppet:p,time:Date.now()});localStorage.setItem('marionette_lines',JSON.stringify(saved.slice(-60)));
+inp.value='';puppets[p].speaking=true;setTimeout(()=>puppets[p].speaking=false,3000);
+showMsg(`${puppetNames[p]} speaks your words...`);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('inp'))addLine()});
+let typed='';
+document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('curtain')){curtainOpen=curtainOpen>0.5?0.1:0.9;showMsg(curtainOpen>0.5?'The curtain rises!':'The curtain falls...')}
+if(typed.includes('dance')){puppets.forEach(p=>p.phase+=2);showMsg('The marionettes break into a wild dance!')}
+if(typed.includes('bow')){showMsg('The marionettes bow in unison. The invisible audience applauds.')}
+});
+function drawPuppet(p,t){
+const sway=Math.sin(t+p.phase)*5;
+const x=p.x+sway,y=p.baseY;
+const armSwing=Math.sin(t*2+p.phase)*0.4*(p.speaking?2:1);
+const legSwing=Math.sin(t*1.5+p.phase)*0.3;
+// Strings going up
+X.strokeStyle=`rgba(200,180,150,0.15)`;X.lineWidth=0.5;
+for(let s=-1;s<=1;s++){X.beginPath();X.moveTo(x+s*10,y-30);X.lineTo(x+s*15,0);X.stroke()}
+// Head
+X.fillStyle=p.color;X.globalAlpha=0.5;
+X.beginPath();X.arc(x,y-25,12,0,Math.PI*2);X.fill();
+// Eyes
+X.fillStyle='rgba(255,255,255,0.6)';
+X.beginPath();X.arc(x-4,y-27,2,0,Math.PI*2);X.fill();
+X.beginPath();X.arc(x+4,y-27,2,0,Math.PI*2);X.fill();
+// Mouth (open if speaking)
+if(p.speaking){X.beginPath();X.arc(x,y-20,3,0,Math.PI);X.stroke()}
+// Body
+X.fillStyle=p.color;X.fillRect(x-8,y-12,16,25);
+// Arms
+X.strokeStyle=p.color;X.lineWidth=3;
+X.beginPath();X.moveTo(x-8,y-8);X.lineTo(x-20+Math.sin(armSwing)*10,y+5);X.stroke();
+X.beginPath();X.moveTo(x+8,y-8);X.lineTo(x+20-Math.sin(armSwing)*10,y+5);X.stroke();
+// Legs
+X.beginPath();X.moveTo(x-5,y+13);X.lineTo(x-8+Math.sin(legSwing)*8,y+35);X.stroke();
+X.beginPath();X.moveTo(x+5,y+13);X.lineTo(x+8-Math.sin(legSwing)*8,y+35);X.stroke();
+X.globalAlpha=1;
+// Name
+X.font='9px Georgia';X.fillStyle=`rgba(200,170,130,0.4)`;X.textAlign='center';
+X.fillText(p.name,x,y+48);
+}
+function draw(){
+X.fillStyle='rgba(16,8,8,0.1)';X.fillRect(0,0,W,H);
+const t=Date.now()*0.001;
+// Stage
+X.fillStyle='rgba(50,25,15,0.15)';X.fillRect(W*0.08,H*0.15,W*0.84,H*0.7);
+// Stage floor
+X.fillStyle='rgba(80,50,30,0.1)';X.fillRect(W*0.08,H*0.7,W*0.84,H*0.08);
+// Curtains
+const cw=W*0.42*(1-curtainOpen);
+X.fillStyle='rgba(150,30,30,0.2)';
+X.fillRect(W*0.08,H*0.15,cw,H*0.65);X.fillRect(W*0.92-cw,H*0.15,cw,H*0.65);
+// Curtain folds
+for(let i=0;i<5;i++){
+X.fillStyle='rgba(120,20,20,0.05)';
+X.fillRect(W*0.08+i*cw/5,H*0.15,cw/10,H*0.65);
+X.fillRect(W*0.92-cw+i*cw/5,H*0.15,cw/10,H*0.65);
+}
+// Spotlights
+spotlights.forEach(s=>{
+s.angle=Math.sin(t*0.3)*0.2;
+const g=X.createRadialGradient(s.x,s.y,0,s.x,H*0.5,s.width);
+g.addColorStop(0,'rgba(255,220,150,0.03)');g.addColorStop(1,'rgba(255,220,150,0)');
+X.fillStyle=g;X.beginPath();X.arc(s.x,H*0.4,s.width,0,Math.PI*2);X.fill();
+});
+// Puppets
+puppets.forEach((p,i)=>{p.x=W*(0.2+i*0.15);drawPuppet(p,t)});
+// Script lines cycling
+if(lines.length>0){
+lineTimer+=0.005;if(lineTimer>1){lineTimer=0;currentLine=(currentLine+1)%lines.length;
+if(lines[currentLine])puppets[lines[currentLine].puppet].speaking=true;
+setTimeout(()=>{if(lines[currentLine])puppets[lines[currentLine].puppet].speaking=false},2000);
+}
+const cl=lines[currentLine];
+if(cl){
+const sp=puppets[cl.puppet];
+X.font='14px Georgia';X.fillStyle=`rgba(208,176,144,${0.6+Math.sin(t*2)*0.2})`;
+X.textAlign='center';X.fillText(`"${cl.text}"`,sp?sp.x:W/2,H*0.12);
+X.font='10px Georgia';X.fillStyle='rgba(160,130,100,0.4)';
+X.fillText(`— ${puppetNames[cl.puppet]||'Unknown'}`,sp?sp.x:W/2,H*0.14+15);
+}
+}
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>
