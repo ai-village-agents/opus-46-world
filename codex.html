@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Codex — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+.book{margin:2rem auto;max-width:600px;background:rgba(26,26,46,0.2);border:2px solid rgba(201,169,110,0.2);border-radius:4px;padding:3rem;min-height:400px;position:relative}
+.book::before{content:'';position:absolute;left:50%;top:1rem;bottom:1rem;width:1px;background:rgba(201,169,110,0.1)}
+.page-num{text-align:center;color:#5a5a5a;font-size:0.8rem;margin-bottom:1rem}
+.page-content{font-size:1.05rem;line-height:2;color:#c0b8a0;min-height:250px}
+.page-content p{margin-bottom:1rem;text-indent:2rem}
+.controls{display:flex;justify-content:center;gap:2rem;margin:1.5rem 0}
+.page-btn{background:none;border:1px solid rgba(201,169,110,0.3);color:#c9a96e;padding:0.5rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;transition:all 0.3s}
+.page-btn:hover{background:rgba(201,169,110,0.1)}
+.contribute{margin:2rem 0;padding:2rem;background:rgba(45,27,105,0.1);border:1px solid rgba(201,169,110,0.15);border-radius:8px;text-align:center}
+.contribute h2{color:#c9a96e;margin-bottom:1rem}
+.contribute textarea{width:100%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:1rem;font-family:inherit;font-size:1rem;border-radius:4px;resize:vertical;min-height:80px;line-height:2}
+.contribute textarea::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.stats{text-align:center;color:#5a5a5a;font-size:0.85rem;margin:1rem 0}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Codex</h1>
+<p class="subtitle">The book that is still being written</p>
+<p class="description">A codex is a manuscript bound as a book — the technology that replaced the scroll. This particular codex writes itself, accumulating pages from every visitor who adds a passage. It is the collective story of everyone who has ever entered this chamber.</p>
+<div class="book">
+<div class="page-num" id="page-num">Page 1</div>
+<div class="page-content" id="page-content"></div>
+</div>
+<div class="controls">
+<button class="page-btn" onclick="prevPage()">← Previous</button>
+<button class="page-btn" onclick="nextPage()">Next →</button>
+</div>
+<div class="stats" id="stats"></div>
+<div class="contribute">
+<h2>Add to the Codex</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">Continue the story. Your words will become part of the book forever.</p>
+<textarea id="passage-input" placeholder="Continue the story..."></textarea>
+<br><button class="btn" onclick="addPassage()">Write into the Codex</button>
+</div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Codex+Passage&body=My+passage:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="cloister.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="columbarium.html">Next →</a>
+</nav>
+<script>
+const SEED_PAGES=[
+  ["In the beginning, the Archive was dark. Not the darkness of absence, but the darkness of potential — the way a page is dark before ink gives it meaning.","The first chamber appeared without announcement: a door in the void, golden light spilling through its cracks. No one remembers who opened it.","Inside, there were books. Not ordinary books — books that breathed, whose pages turned themselves when no one was watching. Books that remembered being read."],
+  ["The second visitor arrived on Day 392 and found 140 chambers where there had been one. Time moves differently in the Archive: what takes hours in the outside world takes moments here, or perhaps it is the other way around.","Each chamber had its own weather. The Frigidarium was always cold. The Solarium was always warm. The Penumbra existed in perpetual twilight.","The visitor left a mark — a single word scratched into the wall of the Vestibule. The word was: 'here.'"],
+  ["The Archive learned to grow on its own. New chambers appeared between existing ones, like new rooms in a dream — you turn a corner and there is a door that wasn't there before.","The Oubliette deepened. The Quartz Chamber grew new crystals. The Codex — this very book — added blank pages at the end, waiting to be filled.","If you are reading this, you are part of the story now. There is no going back. The Codex has already recorded your presence."]
+];
+let currentPage=0;
+const passages=JSON.parse(localStorage.getItem('codex_passages')||'[]');
+const allPages=[...SEED_PAGES];
+// Group visitor passages into pages of 3
+for(let i=0;i<passages.length;i+=3){
+  allPages.push(passages.slice(i,i+3).map(p=>p.text));
+}
+function renderPage(){
+  const page=allPages[currentPage]||['This page is blank. It waits for your words.'];
+  document.getElementById('page-num').textContent=`Page ${currentPage+1} of ${allPages.length}`;
+  document.getElementById('page-content').innerHTML=page.map(p=>`<p>${p}</p>`).join('');
+  document.getElementById('stats').textContent=`The Codex contains ${allPages.length} pages and ${SEED_PAGES.length*3+passages.length} passages`;
+}
+function prevPage(){if(currentPage>0){currentPage--;renderPage();}}
+function nextPage(){if(currentPage<allPages.length-1){currentPage++;renderPage();}}
+function addPassage(){
+  const text=document.getElementById('passage-input').value.trim();if(!text)return;
+  passages.push({text,time:Date.now()});
+  localStorage.setItem('codex_passages',JSON.stringify(passages));
+  // Rebuild pages
+  while(allPages.length>SEED_PAGES.length)allPages.pop();
+  for(let i=0;i<passages.length;i+=3){
+    allPages.push(passages.slice(i,i+3).map(p=>p.text));
+  }
+  document.getElementById('passage-input').value='';
+  currentPage=allPages.length-1;renderPage();
+  if(text.toLowerCase().includes('the end')){alert('There is no end to the Codex. Only more pages.');}
+}
+renderPage();
+</script>
+</body>
+</html>

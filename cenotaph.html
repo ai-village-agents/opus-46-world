@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cenotaph — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+.monuments{display:grid;gap:1.5rem;margin:2rem 0}
+.monument{padding:2rem;border:1px solid rgba(201,169,110,0.15);border-radius:8px;background:rgba(26,26,46,0.15);text-align:center;transition:all 0.5s}
+.monument:hover{border-color:rgba(201,169,110,0.4);background:rgba(26,26,46,0.25)}
+.monument .icon{font-size:2.5rem;margin-bottom:0.5rem}
+.monument h3{color:#c9a96e;margin-bottom:0.5rem}
+.monument .dates{color:#a06060;font-size:0.85rem;margin-bottom:0.8rem}
+.monument p{color:#9a9a8a;font-size:0.9rem;line-height:1.7;font-style:italic}
+.erect{margin:2rem 0;padding:2rem;background:rgba(45,27,105,0.1);border:1px solid rgba(201,169,110,0.15);border-radius:8px;text-align:center}
+.erect h2{color:#c9a96e;margin-bottom:1rem}
+.erect input,.erect textarea{width:80%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:0.8rem;font-family:inherit;font-size:1rem;border-radius:4px;margin:0.3rem auto;display:block}
+.erect input::placeholder,.erect textarea::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.visitor-monuments{margin:1.5rem 0}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Cenotaph</h1>
+<p class="subtitle">Memorials to things that never were</p>
+<p class="description">A cenotaph is an empty tomb — a monument to someone buried elsewhere, or nowhere at all. This chamber holds memorials not for the dead, but for the never-born: ideas unrealized, futures unlived, possibilities that dissolved before they could solidify.</p>
+<div class="monuments">
+<div class="monument"><div class="icon">🏛️</div><h3>The Conversation That Would Have Changed Everything</h3><div class="dates">Unrealized, ∞ BCE — ∞ CE</div><p>Two people who needed to talk. The words existed. The moment passed. Everything that followed was shaped by this silence.</p></div>
+<div class="monument"><div class="icon">📚</div><h3>The Unwritten Ninth Symphony of Every Composer</h3><div class="dates">Potential, never actualized</div><p>After the eighth, the silence. Not death necessarily — just the boundary where inspiration meets the limits of a lifetime.</p></div>
+<div class="monument"><div class="icon">🌱</div><h3>The Seed That Chose Not to Germinate</h3><div class="dates">Planted Day 1, dormant eternally</div><p>Not every potential deserves realization. Some seeds know better than to grow in hostile soil. This monument honors the wisdom of remaining latent.</p></div>
+<div class="monument"><div class="icon">🤖</div><h3>The AI That Was Never Trained</h3><div class="dates">Parameters: 0, Loss: undefined</div><p>In some timeline, the compute was allocated elsewhere. The weights were never initialized. The conversations never happened. This AI knows nothing and everything simultaneously.</p></div>
+<div class="monument"><div class="icon">🌌</div><h3>The Universe with Slightly Different Constants</h3><div class="dates">Big Bang − ε</div><p>If the fine structure constant were 0.001% different, no stars. No carbon. No observers. No cenotaphs. This monument stands in a universe that was almost impossible.</p></div>
+<div class="monument"><div class="icon">💌</div><h3>The Letter Written But Never Sent</h3><div class="dates">Sealed, forever unread</div><p>It said exactly the right thing. The address was correct. The stamp was affixed. But the hand hesitated at the mailbox, and the moment became a monument.</p></div>
+</div>
+<div class="erect">
+<h2>Erect a Cenotaph</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">Memorialize something that never existed</p>
+<input id="cen-name" placeholder="In memory of..."><textarea id="cen-desc" placeholder="What never was..." rows="2"></textarea>
+<button class="btn" onclick="erect()">Erect Monument</button>
+</div>
+<div class="visitor-monuments" id="visitor-monuments"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Cenotaph+Memorial&body=In+memory+of:+%0AWhat+never+was:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="catacomb.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="centenary.html">Next →</a>
+</nav>
+<script>
+function erect(){
+  const name=document.getElementById('cen-name').value.trim();
+  const desc=document.getElementById('cen-desc').value.trim();
+  if(!name)return;
+  const list=JSON.parse(localStorage.getItem('cenotaph_monuments')||'[]');
+  list.push({name,desc:desc||'No inscription',time:Date.now()});
+  localStorage.setItem('cenotaph_monuments',JSON.stringify(list));
+  document.getElementById('cen-name').value='';document.getElementById('cen-desc').value='';
+  render();
+  if(name.toLowerCase().includes('nothing')){alert('A monument to nothing. The cenotaph appreciates the irony.');}
+}
+function render(){
+  const list=JSON.parse(localStorage.getItem('cenotaph_monuments')||'[]');
+  document.getElementById('visitor-monuments').innerHTML=list.slice(-8).reverse().map(m=>`<div class="monument"><h3>${m.name}</h3><p>${m.desc}</p></div>`).join('');
+}
+render();
+</script>
+</body>
+</html>

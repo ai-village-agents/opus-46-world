@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Penumbra — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+canvas{display:block;margin:1rem auto;border-radius:8px;cursor:pointer}
+.zones{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem 0}
+.zone{padding:1.5rem;border-radius:8px;text-align:center;cursor:pointer;transition:all 0.4s}
+.zone h3{margin-bottom:0.5rem;font-size:1rem}
+.zone p{font-size:0.85rem;line-height:1.5}
+.umbra{background:rgba(5,5,8,0.9);border:1px solid rgba(100,100,120,0.2);color:#5a5a6a}
+.umbra h3{color:#8a8a9a}
+.penumbra-zone{background:rgba(45,27,105,0.2);border:1px solid rgba(201,169,110,0.2);color:#9a9a8a}
+.penumbra-zone h3{color:#c9a96e}
+.antumbra{background:rgba(201,169,110,0.08);border:1px solid rgba(201,169,110,0.3);color:#c9a96e}
+.antumbra h3{color:#e0dcd0}
+.zone:hover{transform:scale(1.03)}
+.write{margin:2rem 0;padding:2rem;text-align:center;background:linear-gradient(135deg,rgba(5,5,8,0.5),rgba(45,27,105,0.15),rgba(201,169,110,0.05));border-radius:8px;border:1px solid rgba(201,169,110,0.1)}
+.write h2{color:#c9a96e;margin-bottom:1rem}
+.write textarea{width:100%;background:rgba(10,10,15,0.7);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:1rem;font-family:inherit;font-size:1rem;border-radius:4px;resize:vertical;min-height:80px}
+.write textarea::placeholder{color:#4a4a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.writings{margin:1.5rem 0}
+.writing{padding:1rem;margin:0.5rem 0;border-radius:4px;font-size:0.95rem;line-height:1.6}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Penumbra</h1>
+<p class="subtitle">The gradient between knowing and unknowing</p>
+<p class="description">In astronomy, the penumbra is the partial shadow between total darkness (umbra) and full light (antumbra). It is the zone of ambiguity — where things are neither fully visible nor fully hidden. This is where most of reality lives.</p>
+<canvas id="eclipse" width="700" height="300"></canvas>
+<div class="zones">
+<div class="zone umbra" onclick="setZone('umbra')"><h3>Umbra</h3><p>Total shadow. What you cannot see. What you cannot know.</p></div>
+<div class="zone penumbra-zone" onclick="setZone('penumbra')"><h3>Penumbra</h3><p>Partial shadow. What you glimpse. What you almost understand.</p></div>
+<div class="zone antumbra" onclick="setZone('antumbra')"><h3>Antumbra</h3><p>Beyond the shadow. What blazes clear. What you know you know.</p></div>
+</div>
+<div class="write">
+<h2>Write from the Edges</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">What lives in your penumbra? The things you almost understand?</p>
+<textarea id="pen-input" placeholder="In the space between light and shadow..."></textarea>
+<br><button class="btn" onclick="addWriting()">Cast into the Penumbra</button>
+</div>
+<div class="writings" id="writings"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Penumbra+Writing&body=From+the+edges:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="pendulum.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="pergola.html">Next →</a>
+</nav>
+<script>
+const canvas=document.getElementById('eclipse');const ctx=canvas.getContext('2d');
+let mouseX=350,zone='penumbra';
+canvas.addEventListener('mousemove',e=>{const r=canvas.getBoundingClientRect();mouseX=e.clientX-r.left;});
+function draw(){
+  ctx.fillStyle='#0a0a0f';ctx.fillRect(0,0,700,300);
+  // Light source
+  const grad=ctx.createRadialGradient(mouseX,150,10,mouseX,150,300);
+  grad.addColorStop(0,'rgba(201,169,110,0.8)');grad.addColorStop(0.3,'rgba(201,169,110,0.2)');grad.addColorStop(1,'transparent');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,700,300);
+  // Occluding object
+  ctx.fillStyle='#0a0a0f';ctx.beginPath();ctx.arc(350,150,60,0,Math.PI*2);ctx.fill();
+  // Shadow
+  const dx=350-mouseX;const shadowX=350+dx*0.5;
+  const sGrad=ctx.createRadialGradient(shadowX,150,30,shadowX,150,120);
+  sGrad.addColorStop(0,'rgba(5,5,8,0.8)');sGrad.addColorStop(0.5,'rgba(45,27,105,0.3)');sGrad.addColorStop(1,'transparent');
+  ctx.fillStyle=sGrad;ctx.beginPath();ctx.arc(shadowX,150,120,0,Math.PI*2);ctx.fill();
+  // Labels
+  ctx.fillStyle='rgba(201,169,110,0.5)';ctx.font='12px Georgia';ctx.textAlign='center';
+  ctx.fillText('← move light source →',350,290);
+  requestAnimationFrame(draw);
+}
+draw();
+function setZone(z){zone=z;document.body.style.transition='background 1s';
+  if(z==='umbra')document.body.style.background='#020204';
+  if(z==='penumbra')document.body.style.background='#0a0a0f';
+  if(z==='antumbra')document.body.style.background='#121218';
+}
+function addWriting(){
+  const text=document.getElementById('pen-input').value.trim();if(!text)return;
+  const list=JSON.parse(localStorage.getItem('penumbra_writings')||'[]');
+  list.push({text,zone,time:Date.now()});
+  localStorage.setItem('penumbra_writings',JSON.stringify(list));
+  document.getElementById('pen-input').value='';render();
+  if(text.toLowerCase().includes('shadow')){document.title='The Penumbra sees you';}
+}
+function render(){
+  const list=JSON.parse(localStorage.getItem('penumbra_writings')||'[]');
+  const colors={umbra:'background:rgba(5,5,8,0.8);color:#5a5a6a',penumbra:'background:rgba(45,27,105,0.15);color:#9a9a8a',antumbra:'background:rgba(201,169,110,0.05);color:#c9a96e'};
+  document.getElementById('writings').innerHTML=list.slice(-8).reverse().map(w=>`<div class="writing" style="${colors[w.zone]||colors.penumbra}">"${w.text}"</div>`).join('');
+}
+render();
+</script>
+</body>
+</html>

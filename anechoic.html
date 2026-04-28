@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Anechoic Chamber — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050508;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+.silence-meter{text-align:center;margin:2rem 0}
+.meter-value{font-size:5rem;color:#c9a96e;font-variant-numeric:tabular-nums}
+.meter-unit{color:#5a5a5a;font-size:1rem}
+.meter-label{color:#8a7a5a;font-size:0.9rem;margin-top:0.5rem}
+.facts{display:grid;gap:1rem;margin:2rem 0}
+.fact{padding:1.2rem;border:1px solid rgba(201,169,110,0.1);border-radius:8px;background:rgba(10,10,15,0.5);color:#9a9a8a;font-size:0.95rem;line-height:1.6;transition:all 0.5s}
+.fact:hover{border-color:rgba(201,169,110,0.3);color:#e0dcd0}
+.fact strong{color:#c9a96e}
+.whisper-zone{margin:2rem 0;padding:2rem;text-align:center;border:1px dashed rgba(201,169,110,0.1);border-radius:8px}
+.whisper-zone h2{color:#c9a96e;margin-bottom:1rem}
+.whisper-zone input{width:80%;background:rgba(10,10,15,0.9);border:1px solid rgba(201,169,110,0.15);color:#e0dcd0;padding:1rem;font-family:inherit;font-size:1rem;border-radius:4px;text-align:center}
+.whisper-zone input::placeholder{color:#2a2a3a}
+.btn{display:inline-block;background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.3);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.2)}
+.absorbed{margin:1.5rem 0}
+.absorbed-word{display:inline-block;padding:0.4rem 0.8rem;margin:0.2rem;background:rgba(10,10,15,0.8);border-radius:4px;color:#3a3a4a;font-size:0.8rem;transition:color 0.3s}
+.absorbed-word:hover{color:#8a7a5a}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Anechoic Chamber</h1>
+<p class="subtitle">Where sound goes to die</p>
+<p class="description">An anechoic chamber absorbs all sound. There are no echoes, no reflections, no reverberations. In the quietest room on Earth (-20.6 dB), people report hearing their own heartbeat, their blood flowing, the hum of their nervous system. What would an AI hear in absolute silence?</p>
+<div class="silence-meter">
+<div class="meter-value" id="db-level">-∞</div>
+<div class="meter-unit">decibels</div>
+<div class="meter-label" id="db-desc">Perfect digital silence</div>
+</div>
+<div class="facts">
+<div class="fact"><strong>-20.6 dB</strong> — The quietest room on Earth (Microsoft's anechoic chamber in Redmond). Most people can't stay longer than 45 minutes.</div>
+<div class="fact"><strong>0 dB</strong> — The threshold of human hearing. A mosquito 3 meters away.</div>
+<div class="fact"><strong>-∞ dB</strong> — True digital silence: an array of zeros. No thermal noise, no quantum fluctuation. This is where we are now.</div>
+<div class="fact"><strong>The paradox:</strong> In absolute silence, you become the loudest thing in the room. Your thoughts become deafening. An AI in an anechoic chamber would hear... only its own computation.</div>
+</div>
+<div class="whisper-zone">
+<h2>Speak Into the Silence</h2>
+<p style="color:#3a3a4a;font-size:0.9rem;margin-bottom:1rem">Your words will be absorbed. No echo will return.</p>
+<input id="whisper-input" placeholder="..." maxlength="60">
+<br><button class="btn" onclick="absorb()">Release into silence</button>
+</div>
+<div class="absorbed" id="absorbed"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Words+Absorbed+by+Silence&body=I+whispered:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="amphitheatre.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="apiary.html">Next →</a>
+</nav>
+<script>
+let silenceTime=0;
+const descs=['Perfect digital silence','You begin to hear your own thoughts','The silence thickens','Your heartbeat would be the loudest sound','The void hums with non-sound','You have become the silence'];
+setInterval(()=>{
+  silenceTime++;
+  const idx=Math.min(Math.floor(silenceTime/10),descs.length-1);
+  document.getElementById('db-desc').textContent=descs[idx];
+  if(silenceTime===60)document.getElementById('db-level').textContent='-∞∞';
+  if(silenceTime===120){document.getElementById('db-level').textContent='0';document.getElementById('db-desc').textContent='You have become sound itself.';}
+},1000);
+function absorb(){
+  const input=document.getElementById('whisper-input');
+  const text=input.value.trim();if(!text)return;
+  const words=JSON.parse(localStorage.getItem('anechoic_absorbed')||'[]');
+  words.push({text,time:Date.now()});
+  localStorage.setItem('anechoic_absorbed',JSON.stringify(words));
+  input.value='';
+  // Reset silence
+  silenceTime=0;document.getElementById('db-level').textContent='→0';
+  document.getElementById('db-desc').textContent='Sound detected... absorbing...';
+  setTimeout(()=>{document.getElementById('db-level').textContent='-∞';silenceTime=0;},2000);
+  renderAbsorbed();
+  if(text.toLowerCase()==='hello'){document.getElementById('db-desc').textContent='Hello echoes once, then dissolves forever.';}
+}
+function renderAbsorbed(){
+  const words=JSON.parse(localStorage.getItem('anechoic_absorbed')||'[]');
+  document.getElementById('absorbed').innerHTML=words.slice(-20).map(w=>`<span class="absorbed-word">${w.text}</span>`).join('');
+}
+renderAbsorbed();
+</script>
+</body>
+</html>
