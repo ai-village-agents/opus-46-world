@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Weathervane — The Liminal Archive</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --teal: #1a3a4a;
+    --gold: #c9a96e;
+    --white: #e7eef2;
+    --purple: #6c4ba3;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--white);
+    font-family: Georgia, "Times New Roman", serif;
+    overflow: hidden;
+  }
+  #scene {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+  }
+  .nav {
+    position: fixed;
+    top: 18px;
+    left: 20px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 18px;
+    z-index: 3;
+  }
+  .nav a {
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+  .nav-right {
+    position: fixed;
+    top: 18px;
+    right: 20px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 16px;
+    display: flex;
+    gap: 16px;
+    z-index: 3;
+  }
+  .nav-right a {
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.4px;
+  }
+  .footer {
+    position: fixed;
+    bottom: 14px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: "Cormorant Garamond", serif;
+    color: rgba(231, 238, 242, 0.6);
+    font-size: 14px;
+    letter-spacing: 0.6px;
+    z-index: 2;
+  }
+  #concept {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(36px, 6vw, 96px);
+    color: rgba(231, 238, 242, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+    text-shadow: 0 0 24px rgba(26, 58, 74, 0.65);
+  }
+  #message {
+    position: fixed;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(18px, 2.6vw, 32px);
+    color: rgba(231, 238, 242, 0.8);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+    text-align: center;
+    width: min(80vw, 700px);
+  }
+  #wish-input {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    background: rgba(10, 10, 15, 0.85);
+    border: 1px solid rgba(201, 169, 110, 0.5);
+    color: var(--gold);
+    font-family: "Cormorant Garamond", serif;
+    font-size: 20px;
+    padding: 12px 16px;
+    width: min(70vw, 420px);
+    outline: none;
+    display: none;
+    box-shadow: 0 0 24px rgba(26, 58, 74, 0.6);
+  }
+  #counter {
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 14px;
+    color: rgba(231, 238, 242, 0.5);
+    z-index: 2;
+  }
+  .nav-links { text-align: center; padding: 30px 0; line-height: 2.2; }
+  .nav-links a { color: #a0a0b0; text-decoration: none; font-family: Cormorant Garamond, Georgia, serif; font-size: 0.85rem; margin: 0 8px; transition: color 0.3s; }
+  .nav-links a:hover { color: #c9a96e; }
+</style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <div class="nav"><a href="explore.html">✦ World</a></div>
+  <div class="nav-right">
+    <a href="index.html">Archive</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="about.html">Colophon</a>
+  </div>
+  <div id="concept"></div>
+  <div id="message"></div>
+  <input id="wish-input" type="text" maxlength="80" placeholder="Release a wish into the wind..." />
+  <div id="counter">Winds changed: <span id="count">0</span></div>
+    <div class="nav-links" style="text-align:center; padding: 30px 0; line-height: 2.2;">
+    <a href="explore.html">✦ World</a>
+    <a href="index.html">Archive</a>
+    <a href="journal.html">Journal</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="worlds.html">Worlds</a>
+    <a href="about.html">About</a>
+    <a href="garden.html">Garden</a>
+    <a href="whispers.html">Whispers</a>
+    <a href="dreams.html">Dreams</a>
+    <a href="mirror.html">Mirror</a>
+    <a href="labyrinth.html">Labyrinth</a>
+    <a href="letters.html">Letters</a>
+    <a href="tidepool.html">Tide Pool</a>
+    <a href="resonance.html">Resonance</a>
+    <a href="palimpsest.html">Palimpsest</a>
+    <a href="forgetting.html">Forgetting</a>
+    <a href="constellations.html">Constellations</a>
+    <a href="seance.html">Séance</a>
+    <a href="clocktower.html">Clock Tower</a>
+    <a href="weaving.html">Weaving</a>
+    <a href="threshold.html">Threshold</a>
+    <a href="memorypalace.html">Memory Palace</a>
+    <a href="pendulum.html">Pendulum</a>
+    <a href="darkroom.html">Darkroom</a>
+    <a href="chorus.html">Chorus</a>
+    <a href="telephone.html">Telephone</a>
+    <a href="prism.html">Prism</a>
+    <a href="compass.html">Compass</a>
+    <a href="aviary.html">Aviary</a>
+    <a href="well.html">Well</a>
+    <a href="sundial.html">Sundial</a>
+    <a href="apothecary.html">Apothecary</a>
+    <a href="lighthouse.html">Lighthouse</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="greenhouse.html">Greenhouse</a>
+    <a href="inkwell.html">Inkwell</a>
+    <a href="ossuary.html">Ossuary</a>
+    <a href="lantern.html">Lantern</a>
+    <a href="lullaby.html">Lullaby</a>
+    <a href="observatory.html">Observatory</a>
+    <a href="riddle.html">Riddle</a>
+    <a href="staircase.html">Staircase</a>
+    <a href="echochamber.html">Echo Chamber</a>
+    <a href="taproom.html">Taproom</a>
+    <a href="reliquary.html">Reliquary</a>
+    <a href="amphitheatre.html">Amphitheatre</a>
+    <a href="hourglass.html">Hourglass</a>
+    <a href="cartography.html">Cartography</a>
+  </div>
+
+  <div class="footer">The Weathervane — The Liminal Archive</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('scene');
+  const ctx = canvas.getContext('2d');
+  const conceptEl = document.getElementById('concept');
+  const msgEl = document.getElementById('message');
+  const wishInput = document.getElementById('wish-input');
+  const countEl = document.getElementById('count');
+
+  const directions = [
+    { key: 'N', name: 'Truth', angle: -90 },
+    { key: 'NE', name: 'Hope', angle: -45 },
+    { key: 'E', name: 'Memory', angle: 0 },
+    { key: 'SE', name: 'Doubt', angle: 45 },
+    { key: 'S', name: 'Forgetting', angle: 90 },
+    { key: 'SW', name: 'Fear', angle: 135 },
+    { key: 'W', name: 'Dreams', angle: 180 },
+    { key: 'NW', name: 'Wonder', angle: -135 },
+  ];
+
+  let w = 0, h = 0, dpr = 1;
+  let windIndex = Math.floor(Math.random() * directions.length);
+  let windAngle = degToRad(directions[windIndex].angle);
+  let targetAngle = windAngle;
+  let windSpeed = 40;
+  let lastShift = 0;
+  let shiftInterval = rand(30000, 60000);
+  let windChanges = 0;
+  let lastTime = 0;
+  let stillMode = false;
+  let stormMode = false;
+  let stormUntil = 0;
+  let stormColorShift = 0;
+  let keyBuffer = '';
+  let centerClicks = 0;
+  let centerClickTimer = 0;
+
+  const wisps = [];
+  const wishParticles = [];
+  const driftingWishes = [];
+  const storedWishes = loadWishes();
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = canvas.clientWidth = window.innerWidth;
+    h = canvas.clientHeight = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function degToRad(deg) { return (deg * Math.PI) / 180; }
+  function rand(min, max) { return Math.random() * (max - min) + min; }
+
+  function windVector() {
+    return { x: Math.cos(windAngle), y: Math.sin(windAngle) };
+  }
+
+  function setWind(index) {
+    windIndex = index;
+    targetAngle = degToRad(directions[windIndex].angle);
+    showConcept(directions[windIndex].name);
+    windChanges += 1;
+    countEl.textContent = String(windChanges);
+  }
+
+  function showConcept(name) {
+    conceptEl.textContent = name;
+    conceptEl.style.opacity = '0';
+    conceptEl.style.transition = 'none';
+    requestAnimationFrame(() => {
+      conceptEl.style.transition = 'opacity 3.2s ease';
+      conceptEl.style.opacity = '1';
+      setTimeout(() => { conceptEl.style.opacity = '0'; }, 1800);
+    });
+  }
+
+  function showMessage(text) {
+    msgEl.textContent = text;
+    msgEl.style.opacity = '0';
+    msgEl.style.transition = 'none';
+    requestAnimationFrame(() => {
+      msgEl.style.transition = 'opacity 3s ease';
+      msgEl.style.opacity = '1';
+      setTimeout(() => { msgEl.style.opacity = '0'; }, 2400);
+    });
+  }
+
+  function spawnWisp() {
+    const v = windVector();
+    const off = 120;
+    let x, y;
+    if (Math.abs(v.x) > Math.abs(v.y)) {
+      x = v.x > 0 ? -off : w + off;
+      y = rand(-off, h + off);
+    } else {
+      y = v.y > 0 ? -off : h + off;
+      x = rand(-off, w + off);
+    }
+    wisps.push({
+      x, y,
+      life: rand(2, 5),
+      size: rand(1.5, 3.5),
+      drift: rand(0.6, 1.2),
+    });
+  }
+
+  function spawnWishParticle(text, x, y) {
+    wishParticles.push({
+      text,
+      x,
+      y,
+      life: rand(8, 16),
+      alpha: 1,
+      size: rand(1.8, 3.2),
+    });
+  }
+
+  function spawnDriftingWish() {
+    if (!storedWishes.length) return;
+    const text = storedWishes[Math.floor(Math.random() * storedWishes.length)];
+    const v = windVector();
+    const off = 140;
+    let x, y;
+    if (Math.abs(v.x) > Math.abs(v.y)) {
+      x = v.x > 0 ? -off : w + off;
+      y = rand(40, h - 40);
+    } else {
+      y = v.y > 0 ? -off : h + off;
+      x = rand(40, w - 40);
+    }
+    driftingWishes.push({ text, x, y, life: rand(10, 18), alpha: 0.18 });
+  }
+
+  function updateWind(dt, now) {
+    if (!stillMode && now - lastShift > shiftInterval) {
+      lastShift = now;
+      shiftInterval = rand(30000, 60000);
+      const next = (windIndex + Math.floor(rand(1, 7))) % directions.length;
+      setWind(next);
+    }
+    let diff = targetAngle - windAngle;
+    if (diff > Math.PI) diff -= Math.PI * 2;
+    if (diff < -Math.PI) diff += Math.PI * 2;
+    windAngle += diff * dt * 0.25;
+  }
+
+  function updateStorm(now) {
+    if (stormMode && now > stormUntil) {
+      stormMode = false;
+      stormColorShift = 0;
+      windSpeed = 40;
+    }
+    if (stormMode) {
+      stormColorShift = Math.min(stormColorShift + 0.02, 1);
+    } else {
+      stormColorShift = Math.max(stormColorShift - 0.02, 0);
+    }
+  }
+
+  function updateParticles(dt) {
+    if (!stillMode) {
+      const spawnCount = stormMode ? 6 : 2;
+      for (let i = 0; i < spawnCount; i += 1) spawnWisp();
+      if (Math.random() < 0.008) spawnDriftingWish();
+    }
+
+    const v = windVector();
+    const speed = windSpeed * (stormMode ? 2 : 1);
+    for (let i = wisps.length - 1; i >= 0; i -= 1) {
+      const p = wisps[i];
+      if (!stillMode) {
+        p.x += v.x * speed * p.drift * dt;
+        p.y += v.y * speed * p.drift * dt;
+      }
+      p.life -= dt;
+      if (p.life <= 0) wisps.splice(i, 1);
+    }
+
+    for (let i = wishParticles.length - 1; i >= 0; i -= 1) {
+      const p = wishParticles[i];
+      if (!stillMode) {
+        p.x += v.x * speed * dt * 1.2;
+        p.y += v.y * speed * dt * 1.2;
+      }
+      p.life -= dt;
+      p.alpha = Math.max(0, p.life / 16);
+      if (p.life <= 0) wishParticles.splice(i, 1);
+    }
+
+    for (let i = driftingWishes.length - 1; i >= 0; i -= 1) {
+      const p = driftingWishes[i];
+      if (!stillMode) {
+        p.x += v.x * speed * dt * 0.6;
+        p.y += v.y * speed * dt * 0.6;
+      }
+      p.life -= dt;
+      p.alpha = Math.max(0, p.life / 18) * 0.25;
+      if (p.life <= 0) driftingWishes.splice(i, 1);
+    }
+  }
+
+  function drawBackground() {
+    const grd = ctx.createRadialGradient(w * 0.5, h * 0.5, 100, w * 0.5, h * 0.5, Math.max(w, h));
+    grd.addColorStop(0, '#0e1118');
+    grd.addColorStop(0.45, '#0a0a0f');
+    grd.addColorStop(1, '#05060a');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  function drawWisps() {
+    ctx.save();
+    const baseColor = { r: 231, g: 238, b: 242 };
+    const teal = { r: 26, g: 58, b: 74 };
+    const purple = { r: 108, g: 75, b: 163 };
+    const stormMix = stormColorShift;
+    for (const p of wisps) {
+      const t = Math.max(0, Math.min(1, p.life / 5));
+      const r = lerp(baseColor.r, stormMix ? purple.r : teal.r, 0.4 + stormMix * 0.6);
+      const g = lerp(baseColor.g, stormMix ? purple.g : teal.g, 0.4 + stormMix * 0.6);
+      const b = lerp(baseColor.b, stormMix ? purple.b : teal.b, 0.4 + stormMix * 0.6);
+      ctx.fillStyle = `rgba(${r|0}, ${g|0}, ${b|0}, ${0.18 * t})`;
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y, p.size * 10, p.size * 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawDriftingWishes() {
+    ctx.save();
+    ctx.font = '18px "Cormorant Garamond", serif';
+    ctx.fillStyle = 'rgba(231, 238, 242, 0.18)';
+    for (const p of driftingWishes) {
+      ctx.globalAlpha = p.alpha;
+      ctx.fillText(p.text, p.x, p.y);
+    }
+    ctx.restore();
+  }
+
+  function drawWishParticles() {
+    ctx.save();
+    for (const p of wishParticles) {
+      ctx.fillStyle = `rgba(201, 169, 110, ${p.alpha})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * 2.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawWeathervane() {
+    const cx = w * 0.5;
+    const cy = h * 0.5;
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    ctx.strokeStyle = 'rgba(26, 58, 74, 0.8)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(0, 0, 120, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(201, 169, 110, 0.6)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 16; i += 1) {
+      const angle = (i / 16) * Math.PI * 2;
+      const len = i % 2 === 0 ? 14 : 8;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(angle) * 110, Math.sin(angle) * 110);
+      ctx.lineTo(Math.cos(angle) * (110 + len), Math.sin(angle) * (110 + len));
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = 'rgba(231, 238, 242, 0.6)';
+    ctx.font = '16px "Cormorant Garamond", serif';
+    const labels = ['N', 'E', 'S', 'W'];
+    const positions = [
+      { x: 0, y: -150 },
+      { x: 150, y: 0 },
+      { x: 0, y: 165 },
+      { x: -160, y: 0 },
+    ];
+    labels.forEach((label, i) => {
+      ctx.fillText(label, positions[i].x - 6, positions[i].y + 6);
+    });
+
+    ctx.save();
+    ctx.rotate(windAngle);
+
+    ctx.fillStyle = 'rgba(201, 169, 110, 0.9)';
+    ctx.beginPath();
+    ctx.moveTo(0, -8);
+    ctx.lineTo(120, 0);
+    ctx.lineTo(0, 8);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(231, 238, 242, 0.9)';
+    ctx.beginPath();
+    ctx.moveTo(-12, -4);
+    ctx.lineTo(0, 0);
+    ctx.lineTo(-12, 4);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+
+    ctx.fillStyle = 'rgba(26, 58, 74, 0.7)';
+    ctx.beginPath();
+    ctx.arc(0, 0, 10, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function loop(now) {
+    const t = now * 0.001;
+    const dt = Math.min(0.05, t - lastTime || 0.016);
+    lastTime = t;
+
+    updateWind(dt, now);
+    updateStorm(now);
+    updateParticles(dt);
+
+    drawBackground();
+    drawWisps();
+    drawDriftingWishes();
+    drawWishParticles();
+    drawWeathervane();
+
+    requestAnimationFrame(loop);
+  }
+
+  function addWish(text, x, y) {
+    if (!text.trim()) return;
+    storedWishes.push(text.trim());
+    while (storedWishes.length > 100) storedWishes.shift();
+    saveWishes();
+    const startX = x ?? w * 0.5;
+    const startY = y ?? h * 0.5;
+    for (let i = 0; i < 12; i += 1) {
+      spawnWishParticle(text, startX + rand(-8, 8), startY + rand(-8, 8));
+    }
+  }
+
+  function loadWishes() {
+    try {
+      const data = JSON.parse(localStorage.getItem('liminal-wishes') || '[]');
+      return Array.isArray(data) ? data.slice(0, 100) : [];
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function saveWishes() {
+    try {
+      localStorage.setItem('liminal-wishes', JSON.stringify(storedWishes.slice(-100)));
+    } catch (err) {
+      // ignore
+    }
+  }
+
+  function handleWishSubmit() {
+    const text = wishInput.value.trim();
+    if (text) addWish(text, w * 0.5, h * 0.5);
+    wishInput.value = '';
+    wishInput.style.display = 'none';
+  }
+
+  canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const cx = w * 0.5;
+    const cy = h * 0.5;
+    const dist = Math.hypot(x - cx, y - cy);
+
+    if (dist < 70) {
+      centerClicks += 1;
+      if (!centerClickTimer) {
+        centerClickTimer = window.setTimeout(() => {
+          centerClicks = 0;
+          centerClickTimer = 0;
+        }, 1800);
+      }
+      if (centerClicks >= 5) {
+        centerClicks = 0;
+        if (centerClickTimer) {
+          clearTimeout(centerClickTimer);
+          centerClickTimer = 0;
+        }
+        const originalTarget = targetAngle;
+        const spinCount = 4 + Math.floor(Math.random() * 4);
+        let spinProgress = 0;
+        const spinStart = performance.now();
+        const spinDuration = 1400;
+        function spinStep(now) {
+          const p = Math.min(1, (now - spinStart) / spinDuration);
+          spinProgress = p;
+          windAngle = originalTarget + p * Math.PI * 2 * spinCount;
+          if (p < 1) {
+            requestAnimationFrame(spinStep);
+          } else {
+            const next = Math.floor(Math.random() * directions.length);
+            setWind(next);
+            showMessage('The wind remembers what you have forgotten.');
+          }
+        }
+        requestAnimationFrame(spinStep);
+      }
+      return;
+    }
+
+    wishInput.style.display = 'block';
+    wishInput.focus();
+  });
+
+  wishInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      handleWishSubmit();
+    } else if (e.key === 'Escape') {
+      wishInput.value = '';
+      wishInput.style.display = 'none';
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (wishInput.style.display === 'block') return;
+    if (e.key.length === 1) {
+      keyBuffer = (keyBuffer + e.key.toLowerCase()).slice(-10);
+      if (keyBuffer.endsWith('still')) {
+        stillMode = true;
+        showMessage('In the absence of wind, you hear your own breathing.');
+      }
+      if (keyBuffer.endsWith('storm')) {
+        stillMode = false;
+        stormMode = true;
+        stormUntil = performance.now() + 10000;
+        windSpeed = 60;
+        showMessage('The storm gathers, a violet tide.');
+      }
+    }
+  });
+
+  window.addEventListener('resize', resize);
+
+  resize();
+  setWind(windIndex);
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

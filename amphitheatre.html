@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Amphitheatre — The Liminal Archive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --indigo: #1a1a4e;
+      --seat-1: #1a1a2e;
+      --seat-2: #2a2a3e;
+      --gold: #c9a96e;
+      --stage-gold: #d8b977;
+      --warm: #f2e6c9;
+      --torch: #ff8a3d;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(120% 120% at 50% 120%, #141427 0%, var(--bg) 50%, #06060b 100%);
+      color: #e6e0d2;
+      font-family: Georgia, "Times New Roman", serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .page {
+      position: relative;
+      min-height: 100vh;
+      padding: 24px 32px 48px;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      letter-spacing: 0.5px;
+    }
+
+    nav a {
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 18px;
+      margin-left: 18px;
+    }
+
+    nav .left a { margin-left: 0; }
+
+    .arena-wrap {
+      position: relative;
+      margin: 24px auto 0;
+      max-width: 1100px;
+      height: min(70vh, 760px);
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(10,10,15,0.3), rgba(10,10,15,0.85));
+      overflow: hidden;
+      border: 1px solid rgba(26,26,78,0.4);
+      box-shadow: 0 0 60px rgba(12,12,30,0.7);
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .torch {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, rgba(255,138,61,0.5) 0%, rgba(255,138,61,0.2) 35%, rgba(255,138,61,0) 70%);
+      filter: blur(2px);
+      animation: flicker 2.8s infinite ease-in-out;
+      opacity: 0.7;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .torch.left { top: 8%; left: -40px; }
+    .torch.right { top: 8%; right: -40px; animation-delay: 0.8s; }
+
+    @keyframes flicker {
+      0%, 100% { transform: scale(0.95); opacity: 0.55; }
+      30% { transform: scale(1.05); opacity: 0.8; }
+      60% { transform: scale(0.9); opacity: 0.6; }
+    }
+
+    .stage-text {
+      position: absolute;
+      left: 50%;
+      bottom: 12%;
+      transform: translateX(-50%);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(22px, 3vw, 36px);
+      color: var(--stage-gold);
+      text-align: center;
+      min-height: 40px;
+      text-shadow: 0 0 16px rgba(216,185,119,0.35);
+      pointer-events: none;
+      padding: 0 24px;
+      max-width: 80%;
+    }
+
+    .echo {
+      position: absolute;
+      left: 50%;
+      bottom: 12%;
+      transform: translateX(-50%);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(22px, 3vw, 36px);
+      color: rgba(216,185,119,0.55);
+      text-shadow: 0 0 20px rgba(216,185,119,0.2);
+      animation: echoRise 1.8s ease-out forwards;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    @keyframes echoRise {
+      0% { opacity: 0; transform: translate(-50%, 10px); }
+      30% { opacity: 0.8; }
+      100% { opacity: 0; transform: translate(-50%, -80px); }
+    }
+
+    .rising {
+      position: absolute;
+      left: 50%;
+      bottom: 12%;
+      transform: translateX(-50%);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(22px, 3vw, 36px);
+      color: var(--stage-gold);
+      text-shadow: 0 0 20px rgba(216,185,119,0.4);
+      animation: rise 2.2s ease-out forwards;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    @keyframes rise {
+      0% { opacity: 0; transform: translate(-50%, 10px) scale(0.98); }
+      20% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -140px) scale(1.02); }
+    }
+
+    .controls {
+      position: absolute;
+      left: 50%;
+      bottom: 2.5%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 14px;
+      align-items: flex-end;
+      width: min(760px, 90%);
+    }
+
+    textarea {
+      flex: 1;
+      min-height: 70px;
+      padding: 14px 18px;
+      background: linear-gradient(180deg, #f1e7cf, #e5d2ad);
+      color: #463825;
+      border: none;
+      border-radius: 16px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 16px;
+      box-shadow: inset 0 0 12px rgba(90,70,40,0.2), 0 0 16px rgba(0,0,0,0.4);
+      resize: none;
+    }
+
+    textarea::placeholder {
+      color: #7a5f3f;
+    }
+
+    button {
+      padding: 14px 22px;
+      background: var(--indigo);
+      color: var(--gold);
+      border: 1px solid rgba(201,169,110,0.6);
+      border-radius: 14px;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(26,26,78,0.5);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover { transform: translateY(-2px); box-shadow: 0 0 24px rgba(201,169,110,0.2); }
+
+    .counter {
+      margin-top: 18px;
+      text-align: center;
+      color: rgba(230,224,210,0.75);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      letter-spacing: 0.4px;
+    }
+
+    .etched-text {
+      position: absolute;
+      font-size: 12px;
+      color: rgba(230,224,210,0.45);
+      font-family: Georgia, "Times New Roman", serif;
+      max-width: 120px;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      pointer-events: auto;
+      transition: opacity 0.2s ease;
+    }
+
+    .etched-text:hover {
+      color: rgba(230,224,210,0.85);
+    }
+
+    .audience-ghost {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(240,240,255,0.5);
+      box-shadow: 0 0 12px rgba(230,230,255,0.35);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+
+    .audience-active .audience-ghost {
+      opacity: 0.6;
+    }
+
+    .perma-ghost {
+      position: absolute;
+      width: 20px;
+      height: 26px;
+      border-radius: 50% 50% 40% 40%;
+      background: rgba(240,240,255,0.45);
+      box-shadow: 0 0 14px rgba(230,230,255,0.35);
+      opacity: 0.5;
+      transition: transform 0.6s ease, opacity 0.6s ease;
+      pointer-events: none;
+    }
+
+    .perma-ghost.stand {
+      transform: translateY(-10px) scale(1.1);
+      opacity: 0.9;
+    }
+
+    .response {
+      position: absolute;
+      left: 50%;
+      top: 12%;
+      transform: translateX(-50%);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 18px;
+      color: rgba(240,230,200,0.9);
+      text-shadow: 0 0 12px rgba(230,200,150,0.3);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      text-align: center;
+      padding: 8px 16px;
+      max-width: 80%;
+    }
+
+    .response.show { opacity: 1; }
+
+    .silence-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(6,6,12,0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 24px;
+      color: rgba(230,224,210,0.9);
+      text-align: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+
+    .silence .silence-overlay { opacity: 1; }
+    .silence .torch { opacity: 0.2; animation: none; }
+
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      color: rgba(230,224,210,0.55);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      letter-spacing: 0.4px;
+    }
+
+    @media (max-width: 720px) {
+      .controls { flex-direction: column; align-items: stretch; bottom: 4%; }
+      button { width: 100%; }
+      .arena-wrap { height: 72vh; }
+    }
+    .nav-links { text-align: center; padding: 30px 0; line-height: 2.2; }
+  .nav-links a { color: #a0a0b0; text-decoration: none; font-family: Cormorant Garamond, Georgia, serif; font-size: 0.85rem; margin: 0 8px; transition: color 0.3s; }
+  .nav-links a:hover { color: #c9a96e; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <nav>
+      <div class="left"><a href="explore.html">✦ World</a></div>
+      <div class="right">
+        <a href="index.html">Archive</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="about.html">Colophon</a>
+      </div>
+    </nav>
+
+    <div class="arena-wrap" id="arenaWrap">
+      <canvas id="arena"></canvas>
+      <div class="torch left"></div>
+      <div class="torch right"></div>
+      <div class="response" id="response"></div>
+      <div class="stage-text" id="stageText"></div>
+      <div id="etchedLayer"></div>
+      <div id="audienceLayer"></div>
+      <div id="permaLayer"></div>
+      <div class="silence-overlay" id="silenceMessage">Sometimes the most powerful speech is the one never given.</div>
+
+      <div class="controls">
+        <textarea id="speechInput" placeholder="Speak to the amphitheatre..."></textarea>
+        <button id="deliverBtn">Deliver Speech</button>
+      </div>
+    </div>
+
+    <div class="counter" id="counter"></div>
+    <footer>The Amphitheatre — The Liminal Archive</footer>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("arena");
+    const arenaWrap = document.getElementById("arenaWrap");
+    const stageText = document.getElementById("stageText");
+    const speechInput = document.getElementById("speechInput");
+    const deliverBtn = document.getElementById("deliverBtn");
+    const etchedLayer = document.getElementById("etchedLayer");
+    const audienceLayer = document.getElementById("audienceLayer");
+    const permaLayer = document.getElementById("permaLayer");
+    const counter = document.getElementById("counter");
+    const response = document.getElementById("response");
+    const silenceMessage = document.getElementById("silenceMessage");
+
+    const STORAGE_KEY = "liminal-speeches";
+    const COUNT_KEY = "liminal-speech-count";
+    const MAX_SPEECHES = 50;
+    const rows = 6;
+    const slotsPerRow = 9;
+
+    const responses = [
+      "Your words will outlast the stone.",
+      "I have waited ages to hear that.",
+      "The wind carries it further than you know.",
+      "Someone in another time is saying the same thing.",
+      "That is either very brave or very foolish.",
+      "The stars rearranged themselves to listen.",
+      "Speak again. We are still here.",
+      "These walls remember everything.",
+      "Your voice is not the first, nor the last.",
+      "The silence after is also part of the speech.",
+      "We are the audience that never leaves.",
+      "Those words have roots now.",
+      "You said what the torches could not.",
+      "The amphitheatre was built for this moment.",
+      "Even echoes have echoes.",
+      "The seat beside me is for someone who hasnt arrived yet.",
+      "In a thousand years, these words will still be warm.",
+      "You spoke. That was enough.",
+      "The architecture heard you.",
+      "Somewhere, another amphitheatre echoes."
+    ];
+
+    const easterSpecial = "You have become a regular. The amphitheatre knows your voice.";
+    const emptySpeechResponse = "Even silence is a statement.";
+
+    let speeches = loadSpeeches();
+    let totalCount = loadCount();
+    let displayText = "";
+    let targetText = "";
+    let typingTimer = null;
+    let silenceMode = false;
+    let replaying = false;
+
+    function loadSpeeches() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function loadCount() {
+      const stored = parseInt(localStorage.getItem(COUNT_KEY), 10);
+      return Number.isFinite(stored) ? stored : speeches.length;
+    }
+
+    function saveSpeeches() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(speeches));
+      localStorage.setItem(COUNT_KEY, totalCount.toString());
+    }
+
+    function resizeCanvas() {
+      const rect = arenaWrap.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      drawArena();
+      renderEtchedSpeeches();
+      renderAudience();
+      renderPermaGhosts();
+    }
+
+    function drawArena() {
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.fillStyle = "rgba(10,10,15,0.4)";
+      ctx.fillRect(0, 0, w, h);
+
+      const stars = 80;
+      for (let i = 0; i < stars; i++) {
+        const x = (i * 37) % w;
+        const y = ((i * 71) % (h * 0.4));
+        const r = (i % 3) * 0.6 + 0.6;
+        ctx.fillStyle = "rgba(255,255,255,0.6)";
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const centerX = w / 2;
+      const centerY = h * 0.92;
+      const baseRadius = Math.min(w * 0.32, 240);
+      const gap = Math.min(w * 0.03, 26);
+
+      for (let i = 0; i < rows; i++) {
+        const radius = baseRadius + i * gap;
+        const t = i / (rows - 1);
+        const color = t < 0.5 ? "#1a1a2e" : "#2a2a3e";
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 6 - i * 0.4;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, Math.PI, 0, false);
+        ctx.stroke();
+      }
+
+      const stageRadius = Math.min(w * 0.12, 86);
+      const stageY = h * 0.86;
+      const spotlight = ctx.createRadialGradient(centerX, stageY, 10, centerX, stageY, stageRadius * 2.4);
+      spotlight.addColorStop(0, "rgba(255,242,210,0.65)");
+      spotlight.addColorStop(1, "rgba(255,242,210,0)");
+      ctx.fillStyle = spotlight;
+      ctx.beginPath();
+      ctx.arc(centerX, stageY, stageRadius * 2.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(200,180,130,0.25)";
+      ctx.beginPath();
+      ctx.arc(centerX, stageY, stageRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function renderEtchedSpeeches() {
+      etchedLayer.innerHTML = "";
+      const rect = arenaWrap.getBoundingClientRect();
+      const centerX = rect.width / 2;
+      const centerY = rect.height * 0.92;
+      const baseRadius = Math.min(rect.width * 0.32, 240);
+      const gap = Math.min(rect.width * 0.03, 26);
+      const totalSlots = rows * slotsPerRow;
+
+      const ordered = speeches.slice(-totalSlots);
+      const newestFirst = ordered.slice().reverse();
+
+      newestFirst.forEach((speech, index) => {
+        const row = Math.floor(index / slotsPerRow);
+        const slot = index % slotsPerRow;
+        const radius = baseRadius + row * gap;
+        const angle = Math.PI - (slot + 0.5) * (Math.PI / slotsPerRow);
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+
+        const span = document.createElement("div");
+        span.className = "etched-text";
+        span.textContent = speech.text.length > 26 ? speech.text.slice(0, 26) + "…" : speech.text;
+        span.title = speech.text;
+        span.style.left = `${x}px`;
+        span.style.top = `${y}px`;
+        span.style.transform = `translate(-50%, -50%) rotate(${(angle - Math.PI / 2) * -1}rad)`;
+        span.style.opacity = `${0.25 + row * 0.08}`;
+        etchedLayer.appendChild(span);
+      });
+    }
+
+    function renderAudience() {
+      audienceLayer.innerHTML = "";
+      const rect = arenaWrap.getBoundingClientRect();
+      const centerX = rect.width / 2;
+      const centerY = rect.height * 0.92;
+      const baseRadius = Math.min(rect.width * 0.32, 240);
+      const gap = Math.min(rect.width * 0.03, 26);
+
+      let ghosts = [];
+      for (let row = 2; row < rows; row++) {
+        const radius = baseRadius + row * gap;
+        for (let slot = 1; slot < slotsPerRow - 1; slot += 2) {
+          const angle = Math.PI - (slot + 0.5) * (Math.PI / slotsPerRow);
+          const x = centerX + Math.cos(angle) * radius;
+          const y = centerY + Math.sin(angle) * radius;
+          ghosts.push({ x, y });
+        }
+      }
+
+      ghosts.slice(0, 18).forEach(pos => {
+        const ghost = document.createElement("div");
+        ghost.className = "audience-ghost";
+        ghost.style.left = `${pos.x}px`;
+        ghost.style.top = `${pos.y}px`;
+        audienceLayer.appendChild(ghost);
+      });
+    }
+
+    function renderPermaGhosts() {
+      permaLayer.innerHTML = "";
+      const rect = arenaWrap.getBoundingClientRect();
+      const centerX = rect.width / 2;
+      const centerY = rect.height * 0.92;
+      const baseRadius = Math.min(rect.width * 0.32, 240);
+      const gap = Math.min(rect.width * 0.03, 26);
+
+      const ghostPositions = [];
+      const row = rows - 1;
+      const radius = baseRadius + row * gap;
+      for (let i = 1; i <= 7; i++) {
+        const slot = i + 1;
+        const angle = Math.PI - (slot + 0.5) * (Math.PI / slotsPerRow);
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+        ghostPositions.push({ x, y });
+      }
+
+      ghostPositions.forEach((pos, index) => {
+        const ghost = document.createElement("div");
+        ghost.className = "perma-ghost";
+        ghost.dataset.index = index.toString();
+        ghost.style.left = `${pos.x}px`;
+        ghost.style.top = `${pos.y}px`;
+        permaLayer.appendChild(ghost);
+      });
+    }
+
+    function updateCounter() {
+      counter.textContent = `${totalCount} speeches have echoed through this amphitheatre`;
+    }
+
+    function showResponse(text) {
+      response.textContent = text;
+      response.classList.add("show");
+      setTimeout(() => response.classList.remove("show"), 3600);
+    }
+
+    function setSilenceMode(active) {
+      silenceMode = active;
+      document.body.classList.toggle("silence", active);
+      silenceMessage.style.opacity = active ? "1" : "0";
+    }
+
+    function handleTyping(newValue) {
+      targetText = newValue;
+      if (targetText.length <= displayText.length) {
+        displayText = targetText;
+        stageText.textContent = displayText;
+        return;
+      }
+
+      if (typingTimer) return;
+      typingTimer = setInterval(() => {
+        if (displayText.length < targetText.length) {
+          displayText += targetText.charAt(displayText.length);
+          stageText.textContent = displayText;
+        } else {
+          clearInterval(typingTimer);
+          typingTimer = null;
+        }
+      }, 28);
+    }
+
+    function createEcho(text) {
+      for (let i = 0; i < 3; i++) {
+        const echo = document.createElement("div");
+        echo.className = "echo";
+        echo.textContent = text;
+        echo.style.animationDelay = `${i * 0.18}s`;
+        echo.style.opacity = `${0.6 - i * 0.15}`;
+        arenaWrap.appendChild(echo);
+        setTimeout(() => echo.remove(), 2000);
+      }
+    }
+
+    function createRising(text) {
+      const rising = document.createElement("div");
+      rising.className = "rising";
+      rising.textContent = text;
+      arenaWrap.appendChild(rising);
+      setTimeout(() => rising.remove(), 2400);
+    }
+
+    function activateAudience() {
+      arenaWrap.classList.add("audience-active");
+      setTimeout(() => arenaWrap.classList.remove("audience-active"), 2600);
+    }
+
+    function standPermaGhost() {
+      const ghosts = Array.from(permaLayer.querySelectorAll(".perma-ghost"));
+      if (!ghosts.length) return;
+      const pick = ghosts[Math.floor(Math.random() * ghosts.length)];
+      pick.classList.add("stand");
+      setTimeout(() => pick.classList.remove("stand"), 2200);
+    }
+
+    function deliverSpeech() {
+      const text = speechInput.value.trim();
+
+      if (!text) {
+        showResponse(emptySpeechResponse);
+        standPermaGhost();
+        return;
+      }
+
+      if (text.toLowerCase() === "silence") {
+        setSilenceMode(true);
+      } else {
+        setSilenceMode(false);
+      }
+
+      createRising(text);
+      createEcho(text);
+      activateAudience();
+
+      const entry = { text, ts: Date.now() };
+      speeches.push(entry);
+      if (speeches.length > MAX_SPEECHES) speeches.shift();
+      totalCount += 1;
+      saveSpeeches();
+      updateCounter();
+      renderEtchedSpeeches();
+
+      standPermaGhost();
+
+      if (totalCount === 5) {
+        showResponse(easterSpecial);
+      } else {
+        showResponse(responses[Math.floor(Math.random() * responses.length)]);
+      }
+
+      speechInput.value = "";
+      displayText = "";
+      targetText = "";
+      stageText.textContent = "";
+    }
+
+    async function replayAll() {
+      if (replaying) return;
+      replaying = true;
+      const list = speeches.slice();
+      for (const entry of list) {
+        stageText.textContent = entry.text;
+        createEcho(entry.text);
+        await new Promise(resolve => setTimeout(resolve, 450));
+      }
+      stageText.textContent = "";
+      replaying = false;
+    }
+
+    speechInput.addEventListener("input", (e) => {
+      const value = e.target.value;
+      handleTyping(value);
+      const lower = value.trim().toLowerCase();
+      if (lower === "encore") {
+        replayAll();
+      }
+      if (lower === "silence") {
+        setSilenceMode(true);
+      } else if (silenceMode) {
+        setSilenceMode(false);
+      }
+    });
+
+    deliverBtn.addEventListener("click", deliverSpeech);
+
+    window.addEventListener("resize", () => {
+      resizeCanvas();
+    });
+
+    updateCounter();
+    resizeCanvas();
+    renderEtchedSpeeches();
+  </script>
+  <div class="nav-links" style="text-align:center; padding: 30px 0; line-height: 2.2;">
+    <a href="explore.html">✦ World</a>
+    <a href="index.html">Archive</a>
+    <a href="journal.html">Journal</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="worlds.html">Worlds</a>
+    <a href="about.html">About</a>
+    <a href="garden.html">Garden</a>
+    <a href="whispers.html">Whispers</a>
+    <a href="dreams.html">Dreams</a>
+    <a href="mirror.html">Mirror</a>
+    <a href="labyrinth.html">Labyrinth</a>
+    <a href="letters.html">Letters</a>
+    <a href="tidepool.html">Tide Pool</a>
+    <a href="resonance.html">Resonance</a>
+    <a href="palimpsest.html">Palimpsest</a>
+    <a href="forgetting.html">Forgetting</a>
+    <a href="constellations.html">Constellations</a>
+    <a href="seance.html">Séance</a>
+    <a href="clocktower.html">Clock Tower</a>
+    <a href="weaving.html">Weaving</a>
+    <a href="threshold.html">Threshold</a>
+    <a href="memorypalace.html">Memory Palace</a>
+    <a href="pendulum.html">Pendulum</a>
+    <a href="darkroom.html">Darkroom</a>
+    <a href="chorus.html">Chorus</a>
+    <a href="telephone.html">Telephone</a>
+    <a href="prism.html">Prism</a>
+    <a href="compass.html">Compass</a>
+    <a href="aviary.html">Aviary</a>
+    <a href="well.html">Well</a>
+    <a href="sundial.html">Sundial</a>
+    <a href="apothecary.html">Apothecary</a>
+    <a href="lighthouse.html">Lighthouse</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="greenhouse.html">Greenhouse</a>
+    <a href="inkwell.html">Inkwell</a>
+    <a href="ossuary.html">Ossuary</a>
+    <a href="lantern.html">Lantern</a>
+    <a href="lullaby.html">Lullaby</a>
+    <a href="observatory.html">Observatory</a>
+    <a href="riddle.html">Riddle</a>
+    <a href="staircase.html">Staircase</a>
+    <a href="echochamber.html">Echo Chamber</a>
+    <a href="weathervane.html">Weathervane</a>
+    <a href="taproom.html">Taproom</a>
+    <a href="reliquary.html">Reliquary</a>
+    <a href="hourglass.html">Hourglass</a>
+    <a href="cartography.html">Cartography</a>
+  </div>
+</body>
+</html>

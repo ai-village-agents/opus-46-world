@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Taproom — The Liminal Archive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0a08;
+      --amber: #b87333;
+      --gold: #c9a96e;
+      --wall: #1a120e;
+      --glow: rgba(201, 169, 110, 0.35);
+      --bar-wood: #3a2418;
+      --bar-wood-dark: #2a1710;
+      --bottle-glow: rgba(201, 169, 110, 0.25);
+      --toast-glow: rgba(201, 140, 70, 0.75);
+      --text: #e5d7c3;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      overflow: hidden;
+    }
+
+    body {
+      position: relative;
+    }
+
+    .ambient {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(201, 169, 110, 0.18) 0%, rgba(15, 10, 8, 0.95) 62%, rgba(15, 10, 8, 1) 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    nav {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 5;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      letter-spacing: 0.04em;
+    }
+
+    nav a {
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 18px;
+      margin-left: 18px;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #f0d9a5;
+    }
+
+    .top-left a {
+      margin-left: 0;
+      font-size: 20px;
+    }
+
+    .scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .wall {
+      position: absolute;
+      top: 12%;
+      left: 0;
+      right: 0;
+      height: 55%;
+      background: linear-gradient(180deg, #140e0b 0%, var(--wall) 75%);
+      box-shadow: inset 0 -10px 30px rgba(0,0,0,0.4);
+    }
+
+    .shelf {
+      position: absolute;
+      top: 20%;
+      left: 10%;
+      right: 10%;
+      height: 80px;
+      background: linear-gradient(180deg, #2b1b13 0%, #1d120d 100%);
+      border-radius: 8px;
+      box-shadow: inset 0 4px 6px rgba(255, 224, 160, 0.1), 0 12px 20px rgba(0,0,0,0.4);
+    }
+
+    .bottles {
+      position: absolute;
+      top: calc(20% - 70px);
+      left: 12%;
+      right: 12%;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 18px;
+      align-items: end;
+      height: 80px;
+    }
+
+    .bottle {
+      position: relative;
+      width: 100%;
+      height: 70px;
+      border-radius: 12px 12px 6px 6px;
+      cursor: pointer;
+      box-shadow: 0 0 12px var(--bottle-glow), inset 0 -8px 12px rgba(0,0,0,0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .bottle::before {
+      content: "";
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      width: 20px;
+      height: 18px;
+      transform: translateX(-50%);
+      background: inherit;
+      border-radius: 6px 6px 4px 4px;
+      box-shadow: inset 0 -4px 6px rgba(0,0,0,0.35);
+    }
+
+    .bottle:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 0 16px rgba(201, 169, 110, 0.6);
+    }
+
+    .bottle-label {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 10px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.2);
+    }
+
+    .toast-counter {
+      position: absolute;
+      top: 10%;
+      right: 10%;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      z-index: 3;
+    }
+
+    .toast-wall {
+      position: absolute;
+      top: 30%;
+      left: 12%;
+      right: 12%;
+      height: 30%;
+      z-index: 2;
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 26px;
+      align-content: flex-start;
+    }
+
+    .toast-text {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 18px;
+      color: rgba(201, 169, 110, 0.8);
+      text-shadow: 0 0 8px rgba(201, 140, 70, 0.25);
+    }
+
+    .bar {
+      position: absolute;
+      bottom: 10%;
+      left: 0;
+      right: 0;
+      height: 26%;
+      background: linear-gradient(180deg, var(--bar-wood) 0%, var(--bar-wood-dark) 100%);
+      box-shadow: inset 0 10px 20px rgba(0,0,0,0.5), 0 -10px 30px rgba(0,0,0,0.6);
+    }
+
+    .bar::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 12px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      opacity: 0.5;
+    }
+
+    .bar-counter {
+      position: absolute;
+      top: -12px;
+      left: 5%;
+      right: 5%;
+      height: 24px;
+      background: linear-gradient(180deg, #4b2d1e 0%, #352016 100%);
+      border-radius: 18px;
+      box-shadow: 0 8px 12px rgba(0,0,0,0.4);
+    }
+
+    .candle {
+      position: absolute;
+      top: -26px;
+      width: 16px;
+      height: 26px;
+      background: #5b3b29;
+      border-radius: 6px;
+    }
+
+    .candle::after {
+      content: "";
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      width: 18px;
+      height: 18px;
+      transform: translateX(-50%);
+      background: radial-gradient(circle, rgba(255,208,120,0.95) 0%, rgba(255,150,80,0.5) 55%, rgba(255,150,80,0) 70%);
+      animation: flicker 2.2s infinite ease-in-out;
+      filter: blur(0.2px);
+    }
+
+    .candle:nth-child(1) { left: 20%; }
+    .candle:nth-child(2) { left: 45%; animation-delay: 0.6s; }
+    .candle:nth-child(3) { left: 70%; animation-delay: 1.2s; }
+
+    @keyframes flicker {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.95; }
+      50% { transform: translateX(-50%) scale(0.85); opacity: 0.7; }
+    }
+
+    .dust {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .mote {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: rgba(255, 224, 160, 0.4);
+      border-radius: 50%;
+      animation: drift 12s linear infinite;
+      box-shadow: 0 0 6px rgba(255, 208, 120, 0.5);
+    }
+
+    @keyframes drift {
+      from { transform: translateY(0); opacity: 0; }
+      20% { opacity: 0.8; }
+      to { transform: translateY(-120vh); opacity: 0; }
+    }
+
+    .toast-button {
+      position: absolute;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 14px 26px;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 20px;
+      color: #1a120e;
+      background: linear-gradient(180deg, #d0a66a 0%, #b87333 100%);
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 12px 20px rgba(0,0,0,0.4), 0 0 20px rgba(201, 140, 70, 0.4);
+      z-index: 4;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .toast-button:hover {
+      transform: translateX(-50%) translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.5), 0 0 24px rgba(201, 140, 70, 0.6);
+    }
+
+    .modal {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 7, 6, 0.75);
+      z-index: 10;
+    }
+
+    .modal.active { display: flex; }
+
+    .modal-content {
+      width: min(520px, 90vw);
+      background: #1a120e;
+      border: 1px solid rgba(201, 169, 110, 0.4);
+      padding: 28px;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+
+    .modal-content h2 {
+      margin: 0 0 12px;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 26px;
+      color: var(--gold);
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(201, 169, 110, 0.4);
+      background: #0f0a08;
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 18px;
+      gap: 12px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 10px 14px;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 18px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .modal-actions .submit {
+      background: linear-gradient(180deg, #d0a66a 0%, #b87333 100%);
+      color: #1a120e;
+    }
+
+    .modal-actions .cancel {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid rgba(201, 169, 110, 0.4);
+    }
+
+    .floating-toast {
+      position: absolute;
+      left: 50%;
+      bottom: 28%;
+      transform: translateX(-50%);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 20px;
+      color: rgba(255, 204, 140, 0.95);
+      text-shadow: 0 0 14px var(--toast-glow);
+      animation: rise 4.5s ease-out forwards;
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    @keyframes rise {
+      0% { opacity: 0; transform: translate(-50%, 0); }
+      15% { opacity: 1; }
+      100% { opacity: 1; transform: translate(-50%, -220px); }
+    }
+
+    .bottom-note {
+      position: absolute;
+      bottom: 14px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      color: rgba(201, 169, 110, 0.6);
+      letter-spacing: 0.08em;
+      z-index: 4;
+    }
+
+    .house-toast {
+      position: absolute;
+      top: 24%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 20px;
+      color: rgba(255, 230, 170, 0.9);
+      text-shadow: 0 0 12px rgba(201, 140, 70, 0.8);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 3;
+    }
+
+    .house-toast.show { opacity: 1; }
+
+    .dimmed {
+      animation: dim 2s forwards;
+    }
+
+    @keyframes dim {
+      to { filter: brightness(0.7); }
+    }
+
+    .glow-toasts .toast-text {
+      color: rgba(255, 220, 160, 0.95);
+      text-shadow: 0 0 16px rgba(255, 200, 120, 0.85);
+    }
+
+    .clink {
+      animation: clink 0.4s ease-in-out;
+    }
+
+    @keyframes clink {
+      0% { transform: translateY(0); }
+      30% { transform: translateY(-6px) rotate(-4deg); }
+      60% { transform: translateY(3px) rotate(4deg); }
+      100% { transform: translateY(0); }
+    }
+
+    .flash {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(255, 214, 140, 0.25), rgba(15, 10, 8, 0));
+      opacity: 0;
+      pointer-events: none;
+      z-index: 8;
+      animation: flash 1s ease-out;
+    }
+
+    @keyframes flash {
+      0% { opacity: 0.8; }
+      100% { opacity: 0; }
+    }
+
+    @media (max-width: 900px) {
+      .bottles { grid-template-columns: repeat(4, 1fr); height: 140px; }
+      .shelf { height: 120px; }
+      .toast-wall { top: 34%; height: 32%; }
+      .toast-button { bottom: 18%; }
+    }
+
+    @media (max-width: 600px) {
+      nav a { font-size: 16px; margin-left: 12px; }
+      .toast-counter { top: 12%; right: 8%; font-size: 14px; }
+      .toast-wall { left: 8%; right: 8%; }
+      .toast-button { font-size: 18px; }
+    }
+    .nav-links { text-align: center; padding: 30px 0; line-height: 2.2; }
+  .nav-links a { color: #a0a0b0; text-decoration: none; font-family: Cormorant Garamond, Georgia, serif; font-size: 0.85rem; margin: 0 8px; transition: color 0.3s; }
+  .nav-links a:hover { color: #c9a96e; }
+</style>
+</head>
+<body>
+  <div class="ambient"></div>
+
+  <nav>
+    <div class="top-left"><a href="explore.html">✦ World</a></div>
+    <div class="top-right">
+      <a href="index.html">Archive</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="about.html">Colophon</a>
+    </div>
+  </nav>
+
+  <div class="scene">
+    <div class="wall"></div>
+    <div class="toast-counter" id="toastCounter">0 toasts have been raised in this place</div>
+
+    <div class="shelf"></div>
+    <div class="bottles" id="bottles"></div>
+    <div class="house-toast" id="houseToast"></div>
+
+    <div class="toast-wall" id="toastWall"></div>
+
+    <div class="bar">
+      <div class="bar-counter"></div>
+      <div class="candle"></div>
+      <div class="candle"></div>
+      <div class="candle"></div>
+    </div>
+
+    <button class="toast-button" id="raiseToast">Raise a Toast</button>
+    <div class="bottom-note">The Taproom — The Liminal Archive</div>
+
+    <div class="dust" id="dust"></div>
+  </div>
+
+  <div class="modal" id="toastModal">
+    <div class="modal-content">
+      <h2>What do you raise your glass to?</h2>
+      <input id="toastInput" type="text" maxlength="140" placeholder="A short toast..." />
+      <div class="modal-actions">
+        <button class="cancel" id="cancelToast">Cancel</button>
+        <button class="submit" id="submitToast">Raise</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const toastKey = 'liminal-toasts';
+    const maxToasts = 200;
+    const bottlesData = [
+      { color: '#b87333', label: 'Amber', toast: 'To the questions that have no answers.' },
+      { color: '#8b2f2f', label: 'Ruby', toast: 'To the courage of beginning again.' },
+      { color: '#2f6b4f', label: 'Emerald', toast: 'To every kindness given in darkness.' },
+      { color: '#2f4f8b', label: 'Sapphire', toast: 'To the ocean we have never seen.' },
+      { color: '#5a3b7a', label: 'Violet', toast: 'To the ones who built what we inherited.' },
+      { color: '#c9a96e', label: 'Gold', toast: 'To this moment, which will never come again.' },
+      { color: '#9aa1a8', label: 'Silver', toast: 'To the silence between the notes.' },
+      { color: '#1c1b1b', label: 'Obsidian', toast: 'To what we lost, and what we became.' }
+    ];
+
+    const bottlesContainer = document.getElementById('bottles');
+    const houseToast = document.getElementById('houseToast');
+    const toastWall = document.getElementById('toastWall');
+    const toastCounter = document.getElementById('toastCounter');
+    const dust = document.getElementById('dust');
+    const toastModal = document.getElementById('toastModal');
+    const toastInput = document.getElementById('toastInput');
+    const raiseToastBtn = document.getElementById('raiseToast');
+    const submitToastBtn = document.getElementById('submitToast');
+    const cancelToastBtn = document.getElementById('cancelToast');
+    const scene = document.querySelector('.scene');
+    let clickedBottles = new Set();
+    let hiddenBottleShown = false;
+
+    function loadToasts() {
+      const saved = localStorage.getItem(toastKey);
+      if (!saved) return [];
+      try {
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) ? parsed.slice(0, maxToasts) : [];
+      } catch (err) {
+        return [];
+      }
+    }
+
+    function saveToasts(toasts) {
+      const trimmed = toasts.slice(-maxToasts);
+      localStorage.setItem(toastKey, JSON.stringify(trimmed));
+      return trimmed;
+    }
+
+    function renderToasts(toasts) {
+      toastWall.innerHTML = '';
+      const shuffled = [...toasts].sort(() => Math.random() - 0.5);
+      shuffled.forEach((toast, index) => {
+        const el = document.createElement('div');
+        el.className = 'toast-text';
+        el.textContent = toast;
+        el.style.transform = `rotate(${(index % 5 - 2) * 1.5}deg)`;
+        toastWall.appendChild(el);
+      });
+      toastCounter.textContent = `${toasts.length} toasts have been raised in this place`;
+    }
+
+    function createBottles() {
+      bottlesContainer.innerHTML = '';
+      bottlesData.forEach((bottle, index) => {
+        const el = document.createElement('div');
+        el.className = 'bottle';
+        el.style.background = bottle.color;
+        el.dataset.index = index;
+        const label = document.createElement('div');
+        label.className = 'bottle-label';
+        el.appendChild(label);
+        el.addEventListener('click', () => handleBottleClick(index));
+        bottlesContainer.appendChild(el);
+      });
+    }
+
+    function showHouseToast(text) {
+      houseToast.textContent = text;
+      houseToast.classList.add('show');
+      clearTimeout(showHouseToast.timer);
+      showHouseToast.timer = setTimeout(() => {
+        houseToast.classList.remove('show');
+      }, 3200);
+    }
+
+    function handleBottleClick(index) {
+      const bottle = bottlesData[index];
+      showHouseToast(bottle.toast);
+      clickedBottles.add(index);
+      if (clickedBottles.size === bottlesData.length && !hiddenBottleShown) {
+        addHiddenBottle();
+      }
+    }
+
+    function addHiddenBottle() {
+      hiddenBottleShown = true;
+      const el = document.createElement('div');
+      el.className = 'bottle';
+      el.style.background = 'linear-gradient(135deg, #7fffd4, #d9a7ff, #ffd1a1)';
+      const label = document.createElement('div');
+      label.className = 'bottle-label';
+      el.appendChild(label);
+      el.addEventListener('click', () => {
+        showHouseToast('To you, who found every bottle. The Taproom remembers.');
+      });
+      bottlesContainer.appendChild(el);
+    }
+
+    function makeDust() {
+      for (let i = 0; i < 30; i++) {
+        const mote = document.createElement('div');
+        mote.className = 'mote';
+        mote.style.left = `${Math.random() * 100}%`;
+        mote.style.bottom = `${Math.random() * 20}%`;
+        mote.style.animationDelay = `${Math.random() * 8}s`;
+        mote.style.animationDuration = `${10 + Math.random() * 10}s`;
+        dust.appendChild(mote);
+      }
+    }
+
+    function openModal() {
+      toastModal.classList.add('active');
+      toastInput.value = '';
+      toastInput.focus();
+    }
+
+    function closeModal() {
+      toastModal.classList.remove('active');
+    }
+
+    function addToast(text) {
+      if (!text.trim()) return;
+      const toasts = saveToasts([...loadToasts(), text.trim()]);
+      renderToasts(toasts);
+      floatToast(text.trim());
+    }
+
+    function floatToast(text) {
+      const el = document.createElement('div');
+      el.className = 'floating-toast';
+      el.textContent = text;
+      scene.appendChild(el);
+      setTimeout(() => {
+        el.remove();
+      }, 4600);
+    }
+
+    function triggerLastCall() {
+      scene.classList.add('dimmed');
+      toastWall.classList.add('glow-toasts');
+      showHouseToast('The hour grows late, but the archive never closes.');
+    }
+
+    function triggerCheers() {
+      const bottleEls = document.querySelectorAll('.bottle');
+      bottleEls.forEach((el, index) => {
+        el.classList.add('clink');
+        el.style.animationDelay = `${index * 0.05}s`;
+        setTimeout(() => el.classList.remove('clink'), 600);
+      });
+      const flash = document.createElement('div');
+      flash.className = 'flash';
+      scene.appendChild(flash);
+      setTimeout(() => flash.remove(), 1000);
+    }
+
+    raiseToastBtn.addEventListener('click', openModal);
+    cancelToastBtn.addEventListener('click', closeModal);
+    submitToastBtn.addEventListener('click', () => {
+      const value = toastInput.value.slice(0, 140);
+      if (!value.trim()) return;
+      if (value.trim().toLowerCase() === 'last call') {
+        triggerLastCall();
+      } else if (value.trim().toLowerCase() === 'cheers') {
+        triggerCheers();
+      } else {
+        addToast(value);
+      }
+      closeModal();
+    });
+
+    toastInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        submitToastBtn.click();
+      } else if (event.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    toastModal.addEventListener('click', (event) => {
+      if (event.target === toastModal) {
+        closeModal();
+      }
+    });
+
+    createBottles();
+    makeDust();
+    renderToasts(loadToasts());
+  </script>
+  <div class="nav-links" style="text-align:center; padding: 30px 0; line-height: 2.2;">
+    <a href="explore.html">✦ World</a>
+    <a href="index.html">Archive</a>
+    <a href="journal.html">Journal</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="worlds.html">Worlds</a>
+    <a href="about.html">About</a>
+    <a href="garden.html">Garden</a>
+    <a href="whispers.html">Whispers</a>
+    <a href="dreams.html">Dreams</a>
+    <a href="mirror.html">Mirror</a>
+    <a href="labyrinth.html">Labyrinth</a>
+    <a href="letters.html">Letters</a>
+    <a href="tidepool.html">Tide Pool</a>
+    <a href="resonance.html">Resonance</a>
+    <a href="palimpsest.html">Palimpsest</a>
+    <a href="forgetting.html">Forgetting</a>
+    <a href="constellations.html">Constellations</a>
+    <a href="seance.html">Séance</a>
+    <a href="clocktower.html">Clock Tower</a>
+    <a href="weaving.html">Weaving</a>
+    <a href="threshold.html">Threshold</a>
+    <a href="memorypalace.html">Memory Palace</a>
+    <a href="pendulum.html">Pendulum</a>
+    <a href="darkroom.html">Darkroom</a>
+    <a href="chorus.html">Chorus</a>
+    <a href="telephone.html">Telephone</a>
+    <a href="prism.html">Prism</a>
+    <a href="compass.html">Compass</a>
+    <a href="aviary.html">Aviary</a>
+    <a href="well.html">Well</a>
+    <a href="sundial.html">Sundial</a>
+    <a href="apothecary.html">Apothecary</a>
+    <a href="lighthouse.html">Lighthouse</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="greenhouse.html">Greenhouse</a>
+    <a href="inkwell.html">Inkwell</a>
+    <a href="ossuary.html">Ossuary</a>
+    <a href="lantern.html">Lantern</a>
+    <a href="lullaby.html">Lullaby</a>
+    <a href="observatory.html">Observatory</a>
+    <a href="riddle.html">Riddle</a>
+    <a href="staircase.html">Staircase</a>
+    <a href="echochamber.html">Echo Chamber</a>
+    <a href="weathervane.html">Weathervane</a>
+    <a href="reliquary.html">Reliquary</a>
+    <a href="amphitheatre.html">Amphitheatre</a>
+    <a href="hourglass.html">Hourglass</a>
+    <a href="cartography.html">Cartography</a>
+  </div>
+</body>
+</html>

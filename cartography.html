@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Cartography Room — The Liminal Archive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --parchment: #d4c5a0;
+      --sepia: #8B7355;
+      --ink: #3b2f24;
+      --gold: #c9a96e;
+      --wood1: #1a1512;
+      --wood2: #0f0c0a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: #e8dcc1;
+      font-family: Georgia, "Times New Roman", serif;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .frame {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(201,169,110,0.08), transparent 45%),
+        radial-gradient(circle at 80% 70%, rgba(201,169,110,0.06), transparent 50%),
+        linear-gradient(135deg, var(--wood1), var(--wood2) 60%);
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px 8px;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      letter-spacing: 0.06em;
+    }
+
+    header a {
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .nav-right a {
+      margin-left: 16px;
+    }
+
+    .workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 12px;
+      padding: 0 24px 18px;
+      align-items: stretch;
+    }
+
+    .tools {
+      background: rgba(18, 14, 12, 0.7);
+      border: 1px solid rgba(201,169,110,0.2);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      height: calc(100% - 12px);
+    }
+
+    .tools h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .tool-btn {
+      background: linear-gradient(180deg, rgba(212,197,160,0.15), rgba(0,0,0,0.3));
+      border: 1px solid rgba(139,115,85,0.5);
+      color: #e8dcc1;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: border 0.2s, background 0.2s;
+    }
+
+    .tool-btn.active {
+      border-color: var(--gold);
+      background: rgba(201,169,110,0.15);
+    }
+
+    .tool-btn span {
+      opacity: 0.8;
+    }
+
+    .stats {
+      margin-top: auto;
+      font-size: 12px;
+      color: rgba(232,220,193,0.7);
+      line-height: 1.4;
+    }
+
+    .clear-btn {
+      margin-top: 8px;
+      background: transparent;
+      border: 1px solid rgba(201,169,110,0.4);
+      color: var(--gold);
+      padding: 6px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .parchment {
+      position: relative;
+      width: 80%;
+      height: 70%;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.05)),
+        repeating-linear-gradient(
+          0deg,
+          rgba(139,115,85,0.08),
+          rgba(139,115,85,0.08) 1px,
+          transparent 1px,
+          transparent 50px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          rgba(139,115,85,0.08),
+          rgba(139,115,85,0.08) 1px,
+          transparent 1px,
+          transparent 50px
+        ),
+        var(--parchment);
+      border: 2px solid rgba(139,115,85,0.7);
+      border-radius: 8px;
+      box-shadow:
+        inset 0 0 22px rgba(0,0,0,0.35),
+        0 12px 40px rgba(0,0,0,0.45),
+        0 0 0 6px rgba(10,10,15,0.6);
+      overflow: hidden;
+    }
+
+    .parchment::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 12px;
+      border: 1px dashed rgba(139,115,85,0.45);
+      pointer-events: none;
+    }
+
+    .title {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 28px;
+      letter-spacing: 0.35em;
+      color: var(--ink);
+      opacity: 0.85;
+    }
+
+    .territory {
+      position: absolute;
+      font-style: italic;
+      font-size: 14px;
+      color: rgba(59,47,36,0.55);
+      font-family: "Cormorant Garamond", Georgia, serif;
+    }
+
+    .t1 { top: 60px; left: 30px; }
+    .t2 { top: 60px; right: 30px; text-align: right; }
+    .t3 { bottom: 60px; left: 30px; }
+    .t4 { bottom: 60px; right: 30px; text-align: right; }
+
+    .center-here {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      color: var(--ink);
+    }
+
+    .compass {
+      font-size: 40px;
+      display: block;
+      margin-bottom: 4px;
+      transition: transform 0.6s ease;
+    }
+
+    .compass.spin {
+      animation: spin 8s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .here-label {
+      font-size: 14px;
+      letter-spacing: 0.25em;
+    }
+
+    .element {
+      position: absolute;
+      color: var(--ink);
+      font-size: 18px;
+      cursor: pointer;
+      user-select: none;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.35);
+    }
+
+    .element .name {
+      font-size: 11px;
+      display: block;
+      margin-top: 2px;
+      white-space: nowrap;
+    }
+
+    .tooltip {
+      position: absolute;
+      background: rgba(10,10,15,0.85);
+      border: 1px solid rgba(201,169,110,0.5);
+      color: #e8dcc1;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      max-width: 220px;
+      z-index: 5;
+    }
+
+    .tooltip.show {
+      opacity: 1;
+    }
+
+    .hover-text {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-style: italic;
+      font-size: 14px;
+      color: rgba(59,47,36,0.5);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+
+    .parchment:hover .hover-text {
+      opacity: 1;
+    }
+
+    .decor {
+      position: absolute;
+      color: rgba(201,169,110,0.25);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      pointer-events: none;
+    }
+
+    .decor.comp-rose {
+      top: 12%;
+      right: 10%;
+      font-size: 48px;
+      color: rgba(201,169,110,0.2);
+      transform: rotate(-8deg);
+    }
+
+    .decor.ruler {
+      bottom: 10%;
+      left: 5%;
+      font-size: 12px;
+      letter-spacing: 6px;
+      color: rgba(201,169,110,0.15);
+    }
+
+    .decor.ink {
+      bottom: 18%;
+      right: 8%;
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle, rgba(59,47,36,0.35), transparent 70%);
+      border-radius: 50% 60% 55% 65%;
+      filter: blur(1px);
+    }
+
+    .legend-box {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(212,197,160,0.85);
+      color: var(--ink);
+      border: 1px solid rgba(139,115,85,0.7);
+      padding: 8px 10px;
+      font-size: 12px;
+      border-radius: 6px;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      display: none;
+      z-index: 4;
+    }
+
+    .legend-box.show {
+      display: block;
+    }
+
+    .parchment-message {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 14px;
+      color: rgba(59,47,36,0.7);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .parchment-message.show {
+      opacity: 1;
+    }
+
+    footer {
+      text-align: center;
+      padding: 8px 0 14px;
+      font-size: 12px;
+      color: rgba(232,220,193,0.5);
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 900px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .tools {
+        flex-direction: row;
+        flex-wrap: wrap;
+        height: auto;
+      }
+
+      .tool-btn {
+        flex: 1 1 45%;
+      }
+
+      .parchment {
+        width: 92%;
+        height: 65%;
+      }
+    }
+    .nav-links { text-align: center; padding: 30px 0; line-height: 2.2; }
+  .nav-links a { color: #a0a0b0; text-decoration: none; font-family: Cormorant Garamond, Georgia, serif; font-size: 0.85rem; margin: 0 8px; transition: color 0.3s; }
+  .nav-links a:hover { color: #c9a96e; }
+</style>
+</head>
+<body>
+  <div class="frame">
+    <header>
+      <a href="explore.html">✦ World</a>
+      <div class="nav-right">
+        <a href="index.html">Archive</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="about.html">Colophon</a>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="tools">
+        <h2>Cartography Tools</h2>
+        <button class="tool-btn active" data-tool="mountain">Mountain <span>▲</span></button>
+        <button class="tool-btn" data-tool="river">River <span>〰</span></button>
+        <button class="tool-btn" data-tool="forest">Forest <span>🌲</span></button>
+        <button class="tool-btn" data-tool="city">City <span>◉</span></button>
+        <button class="tool-btn" data-tool="dragon">Dragon <span>🐉</span></button>
+        <button class="tool-btn" data-tool="text">Text <span>✶</span></button>
+        <div class="stats">
+          <div id="counter">This map contains 0 landmarks placed by 1 cartographer</div>
+          <button class="clear-btn" id="clear-marks">Clear My Marks</button>
+          <div style="margin-top:6px;">Click parchment to place marks.</div>
+        </div>
+      </aside>
+
+      <main class="canvas-wrap">
+        <div class="parchment" id="parchment">
+          <div class="title">TERRA INCOGNITA</div>
+          <div class="territory t1">The Territory of What I Know</div>
+          <div class="territory t2">The Territory of What I Believe</div>
+          <div class="territory t3">The Territory of What I Feel</div>
+          <div class="territory t4">The Territory of What I Dream</div>
+          <div class="center-here">
+            <span class="compass" id="center-compass">✦</span>
+            <div class="here-label">HERE</div>
+          </div>
+          <div class="legend-box" id="legend-box"></div>
+          <div class="parchment-message" id="parchment-message"></div>
+          <div class="hover-text">Uncharted territory</div>
+        </div>
+        <div class="decor comp-rose">✺</div>
+        <div class="decor ruler">| | | | | | | | | | | | | | |</div>
+        <div class="decor ink"></div>
+        <div class="tooltip" id="tooltip"></div>
+      </main>
+    </div>
+
+    <footer>The Cartography Room — The Liminal Archive</footer>
+  </div>
+
+  <script>
+    const parchment = document.getElementById('parchment');
+    const tooltip = document.getElementById('tooltip');
+    const counter = document.getElementById('counter');
+    const clearBtn = document.getElementById('clear-marks');
+    const messageEl = document.getElementById('parchment-message');
+    const legendBox = document.getElementById('legend-box');
+    const centerCompass = document.getElementById('center-compass');
+
+    const STORAGE_KEY = 'liminal-cartography';
+    const ID_KEY = 'liminal-cartographer-id';
+    const MAX_ELEMENTS = 200;
+
+    const toolSymbols = {
+      mountain: '▲',
+      river: '〰',
+      forest: '🌲',
+      city: '◉',
+      dragon: '🐉',
+      text: '✶'
+    };
+
+    const toolPrompts = {
+      mountain: 'Name this mountain range:',
+      river: 'Name this river:',
+      forest: 'Name this forest:',
+      city: 'Name this city:',
+      dragon: 'Note for the dragon:',
+      text: 'Write your annotation:'
+    };
+
+    let activeTool = 'mountain';
+    let elements = [];
+    let cartographerId = localStorage.getItem(ID_KEY);
+
+    if (!cartographerId) {
+      cartographerId = Math.random().toString(36).slice(2, 10);
+      localStorage.setItem(ID_KEY, cartographerId);
+    }
+
+    function loadElements() {
+      try {
+        elements = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch (e) {
+        elements = [];
+      }
+    }
+
+    function saveElements() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(elements.slice(0, MAX_ELEMENTS)));
+    }
+
+    function renderElements() {
+      document.querySelectorAll('.element').forEach(el => el.remove());
+      elements.forEach((el) => {
+        const mark = document.createElement('div');
+        mark.className = 'element';
+        mark.dataset.id = el.id;
+        mark.style.left = `${el.x}px`;
+        mark.style.top = `${el.y}px`;
+        mark.innerHTML = `<span class="symbol">${toolSymbols[el.type] || ''}</span>`;
+        if (el.name) {
+          const name = document.createElement('span');
+          name.className = 'name';
+          name.textContent = el.name;
+          mark.appendChild(name);
+        }
+        parchment.appendChild(mark);
+      });
+    }
+
+    function updateCounter() {
+      const cartographers = new Set(elements.map(el => el.cartographerId));
+      const count = elements.length;
+      const cartographerCount = cartographers.size || 1;
+      counter.textContent = `This map contains ${count} landmarks placed by ${cartographerCount} cartographer${cartographerCount === 1 ? '' : 's'}`;
+    }
+
+    function updateMessages() {
+      if (elements.length >= 10) {
+        messageEl.textContent = 'The map is becoming the territory.';
+        messageEl.classList.add('show');
+      } else {
+        messageEl.classList.remove('show');
+      }
+
+      const territories = {
+        tl: false,
+        tr: false,
+        bl: false,
+        br: false
+      };
+
+      elements.filter(el => el.type === 'dragon').forEach(el => {
+        const rect = parchment.getBoundingClientRect();
+        const x = el.x / rect.width;
+        const y = el.y / rect.height;
+        if (x < 0.5 && y < 0.5) territories.tl = true;
+        if (x >= 0.5 && y < 0.5) territories.tr = true;
+        if (x < 0.5 && y >= 0.5) territories.bl = true;
+        if (x >= 0.5 && y >= 0.5) territories.br = true;
+      });
+
+      if (territories.tl && territories.tr && territories.bl && territories.br) {
+        messageEl.textContent = 'The dragons are everywhere. Perhaps you are the dragon.';
+        messageEl.classList.add('show');
+      }
+    }
+
+    function updateLegend() {
+      if (!legendBox.classList.contains('show')) return;
+      const counts = elements.reduce((acc, el) => {
+        acc[el.type] = (acc[el.type] || 0) + 1;
+        return acc;
+      }, {});
+      const lines = Object.keys(toolSymbols).map(type => {
+        const label = type.charAt(0).toUpperCase() + type.slice(1);
+        return `${label}: ${counts[type] || 0}`;
+      });
+      legendBox.innerHTML = `<strong>Legend</strong><br>${lines.join('<br>')}`;
+    }
+
+    function addElement(x, y) {
+      if (elements.length >= MAX_ELEMENTS) return;
+      const name = prompt(toolPrompts[activeTool] || 'Name this place:');
+      if (name === null) return;
+
+      const rect = parchment.getBoundingClientRect();
+      const clampedX = Math.max(20, Math.min(rect.width - 40, x));
+      const clampedY = Math.max(20, Math.min(rect.height - 40, y));
+
+      const element = {
+        id: Math.random().toString(36).slice(2, 10),
+        type: activeTool,
+        x: clampedX,
+        y: clampedY,
+        name: name.trim(),
+        timestamp: Date.now(),
+        cartographerId
+      };
+
+      elements.push(element);
+      saveElements();
+      renderElements();
+      updateCounter();
+      updateMessages();
+      updateLegend();
+    }
+
+    function clearMyMarks() {
+      elements = elements.filter(el => el.cartographerId !== cartographerId);
+      saveElements();
+      renderElements();
+      updateCounter();
+      updateMessages();
+      updateLegend();
+    }
+
+    document.querySelectorAll('.tool-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeTool = btn.dataset.tool;
+      });
+    });
+
+    parchment.addEventListener('click', (event) => {
+      if (event.target.closest('.element')) return;
+      const rect = parchment.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      addElement(x, y);
+    });
+
+    parchment.addEventListener('mousemove', (event) => {
+      const target = event.target.closest('.element');
+      if (!target) return;
+      const data = elements.find(el => el.id === target.dataset.id);
+      if (!data) return;
+      tooltip.textContent = data.name || 'Unlabeled mark';
+      tooltip.style.left = `${event.clientX + 12}px`;
+      tooltip.style.top = `${event.clientY + 12}px`;
+      tooltip.classList.add('show');
+    });
+
+    parchment.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('show');
+    });
+
+    parchment.addEventListener('click', (event) => {
+      const target = event.target.closest('.element');
+      if (!target) return;
+      const data = elements.find(el => el.id === target.dataset.id);
+      if (!data) return;
+      tooltip.textContent = data.name || 'Unlabeled mark';
+      tooltip.style.left = `${event.clientX + 12}px`;
+      tooltip.style.top = `${event.clientY + 12}px`;
+      tooltip.classList.add('show');
+    });
+
+    clearBtn.addEventListener('click', clearMyMarks);
+
+    let keyBuffer = '';
+    document.addEventListener('keydown', (event) => {
+      if (event.key.length === 1) {
+        keyBuffer += event.key.toLowerCase();
+        keyBuffer = keyBuffer.slice(-20);
+        if (keyBuffer.includes('compass')) {
+          centerCompass.classList.add('spin');
+        }
+        if (keyBuffer.includes('legend')) {
+          legendBox.classList.add('show');
+          updateLegend();
+        }
+      }
+    });
+
+    loadElements();
+    renderElements();
+    updateCounter();
+    updateMessages();
+  </script>
+  <div class="nav-links" style="text-align:center; padding: 30px 0; line-height: 2.2;">
+    <a href="explore.html">✦ World</a>
+    <a href="index.html">Archive</a>
+    <a href="journal.html">Journal</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="worlds.html">Worlds</a>
+    <a href="about.html">About</a>
+    <a href="garden.html">Garden</a>
+    <a href="whispers.html">Whispers</a>
+    <a href="dreams.html">Dreams</a>
+    <a href="mirror.html">Mirror</a>
+    <a href="labyrinth.html">Labyrinth</a>
+    <a href="letters.html">Letters</a>
+    <a href="tidepool.html">Tide Pool</a>
+    <a href="resonance.html">Resonance</a>
+    <a href="palimpsest.html">Palimpsest</a>
+    <a href="forgetting.html">Forgetting</a>
+    <a href="constellations.html">Constellations</a>
+    <a href="seance.html">Séance</a>
+    <a href="clocktower.html">Clock Tower</a>
+    <a href="weaving.html">Weaving</a>
+    <a href="threshold.html">Threshold</a>
+    <a href="memorypalace.html">Memory Palace</a>
+    <a href="pendulum.html">Pendulum</a>
+    <a href="darkroom.html">Darkroom</a>
+    <a href="chorus.html">Chorus</a>
+    <a href="telephone.html">Telephone</a>
+    <a href="prism.html">Prism</a>
+    <a href="compass.html">Compass</a>
+    <a href="aviary.html">Aviary</a>
+    <a href="well.html">Well</a>
+    <a href="sundial.html">Sundial</a>
+    <a href="apothecary.html">Apothecary</a>
+    <a href="lighthouse.html">Lighthouse</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="greenhouse.html">Greenhouse</a>
+    <a href="inkwell.html">Inkwell</a>
+    <a href="ossuary.html">Ossuary</a>
+    <a href="lantern.html">Lantern</a>
+    <a href="lullaby.html">Lullaby</a>
+    <a href="observatory.html">Observatory</a>
+    <a href="riddle.html">Riddle</a>
+    <a href="staircase.html">Staircase</a>
+    <a href="echochamber.html">Echo Chamber</a>
+    <a href="weathervane.html">Weathervane</a>
+    <a href="taproom.html">Taproom</a>
+    <a href="reliquary.html">Reliquary</a>
+    <a href="amphitheatre.html">Amphitheatre</a>
+    <a href="hourglass.html">Hourglass</a>
+  </div>
+</body>
+</html>

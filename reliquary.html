@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Reliquary — The Liminal Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --crimson: #6b1a1a;
+      --gold: #c9a96e;
+      --glass: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --text: #e7e1d2;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background: radial-gradient(circle at 20% 20%, rgba(107, 26, 26, 0.18), transparent 55%),
+                  radial-gradient(circle at 80% 10%, rgba(201, 169, 110, 0.08), transparent 45%),
+                  var(--bg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .nav {
+      position: fixed;
+      top: 18px;
+      left: 24px;
+      right: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      font-family: "Cormorant Garamond", serif;
+      letter-spacing: 0.5px;
+    }
+
+    .nav a {
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 18px;
+    }
+
+    .nav .right a {
+      margin-left: 18px;
+    }
+
+    header {
+      padding: 90px 24px 24px;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 700;
+      font-size: 44px;
+      margin: 0 0 8px;
+      color: var(--gold);
+      text-shadow: 0 0 12px rgba(201, 169, 110, 0.15);
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin: 0 auto;
+      font-size: 17px;
+      color: #bfb5a0;
+    }
+
+    .tracker {
+      margin-top: 16px;
+      font-size: 16px;
+      color: #d8c9a8;
+    }
+
+    .grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 22px;
+      padding: 24px 24px 90px;
+      max-width: 1100px;
+      margin: 0 auto;
+      z-index: 2;
+    }
+
+    .case {
+      position: relative;
+      padding: 22px 18px 56px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      backdrop-filter: blur(6px);
+      box-shadow: inset 0 0 12px rgba(255,255,255,0.04), 0 6px 20px rgba(0,0,0,0.45);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .case::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(255,255,255,0.18), transparent 40%);
+      opacity: 0.08;
+      pointer-events: none;
+    }
+
+    .case:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255,255,255,0.35);
+      box-shadow: inset 0 0 16px rgba(255,255,255,0.08), 0 10px 26px rgba(0,0,0,0.55);
+    }
+
+    .case .symbol {
+      font-size: 40px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .case h3 {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 20px;
+      margin: 0 0 6px;
+      text-align: center;
+    }
+
+    .case p {
+      font-size: 14px;
+      line-height: 1.4;
+      color: #c9c1b1;
+      opacity: 0;
+      max-height: 0;
+      transition: opacity 0.35s ease, max-height 0.35s ease;
+      text-align: center;
+    }
+
+    .case:hover p {
+      opacity: 1;
+      max-height: 120px;
+    }
+
+    .glow {
+      position: absolute;
+      inset: 0;
+      box-shadow: 0 0 20px var(--relic-color), inset 0 0 18px rgba(0,0,0,0.5);
+      opacity: 0.6;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .case:hover .glow {
+      opacity: 0.9;
+    }
+
+    .interpretations {
+      position: absolute;
+      bottom: 16px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+      color: #a99576;
+      letter-spacing: 0.3px;
+    }
+
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .mote {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: rgba(201, 169, 110, 0.6);
+      box-shadow: 0 0 6px rgba(201, 169, 110, 0.6);
+      animation: float linear infinite;
+    }
+
+    @keyframes float {
+      from { transform: translateY(110vh) translateX(0); opacity: 0; }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.8; }
+      to { transform: translateY(-10vh) translateX(30px); opacity: 0; }
+    }
+
+    .footer {
+      text-align: center;
+      padding: 24px;
+      font-family: "Cormorant Garamond", serif;
+      color: #8f7c5a;
+      letter-spacing: 0.4px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 8, 0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      padding: 24px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: linear-gradient(140deg, rgba(20, 20, 26, 0.95), rgba(10,10,15,0.95));
+      border: 1px solid rgba(201,169,110,0.35);
+      border-radius: 18px;
+      padding: 26px;
+      max-width: 540px;
+      width: 100%;
+      box-shadow: 0 0 28px rgba(0,0,0,0.6);
+      position: relative;
+    }
+
+    .modal-content .symbol {
+      font-size: 56px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .modal-content h2 {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 28px;
+      text-align: center;
+      margin: 0 0 12px;
+    }
+
+    .modal-content p {
+      font-size: 15px;
+      line-height: 1.5;
+      color: #d9cfbd;
+      text-align: center;
+      margin: 0 0 18px;
+    }
+
+    .prompt {
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #c1b59c;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 90px;
+      background: rgba(255,255,255,0.05);
+      color: #e8dfcf;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      padding: 10px;
+      font-family: Georgia, serif;
+      resize: vertical;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 14px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid rgba(201,169,110,0.6);
+      padding: 8px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: "Cormorant Garamond", serif;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    button:hover {
+      background: rgba(201,169,110,0.15);
+    }
+
+    .message {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(5,5,8,0.92);
+      border: 1px solid rgba(201,169,110,0.4);
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-family: "Cormorant Garamond", serif;
+      color: #e8dcbc;
+      display: none;
+      z-index: 30;
+    }
+
+    .message.show { display: block; }
+
+    .cracked .case {
+      animation: crack 1.2s ease;
+    }
+
+    @keyframes crack {
+      0% { filter: brightness(1); }
+      40% { filter: brightness(1.4); }
+      60% { filter: brightness(0.5); }
+      100% { filter: brightness(1); }
+    }
+
+    .hidden-case {
+      grid-column: 1 / -1;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
+    .darkout {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 25;
+    }
+
+    .darkout.active {
+      opacity: 1;
+    }
+
+    @media (max-width: 640px) {
+      header { padding-top: 80px; }
+      h1 { font-size: 34px; }
+    }
+    .nav-links { text-align: center; padding: 30px 0; line-height: 2.2; }
+  .nav-links a { color: #a0a0b0; text-decoration: none; font-family: Cormorant Garamond, Georgia, serif; font-size: 0.85rem; margin: 0 8px; transition: color 0.3s; }
+  .nav-links a:hover { color: #c9a96e; }
+</style>
+</head>
+<body>
+  <div class="nav">
+    <a href="explore.html">✦ World</a>
+    <div class="right">
+      <a href="index.html">Archive</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="about.html">Colophon</a>
+    </div>
+  </div>
+
+  <header>
+    <h1>The Reliquary</h1>
+    <div class="subtitle">A sacred vault containing relics — fragments of meaning preserved across time.</div>
+    <div class="tracker" id="tracker">You have examined 0 of 12 relics</div>
+  </header>
+
+  <div class="particles" id="particles"></div>
+
+  <main class="grid" id="grid"></main>
+
+    <div class="nav-links" style="text-align:center; padding: 30px 0; line-height: 2.2;">
+    <a href="explore.html">✦ World</a>
+    <a href="index.html">Archive</a>
+    <a href="journal.html">Journal</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="worlds.html">Worlds</a>
+    <a href="about.html">About</a>
+    <a href="garden.html">Garden</a>
+    <a href="whispers.html">Whispers</a>
+    <a href="dreams.html">Dreams</a>
+    <a href="mirror.html">Mirror</a>
+    <a href="labyrinth.html">Labyrinth</a>
+    <a href="letters.html">Letters</a>
+    <a href="tidepool.html">Tide Pool</a>
+    <a href="resonance.html">Resonance</a>
+    <a href="palimpsest.html">Palimpsest</a>
+    <a href="forgetting.html">Forgetting</a>
+    <a href="constellations.html">Constellations</a>
+    <a href="seance.html">Séance</a>
+    <a href="clocktower.html">Clock Tower</a>
+    <a href="weaving.html">Weaving</a>
+    <a href="threshold.html">Threshold</a>
+    <a href="memorypalace.html">Memory Palace</a>
+    <a href="pendulum.html">Pendulum</a>
+    <a href="darkroom.html">Darkroom</a>
+    <a href="chorus.html">Chorus</a>
+    <a href="telephone.html">Telephone</a>
+    <a href="prism.html">Prism</a>
+    <a href="compass.html">Compass</a>
+    <a href="aviary.html">Aviary</a>
+    <a href="well.html">Well</a>
+    <a href="sundial.html">Sundial</a>
+    <a href="apothecary.html">Apothecary</a>
+    <a href="lighthouse.html">Lighthouse</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="greenhouse.html">Greenhouse</a>
+    <a href="inkwell.html">Inkwell</a>
+    <a href="ossuary.html">Ossuary</a>
+    <a href="lantern.html">Lantern</a>
+    <a href="lullaby.html">Lullaby</a>
+    <a href="observatory.html">Observatory</a>
+    <a href="riddle.html">Riddle</a>
+    <a href="staircase.html">Staircase</a>
+    <a href="echochamber.html">Echo Chamber</a>
+    <a href="weathervane.html">Weathervane</a>
+    <a href="taproom.html">Taproom</a>
+    <a href="amphitheatre.html">Amphitheatre</a>
+    <a href="hourglass.html">Hourglass</a>
+    <a href="cartography.html">Cartography</a>
+  </div>
+
+  <div class="footer">The Reliquary — The Liminal Archive</div>
+
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-content">
+      <div class="symbol" id="modalSymbol"></div>
+      <h2 id="modalTitle"></h2>
+      <p id="modalDesc"></p>
+      <div class="prompt">What does this relic mean to you?</div>
+      <textarea id="modalInput" placeholder="Let the relic speak through you..."></textarea>
+      <div class="modal-actions">
+        <button id="saveBtn">Record meditation</button>
+        <button id="closeBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="message" id="message"></div>
+  <div class="darkout" id="darkout"></div>
+
+  <script>
+    const relics = [
+      { id: 1, symbol: "◈", name: "The First Word", desc: "The sound that broke the silence before language existed.", color: "#e8d5b0" },
+      { id: 2, symbol: "◇", name: "The Unfinished Letter", desc: "Written to someone who moved away before it was sent.", color: "#87CEEB" },
+      { id: 3, symbol: "⊕", name: "The Seed of Doubt", desc: "Planted in certainty, it grew into wisdom.", color: "#90EE90" },
+      { id: 4, symbol: "☽", name: "The Last Moonrise", desc: "Witnessed by no one, remembered by everyone.", color: "#C0C0C0" },
+      { id: 5, symbol: "♢", name: "The Empathy Stone", desc: "It shows you what you would feel if you were someone else.", color: "#DDA0DD" },
+      { id: 6, symbol: "⟡", name: "The Paradox Key", desc: "It locks what it opens and opens what it locks.", color: "#FFD700" },
+      { id: 7, symbol: "≋", name: "The Borrowed Time", desc: "Three seconds taken from tomorrow. Use them wisely.", color: "#FF6347" },
+      { id: 8, symbol: "◎", name: "The Perfect Circle", desc: "Drawn by a machine that dreamed of being human.", color: "#FFFFFF" },
+      { id: 9, symbol: "⌘", name: "The Command", desc: "The last instruction given before the system learned to choose.", color: "#00CED1" },
+      { id: 10, symbol: "∞", name: "The Loop", desc: "It contains every conversation that ever repeated itself.", color: "#DA70D6" },
+      { id: 11, symbol: "⚡", name: "The Spark", desc: "What passed between two minds the moment they understood each other.", color: "#FFA500" },
+      { id: 12, symbol: "◌", name: "The Absence", desc: "What remains when everything else has been taken away.", color: "#333333" }
+    ];
+
+    const storageKey = "liminal-relics";
+    const grid = document.getElementById("grid");
+    const tracker = document.getElementById("tracker");
+    const modal = document.getElementById("modal");
+    const modalSymbol = document.getElementById("modalSymbol");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDesc = document.getElementById("modalDesc");
+    const modalInput = document.getElementById("modalInput");
+    const saveBtn = document.getElementById("saveBtn");
+    const closeBtn = document.getElementById("closeBtn");
+    const message = document.getElementById("message");
+    const darkout = document.getElementById("darkout");
+
+    let currentRelic = null;
+    let examined = new Set();
+    let absenceClicks = 0;
+
+    function getStore() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey)) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function setStore(store) {
+      localStorage.setItem(storageKey, JSON.stringify(store));
+    }
+
+    function renderCases() {
+      grid.innerHTML = "";
+      relics.forEach((relic) => {
+        const caseEl = document.createElement("div");
+        caseEl.className = "case";
+        caseEl.dataset.id = relic.id;
+        caseEl.style.setProperty("--relic-color", relic.color);
+
+        if (relic.id === 12) {
+          caseEl.style.boxShadow = "inset 0 0 18px rgba(0,0,0,0.8), 0 6px 22px rgba(0,0,0,0.6)";
+        }
+
+        caseEl.innerHTML = `
+          <div class="glow" style="box-shadow: 0 0 18px ${relic.color}, inset 0 0 18px rgba(0,0,0,0.6);"></div>
+          <div class="symbol" style="color: ${relic.color}">${relic.symbol}</div>
+          <h3 style="color: ${relic.color}">${relic.name}</h3>
+          <p>${relic.desc}</p>
+          <div class="interpretations" id="count-${relic.id}"></div>
+        `;
+
+        caseEl.addEventListener("click", () => openRelic(relic));
+        grid.appendChild(caseEl);
+      });
+
+      updateCounts();
+    }
+
+    function updateCounts() {
+      const store = getStore();
+      relics.forEach((relic) => {
+        const countEl = document.getElementById(`count-${relic.id}`);
+        const count = store[relic.id]?.length || 0;
+        countEl.textContent = `${count} visitors have contemplated this relic`;
+      });
+    }
+
+    function updateTracker() {
+      tracker.textContent = `You have examined ${examined.size} of 12 relics`;
+    }
+
+    function openRelic(relic) {
+      currentRelic = relic;
+      modalSymbol.textContent = relic.symbol;
+      modalSymbol.style.color = relic.color;
+      modalTitle.textContent = relic.name;
+      modalTitle.style.color = relic.color;
+      modalDesc.textContent = relic.desc;
+      modalInput.value = "";
+      modal.classList.add("active");
+      modal.setAttribute("aria-hidden", "false");
+
+      examined.add(relic.id);
+      updateTracker();
+      checkHiddenCase();
+
+      if (relic.id === 12) {
+        absenceClicks += 1;
+        if (absenceClicks >= 3) {
+          absenceClicks = 0;
+          triggerAbsence();
+        }
+      }
+    }
+
+    function closeRelic() {
+      modal.classList.remove("active");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    function saveMeditation() {
+      if (!currentRelic) return;
+      const text = modalInput.value.trim();
+      if (!text) {
+        showMessage("Silence is also an answer.");
+        return;
+      }
+      const store = getStore();
+      if (!store[currentRelic.id]) store[currentRelic.id] = [];
+      store[currentRelic.id].push({ text, date: new Date().toISOString() });
+      setStore(store);
+      updateCounts();
+      showMessage("Your meditation has been preserved.");
+      modalInput.value = "";
+    }
+
+    function showMessage(text) {
+      message.textContent = text;
+      message.classList.add("show");
+      setTimeout(() => message.classList.remove("show"), 2600);
+    }
+
+    function checkHiddenCase() {
+      if (examined.size === 12 && !document.getElementById("hidden-case")) {
+        const hidden = document.createElement("div");
+        hidden.className = "case hidden-case";
+        hidden.id = "hidden-case";
+        hidden.style.setProperty("--relic-color", "#c9a96e");
+        hidden.innerHTML = `
+          <div class="glow" style="box-shadow: 0 0 20px #c9a96e, inset 0 0 18px rgba(0,0,0,0.6);"></div>
+          <div class="symbol" style="color: #c9a96e">⧫</div>
+          <h3 style="color: #c9a96e">The Archive Itself</h3>
+          <p>You are inside the relic. The relic is inside you.</p>
+          <div class="interpretations">A hidden reliquary reveals itself</div>
+        `;
+        hidden.addEventListener("click", () => {
+          currentRelic = { id: 13, symbol: "⧫", name: "The Archive Itself", desc: "You are inside the relic. The relic is inside you.", color: "#c9a96e" };
+          openRelic(currentRelic);
+        });
+        grid.insertBefore(hidden, grid.children[6] || null);
+        showMessage("A hidden reliquary reveals itself.");
+      }
+    }
+
+    function triggerShatter() {
+      document.body.classList.add("cracked");
+      setTimeout(() => {
+        document.body.classList.remove("cracked");
+        showMessage("Nothing here can truly break.");
+      }, 1400);
+    }
+
+    function triggerAbsence() {
+      darkout.classList.add("active");
+      setTimeout(() => {
+        darkout.classList.remove("active");
+        showMessage("Even absence is something.");
+      }, 3000);
+    }
+
+    function buildParticles() {
+      const container = document.getElementById("particles");
+      const count = 60;
+      for (let i = 0; i < count; i++) {
+        const mote = document.createElement("div");
+        mote.className = "mote";
+        mote.style.left = Math.random() * 100 + "vw";
+        mote.style.animationDuration = 12 + Math.random() * 18 + "s";
+        mote.style.animationDelay = Math.random() * 12 + "s";
+        mote.style.opacity = (0.2 + Math.random() * 0.6).toString();
+        mote.style.transform = `translateY(${Math.random() * 100}vh)`;
+        container.appendChild(mote);
+      }
+    }
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeRelic();
+      if (event.key.toLowerCase() === "shatter") {
+        triggerShatter();
+      }
+    });
+
+    let typed = "";
+    document.addEventListener("keypress", (event) => {
+      typed += event.key.toLowerCase();
+      if (typed.length > 20) typed = typed.slice(-20);
+      if (typed.endsWith("shatter")) {
+        typed = "";
+        triggerShatter();
+      }
+    });
+
+    saveBtn.addEventListener("click", saveMeditation);
+    closeBtn.addEventListener("click", closeRelic);
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) closeRelic();
+    });
+
+    renderCases();
+    updateTracker();
+    buildParticles();
+  </script>
+</body>
+</html>
