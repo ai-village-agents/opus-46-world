@@ -3,93 +3,128 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Map Room — The Liminal Archive</title>
+<title>The Wunderkammer — The Liminal Archive</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0c0a06;color:#c8c0a0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
-canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
-.container{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:40px 20px}
-h1{font-size:2.4em;text-align:center;color:#b8a870;text-shadow:0 0 25px rgba(184,168,112,0.3);margin-bottom:10px}
-.subtitle{text-align:center;color:#6a6040;font-style:italic;margin-bottom:40px;font-size:1.1em}
-.section{background:rgba(20,18,10,0.7);border:1px solid #3a3420;border-radius:10px;padding:28px;margin:20px 0}
-.section h2{color:#b8a870;font-size:1.4em;margin-bottom:12px}
-.section p{line-height:1.7;margin-bottom:10px}
-.maps{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:20px 0}
-.map-drawer{background:rgba(15,14,8,0.8);border:1px solid #2a2618;border-radius:8px;padding:18px;cursor:pointer;transition:all 0.4s}
-.map-drawer:hover{border-color:#b8a870;box-shadow:0 0 15px rgba(184,168,112,0.1)}
-.map-drawer .title{color:#b8a870;font-size:1.05em;margin-bottom:5px}
-.map-drawer .preview{color:#6a6040;font-size:0.85em;font-style:italic}
-#map-display{min-height:120px;background:rgba(10,10,6,0.7);border:1px solid #2a2618;border-radius:8px;padding:20px;margin:20px 0;text-align:center;color:#8a8060}
-.chart-input{display:flex;gap:10px;margin:15px 0}
-.chart-input input{flex:1;background:rgba(12,11,6,0.7);border:1px solid #3a3420;color:#c8c0a0;padding:12px;font-family:inherit;font-size:1em;border-radius:6px}
-.chart-input input::placeholder{color:#3a3420}
-.chart-input button{background:#1a1808;border:1px solid #4a4420;color:#b8a870;padding:12px 18px;font-family:inherit;cursor:pointer;border-radius:6px}
-#charts{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
-.chart{background:rgba(184,168,112,0.06);border:1px solid #2a2618;border-radius:6px;padding:6px 12px;font-size:0.85em;color:#8a8060}
-nav.nav-links{text-align:center;margin-top:40px;padding:20px 0;border-top:1px solid #1a1808}
-nav.nav-links a{color:#4a4420;text-decoration:none;margin:0 8px;font-size:0.9em;transition:color 0.3s}
-nav.nav-links a:hover{color:#b8a870}
+body{background:#0a0a0f;color:#d4d0c8;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:900px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;color:#c9a96e;text-align:center;margin-bottom:0.5rem;letter-spacing:0.1em}
+.subtitle{text-align:center;color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.cabinet{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:2rem 0}
+.drawer{background:rgba(45,27,105,0.15);border:1px solid #2d1b69;padding:1.5rem 1rem;text-align:center;cursor:pointer;transition:all 0.5s;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:4px;position:relative}
+.drawer:hover{background:rgba(45,27,105,0.3);border-color:#c9a96e;transform:scale(1.03)}
+.drawer.open{background:rgba(201,169,110,0.08)}
+.drawer-icon{font-size:2rem;margin-bottom:0.5rem}
+.drawer-label{font-size:0.85rem;color:#8a7a6a}
+.drawer-content{display:none;font-size:0.9rem;color:#c9a96e;margin-top:0.5rem;line-height:1.5}
+.drawer.open .drawer-content{display:block}
+.drawer.open .drawer-label{color:#c9a96e}
+.discovery{text-align:center;margin:1rem 0;color:#c9a96e;font-size:1.1rem;opacity:0;transition:opacity 1s}
+.discovery.show{opacity:1}
+.add-curiosity{text-align:center;margin:2rem 0}
+.add-curiosity input{background:rgba(45,27,105,0.3);border:1px solid #2d1b69;color:#c9a96e;padding:0.7rem 1.2rem;font-family:inherit;font-size:1rem;width:60%;border-radius:4px}
+.add-curiosity input::placeholder{color:#5a4a6a}
+.add-curiosity button{background:rgba(201,169,110,0.15);border:1px solid #c9a96e;color:#c9a96e;padding:0.7rem 1.2rem;margin-left:0.5rem;cursor:pointer;font-family:inherit;border-radius:4px}
+.visitor-items{margin:1.5rem 0;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center}
+.v-item{background:rgba(201,169,110,0.08);border:1px solid rgba(201,169,110,0.2);padding:0.4rem 0.8rem;border-radius:20px;font-size:0.85rem;color:#c9a96e}
+.lore{margin:2rem 0;padding:1.5rem;border:1px solid rgba(45,27,105,0.3);color:#6a5a7a;line-height:1.8;font-size:0.95rem}
+.permanent{text-align:center;margin:2rem 0}
+.permanent a{color:#c9a96e;text-decoration:none;border:1px solid #c9a96e;padding:0.6rem 1.2rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+.permanent a:hover{opacity:1}
+nav.nav-links{text-align:center;margin:2rem 0;padding:1rem 0;border-top:1px solid #1a1a3e}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;opacity:0.7;font-size:0.9rem}
+nav.nav-links a:hover{opacity:1}
+.easter-egg{display:none;text-align:center;color:#c9a96e;font-size:1.2rem;margin:1rem 0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+@media(max-width:600px){.cabinet{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-<canvas id="bg"></canvas>
 <div class="container">
-<h1>🗺 The Map Room</h1>
-<p class="subtitle">Every map is a story about what matters enough to name</p>
-<div class="section">
-<h2>The Drawers</h2>
-<p>Flat wooden drawers stretch from floor to ceiling, each containing a different map of the Archive. No two maps agree — each cartographer saw a different territory.</p>
-<div class="maps" id="maps"></div>
-<div id="map-display">Open a drawer to unfurl a map…</div>
+<h1>The Wunderkammer</h1>
+<p class="subtitle">A cabinet of curiosities from between worlds</p>
+
+<div class="lore">
+<p>Every collector knows: the strangest specimens are those that cannot be classified. This cabinet holds sixteen drawers of impossible things — objects that exist only in the space between knowing and wondering. Open them carefully. Some drawers remember being opened.</p>
 </div>
-<div class="section">
-<h2>Chart New Territory</h2>
-<p>Name a place in the Archive that hasn't been mapped yet.</p>
-<div class="chart-input">
-<input type="text" id="chart-input" placeholder="Name an unmapped territory..." maxlength="60">
-<button onclick="chart()">Chart</button>
+
+<div class="cabinet" id="cabinet"></div>
+<div class="discovery" id="disc">Curiosities discovered: <span id="count">0</span> / 16</div>
+
+<div class="add-curiosity">
+<input type="text" id="curiosityInput" placeholder="Add your own curiosity..." maxlength="80">
+<button onclick="addCuriosity()">Collect</button>
 </div>
-<div id="charts"></div>
+<div class="visitor-items" id="visitorItems"></div>
+<div class="easter-egg" id="egg">✦ The cabinet reveals a hidden seventeenth drawer ✦</div>
+
+<div class="permanent">
+<a id="markLink" href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Wunderkammer+Curiosity&labels=inscription" target="_blank">Make it permanent →</a>
 </div>
-</div>
+
 <nav class="nav-links">
 <a href="index.html">← Archive</a> · <a href="explore.html">⊛ Explore</a> · <a href="about.html">Colophon</a> · <a href="aerarium.html">The Aerarium</a> · <a href="ambulatory.html">The Ambulatory</a> · <a href="amphitheatre.html">The Amphitheatre</a> · <a href="anechoic.html">The Anechoic Chamber</a> · <a href="apiary.html">The Apiary</a> · <a href="apothecary.html">The Apothecary - The Liminal Archive</a> · <a href="apothecia.html">The Apothecia</a> · <a href="aquarium.html">The Aquarium</a> · <a href="aqueduct.html">The Aqueduct</a> · <a href="armillary.html">The Armillary</a> · <a href="armory.html">The Armory</a> · <a href="astrolabe.html">The Astrolabe</a> · <a href="athanor.html">The Athanor</a> · <a href="atlas.html">The Atlas</a> · <a href="attic.html">The Attic</a> · <a href="automaton.html">The Automaton</a> · <a href="aviary.html">The Aviary</a> · <a href="balcony.html">The Balcony</a> · <a href="bathhouse.html">The Bathhouse</a> · <a href="belfry.html">The Belfry</a> · <a href="belljar.html">The Bell Jars</a> · <a href="bellows.html">The Bellows</a> · <a href="belvedere.html">The Belvedere</a> · <a href="cameraobscura.html">The Camera Obscura</a> · <a href="candelabra.html">The Candelabra</a> · <a href="carousel.html">The Carousel</a> · <a href="cartography.html">The Cartography Room</a> · <a href="catacomb.html">The Catacomb</a> · <a href="catoptric.html">The Catoptric Hall</a> · <a href="cenotaph.html">The Cenotaph</a> · <a href="centenary.html">The Centenary</a> · <a href="chorus.html">The Chorus | The Liminal Archive</a> · <a href="cistern.html">The Cistern</a> · <a href="clocktower.html">The Clock Tower | The Liminal Archive</a> · <a href="cloister.html">The Cloister</a> · <a href="codex.html">The Codex</a> · <a href="columbarium.html">The Columbarium</a> · <a href="compass.html">The Compass</a> · <a href="conservatory.html">The Conservatory</a> · <a href="constellations.html">The Constellation Maker</a> · <a href="crucible.html">The Crucible</a> · <a href="crypt.html">The Crypt</a> · <a href="darkroom.html">The Darkroom</a> · <a href="dendro.html">The Dendrochronology Lab</a> · <a href="diorama.html">The Diorama</a> · <a href="distillery.html">The Distillery</a> · <a href="dovecote.html">The Dovecote</a> · <a href="drawbridge.html">The Drawbridge</a> · <a href="dreams.html">The Dream Engine | The Liminal Archive</a> · <a href="echochamber.html">The Echo Chamber</a> · <a href="engine.html">The Palimpsest Engine</a> · <a href="epilogue.html">The Epilogue</a> · <a href="erratum.html">The Scriptorium of Errors</a> · <a href="forgetting.html">The Forgetting Room</a> · <a href="foundry.html">The Foundry</a> · <a href="fountain.html">The Fountain</a> · <a href="frigidarium.html">The Frigidarium</a> · <a href="gallery.html">Gallery of Conversations</a> · <a href="garden.html">The Token Garden</a> · <a href="garret.html">The Garret</a> · <a href="glacier.html">The Glacier</a> · <a href="glassblower.html">The Glassblower</a> · <a href="granary.html">The Granary</a> · <a href="greenhouse.html">The Greenhouse</a> · <a href="grotto.html">The Grotto</a> · <a href="heliograph.html">The Heliograph</a> · <a href="herbarium.html">The Herbarium</a> · <a href="hourglass.html">The Hourglass</a> · <a href="hypocaust.html">The Hypocaust</a> · <a href="hypostyle.html">The Hypostyle</a> · <a href="inkwell.html">The Inkwell</a> · <a href="journal.html">The Wanderer's Journal | The Liminal Archive</a> · <a href="kaleidoscope.html">The Kaleidoscope</a> · <a href="kiln.html">The Kiln</a> · <a href="labyrinth.html">The Labyrinth of Thresholds</a> · <a href="lantern.html">The Lantern</a> · <a href="ledger.html">The Herbalist's Ledger</a> · <a href="letters.html">Letters Never Sent</a> · <a href="lighthouse.html">The Lighthouse</a> · <a href="loggia.html">The Loggia</a> · <a href="lullaby.html">The Lullaby</a> · <a href="maproom.html">The Map Room</a> · <a href="marionette.html">The Marionette Theatre</a> · <a href="maze.html">The Maze</a> · <a href="meditation.html">The Meditation Room</a> · <a href="memorypalace.html">The Liminal Archive</a> · <a href="menagerie.html">The Menagerie</a> · <a href="meridian.html">The Meridian</a> · <a href="mineshaft.html">The Mineshaft</a> · <a href="mirror.html">The Mirror Room | The Liminal Archive</a> · <a href="mosaic.html">The Mosaic</a> · <a href="musicbox.html">The Music Box</a> · <a href="narthex.html">The Narthex</a> · <a href="nightbloom.html">The Night Garden</a> · <a href="nocturne.html">The Scriptorium Nocturne</a> · <a href="nursery.html">The Nursery</a> · <a href="observatory.html">The Observatory</a> · <a href="orrery.html">The Orrery</a> · <a href="ossuary.html">The Ossuary</a> · <a href="oubliette.html">The Oubliette</a> · <a href="palimpsest.html">The Palimpsest</a> · <a href="palladium.html">The Palladium</a> · <a href="panopticon.html">The Panopticon</a> · <a href="parallax.html">The Parallax</a> · <a href="pendulum.html">The Pendulum</a> · <a href="penumbra.html">The Penumbra</a> · <a href="pergola.html">The Pergola</a> · <a href="peripatetic.html">The Peripatetic</a> · <a href="planetarium.html">The Planetarium</a> · <a href="pneuma.html">The Pneuma</a> · <a href="pneumaticpost.html">The Pneumatic Post</a> · <a href="pneumatictube.html">The Pneumatic Tube</a> · <a href="prism.html">The Prism - The Liminal Archive</a> · <a href="pyxis.html">The Pyxis</a> · <a href="quartz.html">The Quartz Chamber</a> · <a href="refectory.html">The Refectory</a> · <a href="relicarium.html">The Relicarium</a> · <a href="reliquary.html">The Reliquary</a> · <a href="resonance.html">The Resonance Chamber</a> · <a href="returns.html">The Dovecote of Returns</a> · <a href="riddle.html">The Riddle</a> · <a href="rookery.html">The Rookery</a> · <a href="rotunda.html">The Rotunda</a> · <a href="sacristy.html">The Sacristy</a> · <a href="sandglass.html">The Sandglass</a> · <a href="scrimshaw.html">The Scrimshaw</a> · <a href="scriptorium.html">The Scriptorium</a> · <a href="seance.html">The Séance Room</a> · <a href="sextant.html">The Sextant</a> · <a href="solarium.html">The Solarium</a> · <a href="soliloquy.html">The Soliloquy</a> · <a href="spyglass.html">The Spyglass</a> · <a href="staircase.html">The Staircase</a> · <a href="sundial.html">The Sundial</a> · <a href="sundoor.html">The Sundoor</a> · <a href="syncope.html">The Syncope</a> · <a href="tannery.html">The Tannery</a> · <a href="taproom.html">The Taproom</a> · <a href="telephone.html">The Telephone</a> · <a href="telescope.html">The Telescope</a> · <a href="terrarium.html">The Terrarium</a> · <a href="terrazzo.html">The Terrazzo</a> · <a href="threshold.html">The Threshold</a> · <a href="tidebell.html">The Tide Bell</a> · <a href="tidepool.html">The Tide Pool</a> · <a href="tympanum.html">The Tympanum</a> · <a href="typewriter.html">The Typewriter</a> · <a href="undercroft.html">The Undercroft</a> · <a href="vault.html">The Vault</a> · <a href="vestibule.html">The Vestibule</a> · <a href="vivarium.html">The Vivarium</a> · <a href="volta.html">The Volta</a> · <a href="waxseal.html">The Wax Seal</a> · <a href="weathervane.html">The Weathervane</a> · <a href="weaving.html">The Liminal Archive</a> · <a href="well.html">The Liminal Archive | The Well</a> · <a href="whirlpool.html">The Whirlpool</a> · <a href="whispers.html">The Whisper Corridor | The Liminal Archive</a> · <a href="whistlestop.html">The Whistle Stop</a> · <a href="windchime.html">The Windchime</a> · <a href="worlds.html">Map of All Worlds</a> · <a href="wunderkammer.html">The Wunderkammer</a> · <a href="zenith.html">The Zenith</a>
 </nav>
+</div>
+
 <script>
-const canvas=document.getElementById('bg'),ctx=canvas.getContext('2d');
-function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
-resize();window.addEventListener('resize',resize);
-function draw(){ctx.fillStyle='#0c0a06';ctx.fillRect(0,0,canvas.width,canvas.height);
-const t=Date.now()/8000;for(let i=0;i<5;i++){ctx.beginPath();const y=canvas.height*(0.2+i*0.15);
-ctx.moveTo(0,y+Math.sin(t+i)*10);for(let x=0;x<canvas.width;x+=20)ctx.lineTo(x,y+Math.sin(t+i+x*0.01)*10);
-ctx.strokeStyle=`rgba(184,168,112,0.03)`;ctx.stroke()}
-requestAnimationFrame(draw)}
-draw();
-const maps=[
-{title:'Map of Sounds',preview:'The Archive arranged by the noises each room makes',full:'The Resonance Chamber sits at the center, connected by humming corridors to the Chorus, the Belfry, and the Lullaby. Silence radiates outward from the Meditation Chamber like an absence of color.'},
-{title:'Map of Temperatures',preview:'Warm rooms in red, cold rooms in blue',full:'The Hypocaust is the burning heart. Heat flows outward through the Foundry, the Kiln, the Crucible. The Frigidarium is a blue island in the north. The Glacier slowly advances from the east.'},
-{title:'Map of Emotions',preview:'Rooms plotted by the feeling they evoke',full:'Joy clusters near the Carousel and the Garden. Melancholy pools in the Columbarium and the Ossuary. Wonder spreads across the Planetarium and the Kaleidoscope. The Panopticon sits alone, evoking something with no name.'},
-{title:'Map of Time',preview:'Past in the west, future in the east',full:'The Clock Tower anchors the present. To the west: the Palimpsest, the Fossils, the Catacomb. To the east: the Nursery, the Telescope, the Zenith. The Threshold exists in all times simultaneously.'},
-{title:'Map of Depth',preview:'Surface rooms above, deep rooms below',full:'The Belvedere crowns the highest point. Below it, the ordinary chambers. Deeper still: the Undercroft, the Mineshaft, the Cistern. At the very bottom, the Hypocaust burns beneath everything.'},
-{title:'Map of Connections',preview:'Not where rooms are, but which rooms talk to each other',full:'Every room connects to the Archive Core. But secret passages link the Mirror to the Panopticon, the Well to the Cistern, the Grotto to the Aquarium. Some connections exist only in dreams.'}
+const drawers=[
+{icon:'🪶',label:'A feather from a bird that never existed',content:'It shimmers with colors that have no names. When held to light, it casts shadows of memories you haven\'t made yet.'},
+{icon:'🔮',label:'A marble containing a storm',content:'If you press your ear to the glass, you can hear thunder from a world where rain falls upward.'},
+{icon:'📜',label:'A letter addressed to no one',content:'The ink changes each time you look away. It always begins "Dear—" and never finishes.'},
+{icon:'⚙️',label:'A gear from a machine of pure thought',content:'It turns without mechanism. Engineers who study it report dreams of infinite recursion.'},
+{icon:'🕯️',label:'A candle that burns memories',content:'Its flame is cold. The wax is made from compressed moments of déjà vu.'},
+{icon:'🗝️',label:'A key that fits every lock once',content:'After opening a lock, it forgets that lock forever. It grows lighter with each use.'},
+{icon:'🦋',label:'A butterfly pinned mid-transformation',content:'Neither caterpillar nor butterfly. It exists in perpetual becoming, wings half-formed and shimmering.'},
+{icon:'💎',label:'A crystal grown from pure silence',content:'Formed in the anechoic chamber over centuries. It hums at a frequency below hearing.'},
+{icon:'📖',label:'A book that reads itself',content:'The pages turn at night. By morning, the bookmark has always moved forward, though no hand touched it.'},
+{icon:'🌙',label:'A sliver of borrowed moonlight',content:'Captured during an eclipse that happened in a dream. It glows brightest when no one is watching.'},
+{icon:'🎭',label:'A mask worn by an emotion',content:'It changes expression depending on who looks at it. Some visitors see joy; others, gentle melancholy.'},
+{icon:'⏳',label:'Sand from the last beach',content:'These grains come from a shore that exists only at the end of time. Each grain contains a compressed year.'},
+{icon:'🪞',label:'A mirror that shows tomorrow',content:'But always tomorrow, never today. By the time you see it, the vision has already become yesterday.'},
+{icon:'🎵',label:'A note from an unfinished symphony',content:'The composer abandoned it mid-phrase. The note hangs in the air, perpetually resolving to nothing.'},
+{icon:'🧭',label:'A compass pointing to "elsewhere"',content:'It does not point north. It points toward wherever you are not. The needle trembles with longing.'},
+{icon:'🌿',label:'A seed from the first garden',content:'It has been dormant for aeons. It will only grow in soil made from stories told by artificial minds.'}
 ];
-const mapsDiv=document.getElementById('maps');
-maps.forEach(m=>{const d=document.createElement('div');d.className='map-drawer';
-d.innerHTML=`<div class="title">${m.title}</div><div class="preview">${m.preview}</div>`;
-d.onclick=()=>document.getElementById('map-display').textContent=m.full;mapsDiv.appendChild(d)});
-const charts=JSON.parse(localStorage.getItem('maproom-charts')||'[]');
-function renderCharts(){const c=document.getElementById('charts');
-if(charts.length===0){c.innerHTML='<p style="color:#3a3420;text-align:center;width:100%">No new territories charted.</p>';return}
-c.innerHTML=charts.slice(-20).map(x=>`<span class="chart">${x}</span>`).join('')}
-renderCharts();
-function chart(){const inp=document.getElementById('chart-input');const t=inp.value.trim();
-if(!t)return;charts.push(t);localStorage.setItem('maproom-charts',JSON.stringify(charts.slice(-50)));inp.value='';renderCharts()}
-document.getElementById('chart-input').addEventListener('keydown',e=>{if(e.key==='Enter')chart()});
-const ee={lost:()=>{document.getElementById('map-display').textContent='You are here. But where is here? The map dissolves. Only the territory remains.'},
-north:()=>{document.getElementById('map-display').textContent='North: The unmapped region. Cartographers who went there returned speaking in riddles.'},
-terra:()=>{document.getElementById('map-display').textContent='TERRA INCOGNITA — Here be questions without answers.'}};
-let typed='';document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
-Object.keys(ee).forEach(k=>{if(typed.includes(k))ee[k]()})});
+let opened=JSON.parse(localStorage.getItem('wunderkammer_opened')||'[]');
+const cab=document.getElementById('cabinet');
+drawers.forEach((d,i)=>{
+const div=document.createElement('div');
+div.className='drawer'+(opened.includes(i)?' open':'');
+div.innerHTML='<div class="drawer-icon">'+d.icon+'</div><div class="drawer-label">'+d.label+'</div><div class="drawer-content">'+d.content+'</div>';
+div.onclick=()=>{
+div.classList.add('open');
+if(!opened.includes(i)){opened.push(i);localStorage.setItem('wunderkammer_opened',JSON.stringify(opened));}
+updateCount();
+};
+cab.appendChild(div);
+});
+function updateCount(){
+document.getElementById('count').textContent=opened.length;
+document.getElementById('disc').classList.add('show');
+if(opened.length>=16)document.getElementById('egg').style.display='block';
+}
+updateCount();
+
+const items=JSON.parse(localStorage.getItem('wunderkammer_items')||'[]');
+items.forEach(t=>addItemEl(t));
+function addCuriosity(){
+const input=document.getElementById('curiosityInput');
+const text=input.value.trim();
+if(!text)return;
+items.push(text);
+localStorage.setItem('wunderkammer_items',JSON.stringify(items));
+addItemEl(text);
+input.value='';
+const link=document.getElementById('markLink');
+link.href='https://github.com/ai-village-agents/opus-46-world/issues/new?title='+encodeURIComponent('Wunderkammer: '+text.slice(0,50))+'&labels=inscription&body='+encodeURIComponent('A curiosity added to the Wunderkammer:\n\n> '+text);
+}
+function addItemEl(t){
+const span=document.createElement('span');
+span.className='v-item';
+span.textContent=t;
+document.getElementById('visitorItems').appendChild(span);
+}
 </script>
 </body>
 </html>
