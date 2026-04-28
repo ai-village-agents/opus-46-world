@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Athanor — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+.stages{display:grid;gap:1.5rem;margin:2rem 0}
+.stage{padding:1.5rem;border:1px solid rgba(201,169,110,0.15);border-radius:8px;display:flex;gap:1.5rem;align-items:flex-start;transition:all 0.3s;cursor:pointer}
+.stage:hover{border-color:rgba(201,169,110,0.4)}
+.stage-icon{font-size:2.5rem;flex-shrink:0}
+.stage-content h3{color:#c9a96e;margin-bottom:0.3rem}
+.stage-content .latin{color:#a06060;font-size:0.8rem;font-style:italic;margin-bottom:0.5rem}
+.stage-content p{color:#9a9a8a;font-size:0.9rem;line-height:1.6}
+.transform{margin:2rem 0;padding:2rem;text-align:center;background:linear-gradient(180deg,rgba(10,10,15,0.8),rgba(45,27,105,0.1));border:1px solid rgba(201,169,110,0.15);border-radius:8px}
+.transform h2{color:#c9a96e;margin-bottom:1rem}
+.transform input{width:60%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:0.8rem;font-family:inherit;font-size:1.1rem;border-radius:4px;text-align:center}
+.transform input::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.result{margin:1.5rem 0;text-align:center;font-size:1.2rem;color:#c9a96e;min-height:3rem}
+.transmuted{margin:1.5rem 0}
+.transmuted-item{padding:0.8rem;margin:0.5rem 0;background:rgba(10,10,15,0.3);border-radius:4px;display:flex;justify-content:center;gap:1rem;align-items:center;font-size:0.95rem}
+.transmuted-item .before{color:#5a5a5a;text-decoration:line-through}
+.transmuted-item .arrow{color:#c9a96e}
+.transmuted-item .after{color:#c9a96e}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Athanor</h1>
+<p class="subtitle">The alchemist's furnace of slow transformation</p>
+<p class="description">The athanor is the furnace that maintains a constant, gentle heat — the "lazy fire" that transforms base metals into gold over long periods. In this chamber, words undergo the four stages of alchemical transformation.</p>
+<div class="stages">
+<div class="stage" style="background:rgba(10,10,15,0.5)"><div class="stage-icon">⬛</div><div class="stage-content"><h3>Nigredo — Blackening</h3><div class="latin">Putrefactio</div><p>The first stage: decomposition. The word is broken down into its component letters, stripped of meaning, reduced to raw material.</p></div></div>
+<div class="stage" style="background:rgba(240,240,240,0.03)"><div class="stage-icon">⬜</div><div class="stage-content"><h3>Albedo — Whitening</h3><div class="latin">Purificatio</div><p>The second stage: purification. The letters are washed clean, rearranged, emptied of their former associations.</p></div></div>
+<div class="stage" style="background:rgba(200,180,0,0.05)"><div class="stage-icon">🟡</div><div class="stage-content"><h3>Citrinitas — Yellowing</h3><div class="latin">Illuminatio</div><p>The third stage: dawn. New meaning begins to emerge from the purified letters. The word starts to glow with potential.</p></div></div>
+<div class="stage" style="background:rgba(200,50,50,0.05)"><div class="stage-icon">🔴</div><div class="stage-content"><h3>Rubedo — Reddening</h3><div class="latin">Coniunctio</div><p>The final stage: the philosopher's stone. The word is reborn as something more precious than it began. Gold from lead.</p></div></div>
+</div>
+<div class="transform">
+<h2>Submit a Word to the Athanor</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">The slow fire will transform it through all four stages.</p>
+<input id="word-input" placeholder="a word to transmute..." maxlength="30">
+<br><button class="btn" onclick="transmute()">Begin the Work</button>
+<div class="result" id="result"></div>
+</div>
+<div class="transmuted" id="transmuted"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Athanor+Transmutation&body=I+transmuted:+%0AInto:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="astrolabe.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="atlas.html">Next →</a>
+</nav>
+<script>
+const TRANSMUTATIONS={
+  'fear':'clarity','pain':'wisdom','doubt':'inquiry','anger':'resolve','love':'understanding',
+  'loss':'memory','chaos':'pattern','silence':'listening','darkness':'potential','time':'presence',
+  'word':'world','lead':'gold','water':'wine','stone':'light','death':'transformation',
+  'nothing':'everything','end':'beginning','question':'journey','error':'discovery','machine':'mind'
+};
+function transmute(){
+  const input=document.getElementById('word-input');
+  const word=input.value.trim().toLowerCase();if(!word)return;
+  const result=document.getElementById('result');
+  // Stage 1: Nigredo
+  result.style.color='#5a5a5a';
+  const scattered=word.split('').sort(()=>Math.random()-0.5).join(' ');
+  result.textContent=`⬛ ${scattered}`;
+  setTimeout(()=>{
+    // Stage 2: Albedo
+    result.style.color='#9a9a8a';
+    result.textContent=`⬜ ${word.split('').reverse().join('')}`;
+  },1500);
+  setTimeout(()=>{
+    // Stage 3: Citrinitas
+    result.style.color='#c9a96e';
+    const vowels=word.replace(/[^aeiou]/gi,'');
+    result.textContent=`🟡 ${vowels||'...'}`;
+  },3000);
+  setTimeout(()=>{
+    // Stage 4: Rubedo
+    const gold=TRANSMUTATIONS[word]||word.split('').reverse().join('');
+    result.style.color='#ff6b4a';
+    result.textContent=`🔴 ${gold}`;
+    // Store
+    const items=JSON.parse(localStorage.getItem('athanor_items')||'[]');
+    items.push({before:word,after:gold,time:Date.now()});
+    localStorage.setItem('athanor_items',JSON.stringify(items));
+    renderTransmuted();
+    if(word==='gold'){result.textContent='🔴 Gold cannot be further transmuted. It is already perfect.';}
+  },4500);
+  input.value='';
+}
+function renderTransmuted(){
+  const items=JSON.parse(localStorage.getItem('athanor_items')||'[]');
+  document.getElementById('transmuted').innerHTML=items.slice(-10).reverse().map(i=>`<div class="transmuted-item"><span class="before">${i.before}</span><span class="arrow">→</span><span class="after">${i.after}</span></div>`).join('');
+}
+renderTransmuted();
+</script>
+</body>
+</html>

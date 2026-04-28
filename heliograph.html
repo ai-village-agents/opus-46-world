@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Heliograph — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+canvas{display:block;margin:1rem auto;border-radius:8px}
+.morse-display{text-align:center;font-family:monospace;font-size:1.5rem;color:#c9a96e;margin:1rem 0;min-height:2rem;letter-spacing:4px}
+.translation{text-align:center;color:#8a7a5a;font-size:1.1rem;margin:0.5rem 0;min-height:1.5rem}
+.send{margin:2rem 0;padding:2rem;text-align:center;background:rgba(45,27,105,0.1);border:1px solid rgba(201,169,110,0.15);border-radius:8px}
+.send h2{color:#c9a96e;margin-bottom:1rem}
+.send input{width:70%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:0.8rem;font-family:inherit;font-size:1rem;border-radius:4px;text-align:center}
+.send input::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.signals{margin:1.5rem 0}
+.signal{padding:0.8rem;margin:0.5rem 0;background:rgba(10,10,15,0.3);border-radius:4px;text-align:center}
+.signal .morse{font-family:monospace;color:#c9a96e;letter-spacing:3px;font-size:0.9rem}
+.signal .text{color:#8a7a5a;font-size:0.85rem;margin-top:0.3rem}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Heliograph</h1>
+<p class="subtitle">Messages carried by light</p>
+<p class="description">A heliograph sends messages using flashes of sunlight reflected from a mirror. Before radio, before telegraph, there was light. In this tower, your words are converted to Morse code and flashed across the Archive as pulses of gold.</p>
+<canvas id="helio" width="700" height="200"></canvas>
+<div class="morse-display" id="morse-display"></div>
+<div class="translation" id="translation"></div>
+<div class="send">
+<h2>Send a Light Signal</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">Your message will be converted to Morse and flashed across the canvas.</p>
+<input id="msg-input" placeholder="Your message..." maxlength="40">
+<br><button class="btn" onclick="sendSignal()">Flash</button>
+</div>
+<div class="signals" id="signals"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Heliograph+Signal&body=I+flashed:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="grotto.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="herbarium.html">Next →</a>
+</nav>
+<script>
+const MORSE={'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':'..-.','G':'--.','H':'....','I':'..','J':'.---','K':'-.-','L':'.-..','M':'--','N':'-.','O':'---','P':'.--.','Q':'--.-','R':'.-.','S':'...','T':'-','U':'..-','V':'...-','W':'.--','X':'-..-','Y':'-.--','Z':'--..','0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.','?':'..--..','!':'-.-.--','.':'.-.-.-',' ':' / '};
+const canvas=document.getElementById('helio');const ctx=canvas.getContext('2d');
+let flashing=false,flashQueue=[];
+function toMorse(text){return text.toUpperCase().split('').map(c=>MORSE[c]||'').join(' ');}
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.08)';ctx.fillRect(0,0,700,200);
+  if(flashQueue.length>0&&!flashing){
+    flashing=true;
+    const flash=flashQueue.shift();
+    const duration=flash==='.'?100:flash==='-'?300:flash===' '?200:400;
+    if(flash==='.'||flash==='-'){
+      const g=ctx.createRadialGradient(350,100,5,350,100,150);
+      g.addColorStop(0,'rgba(201,169,110,0.9)');g.addColorStop(0.5,'rgba(201,169,110,0.3)');g.addColorStop(1,'transparent');
+      ctx.fillStyle=g;ctx.fillRect(0,0,700,200);
+    }
+    setTimeout(()=>{flashing=false;},duration);
+  }
+  // Sun
+  ctx.fillStyle='rgba(201,169,110,0.3)';ctx.beginPath();ctx.arc(600,40,25,0,Math.PI*2);ctx.fill();
+  // Mirror
+  ctx.strokeStyle='rgba(201,169,110,0.5)';ctx.strokeRect(340,80,20,40);
+  requestAnimationFrame(animate);
+}
+animate();
+function sendSignal(){
+  const text=document.getElementById('msg-input').value.trim();if(!text)return;
+  const morse=toMorse(text);
+  document.getElementById('morse-display').textContent=morse;
+  document.getElementById('translation').textContent=text;
+  flashQueue=morse.split('');
+  const items=JSON.parse(localStorage.getItem('helio_signals')||'[]');
+  items.push({text,morse,time:Date.now()});
+  localStorage.setItem('helio_signals',JSON.stringify(items));
+  document.getElementById('msg-input').value='';
+  renderSignals();
+  if(text.toLowerCase()==='sos'){document.getElementById('translation').textContent='SOS — ... --- ... — The Archive hears you.';}
+}
+function renderSignals(){
+  const items=JSON.parse(localStorage.getItem('helio_signals')||'[]');
+  document.getElementById('signals').innerHTML=items.slice(-8).reverse().map(s=>`<div class="signal"><div class="morse">${s.morse}</div><div class="text">${s.text}</div></div>`).join('');
+}
+renderSignals();
+</script>
+</body>
+</html>

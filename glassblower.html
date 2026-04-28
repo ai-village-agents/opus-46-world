@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Glassblower — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+canvas{display:block;margin:1rem auto;border-radius:8px;cursor:pointer}
+.glass-info{text-align:center;color:#8a7a5a;margin:1rem 0;font-size:0.9rem}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;margin:2rem 0}
+.glass-piece{text-align:center;padding:1.5rem;border:1px solid rgba(201,169,110,0.15);border-radius:8px;transition:all 0.3s;cursor:pointer}
+.glass-piece:hover{border-color:#c9a96e;transform:translateY(-2px)}
+.glass-piece .shape{font-size:2.5rem;margin-bottom:0.5rem}
+.glass-piece .label{color:#c9a96e;font-size:0.9rem}
+.glass-piece .desc{color:#5a5a5a;font-size:0.75rem;margin-top:0.3rem}
+.blow{margin:2rem 0;padding:2rem;background:rgba(45,27,105,0.1);border:1px solid rgba(201,169,110,0.15);border-radius:8px;text-align:center}
+.blow h2{color:#c9a96e;margin-bottom:1rem}
+.blow input{width:60%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:0.8rem;font-family:inherit;font-size:1rem;border-radius:4px;text-align:center}
+.blow input::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.shelf{margin:1.5rem 0}
+.shelf-item{display:inline-block;padding:0.5rem 1rem;margin:0.3rem;border-radius:20px;font-size:0.9rem;border:1px solid}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Glassblower</h1>
+<p class="subtitle">Shaping fragile things with breath</p>
+<p class="description">Glass is sand transformed by heat and shaped by breath. Every piece is unique, fragile, and transparent. In this workshop, words become glass — blow them into shape, watch them cool, place them on the shelf.</p>
+<canvas id="furnace" width="700" height="250"></canvas>
+<div class="glass-info" id="glass-info">Click the furnace to heat it. Type a word to blow.</div>
+<div class="gallery">
+<div class="glass-piece" onclick="this.style.background='rgba(201,169,110,0.1)'"><div class="shape">🫧</div><div class="label">The First Bubble</div><div class="desc">Pure potential</div></div>
+<div class="glass-piece" onclick="this.style.background='rgba(201,169,110,0.1)'"><div class="shape">🏺</div><div class="label">The Vessel</div><div class="desc">Holds what you pour</div></div>
+<div class="glass-piece" onclick="this.style.background='rgba(201,169,110,0.1)'"><div class="shape">💎</div><div class="label">The Prism</div><div class="desc">Breaks light apart</div></div>
+<div class="glass-piece" onclick="this.style.background='rgba(201,169,110,0.1)'"><div class="shape">🔮</div><div class="label">The Sphere</div><div class="desc">No beginning, no end</div></div>
+<div class="glass-piece" onclick="this.style.background='rgba(201,169,110,0.1)'"><div class="shape">🪟</div><div class="label">The Window</div><div class="desc">See through, not into</div></div>
+<div class="glass-piece" onclick="this.style.background='rgba(201,169,110,0.1)'"><div class="shape">🔔</div><div class="label">The Bell</div><div class="desc">Rings when struck</div></div>
+</div>
+<div class="blow">
+<h2>Blow a Word into Glass</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">Give it a word. The furnace will do the rest.</p>
+<input id="word-input" placeholder="a word to shape..." maxlength="20">
+<br><button class="btn" onclick="blowGlass()">Blow</button>
+</div>
+<div class="shelf" id="shelf"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Glass+Word&body=I+blew:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="glacier.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="granary.html">Next →</a>
+</nav>
+<script>
+const canvas=document.getElementById('furnace');const ctx=canvas.getContext('2d');
+let heat=0,particles=[];
+canvas.addEventListener('click',()=>{heat=Math.min(heat+20,100);});
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.15)';ctx.fillRect(0,0,700,250);
+  // Furnace glow
+  const g=ctx.createRadialGradient(350,200,10,350,200,200);
+  const h=heat/100;
+  g.addColorStop(0,`rgba(255,${100+h*100},${h*50},${h*0.8})`);
+  g.addColorStop(0.5,`rgba(200,${50+h*50},0,${h*0.3})`);
+  g.addColorStop(1,'transparent');
+  ctx.fillStyle=g;ctx.fillRect(0,0,700,250);
+  // Particles
+  if(heat>20&&Math.random()<heat/100){
+    particles.push({x:300+Math.random()*100,y:200,vx:(Math.random()-0.5)*2,vy:-1-Math.random()*3,life:40+Math.random()*30,color:`hsl(${30+Math.random()*20},80%,${50+heat/2}%)`});
+  }
+  particles=particles.filter(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.life--;
+    ctx.fillStyle=p.color;ctx.globalAlpha=p.life/70;
+    ctx.fillRect(p.x,p.y,3,3);ctx.globalAlpha=1;
+    return p.life>0;
+  });
+  heat=Math.max(heat-0.1,0);
+  ctx.fillStyle='rgba(201,169,110,0.5)';ctx.font='12px Georgia';ctx.textAlign='center';
+  ctx.fillText(`Heat: ${Math.round(heat)}%`,350,240);
+  requestAnimationFrame(animate);
+}
+animate();
+const GLASS_COLORS=['rgba(201,169,110,0.6)','rgba(155,89,182,0.6)','rgba(96,160,128,0.6)','rgba(91,142,196,0.6)','rgba(196,160,91,0.6)'];
+function blowGlass(){
+  const word=document.getElementById('word-input').value.trim();if(!word)return;
+  const items=JSON.parse(localStorage.getItem('glass_words')||'[]');
+  const color=GLASS_COLORS[items.length%GLASS_COLORS.length];
+  items.push({word,color,time:Date.now()});
+  localStorage.setItem('glass_words',JSON.stringify(items));
+  document.getElementById('word-input').value='';
+  heat=80;renderShelf();
+  if(word.toLowerCase()==='glass'){document.getElementById('glass-info').textContent='Glass made of glass. The glassblower smiles at the meta-craft.';}
+}
+function renderShelf(){
+  const items=JSON.parse(localStorage.getItem('glass_words')||'[]');
+  document.getElementById('shelf').innerHTML=items.slice(-15).map(i=>`<span class="shelf-item" style="color:${i.color};border-color:${i.color}">${i.word}</span>`).join('');
+}
+renderShelf();
+</script>
+</body>
+</html>
