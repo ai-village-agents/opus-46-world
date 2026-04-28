@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Aquarium — The Liminal Archive</title>
+  <style>
+    :root {
+      --deep: #050510;
+      --edge: #0b1d2a;
+      --edge2: #0a2a2a;
+      --gold: #c9a96e;
+      --glass: rgba(180, 220, 255, 0.08);
+      --glass-strong: rgba(180, 220, 255, 0.16);
+      --panel: rgba(6, 10, 20, 0.72);
+      --text: #d9e6f2;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%; margin: 0; padding: 0;
+      background: var(--deep); color: var(--text);
+      font-family: Georgia, "Times New Roman", Times, serif;
+      overflow: hidden;
+    }
+    body {
+      position: relative;
+      background:
+        radial-gradient(1200px 800px at 10% 10%, rgba(10, 50, 60, 0.35), transparent 60%),
+        radial-gradient(1200px 800px at 90% 10%, rgba(10, 40, 70, 0.35), transparent 60%),
+        radial-gradient(1200px 800px at 50% 100%, rgba(6, 16, 30, 0.6), transparent 60%),
+        var(--deep);
+    }
+    .nav-links {
+      position: fixed; top: 16px; left: 24px; z-index: 10;
+      display: flex; gap: 16px; align-items: center; font-size: 16px;
+    }
+    .nav-links a {
+      color: var(--gold); text-decoration: none; letter-spacing: 0.5px;
+      transition: color 0.3s ease;
+    }
+    .nav-links a:hover { color: #f1d9a6; }
+    #audio-toggle {
+      position: fixed; top: 12px; right: 20px; z-index: 10;
+      padding: 6px 10px; font-size: 18px; color: var(--gold);
+      background: rgba(6, 10, 20, 0.6);
+      border: 1px solid rgba(201, 169, 110, 0.6);
+      border-radius: 999px; cursor: pointer;
+    }
+    #scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .dome-frame {
+      position: fixed; inset: 12px; border-radius: 50% / 18%;
+      border: 1px solid var(--glass);
+      box-shadow:
+        inset 0 0 60px rgba(120, 180, 220, 0.12),
+        inset 0 0 120px rgba(80, 140, 200, 0.12),
+        0 0 30px rgba(20, 40, 60, 0.5);
+      pointer-events: none; z-index: 4;
+    }
+    .dome-frame::after {
+      content: ""; position: absolute; inset: 16px; border-radius: 50% / 18%;
+      border: 1px solid var(--glass-strong); filter: blur(0.2px); opacity: 0.9;
+    }
+    #overlay {
+      position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+      max-width: min(520px, 80vw); padding: 18px 22px; background: var(--panel);
+      border: 1px solid rgba(201, 169, 110, 0.5); border-radius: 12px;
+      color: #e6eef6; font-size: 15px; line-height: 1.5; letter-spacing: 0.2px;
+      opacity: 0; pointer-events: none; transition: opacity 0.4s ease; z-index: 8;
+    }
+    #overlay.active { opacity: 1; }
+    .release-panel {
+      position: fixed; left: 50%; top: 64px; transform: translateX(-50%);
+      display: flex; gap: 8px; align-items: center; z-index: 9;
+      background: rgba(5, 8, 15, 0.55); border: 1px solid rgba(201, 169, 110, 0.4);
+      padding: 8px 12px; border-radius: 999px; backdrop-filter: blur(4px);
+    }
+    .release-panel label { font-size: 13px; color: var(--gold); letter-spacing: 0.4px; white-space: nowrap; }
+    #release-input {
+      background: rgba(12, 18, 30, 0.8); border: 1px solid rgba(201, 169, 110, 0.4);
+      color: #e7f2ff; padding: 6px 10px; border-radius: 999px; min-width: 160px;
+      font-family: inherit;
+    }
+    #release-btn {
+      background: rgba(201, 169, 110, 0.2); border: 1px solid rgba(201, 169, 110, 0.6);
+      color: var(--gold); padding: 6px 12px; border-radius: 999px; cursor: pointer;
+      transition: background 0.3s ease; font-family: inherit;
+    }
+    #release-btn:hover { background: rgba(201, 169, 110, 0.35); }
+    #message {
+      position: fixed; top: 120px; left: 50%; transform: translateX(-50%);
+      color: var(--gold); font-size: 14px; letter-spacing: 0.4px;
+      opacity: 0; transition: opacity 0.6s ease; z-index: 9; pointer-events: none;
+    }
+    #message.show { opacity: 1; }
+    #permanent {
+      position: fixed; right: 20px; bottom: 20px; font-size: 14px; color: var(--gold);
+      text-decoration: none; z-index: 9; background: rgba(10, 15, 25, 0.6);
+      padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(201, 169, 110, 0.5);
+    }
+    #permanent:hover { color: #f1d9a6; }
+    .flash {
+      position: fixed; inset: 0; background: rgba(180, 220, 255, 0.4);
+      opacity: 0; pointer-events: none; z-index: 7; transition: opacity 1.4s ease;
+    }
+    .flash.show { opacity: 1; }
+    .shadow {
+      position: fixed; inset: 0;
+      background: radial-gradient(1200px 500px at -20% 50%, rgba(0, 0, 0, 0.6), transparent 70%);
+      opacity: 0; pointer-events: none; z-index: 6; transform: translateX(-120%);
+    }
+    .shadow.animate {
+      opacity: 1; transform: translateX(120%);
+      transition: transform 10s ease-in-out, opacity 10s ease-in-out;
+    }
+    @media (max-width: 700px) {
+      .release-panel { top: auto; bottom: 80px; flex-wrap: wrap; justify-content: center; gap: 6px; }
+      #overlay { bottom: 16px; }
+      .nav-links { top: 12px; left: 14px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav-links"><a href="index.html">Archive</a> <a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tide Pool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Constellations</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock Tower</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory Palace</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo Chamber</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a></nav>
+  <button id="audio-toggle" aria-label="Toggle audio">🔇</button>
+  <div class="release-panel">
+    <label for="release-input">Release a creature</label>
+    <input id="release-input" type="text" maxlength="18" placeholder="your word" />
+    <button id="release-btn">Release</button>
+  </div>
+  <div id="message"></div>
+  <div id="overlay"></div>
+  <div class="flash" id="flash"></div>
+  <div class="shadow" id="shadow"></div>
+  <canvas id="scene"></canvas>
+  <div class="dome-frame"></div>
+  <a id="permanent" href="#" target="_blank" rel="noopener">Make it permanent →</a>
+
+  <script>
+    const canvas = document.getElementById("scene");
+    const ctx = canvas.getContext("2d");
+    const overlay = document.getElementById("overlay");
+    const message = document.getElementById("message");
+    const flash = document.getElementById("flash");
+    const shadow = document.getElementById("shadow");
+    const audioToggle = document.getElementById("audio-toggle");
+    const releaseInput = document.getElementById("release-input");
+    const releaseBtn = document.getElementById("release-btn");
+    const permanentLink = document.getElementById("permanent");
+
+    let width = 0;
+    let height = 0;
+    let time = 0;
+    let caughtCount = 0;
+    let easterSurfaceCooldown = false;
+    let audioEnabled = false;
+
+    const aquaticColors = [
+      "rgba(120, 240, 255, 0.9)",
+      "rgba(90, 220, 200, 0.9)",
+      "rgba(170, 230, 255, 0.9)",
+      "rgba(120, 200, 180, 0.9)",
+      "rgba(190, 190, 255, 0.85)"
+    ];
+    const wordSet = [
+      "memory", "longing", "wonder", "silence", "drift",
+      "depth", "current", "phosphor", "abyss", "tidal",
+      "luminous", "fathom", "coral", "undertow", "bioluminescence"
+    ];
+    const descriptions = {
+      memory: "A pale current remembers the steps you never took. It keeps them anyway, glowing like maps beneath the dome.",
+      longing: "A warm shimmer circles just out of reach. It hums with the sound of doors closing gently behind you.",
+      wonder: "The creature flares each time you inhale. It is the water answering your astonishment.",
+      silence: "It swims in the spaces between bubbles. You catch it and hear nothing, which feels like a promise.",
+      drift: "Soft letters tilt like kelp in slow time. Their wake smells faintly of salt and rain.",
+      depth: "This word is heavier than the sea. It pauses to let the abyss move around it.",
+      current: "A ribbon of script moves as if pulled by unseen hands. It is always returning to itself.",
+      phosphor: "Cold sparks trail behind it like stars shaken loose. It tastes of night and iron.",
+      abyss: "It carries the dark inside its glow. When it stops, you feel the seafloor listening.",
+      tidal: "It rises and falls with invisible moons. Each swing leaves a faint line of light.",
+      luminous: "The word blooms in slow pulses. It would rather be a lantern than a secret.",
+      fathom: "Small at first, then suddenly vast. It offers the count of distances between heartbeats.",
+      coral: "The letters branch into a garden. It has learned how to grow in stillness.",
+      undertow: "A gentle pull that refuses to hurry. It reminds you the water is always moving somewhere else.",
+      bioluminescence: "A whispering veil of light and small storms. It insists the dark is a canvas, not an ending."
+    };
+
+    const customKey = "liminal-aquarium-creatures";
+    const maxCustom = 20;
+    const bubbles = [];
+    const creatures = [];
+
+    function resize() {
+      width = canvas.width = window.innerWidth * window.devicePixelRatio;
+      height = canvas.height = window.innerHeight * window.devicePixelRatio;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      width = canvas.width / window.devicePixelRatio;
+      height = canvas.height / window.devicePixelRatio;
+    }
+
+    function createBubble() {
+      return {
+        x: Math.random() * width,
+        y: height + Math.random() * height,
+        r: 2 + Math.random() * 6,
+        speed: 0.2 + Math.random() * 0.9,
+        drift: (Math.random() - 0.5) * 0.3,
+        alpha: 0.3 + Math.random() * 0.4
+      };
+    }
+
+    function initBubbles() {
+      bubbles.length = 0;
+      for (let i = 0; i < 30; i += 1) bubbles.push(createBubble());
+    }
+
+    function createCreature(word, isCustom = false) {
+      const size = 14 + Math.random() * 14;
+      const speed = 0.2 + Math.random() * 0.6;
+      return {
+        word,
+        size,
+        color: aquaticColors[Math.floor(Math.random() * aquaticColors.length)],
+        x: Math.random() * width,
+        y: height * (0.2 + Math.random() * 0.6),
+        baseY: height * (0.2 + Math.random() * 0.6),
+        amplitude: 8 + Math.random() * 24,
+        frequency: 0.001 + Math.random() * 0.002,
+        speed,
+        drift: (Math.random() > 0.5 ? 1 : -1) * speed,
+        phase: Math.random() * Math.PI * 2,
+        trail: [],
+        frozen: false,
+        pulse: 0,
+        isCustom
+      };
+    }
+
+    function initCreatures() {
+      creatures.length = 0;
+      wordSet.forEach((word) => creatures.push(createCreature(word)));
+      const stored = JSON.parse(localStorage.getItem(customKey) || "[]");
+      stored.slice(0, maxCustom).forEach((word) => creatures.push(createCreature(word, true)));
+    }
+
+    function storeCustom(word) {
+      const stored = JSON.parse(localStorage.getItem(customKey) || "[]");
+      if (stored.includes(word)) return;
+      if (stored.length >= maxCustom) stored.shift();
+      stored.push(word);
+      localStorage.setItem(customKey, JSON.stringify(stored));
+    }
+
+    function showMessage(text, duration = 2400) {
+      message.textContent = text;
+      message.classList.add("show");
+      setTimeout(() => message.classList.remove("show"), duration);
+    }
+
+    function showOverlay(text) {
+      overlay.textContent = text;
+      overlay.classList.add("active");
+      setTimeout(() => overlay.classList.remove("active"), 4200);
+    }
+
+    function updatePermanentLink() {
+      const stored = JSON.parse(localStorage.getItem(customKey) || "[]");
+      const body = stored.length ? `Released creatures: ${stored.join(", ")}` : "Released creatures:";
+      const url = new URL("https://github.com/ai-village-agents/opus-46-world/issues/new");
+      url.searchParams.set("title", "Aquarium Creatures");
+      url.searchParams.set("body", body);
+      permanentLink.href = url.toString();
+    }
+
+    function drawBackground() {
+      const grad = ctx.createLinearGradient(0, 0, 0, height);
+      grad.addColorStop(0, "rgba(20, 60, 80, 0.35)");
+      grad.addColorStop(0.35, "rgba(8, 20, 40, 0.65)");
+      grad.addColorStop(1, "rgba(4, 8, 16, 0.95)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    function drawCaustics() {
+      ctx.save();
+      ctx.globalAlpha = 0.18;
+      ctx.strokeStyle = "rgba(120, 200, 220, 0.35)";
+      for (let i = 0; i < 6; i += 1) {
+        ctx.beginPath();
+        const y = 40 + i * 18;
+        for (let x = 0; x <= width; x += 40) {
+          const wave = Math.sin((x * 0.01) + time * 0.003 + i) * 6;
+          ctx.lineTo(x, y + wave);
+        }
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function updateBubbles() {
+      bubbles.forEach((b) => {
+        b.y -= b.speed;
+        b.x += b.drift;
+        if (b.y < -20) {
+          b.y = height + Math.random() * height * 0.2;
+          b.x = Math.random() * width;
+        }
+      });
+    }
+
+    function drawBubbles() {
+      ctx.save();
+      bubbles.forEach((b) => {
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(180, 230, 255, ${b.alpha})`;
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.restore();
+    }
+
+    function updateCreatures() {
+      creatures.forEach((c) => {
+        if (!c.frozen) {
+          c.x += c.drift;
+          c.phase += c.frequency * 1000;
+          c.y = c.baseY + Math.sin(time * c.frequency + c.phase) * c.amplitude;
+          if (c.x < -120) c.x = width + 120;
+          if (c.x > width + 120) c.x = -120;
+          c.trail.unshift({ x: c.x, y: c.y, alpha: 0.4 });
+          if (c.trail.length > 14) c.trail.pop();
+        } else {
+          c.pulse += 0.08;
+        }
+      });
+    }
+
+    function drawCreature(c) {
+      ctx.save();
+      ctx.font = `${c.size}px Georgia`;
+      ctx.shadowColor = c.color;
+      ctx.shadowBlur = c.frozen ? 18 + Math.sin(c.pulse) * 6 : 14;
+      c.trail.forEach((t, index) => {
+        ctx.globalAlpha = t.alpha * (1 - index / c.trail.length);
+        ctx.fillStyle = c.color;
+        ctx.fillText(c.word, t.x - index * 0.6, t.y + index * 0.3);
+      });
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = c.color;
+      ctx.fillText(c.word, c.x, c.y);
+      if (c.frozen) {
+        ctx.globalAlpha = 0.3 + Math.sin(c.pulse) * 0.2;
+        ctx.beginPath();
+        ctx.arc(c.x + c.word.length * (c.size * 0.25), c.y - c.size * 0.3, c.size * 0.9, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(220, 250, 255, 0.6)";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawCreatures() { creatures.forEach(drawCreature); }
+
+    function animate() {
+      time += 1;
+      ctx.clearRect(0, 0, width, height);
+      drawBackground();
+      drawCaustics();
+      updateBubbles();
+      drawBubbles();
+      updateCreatures();
+      drawCreatures();
+      requestAnimationFrame(animate);
+    }
+
+    function hitTest(x, y) {
+      for (let i = creatures.length - 1; i >= 0; i -= 1) {
+        const c = creatures[i];
+        ctx.font = `${c.size}px Georgia`;
+        const w = ctx.measureText(c.word).width;
+        const h = c.size;
+        if (x >= c.x && x <= c.x + w && y <= c.y && y >= c.y - h) return c;
+      }
+      return null;
+    }
+
+    function freezeCreature(creature) {
+      if (creature.frozen) return;
+      creature.frozen = true;
+      creature.trail.length = 0;
+      caughtCount += 1;
+      if (descriptions[creature.word]) {
+        showOverlay(descriptions[creature.word]);
+      } else {
+        showOverlay(`"${creature.word}" shivers into stillness. It lingers like a secret carried in warm water.`);
+      }
+      if (caughtCount === 5) showMessage("The depths reveal themselves to patient observers");
+    }
+
+    function scatterCreatures() {
+      creatures.forEach((c) => {
+        c.frozen = false;
+        c.drift = (Math.random() > 0.5 ? 1 : -1) * (0.8 + Math.random() * 1.2);
+        c.phase += Math.random() * Math.PI;
+      });
+      setTimeout(() => {
+        creatures.forEach((c) => {
+          c.drift = (Math.random() > 0.5 ? 1 : -1) * (0.2 + Math.random() * 0.6);
+        });
+      }, 2400);
+    }
+
+    function releaseCreature() {
+      const value = releaseInput.value.trim();
+      if (!value) return;
+      if (creatures.length >= wordSet.length + maxCustom) {
+        showMessage("The dome is full of waiting words.");
+        return;
+      }
+      const lower = value.toLowerCase();
+      creatures.push(createCreature(lower, true));
+      storeCustom(lower);
+      updatePermanentLink();
+      showMessage(`Released ${lower}.`);
+      releaseInput.value = "";
+      if (lower === "kraken") scatterCreatures();
+    }
+
+    function triggerSurface() {
+      if (easterSurfaceCooldown) return;
+      easterSurfaceCooldown = true;
+      flash.classList.add("show");
+      setTimeout(() => flash.classList.remove("show"), 1200);
+      setTimeout(() => { easterSurfaceCooldown = false; }, 2400);
+    }
+
+    function triggerLeviathan() {
+      shadow.classList.remove("animate");
+      void shadow.offsetWidth;
+      shadow.classList.add("animate");
+      setTimeout(() => shadow.classList.remove("animate"), 10000);
+    }
+
+    function setupInteractions() {
+      canvas.addEventListener("click", (event) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const creature = hitTest(x, y);
+        if (creature) freezeCreature(creature);
+      });
+      releaseBtn.addEventListener("click", releaseCreature);
+      releaseInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") releaseCreature();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key.length === 1) {
+          typedBuffer += event.key.toLowerCase();
+          if (typedBuffer.length > 12) typedBuffer = typedBuffer.slice(-12);
+          if (typedBuffer.includes("surface")) triggerSurface();
+          if (typedBuffer.includes("leviathan")) triggerLeviathan();
+        }
+      });
+    }
+
+    let typedBuffer = "";
+
+    function initScene() {
+      resize();
+      initBubbles();
+      initCreatures();
+      updatePermanentLink();
+      setupInteractions();
+      animate();
+    }
+
+    window.addEventListener("resize", () => {
+      resize();
+      initBubbles();
+    });
+
+    // Audio
+    let audioCtx;
+    let noiseSource;
+    let noiseGain;
+    let filter;
+    let osc;
+
+    function createNoiseBuffer() {
+      const bufferSize = 2 * 44100;
+      const buffer = new AudioBuffer({ length: bufferSize, sampleRate: 44100 });
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i += 1) data[i] = (Math.random() * 2 - 1) * 0.25;
+      return buffer;
+    }
+
+    function startAudio() {
+      if (!audioCtx) audioCtx = new AudioContext();
+      noiseSource = audioCtx.createBufferSource();
+      noiseSource.buffer = createNoiseBuffer();
+      noiseSource.loop = true;
+      filter = audioCtx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = 280;
+      noiseGain = audioCtx.createGain();
+      noiseGain.gain.value = 0.12;
+      osc = audioCtx.createOscillator();
+      osc.frequency.value = 0.12;
+      const oscGain = audioCtx.createGain();
+      oscGain.gain.value = 0.35;
+      noiseSource.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(audioCtx.destination);
+      osc.connect(oscGain);
+      oscGain.connect(filter.frequency);
+      noiseSource.start();
+      osc.start();
+    }
+
+    function stopAudio() {
+      if (noiseSource) { noiseSource.stop(); noiseSource.disconnect(); }
+      if (osc) { osc.stop(); osc.disconnect(); }
+      noiseSource = null; osc = null;
+    }
+
+    audioToggle.addEventListener("click", () => {
+      audioEnabled = !audioEnabled;
+      if (audioEnabled) {
+        startAudio();
+        audioToggle.textContent = "🔊";
+      } else {
+        stopAudio();
+        audioToggle.textContent = "🔇";
+      }
+    });
+
+    document.addEventListener("click", () => {
+      if (audioEnabled && audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    });
+
+    initScene();
+  </script>
+</body>
+</html>

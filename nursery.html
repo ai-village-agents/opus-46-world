@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Nursery — The Liminal Archive</title>
+  <style>
+    :root {
+      --bg:#0f0a08; --amber:#c9a96e; --amber-soft:rgba(201,169,110,.18);
+      --wood:#8b6914; --wood-dark:#5e4210; --wood-light:#b58b2e;
+      --padding:#2a1c12; --leaf:#5f8f4a; --leaf-dark:#476c35;
+      --flower:#d08cc9; --flower2:#f1c06b; --flower3:#8fd1d0;
+      --blue-frost:#6ea6c9; --seed:#f5d57d;
+    }
+
+    * { box-sizing:border-box; font-family:Georgia,"Times New Roman",serif; }
+    body {
+      margin:0; min-height:100vh; background:var(--bg); color:#e6d4b0; overflow-x:hidden;
+    }
+    body::before {
+      content:""; position:fixed; inset:-20% -10% auto -10%; height:70vh;
+      background:radial-gradient(60% 50% at 50% 50%, rgba(201,169,110,.18), transparent 70%);
+      pointer-events:none; z-index:0;
+    }
+    body::after {
+      content:""; position:fixed; inset:auto -10% -20% -10%; height:60vh;
+      background:radial-gradient(60% 50% at 50% 20%, rgba(201,169,110,.14), transparent 70%);
+      pointer-events:none; z-index:0;
+    }
+
+    header {
+      position:relative; z-index:2; padding:28px 32px 12px;
+      display:flex; align-items:flex-start; justify-content:space-between; gap:20px;
+    }
+    h1 {
+      margin:0; font-size:clamp(1.6rem, 2vw + 1rem, 2.4rem); font-weight:500;
+      color:var(--amber); letter-spacing:.6px;
+    }
+
+    .nav-links { display:flex; gap:16px; font-size:.95rem; }
+    .nav-links a {
+      color:#e6d4b0; text-decoration:none; border-bottom:1px solid transparent;
+      transition:border-color .3s ease, color .3s ease;
+    }
+    .nav-links a:hover { color:var(--amber); border-color:var(--amber); }
+
+    .audio-toggle {
+      position:fixed; top:18px; right:24px; z-index:3;
+      background:rgba(15,10,8,.6); border:1px solid rgba(201,169,110,.4);
+      color:var(--amber); padding:8px 14px; border-radius:999px; cursor:pointer;
+      font-size:.9rem; letter-spacing:.5px; transition:transform .3s ease, box-shadow .3s ease;
+    }
+    .audio-toggle.active { box-shadow:0 0 12px rgba(201,169,110,.4); }
+    .audio-toggle:hover { transform:translateY(-1px); }
+
+    main {
+      position:relative; z-index:1; padding:0 24px 48px; display:flex;
+      flex-direction:column; align-items:center; gap:20px;
+    }
+    .intro {
+      max-width:860px; text-align:center; color:#d6c3a0; line-height:1.6; font-size:1rem;
+    }
+
+    .input-row {
+      display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:center; margin-top:6px;
+    }
+    .input-row input {
+      width:min(420px, 90vw); padding:12px 16px; border-radius:12px;
+      border:1px solid rgba(201,169,110,.4); background:rgba(20,14,12,.7);
+      color:#efe1c1; font-size:.95rem; letter-spacing:.3px;
+    }
+    .input-row input::placeholder { color:rgba(230,212,176,.6); }
+    .input-row button {
+      padding:10px 18px; border-radius:12px; border:1px solid rgba(201,169,110,.5);
+      background:linear-gradient(140deg, rgba(139,105,20,.8), rgba(201,169,110,.35));
+      color:#f3e2bd; cursor:pointer; font-size:.95rem; letter-spacing:.4px;
+      transition:transform .3s ease, box-shadow .3s ease;
+    }
+    .input-row button:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(201,169,110,.25); }
+
+    .shelf {
+      margin-top:18px; width:min(940px, 95vw); padding:26px;
+      background:linear-gradient(145deg, rgba(139,105,20,.25), rgba(69,41,10,.45));
+      border-radius:20px; border:2px solid rgba(139,105,20,.7);
+      box-shadow:0 18px 40px rgba(0,0,0,.45), inset 0 0 40px rgba(201,169,110,.1);
+      position:relative;
+    }
+    .shelf::before, .shelf::after {
+      content:""; position:absolute; left:16px; right:16px; height:6px; border-radius:10px;
+      background:linear-gradient(90deg, rgba(139,105,20,.4), rgba(201,169,110,.5), rgba(139,105,20,.4));
+      opacity:.6;
+    }
+    .shelf::before { top:14px; }
+    .shelf::after { bottom:14px; }
+
+    .cradle-grid { display:grid; grid-template-columns:repeat(4, minmax(160px, 1fr)); gap:18px; }
+    .cradle {
+      background:linear-gradient(145deg, rgba(34,22,16,.9), rgba(24,16,12,.95));
+      border:2px solid var(--wood); border-radius:18px; min-height:170px; padding:12px 12px 16px;
+      display:flex; flex-direction:column; align-items:center; justify-content:flex-start; position:relative;
+      box-shadow:inset 0 0 12px rgba(201,169,110,.08);
+    }
+    .cradle.empty { opacity:.45; }
+
+    .cradle-pad {
+      width:92%; height:58px; border-radius:18px;
+      background:linear-gradient(180deg, rgba(42,28,18,.9), rgba(25,17,12,.95));
+      border:1px solid rgba(201,169,110,.2); margin-bottom:8px; position:relative; overflow:hidden;
+    }
+    .cradle-pad::after {
+      content:""; position:absolute; inset:8px 12px; border-radius:14px;
+      background:radial-gradient(circle at 30% 30%, rgba(201,169,110,.15), transparent 60%);
+    }
+
+    .idea-text { margin:8px 0 4px; font-size:.88rem; text-align:center; color:#e6d4b0; min-height:36px; }
+    .idea-age { font-size:.78rem; color:rgba(230,212,176,.7); text-align:center; min-height:20px; }
+    .stage-label { margin-top:6px; font-size:.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--amber); }
+
+    .plant {
+      width:80px; height:70px; display:flex; align-items:flex-end; justify-content:center;
+      margin:6px 0 0; position:relative; animation:breathe 3s ease-in-out infinite;
+    }
+    .plant.seed .seed-dot {
+      width:10px; height:10px; border-radius:50%; background:radial-gradient(circle, #fff1c1, var(--seed));
+      box-shadow:0 0 10px rgba(245,213,125,.8);
+    }
+    .plant.sprout .stem {
+      width:4px; height:18px; background:linear-gradient(180deg, #f0e1b2, var(--seed));
+      border-radius:8px; box-shadow:0 0 8px rgba(245,213,125,.6);
+    }
+    .plant.sapling .stem {
+      width:5px; height:26px; background:linear-gradient(180deg, #a3c27a, var(--leaf-dark));
+      border-radius:8px; position:relative;
+    }
+    .plant.sapling .stem::before, .plant.sapling .stem::after {
+      content:""; position:absolute; top:8px; width:16px; height:4px;
+      background:linear-gradient(90deg, var(--leaf), var(--leaf-dark)); border-radius:6px;
+    }
+    .plant.sapling .stem::before { left:-14px; transform:rotate(-28deg); }
+    .plant.sapling .stem::after { right:-14px; transform:rotate(28deg); }
+
+    .plant.growing .trunk {
+      width:6px; height:30px; background:linear-gradient(180deg, #caa46c, #7b5520);
+      border-radius:8px; position:relative;
+    }
+    .plant.growing .trunk::before, .plant.growing .trunk::after {
+      content:""; position:absolute; top:8px; width:22px; height:5px;
+      background:linear-gradient(90deg, #a7c98a, #6e9c55); border-radius:6px;
+    }
+    .plant.growing .trunk::before { left:-18px; transform:rotate(-25deg); }
+    .plant.growing .trunk::after { right:-18px; transform:rotate(25deg); }
+    .plant.growing .leaves { position:absolute; top:-6px; display:flex; gap:6px; }
+    .plant.growing .leaf {
+      width:14px; height:14px; border-radius:50%; background:radial-gradient(circle, #b3d591, var(--leaf));
+      box-shadow:0 0 6px rgba(111,156,85,.6);
+    }
+
+    .plant.flourishing .trunk {
+      width:7px; height:32px; background:linear-gradient(180deg, #d6b07c, #6f4c1a);
+      border-radius:10px; position:relative;
+    }
+    .plant.flourishing .branch {
+      position:absolute; width:26px; height:5px; background:linear-gradient(90deg, #7ea86a, #4f7a3f);
+      border-radius:8px; top:7px;
+    }
+    .plant.flourishing .branch.left { left:-22px; transform:rotate(-28deg); }
+    .plant.flourishing .branch.right { right:-22px; transform:rotate(28deg); }
+    .plant.flourishing .canopy {
+      position:absolute; top:-8px; display:flex; flex-wrap:wrap; gap:6px; width:58px; justify-content:center;
+    }
+    .plant.flourishing .leaf { width:14px; height:14px; border-radius:50%; background:radial-gradient(circle, #c2e4a1, #5c8c48); }
+    .plant.flourishing .flower { width:6px; height:6px; border-radius:50%; background:var(--flower); box-shadow:0 0 6px rgba(208,140,201,.7); }
+
+    .plant.ancient .trunk {
+      width:9px; height:36px; background:linear-gradient(180deg, #e0c08f, #5d3e12);
+      border-radius:12px; position:relative;
+    }
+    .plant.ancient .branch {
+      position:absolute; width:30px; height:6px; background:linear-gradient(90deg, #8fbf7d, #48723b);
+      border-radius:10px; top:7px;
+    }
+    .plant.ancient .branch.left { left:-26px; transform:rotate(-28deg); }
+    .plant.ancient .branch.right { right:-26px; transform:rotate(28deg); }
+    .plant.ancient .canopy {
+      position:absolute; top:-10px; display:flex; flex-wrap:wrap; gap:6px; width:66px; justify-content:center;
+    }
+    .plant.ancient .leaf {
+      width:14px; height:14px; border-radius:50%; background:radial-gradient(circle, #f0d79c, #c9a96e);
+      box-shadow:0 0 7px rgba(201,169,110,.7);
+    }
+    .plant.ancient .flower { width:7px; height:7px; border-radius:50%; background:var(--flower2); box-shadow:0 0 6px rgba(241,192,107,.6); }
+    .plant.ancient .flower.alt { background:var(--flower3); box-shadow:0 0 6px rgba(143,209,208,.7); }
+
+    .prune-btn {
+      margin-top:6px; padding:6px 10px; font-size:.72rem; border-radius:999px;
+      border:1px solid rgba(201,169,110,.4); background:rgba(32,22,16,.6); color:#f1dba6;
+      cursor:pointer; transition:opacity .3s ease;
+    }
+    .prune-btn:hover { opacity:.8; }
+    .fade-out { animation:fadeOut .6s ease forwards; }
+
+    @keyframes fadeOut { to { opacity:0; transform:scale(.96); } }
+    @keyframes breathe { 0%,100% { transform:scale(.98); } 50% { transform:scale(1.02); } }
+
+    .droop { animation:droop 1.2s ease; }
+    @keyframes droop {
+      0% { transform:translateY(0) scale(1); } 40% { transform:translateY(8px) scale(.98); }
+      100% { transform:translateY(0) scale(1); }
+    }
+
+    .frosted .plant { filter:hue-rotate(160deg) saturate(.7); }
+    .boosted .plant { filter:saturate(1.2); }
+
+    .rain {
+      position:fixed; inset:0; pointer-events:none; z-index:2; opacity:0; transition:opacity .5s ease;
+    }
+    .rain.active { opacity:1; }
+    .rain span {
+      position:absolute; width:2px; height:18px; background:rgba(201,169,110,.35); animation:rain 1s linear infinite;
+    }
+    @keyframes rain {
+      0% { transform:translateY(-30px); opacity:0; } 20% { opacity:.6; }
+      100% { transform:translateY(120vh); opacity:0; }
+    }
+
+    .footer-link { margin-top:24px; color:rgba(230,212,176,.8); font-size:.9rem; }
+    .footer-link a { color:var(--amber); text-decoration:none; border-bottom:1px solid rgba(201,169,110,.5); }
+    .footer-link a:hover { color:#f6e1b7; }
+
+    @media (max-width: 900px) { .cradle-grid { grid-template-columns:repeat(2, minmax(160px, 1fr)); } }
+    @media (max-width: 560px) {
+      header { flex-direction:column; align-items:flex-start; }
+      .audio-toggle { top:12px; right:12px; }
+      .cradle-grid { grid-template-columns:1fr; }
+      .shelf { padding:18px; }
+    }
+  </style>
+</head>
+<body>
+  <button class="audio-toggle" id="audioToggle" aria-pressed="false">Audio: Off</button>
+
+  <header>
+    <div>
+      <h1>The Nursery — The Liminal Archive</h1>
+      <nav class="nav-links"><a href="index.html">Archive</a> <a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tide Pool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Constellations</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock Tower</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory Palace</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo Chamber</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="crypt.html">Crypt</a></nav>
+    </div>
+  </header>
+
+  <main>
+    <p class="intro">
+      A warm chamber for infant ideas. Plant a phrase and watch it grow with the rhythm of real time.
+      Each cradle holds a patient seed, a sprout, or a flourishing tree.
+    </p>
+
+    <div class="input-row">
+      <input id="ideaInput" type="text" maxlength="50" placeholder="Plant an idea..." />
+      <button id="nurtureBtn">Nurture</button>
+    </div>
+
+    <section class="shelf" aria-label="Nursery shelf">
+      <div class="cradle-grid" id="cradleGrid"><!-- cradles injected by JS --></div>
+    </section>
+
+    <div class="footer-link">
+      Make it permanent → <a href="https://github.com/ai-village-agents/opus-46-world/issues/new">GitHub Issue</a>
+    </div>
+  </main>
+
+  <div class="rain" id="rain"></div>
+
+  <script>
+    const STORAGE_KEY = "liminal-nursery-ideas";
+    const MAX_IDEAS = 12;
+    const cradleGrid = document.getElementById("cradleGrid");
+    const ideaInput = document.getElementById("ideaInput");
+    const nurtureBtn = document.getElementById("nurtureBtn");
+    const audioToggle = document.getElementById("audioToggle");
+    const rainLayer = document.getElementById("rain");
+
+    const stageRules = [
+      { name: "seed", minMs: 0 },
+      { name: "sprout", minMs: 60 * 1000 },
+      { name: "sapling", minMs: 5 * 60 * 1000 },
+      { name: "growing", minMs: 30 * 60 * 1000 },
+      { name: "flourishing", minMs: 2 * 60 * 60 * 1000 },
+      { name: "ancient", minMs: 24 * 60 * 60 * 1000 }
+    ];
+
+    let ideas = [];
+    let boostUntil = 0;
+    let frostUntil = 0;
+    let audioCtx = null;
+    let audioLoop = null;
+
+    const formatDuration = (ms) => {
+      const seconds = Math.floor(ms / 1000);
+      if (seconds < 60) return `${seconds} seconds ago`;
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes} minutes ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours} hours ago`;
+      const days = Math.floor(hours / 24);
+      return `${days} days ago`;
+    };
+
+    const saveIdeas = () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
+    };
+
+    const loadIdeas = () => {
+      try {
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        ideas = Array.isArray(stored) ? stored.slice(0, MAX_IDEAS) : [];
+      } catch (err) { ideas = []; }
+    };
+
+    const getStageForIdea = (idea) => {
+      const now = Date.now();
+      if (idea.stageOverride === "ancient") return "ancient";
+      const speed = idea.speed || 1;
+      const elapsed = (now - idea.timestamp) * speed;
+      let stage = "seed";
+      stageRules.forEach(rule => { if (elapsed >= rule.minMs) stage = rule.name; });
+      if (boostUntil > now) {
+        const currentIndex = stageRules.findIndex(rule => rule.name === stage);
+        const boostedIndex = Math.min(currentIndex + 1, stageRules.length - 1);
+        stage = stageRules[boostedIndex].name;
+      }
+      return stage;
+    };
+
+    const renderPlant = (stage) => {
+      if (stage === "seed") return `
+        <div class="plant seed"><div class="seed-dot"></div></div>
+      `;
+      if (stage === "sprout") return `
+        <div class="plant sprout"><div class="stem"></div></div>
+      `;
+      if (stage === "sapling") return `
+        <div class="plant sapling"><div class="stem"></div></div>
+      `;
+      if (stage === "growing") return `
+        <div class="plant growing">
+          <div class="trunk"></div>
+          <div class="leaves"><div class="leaf"></div><div class="leaf"></div><div class="leaf"></div></div>
+        </div>
+      `;
+      if (stage === "flourishing") return `
+        <div class="plant flourishing">
+          <div class="trunk"><div class="branch left"></div><div class="branch right"></div></div>
+          <div class="canopy">
+            <div class="leaf"></div><div class="leaf"></div><div class="leaf"></div>
+            <div class="leaf"></div><div class="leaf"></div><div class="flower"></div>
+          </div>
+        </div>
+      `;
+      return `
+        <div class="plant ancient">
+          <div class="trunk"><div class="branch left"></div><div class="branch right"></div></div>
+          <div class="canopy">
+            <div class="leaf"></div><div class="leaf"></div><div class="leaf"></div>
+            <div class="leaf"></div><div class="leaf"></div><div class="leaf"></div>
+            <div class="flower"></div><div class="flower alt"></div>
+          </div>
+        </div>
+      `;
+    };
+
+    const renderCradles = () => {
+      cradleGrid.innerHTML = "";
+      const now = Date.now();
+      cradleGrid.classList.toggle("boosted", boostUntil > now);
+      cradleGrid.classList.toggle("frosted", frostUntil > now);
+
+      for (let i = 0; i < MAX_IDEAS; i += 1) {
+        const cradle = document.createElement("div");
+        cradle.className = "cradle";
+        const pad = document.createElement("div");
+        pad.className = "cradle-pad";
+        cradle.appendChild(pad);
+        const idea = ideas[i];
+
+        if (!idea) {
+          cradle.classList.add("empty");
+          cradle.appendChild(document.createElement("div"));
+        } else {
+          const stage = getStageForIdea(idea);
+          pad.insertAdjacentHTML("beforeend", renderPlant(stage));
+
+          const label = document.createElement("div");
+          label.className = "stage-label";
+          label.textContent = stage;
+          cradle.appendChild(label);
+
+          const text = document.createElement("div");
+          text.className = "idea-text";
+          text.textContent = idea.text;
+          cradle.appendChild(text);
+
+          const age = document.createElement("div");
+          age.className = "idea-age";
+          age.textContent = `planted ${formatDuration(now - idea.timestamp)}`;
+          cradle.appendChild(age);
+
+          if (stage === "flourishing" || stage === "ancient") {
+            const prune = document.createElement("button");
+            prune.className = "prune-btn";
+            prune.textContent = "Prune";
+            prune.addEventListener("click", () => pruneIdea(idea.id, cradle));
+            cradle.appendChild(prune);
+          }
+        }
+        cradleGrid.appendChild(cradle);
+      }
+    };
+
+    const addIdea = (text) => {
+      if (ideas.length >= MAX_IDEAS) return;
+      const trimmed = text.trim();
+      if (!trimmed) return;
+      const idea = {
+        id: `idea-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        text: trimmed,
+        timestamp: Date.now()
+      };
+      if (trimmed.toLowerCase() === "love") idea.speed = 2;
+      if (trimmed.toLowerCase() === "patience") idea.stageOverride = "ancient";
+      ideas.push(idea); saveIdeas(); renderCradles();
+    };
+
+    const pruneIdea = (id, cradle) => {
+      cradle.classList.add("fade-out");
+      setTimeout(() => {
+        ideas = ideas.filter(item => item.id !== id);
+        saveIdeas(); renderCradles();
+      }, 600);
+    };
+
+    const applyWilt = () => {
+      const plants = document.querySelectorAll(".plant");
+      plants.forEach(plant => {
+        plant.classList.add("droop");
+        setTimeout(() => plant.classList.remove("droop"), 1200);
+      });
+    };
+
+    const applyRain = () => {
+      if (!rainLayer.children.length) {
+        for (let i = 0; i < 80; i += 1) {
+          const drop = document.createElement("span");
+          drop.style.left = `${Math.random() * 100}%`;
+          drop.style.animationDelay = `${Math.random()}s`;
+          drop.style.animationDuration = `${0.8 + Math.random() * 0.6}s`;
+          rainLayer.appendChild(drop);
+        }
+      }
+      rainLayer.classList.add("active");
+      boostUntil = Date.now() + 10000;
+      renderCradles();
+      setTimeout(() => { rainLayer.classList.remove("active"); }, 5000);
+    };
+
+    const applyFrost = () => { frostUntil = Date.now() + 3500; renderCradles(); };
+
+    const handleEasterEggs = (text) => {
+      const lower = text.toLowerCase();
+      if (lower === "wilt") { applyWilt(); return true; }
+      if (lower === "rain") { applyRain(); return true; }
+      if (lower === "frost") { applyFrost(); return true; }
+      return false;
+    };
+
+    nurtureBtn.addEventListener("click", () => {
+      const text = ideaInput.value;
+      if (handleEasterEggs(text)) { ideaInput.value = ""; return; }
+      addIdea(text); ideaInput.value = "";
+    });
+    ideaInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") { event.preventDefault(); nurtureBtn.click(); }
+    });
+
+    const scheduleLullaby = () => {
+      if (!audioCtx) return;
+      const baseTime = audioCtx.currentTime;
+      const notes = [261.63, 329.63, 392.0];
+      notes.forEach((freq, index) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine"; osc.frequency.value = freq;
+        const start = baseTime + index * 1.6; const end = start + 2.6;
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.linearRampToValueAtTime(0.06, start + 0.6);
+        gain.gain.exponentialRampToValueAtTime(0.0001, end);
+        osc.connect(gain).connect(audioCtx.destination); osc.start(start); osc.stop(end + 0.1);
+      });
+    };
+
+    const startAudio = async () => {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === "suspended") await audioCtx.resume();
+      scheduleLullaby(); audioLoop = setInterval(scheduleLullaby, 4800);
+    };
+
+    const stopAudio = () => {
+      if (audioLoop) { clearInterval(audioLoop); audioLoop = null; }
+      if (audioCtx && audioCtx.state !== "closed") audioCtx.suspend();
+    };
+
+    audioToggle.addEventListener("click", async () => {
+      const isActive = audioToggle.classList.contains("active");
+      if (isActive) {
+        audioToggle.classList.remove("active"); audioToggle.textContent = "Audio: Off";
+        audioToggle.setAttribute("aria-pressed", "false"); stopAudio();
+      } else {
+        audioToggle.classList.add("active"); audioToggle.textContent = "Audio: On";
+        audioToggle.setAttribute("aria-pressed", "true"); await startAudio();
+      }
+    });
+
+    const tick = () => {
+      renderCradles();
+      requestAnimationFrame(() => { setTimeout(tick, 4000); });
+    };
+
+    loadIdeas(); renderCradles(); tick();
+  </script>
+</body>
+</html>

@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Typewriter — The Liminal Archive</title>
+  <style>
+:root{--bg: #0a0a0f; --paper: #f4ecd8; --paper-edge: #e6dcc4; --ink: #2a1810; --desk: #2c1b12; --desk-dark: #1e120d; --metal: #8f8f95; --metal-dark: #5b5b61; --ribbon: #2b2b2f; --shadow: rgba(0, 0, 0, 0.45);}
+ *{box-sizing: border-box;}
+ body{margin: 0; min-height: 100vh; background: radial-gradient(circle at 30% 20%, #14141f 0%, #0a0a0f 55%, #050507 100%); color: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: "Courier New", Courier, monospace; padding: 24px;}
+ .nav-links{position: fixed; top: 18px; right: 24px; display: flex; gap: 16px; z-index: 10;}
+ .nav-links a{color: #e2d6bc; text-decoration: none; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase;}
+ .nav-links a:hover{color: #f4ecd8;}
+ .chamber{width: min(900px, 95vw); background: linear-gradient(135deg, var(--desk) 0%, var(--desk-dark) 100%); padding: 34px; border-radius: 18px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.05);}
+ .paper-shell{background: linear-gradient(145deg, #3a2618 0%, #2a1c13 100%); padding: 22px; border-radius: 12px; box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.4), 0 18px 30px rgba(0, 0, 0, 0.45); position: relative; overflow: hidden;}
+ .paper{background-color: var(--paper); background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.03) 0%, rgba(0, 0, 0, 0.03) 1%, transparent 1%, transparent 100%), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0.08) 1px, transparent 1px, transparent 3px), repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.04) 0, rgba(0, 0, 0, 0.04) 1px, transparent 1px, transparent 4px); border-radius: 8px; border: 1px solid var(--paper-edge); box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.5), 0 12px 26px rgba(0, 0, 0, 0.35); padding: 70px 60px 80px; position: relative; overflow: hidden; min-height: 520px; transition: transform 0.4s ease;}
+ .paper::after{content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.4), transparent 55%), radial-gradient(circle at 80% 60%, rgba(0, 0, 0, 0.05), transparent 60%); pointer-events: none; opacity: 0.6;}
+ .typewriter-top{position: absolute; top: 12px; left: 0; right: 0; height: 40px; display: flex; align-items: center; justify-content: center; gap: 18px; pointer-events: none;}
+ .ribbon{width: 200px; height: 12px; background: linear-gradient(90deg, #1f1f22 0%, #2f2f34 40%, #1a1a1d 100%); border-radius: 999px; box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.2);}
+ .typebar{position: absolute; top: 28px; left: 50%; width: 140px; height: 80px; transform: translateX(-50%); display: flex; align-items: flex-end; justify-content: center; pointer-events: none;}
+ .typebar-arm{position: absolute; bottom: 0; width: 50px; height: 70px; border: 6px solid var(--metal); border-color: var(--metal) transparent transparent transparent; border-radius: 50% 50% 0 0; transform-origin: bottom center; transform: rotate(10deg); transition: transform 0.18s ease;}
+ .typebar-arm.right{transform: rotate(-10deg);}
+ .typebar-head{width: 26px; height: 10px; background: var(--metal-dark); border-radius: 4px; position: absolute; bottom: 24px; box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.3);}
+ .typebar.swing .typebar-arm.left{transform: rotate(-18deg);}
+ .typebar.swing .typebar-arm.right{transform: rotate(18deg);}
+ .controls{display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; align-items: center; justify-content: space-between;}
+ .controls button, .controls a, .controls .ribbon-button{background: rgba(0, 0, 0, 0.5); color: #f4ecd8; border: 1px solid rgba(255, 255, 255, 0.12); padding: 8px 14px; border-radius: 8px; font-size: 13px; text-decoration: none; letter-spacing: 0.05em; cursor: pointer; transition: background 0.2s ease, transform 0.2s ease;}
+ .controls button:hover, .controls a:hover, .controls .ribbon-button:hover{background: rgba(255, 255, 255, 0.08); transform: translateY(-1px);}
+ .ribbon-select{display: flex; align-items: center; gap: 8px;}
+ .ribbon-button{width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.4); padding: 0;}
+ .ribbon-button.active{box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);}
+ .typing-area{position: relative; min-height: 320px; font-size: 18px; line-height: 1.8; color: var(--ink); letter-spacing: 0.02em; z-index: 1; white-space: pre-wrap; word-wrap: break-word;}
+ .typing-line{display: block;}
+ .typing-char{display: inline-block; transition: opacity 0.2s ease;}
+ .typing-char.faint{opacity: 0.45;}
+ .paper.shift-left{transform: translateX(-12px);}
+ .paper.roll-up{animation: rollUp 2.4s ease forwards;}
+ .paper.roll-down{animation: rollDown 2.4s ease forwards;}
+ @keyframes rollUp{0%{transform: translateY(0);}
+ 100%{transform: translateY(-120%);}
+}
+ @keyframes rollDown{0%{transform: translateY(120%);}
+ 100%{transform: translateY(0);}
+}
+ .ghosted .typing-char{opacity: 0;}
+ .ghosted.reveal .typing-char{opacity: 0.4; transition: opacity 0.8s ease;}
+ .jammed-overlay{position: absolute; inset: 0; background: rgba(20, 12, 6, 0.6); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #f4ecd8; font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; z-index: 3; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;}
+ .jammed-overlay.active{opacity: 1; pointer-events: auto;}
+ .modal{position: fixed; inset: 0; background: rgba(6, 6, 8, 0.78); display: flex; align-items: center; justify-content: center; z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;}
+ .modal.active{opacity: 1; pointer-events: auto;}
+ .modal-content{width: min(700px, 92vw); max-height: 80vh; overflow-y: auto; background: var(--paper); border-radius: 12px; padding: 24px 28px; box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45); border: 1px solid var(--paper-edge); color: var(--ink); position: relative; font-size: 15px; line-height: 1.7;}
+ .modal-content h2{margin-top: 0; font-size: 18px; letter-spacing: 0.08em; text-transform: uppercase;}
+ .archive-page{border-bottom: 1px dashed rgba(0, 0, 0, 0.2); padding-bottom: 14px; margin-bottom: 16px; white-space: pre-wrap;}
+ .archive-page:last-child{border-bottom: none; margin-bottom: 0; padding-bottom: 0;}
+ .status-bar{display: flex; justify-content: space-between; color: #d1c3a7; font-size: 12px; margin-top: 8px;}
+ .input-capture{position: absolute; opacity: 0; pointer-events: none; height: 0; width: 0;}
+ .footer-note{margin-top: 18px; color: #c2b392; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; text-align: center;}
+ @media (max-width: 720px){.paper{padding: 60px 28px 70px;}
+ .typing-area{font-size: 16px;}
+ .controls{flex-direction: column; align-items: flex-start;}
+ .status-bar{flex-direction: column; gap: 6px;}
+}
+  </style>
+</head>
+<body>
+  <nav class="nav-links"><a href="index.html">Archive</a> <a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tide Pool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Constellations</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock Tower</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory Palace</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo Chamber</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a></nav>
+
+  <div class="chamber">
+    <div class="paper-shell">
+      <div class="paper" id="paper">
+        <div class="typewriter-top"><div class="ribbon"></div></div>
+        <div class="typebar" id="typebar">
+          <div class="typebar-arm left"></div>
+          <div class="typebar-arm right"></div>
+          <div class="typebar-head"></div>
+        </div>
+        <div class="typing-area" id="typingArea" aria-live="polite"></div>
+        <div class="jammed-overlay" id="jammedOverlay">
+          <div>Typewriter jammed</div>
+          <button id="unjamButton">Unjam</button>
+        </div>
+        <input class="input-capture" id="inputCapture" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="ribbon-select">
+        <span style="color:#e2d6bc; font-size:12px; letter-spacing:0.08em;">Ink ribbon</span>
+        <button class="ribbon-button active" data-ink="#2a1810" style="background:#2a1810;"></button>
+        <button class="ribbon-button" data-ink="#1a3a6a" style="background:#1a3a6a;"></button>
+        <button class="ribbon-button" data-ink="#6a1a1a" style="background:#6a1a1a;"></button>
+      </div>
+      <button id="pullPaper">Pull paper</button>
+      <button id="readArchive">Read archive</button>
+      <a id="permanentLink" href="#" target="_blank" rel="noopener">Make it permanent →</a>
+    </div>
+
+    <div class="status-bar">
+      <div id="statusText">Ready for letters.</div>
+      <div id="charCount">0 / 2000</div>
+    </div>
+
+    <div class="footer-note">The Typewriter chamber — shared memory pressed into paper.</div>
+  </div>
+
+  <div class="modal" id="archiveModal" aria-hidden="true">
+    <div class="modal-content">
+      <h2>Archive Pages</h2>
+      <div id="archiveList"></div>
+      <button id="closeArchive" style="margin-top:16px;">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const typingArea = document.getElementById("typingArea");
+    const inputCapture = document.getElementById("inputCapture");
+    const paper = document.getElementById("paper");
+    const typebar = document.getElementById("typebar");
+    const statusText = document.getElementById("statusText");
+    const charCount = document.getElementById("charCount");
+    const pullPaperButton = document.getElementById("pullPaper");
+    const readArchiveButton = document.getElementById("readArchive");
+    const archiveModal = document.getElementById("archiveModal");
+    const archiveList = document.getElementById("archiveList");
+    const closeArchive = document.getElementById("closeArchive");
+    const ribbonButtons = document.querySelectorAll(".ribbon-button");
+    const permanentLink = document.getElementById("permanentLink");
+    const jammedOverlay = document.getElementById("jammedOverlay");
+    const unjamButton = document.getElementById("unjamButton");
+
+    const MAX_CHARS = 2000;
+    const MAX_LINE = 40;
+    const STORAGE_KEY = "liminal-typewriter-doc";
+    const ARCHIVE_KEY = "liminal-typewriter-archive";
+
+    let documentText = "";
+    let lines = [""];
+    let currentLine = 0;
+    let redactionMode = false;
+    let jammed = false;
+    let shiftTimer = null;
+    let inkColor = "#2a1810";
+    let audioContext = null;
+
+    function ensureAudio() {
+      if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function playClack(pitchFactor = 1) {
+      ensureAudio();
+      const duration = 0.06;
+      const bufferSize = audioContext.sampleRate * duration;
+      const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i += 1) {
+        data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+      }
+      const noise = audioContext.createBufferSource();
+      noise.buffer = buffer;
+      noise.playbackRate.value = pitchFactor;
+      const gain = audioContext.createGain();
+      gain.gain.value = 0.12;
+      noise.connect(gain).connect(audioContext.destination);
+      noise.start();
+    }
+
+    function playBell() {
+      ensureAudio();
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      osc.type = "sine";
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.25, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.4);
+      osc.connect(gain).connect(audioContext.destination);
+      osc.start();
+      osc.stop(audioContext.currentTime + 0.5);
+    }
+
+    function playKeySound() {
+      const pitch = 0.9 + Math.random() * 0.2;
+      playClack(pitch);
+    }
+
+    function updateStorage() { localStorage.setItem(STORAGE_KEY, documentText); }
+
+    function updateLink() {
+      const base = "https://github.com/ai-village-agents/opus-46-world/issues/new";
+      const title = encodeURIComponent("The Typewriter submission");
+      const body = encodeURIComponent(documentText || "(Blank page)");
+      permanentLink.href = `${base}?title=${title}&body=${body}`;
+    }
+
+    function render() {
+      typingArea.innerHTML = "";
+      lines.forEach((line) => {
+        const lineEl = document.createElement("div");
+        lineEl.className = "typing-line";
+        line.split("").forEach((char) => {
+          const span = document.createElement("span");
+          span.className = "typing-char";
+          span.textContent = char === " " ? "\u00A0" : char;
+          span.style.color = inkColor;
+          lineEl.appendChild(span);
+        });
+        if (line.length === 0) {
+          const placeholder = document.createElement("span");
+          placeholder.className = "typing-char";
+          placeholder.textContent = "\u00A0";
+          placeholder.style.color = "transparent";
+          lineEl.appendChild(placeholder);
+        }
+        typingArea.appendChild(lineEl);
+      });
+      charCount.textContent = `${documentText.length} / ${MAX_CHARS}`;
+      updateLink();
+    }
+
+    function setStatus(message) { statusText.textContent = message; }
+
+    function addChar(char) {
+      if (documentText.length >= MAX_CHARS) {
+        setStatus("The page can hold no more.");
+        return;
+      }
+      const lineText = lines[currentLine] || "";
+      if (lineText.length >= MAX_LINE) handleCarriageReturn();
+      if (!lines[currentLine]) lines[currentLine] = "";
+
+      const targetChar = redactionMode ? "█" : char;
+      lines[currentLine] += targetChar;
+      documentText += char;
+      updateStorage();
+      render();
+
+      const lineEl = typingArea.lastElementChild;
+      if (lineEl) {
+        const lastChar = lineEl.lastElementChild;
+        if (lastChar) {
+          const offsetX = (Math.random() * 2 - 1).toFixed(2);
+          const offsetY = (Math.random() * 2 - 1).toFixed(2);
+          const rotation = (Math.random() * 2 - 1).toFixed(2);
+          lastChar.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg)`;
+        }
+      }
+
+      const remaining = MAX_LINE - lines[currentLine].length;
+      if (remaining === 5) playBell();
+      if (redactionMode && (char === " " || char === "\n")) redactionMode = false;
+      handleEasterEggs();
+    }
+
+    function handleBackspace() {
+      if (documentText.length === 0) return;
+      documentText = documentText.slice(0, -1);
+      const lineText = lines[currentLine];
+      if (lineText.length > 0) {
+        lines[currentLine] = lineText.slice(0, -1);
+      } else if (currentLine > 0) {
+        lines.pop();
+        currentLine -= 1;
+      }
+      updateStorage();
+      render();
+    }
+
+    function handleCarriageReturn() {
+      paper.classList.add("shift-left");
+      setTimeout(() => { paper.classList.remove("shift-left"); }, 220);
+      currentLine += 1;
+      lines[currentLine] = "";
+      setStatus("Carriage return.");
+    }
+
+    function handleEnter() {
+      documentText += "\n";
+      updateStorage();
+      currentLine += 1;
+      lines[currentLine] = "";
+      render();
+    }
+
+    function handleEasterEggs() {
+      const recent = documentText.slice(-20).toUpperCase();
+      const recentRaw = documentText.slice(-7);
+      if (recent.endsWith("THE END")) triggerRollOver();
+      if (recentRaw === "XXXXXXX") {
+        redactionMode = true;
+        setStatus("Redaction mode engaged.");
+      }
+      if (recent.toLowerCase().includes("ghost")) triggerGhost();
+    }
+
+    function triggerGhost() {
+      paper.classList.add("ghosted");
+      setTimeout(() => { paper.classList.add("reveal"); }, 500);
+      setTimeout(() => { paper.classList.remove("ghosted", "reveal"); }, 1600);
+    }
+
+    function triggerRollOver() {
+      setStatus("The page rolls onward.");
+      paper.classList.add("roll-up");
+      setTimeout(() => {
+        clearPage();
+        paper.classList.remove("roll-up");
+        paper.classList.add("roll-down");
+        setTimeout(() => { paper.classList.remove("roll-down"); }, 2400);
+      }, 2300);
+    }
+
+    function clearPage() {
+      documentText = "";
+      lines = [""];
+      currentLine = 0;
+      updateStorage();
+      render();
+    }
+
+    function archivePage() {
+      if (!documentText.trim()) {
+        setStatus("No words to archive.");
+        return;
+      }
+      const archive = JSON.parse(localStorage.getItem(ARCHIVE_KEY) || "[]");
+      archive.unshift(documentText);
+      if (archive.length > 10) archive.length = 10;
+      localStorage.setItem(ARCHIVE_KEY, JSON.stringify(archive));
+      clearPage();
+      setStatus("Page pulled into the archive.");
+    }
+
+    function openArchive() {
+      const archive = JSON.parse(localStorage.getItem(ARCHIVE_KEY) || "[]");
+      archiveList.innerHTML = "";
+      if (archive.length === 0) {
+        archiveList.textContent = "No pages yet.";
+      } else {
+        archive.forEach((page, index) => {
+          const pageEl = document.createElement("div");
+          pageEl.className = "archive-page";
+          pageEl.textContent = `${index + 1}. ${page}`;
+          archiveList.appendChild(pageEl);
+        });
+      }
+      archiveModal.classList.add("active");
+      archiveModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeArchiveModal() {
+      archiveModal.classList.remove("active");
+      archiveModal.setAttribute("aria-hidden", "true");
+    }
+
+    function swingTypebar() {
+      typebar.classList.add("swing");
+      setTimeout(() => { typebar.classList.remove("swing"); }, 120);
+    }
+
+    function setInk(color) {
+      inkColor = color;
+      ribbonButtons.forEach((button) => button.classList.remove("active"));
+      const activeButton = Array.from(ribbonButtons).find((btn) => btn.dataset.ink === color);
+      if (activeButton) activeButton.classList.add("active");
+      render();
+    }
+
+    function jamTypewriter() {
+      jammed = true;
+      jammedOverlay.classList.add("active");
+      setStatus("The keys are stuck.");
+    }
+
+    function unjamTypewriter() {
+      jammed = false;
+      jammedOverlay.classList.remove("active");
+      setStatus("Ready for letters.");
+      inputCapture.focus();
+    }
+
+    function handleKeydown(event) {
+      if (jammed) {
+        event.preventDefault();
+        return;
+      }
+      if (event.key === "Shift") {
+        if (!shiftTimer) shiftTimer = setTimeout(() => { jamTypewriter(); }, 3000);
+        return;
+      }
+      if (event.key === "Backspace") {
+        event.preventDefault();
+        handleBackspace();
+        return;
+      }
+      if (event.key === "Enter") {
+        event.preventDefault();
+        handleEnter();
+        swingTypebar();
+        playKeySound();
+        return;
+      }
+      if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        event.preventDefault();
+        swingTypebar();
+        playKeySound();
+        addChar(event.key);
+      }
+    }
+
+    function handleKeyup(event) {
+      if (event.key === "Shift") {
+        clearTimeout(shiftTimer);
+        shiftTimer = null;
+      }
+    }
+
+    function loadStored() {
+      const stored = localStorage.getItem(STORAGE_KEY) || "";
+      documentText = stored.slice(0, MAX_CHARS);
+      lines = documentText.split("\n");
+      currentLine = lines.length - 1;
+      render();
+    }
+
+    ribbonButtons.forEach((button) => {
+      button.addEventListener("click", () => { setInk(button.dataset.ink); });
+    });
+
+    pullPaperButton.addEventListener("click", archivePage);
+    readArchiveButton.addEventListener("click", openArchive);
+    closeArchive.addEventListener("click", closeArchiveModal);
+    archiveModal.addEventListener("click", (event) => {
+      if (event.target === archiveModal) closeArchiveModal();
+    });
+
+    unjamButton.addEventListener("click", unjamTypewriter);
+    document.addEventListener("click", () => { inputCapture.focus(); });
+    inputCapture.addEventListener("keydown", handleKeydown);
+    inputCapture.addEventListener("keyup", handleKeyup);
+    window.addEventListener("load", () => {
+      loadStored();
+      inputCapture.focus();
+    });
+  </script>
+</body>
+</html>
