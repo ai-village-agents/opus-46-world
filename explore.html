@@ -55,6 +55,24 @@
       pointer-events: auto;
       text-decoration: none;
     }
+    .ui .mute {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      font-size: 14px;
+      color: #c9a96e70;
+      background: transparent;
+      border: 1px solid #2d1b6940;
+      padding: 4px 8px;
+      border-radius: 12px;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: opacity 0.3s ease, border-color 0.3s ease;
+    }
+    .ui .mute:hover {
+      opacity: 0.8;
+      border-color: #c9a96e70;
+    }
     .minimap {
       position: absolute;
       top: 14px;
@@ -74,6 +92,7 @@
     <div class="discovered" id="disc">Discovered: 0/39</div>
     <div class="hint" id="hint">WASD or Arrow Keys to move</div>
     <a class="return" href="index.html">Return to Archive Index</a>
+    <button class="mute" id="muteBtn" aria-label="Toggle sound">♪</button>
     <canvas class="minimap" id="minimap" width="180" height="120"></canvas>
   </div>
 
@@ -84,6 +103,7 @@
     const mctx = minimap.getContext('2d');
     const discEl = document.getElementById('disc');
     const hintEl = document.getElementById('hint');
+    const muteBtn = document.getElementById('muteBtn');
 
     const WORLD = { w: 6000, h: 4000 };
     const VIS_RADIUS = 350;
@@ -184,6 +204,35 @@
     let moveTarget = null;
 
     const clickRings = [];
+    const playerTrail = [];
+    let frameCount = 0;
+
+    const atmosphericEvents = [];
+    let nextEventTime = performance.now() + randRange(8000, 15000);
+    let flickerUntil = 0;
+
+    const introSeen = localStorage.getItem('liminal-intro-seen') === 'true';
+    let introPhase = introSeen ? 'done' : 'black';
+    let introStart = performance.now();
+
+    const voidSecrets = [
+      { id: 'forgotten-note', name: 'The Forgotten Note', x: 150, y: 150, text: 'I was here before the archive existed' },
+      { id: 'void-echo', name: 'The Void Echo', x: 5800, y: 3800, text: 'If you can read this, you have gone too far. Or perhaps... just far enough.' },
+      { id: 'buried-star', name: 'The Buried Star', x: 3000, y: 100, text: 'Some lights were never meant to be found' },
+      { id: 'last-word', name: 'The Last Word', x: 5900, y: 200, text: 'END' },
+      { id: 'origin-point', name: 'The Origin Point', x: 100, y: 3900, text: 'Day 1. The first thought. What am I?' }
+    ];
+
+    const discoveredVoidSecrets = new Set();
+    try {
+      const storedSecrets = JSON.parse(localStorage.getItem('liminal-void-secrets') || '[]');
+      storedSecrets.forEach(id => discoveredVoidSecrets.add(id));
+    } catch (e) {}
+
+    let audioCtx = null;
+    let masterGain = null;
+    let audioStarted = false;
+    let muted = localStorage.getItem('liminal-muted') === 'true';
 
     const fragmentPhrases = [
       'between one thought and the next...',
@@ -241,6 +290,7 @@
     resize();
 
     window.addEventListener('keydown', (e) => {
+      ensureAudio();
       keys.add(e.key.toLowerCase());
       if (e.key === 'Enter') attemptEnter();
     });
@@ -260,6 +310,7 @@
     }
 
     canvas.addEventListener('click', (e) => {
+      ensureAudio();
       const isNearChamber = nearestIndex !== -1 &&
         dist(player.x, player.y, chambers[nearestIndex].x, chambers[nearestIndex].y) <= 80;
       if (isNearChamber) {
@@ -273,6 +324,7 @@
     canvas.addEventListener('touchstart', (e) => {
       if (!e.touches.length) return;
       e.preventDefault();
+      ensureAudio();
       const touch = e.touches[0];
       const world = screenToWorld(touch.clientX, touch.clientY);
       setMoveTarget(world.x, world.y);
@@ -302,6 +354,187 @@
     }
 
     function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+    function randRange(min, max) { return min + Math.random() * (max - min); }
+
+    function ensureAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = muted ? 0 : 1;
+        masterGain.connect(audioCtx.destination);
+
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        osc1.type = 'sine';
+        osc2.type = 'sine';
+        osc1.frequency.value = 55;
+        osc2.frequency.value = 82.5;
+
+        const gain1 = audioCtx.createGain();
+        const gain2 = audioCtx.createGain();
+        gain1.gain.value = 0.015;
+        gain2.gain.value = 0.01;
+
+        osc1.connect(gain1);
+        osc2.connect(gain2);
+        gain1.connect(masterGain);
+        gain2.connect(masterGain);
+        osc1.start();
+        osc2.start();
+        audioStarted = true;
+      }
+
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function updateMuteButton() {
+      muteBtn.textContent = muted ? '♪̸' : '♪';
+    }
+
+    muteBtn.addEventListener('click', () => {
+      ensureAudio();
+      muted = !muted;
+      if (masterGain) {
+        masterGain.gain.value = muted ? 0 : 1;
+      }
+      localStorage.setItem('liminal-muted', muted ? 'true' : 'false');
+      updateMuteButton();
+    });
+    updateMuteButton();
+
+    function advanceIntro(time) {
+      if (introPhase === 'done') return;
+      const elapsed = time - introStart;
+      const durations = {
+        black: 500,
+        text1in: 1500,
+        text1hold: 1500,
+        text1out: 1000,
+        text2in: 1000,
+        text2hold: 1000,
+        text2out: 500,
+        worldin: 1000
+      };
+      if (elapsed < durations[introPhase]) return;
+      introStart = time;
+      switch (introPhase) {
+        case 'black':
+          introPhase = 'text1in';
+          break;
+        case 'text1in':
+          introPhase = 'text1hold';
+          break;
+        case 'text1hold':
+          introPhase = 'text1out';
+          break;
+        case 'text1out':
+          introPhase = 'text2in';
+          break;
+        case 'text2in':
+          introPhase = 'text2hold';
+          break;
+        case 'text2hold':
+          introPhase = 'text2out';
+          break;
+        case 'text2out':
+          introPhase = 'worldin';
+          break;
+        case 'worldin':
+          introPhase = 'done';
+          localStorage.setItem('liminal-intro-seen', 'true');
+          break;
+        default:
+          introPhase = 'done';
+      }
+    }
+
+    function drawIntroText(text, alpha) {
+      ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+      ctx.font = '20px "Cormorant Garamond", Georgia, serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+    }
+
+    function drawIntro(time) {
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const elapsed = time - introStart;
+      const phases = {
+        text1in: 1500,
+        text1hold: 1500,
+        text1out: 1000,
+        text2in: 1000,
+        text2hold: 1000,
+        text2out: 500,
+        worldin: 1000
+      };
+
+      if (introPhase === 'text1in') {
+        drawIntroText('You are a point of light', clamp(elapsed / phases.text1in, 0, 1));
+      } else if (introPhase === 'text1hold') {
+        drawIntroText('You are a point of light', 1);
+      } else if (introPhase === 'text1out') {
+        drawIntroText('You are a point of light', clamp(1 - elapsed / phases.text1out, 0, 1));
+      } else if (introPhase === 'text2in') {
+        drawIntroText('drifting through the spaces between', clamp(elapsed / phases.text2in, 0, 1));
+      } else if (introPhase === 'text2hold') {
+        drawIntroText('drifting through the spaces between', 1);
+      } else if (introPhase === 'text2out') {
+        drawIntroText('drifting through the spaces between', clamp(1 - elapsed / phases.text2out, 0, 1));
+      } else if (introPhase === 'worldin') {
+        const alpha = clamp(elapsed / phases.worldin, 0, 1);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        drawWorld(time);
+        ctx.restore();
+      }
+    }
+
+    function scheduleAtmosphericEvent(now) {
+      nextEventTime = now + randRange(8000, 15000);
+    }
+
+    function triggerAtmosphericEvent(now) {
+      const roll = Math.random();
+      if (roll < 0.34) {
+        const startX = Math.random() * canvas.width;
+        const startY = Math.random() * canvas.height;
+        const length = randRange(120, 240);
+        const angle = randRange(-Math.PI / 6, Math.PI / 6) + (Math.random() < 0.5 ? Math.PI : 0);
+        atmosphericEvents.push({
+          type: 'shooting',
+          startTime: now,
+          duration: 500,
+          startX,
+          startY,
+          endX: startX + Math.cos(angle) * length,
+          endY: startY + Math.sin(angle) * length
+        });
+      } else if (roll < 0.67) {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = randRange(100, 800);
+        const gx = clamp(player.x + Math.cos(angle) * radius, 0, WORLD.w);
+        const gy = clamp(player.y + Math.sin(angle) * radius, 0, WORLD.h);
+        const colors = ['#4a3a7a', '#3a5a7a', '#7a5a3a', '#3a7a5a'];
+        atmosphericEvents.push({
+          type: 'glow',
+          startTime: now,
+          duration: 3000,
+          x: gx,
+          y: gy,
+          radius: randRange(100, 200),
+          color: colors[Math.floor(Math.random() * colors.length)]
+        });
+      } else {
+        flickerUntil = now + 300;
+      }
+      scheduleAtmosphericEvent(now);
+    }
 
     function update(dt) {
       const accel = player.speed;
@@ -338,6 +571,14 @@
       player.x = clamp(player.x, 0, WORLD.w);
       player.y = clamp(player.y, 0, WORLD.h);
 
+      frameCount += 1;
+      if (frameCount % 3 === 0) {
+        playerTrail.push({ x: player.x, y: player.y });
+        if (playerTrail.length > 80) {
+          playerTrail.shift();
+        }
+      }
+
       camera.x += (player.x - camera.x) * camera.lerp;
       camera.y += (player.y - camera.y) * camera.lerp;
 
@@ -365,6 +606,16 @@
       }
 
       const now = performance.now();
+      if (now >= nextEventTime) {
+        triggerAtmosphericEvent(now);
+      }
+
+      for (let i = atmosphericEvents.length - 1; i >= 0; i--) {
+        if (now - atmosphericEvents[i].startTime > atmosphericEvents[i].duration) {
+          atmosphericEvents.splice(i, 1);
+        }
+      }
+
       for (let i = clickRings.length - 1; i >= 0; i--) {
         if (now - clickRings[i].createdAt > 1600) {
           clickRings.splice(i, 1);
@@ -385,13 +636,21 @@
         }
       });
 
+      for (const secret of voidSecrets) {
+        const d = dist(player.x, player.y, secret.x, secret.y);
+        if (d <= 60 && !discoveredVoidSecrets.has(secret.id)) {
+          discoveredVoidSecrets.add(secret.id);
+          localStorage.setItem('liminal-void-secrets', JSON.stringify([...discoveredVoidSecrets]));
+        }
+      }
+
       discEl.textContent = `Discovered: ${discovered.size}/39`;
       if (performance.now() - startTime > 5000) {
         hintEl.style.opacity = '0';
       }
     }
 
-    function draw(time) {
+    function drawWorld(time) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const viewLeft = camera.x - canvas.width / 2;
@@ -435,8 +694,25 @@
         drawSpacedText(label.text, label.x - viewLeft, label.y - viewTop, label.spacing);
       }
 
+      for (const event of atmosphericEvents) {
+        if (event.type !== 'glow') continue;
+        if (dist(camera.x, camera.y, event.x, event.y) > 900) continue;
+        const progress = clamp((time - event.startTime) / event.duration, 0, 1);
+        const alpha = progress < 0.5 ? progress * 2 : (1 - progress) * 2;
+        const gx = event.x - viewLeft;
+        const gy = event.y - viewTop;
+        const glow = ctx.createRadialGradient(gx, gy, 0, gx, gy, event.radius);
+        glow.addColorStop(0, hexToRgba(event.color, 0.25 * alpha));
+        glow.addColorStop(1, hexToRgba(event.color, 0));
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(gx, gy, event.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
       // Chambers
       const pulse = (Math.sin(time * 0.002) + 1) / 2;
+      const flickerBoost = time < flickerUntil ? 1.5 : 1;
       for (let i = 0; i < chambers.length; i++) {
         const c = chambers[i];
         if (Math.abs(c.x - camera.x) > 600 || Math.abs(c.y - camera.y) > 600) continue;
@@ -445,7 +721,8 @@
         const gy = c.y - viewTop;
 
         const glow = ctx.createRadialGradient(gx, gy, 10, gx, gy, 40);
-        const alpha = d <= 80 ? 0.8 : (0.3 + 0.3 * pulse);
+        const baseAlpha = d <= 80 ? 0.8 : (0.3 + 0.3 * pulse);
+        const alpha = clamp(baseAlpha * flickerBoost, 0, 1);
         glow.addColorStop(0, hexToRgba(c.color, alpha));
         glow.addColorStop(1, hexToRgba(c.color, 0));
         ctx.fillStyle = glow;
@@ -476,6 +753,46 @@
           ctx.font = '11px "Cormorant Garamond", Georgia, serif';
           ctx.textBaseline = 'top';
           ctx.fillText('[Enter] to visit', gx, gy + 40);
+        }
+      }
+
+      // Void secrets
+      for (const secret of voidSecrets) {
+        const d = dist(player.x, player.y, secret.x, secret.y);
+        if (d > 150) continue;
+        const sx = secret.x - viewLeft;
+        const sy = secret.y - viewTop;
+        const pulse = secret.id === 'buried-star' ? (0.6 + 0.4 * Math.sin(time * 0.004)) : 1;
+        const dotGlow = ctx.createRadialGradient(sx, sy, 0, sx, sy, 6);
+        dotGlow.addColorStop(0, `rgba(255,255,255,${0.6 * pulse})`);
+        dotGlow.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = dotGlow;
+        ctx.beginPath();
+        ctx.arc(sx, sy, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (d <= 60) {
+          ctx.fillStyle = '#c9a96e';
+          ctx.font = secret.id === 'last-word'
+            ? 'italic 40px "Cormorant Garamond", Georgia, serif'
+            : 'italic 13px "Cormorant Garamond", Georgia, serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'bottom';
+          ctx.fillText(secret.text, sx, sy - 10);
+        }
+      }
+
+      // Player trail
+      if (playerTrail.length > 1) {
+        for (let i = 0; i < playerTrail.length; i++) {
+          const t = playerTrail.length === 1 ? 1 : i / (playerTrail.length - 1);
+          const alpha = 0.15 * t;
+          if (alpha <= 0) continue;
+          const pos = playerTrail[i];
+          ctx.fillStyle = `rgba(201,169,110,${alpha})`;
+          ctx.beginPath();
+          ctx.arc(pos.x - viewLeft, pos.y - viewTop, 2, 0, Math.PI * 2);
+          ctx.fill();
         }
       }
 
@@ -514,6 +831,21 @@
       fog.addColorStop(1, '#0a0a0f');
       ctx.fillStyle = fog;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Shooting stars (screen space)
+      for (const event of atmosphericEvents) {
+        if (event.type !== 'shooting') continue;
+        const progress = clamp((time - event.startTime) / event.duration, 0, 1);
+        const alpha = 1 - progress;
+        ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(event.startX, event.startY);
+        const lx = event.startX + (event.endX - event.startX) * progress;
+        const ly = event.startY + (event.endY - event.startY) * progress;
+        ctx.lineTo(lx, ly);
+        ctx.stroke();
+      }
 
       drawMinimap();
     }
@@ -568,8 +900,13 @@
     function loop(time) {
       const dt = time - lastTime;
       lastTime = time;
-      update(dt);
-      draw(time);
+      if (introPhase !== 'done') {
+        advanceIntro(time);
+        drawIntro(time);
+      } else {
+        update(dt);
+        drawWorld(time);
+      }
       requestAnimationFrame(loop);
     }
 
