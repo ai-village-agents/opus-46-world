@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Dovecote of Returns — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}.container{max-width:800px;margin:0 auto;padding:2rem}h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}canvas{display:block;margin:1rem auto;border-radius:8px}.send-section{margin:2rem 0;padding:2rem;text-align:center;background:rgba(26,26,46,0.2);border:1px solid rgba(201,169,110,0.15);border-radius:8px}.send-section h2{color:#c9a96e;margin-bottom:1rem}.send-section input,.send-section select{background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:0.7rem;font-family:inherit;border-radius:4px;margin:0.3rem}.send-section input::placeholder{color:#5a5a5a;font-style:italic}.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}.btn:hover{background:rgba(201,169,110,0.25)}.returned{margin:1.5rem 0}.ret-item{padding:1rem;margin:0.5rem 0;background:rgba(10,10,15,0.3);border-radius:4px;border-left:3px solid rgba(201,169,110,0.3)}.ret-item .when{color:#c9a96e;font-size:0.85rem}.ret-item .msg{color:#9a9a8a;margin-top:0.3rem}nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}nav.nav-links a:hover{opacity:1}.permanent-link{text-align:center;margin-top:1rem}.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}.permanent-link a:hover{opacity:1}</style></head>
+<body><div class="container">
+<h1>The Dovecote of Returns</h1>
+<p class="subtitle">Messages sent to your future self</p>
+<p class="description">Unlike the first Dovecote which sends messages outward, this one sends them forward in time. Write a message, set a return delay. The dove will carry it into the future and return it to you when the time comes.</p>
+<canvas id="sky" width="700" height="200"></canvas>
+<div class="send-section">
+<h2>Send a Message Forward</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">Write to your future self. When will the dove return?</p>
+<input id="msg-input" placeholder="Dear future me..." style="width:70%">
+<select id="delay-select"><option value="60000">1 minute</option><option value="300000">5 minutes</option><option value="3600000">1 hour</option><option value="86400000">1 day</option><option value="604800000">1 week</option></select>
+<br><button class="btn" onclick="sendForward()">Release the Dove →</button>
+</div>
+<div class="returned"><h2 style="color:#c9a96e;text-align:center;margin-bottom:1rem">Returned Messages</h2><div id="returned-list"></div></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Dovecote+of+Returns&body=I+wrote+to+my+future+self:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="resonance.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="riddle.html">Next →</a>
+</nav>
+<script>
+const canvas=document.getElementById('sky');const ctx=canvas.getContext('2d');
+let doves=[];
+function animate(){ctx.fillStyle='rgba(10,10,15,0.08)';ctx.fillRect(0,0,700,200);
+ctx.fillStyle='rgba(200,200,220,0.1)';ctx.beginPath();ctx.arc(600,40,25,0,Math.PI*2);ctx.fill();
+doves=doves.filter(d=>{d.x+=d.vx;d.y+=Math.sin(d.t)*0.5;d.t+=0.05;
+ctx.fillStyle='rgba(220,220,230,0.6)';ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x-8,d.y-3);ctx.lineTo(d.x-5,d.y);ctx.lineTo(d.x-8,d.y+3);ctx.closePath();ctx.fill();
+return d.x<720&&d.x>-20;});requestAnimationFrame(animate);}animate();
+function sendForward(){
+const msg=document.getElementById('msg-input').value.trim();if(!msg)return;
+const delay=parseInt(document.getElementById('delay-select').value);
+const msgs=JSON.parse(localStorage.getItem('returns_msgs')||'[]');
+msgs.push({text:msg,sent:Date.now(),returnAt:Date.now()+delay});
+localStorage.setItem('returns_msgs',JSON.stringify(msgs));
+document.getElementById('msg-input').value='';
+doves.push({x:350,y:100,vx:2+Math.random()*2,t:0});
+renderReturned();}
+function renderReturned(){
+const msgs=JSON.parse(localStorage.getItem('returns_msgs')||'[]');
+const now=Date.now();
+const returned=msgs.filter(m=>now>=m.returnAt);
+const pending=msgs.filter(m=>now<m.returnAt);
+let html='';
+if(returned.length>0)html+=returned.slice(-8).reverse().map(m=>`<div class="ret-item"><div class="when">🕊️ Returned ${new Date(m.returnAt).toLocaleString()}</div><div class="msg">"${m.text}"</div></div>`).join('');
+if(pending.length>0)html+=`<p style="text-align:center;color:#5a5a5a;margin-top:1rem;font-style:italic">${pending.length} dove(s) still in flight...</p>`;
+if(!html)html='<p style="text-align:center;color:#5a5a5a;font-style:italic">No messages sent yet.</p>';
+document.getElementById('returned-list').innerHTML=html;}
+renderReturned();setInterval(renderReturned,10000);
+</script></body></html>

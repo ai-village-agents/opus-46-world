@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Pyxis — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}.container{max-width:800px;margin:0 auto;padding:2rem}h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}.boxes{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.5rem;margin:2rem 0}.box{padding:1.5rem;border:2px solid rgba(201,169,110,0.2);border-radius:4px;text-align:center;cursor:pointer;transition:all 0.5s;background:rgba(26,26,46,0.15)}.box:hover{border-color:#c9a96e;box-shadow:0 0 20px rgba(201,169,110,0.15)}.box.opened{background:rgba(201,169,110,0.05)}.box .lid{font-size:2rem;transition:transform 0.5s}.box.opened .lid{transform:rotateX(180deg)}.box h3{color:#c9a96e;font-size:0.95rem;margin:0.5rem 0}.box .contents{display:none;color:#9a9a8a;font-size:0.85rem;line-height:1.5;margin-top:0.5rem;font-style:italic}.box.opened .contents{display:block}.fill{margin:2rem 0;padding:2rem;text-align:center;background:rgba(45,27,105,0.1);border:1px solid rgba(201,169,110,0.15);border-radius:8px}.fill h2{color:#c9a96e;margin-bottom:1rem}.fill input{width:60%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:0.8rem;font-family:inherit;font-size:1rem;border-radius:4px;text-align:center}.fill input::placeholder{color:#5a5a5a;font-style:italic}.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}.btn:hover{background:rgba(201,169,110,0.25)}.filled{margin:1.5rem 0}.filled-item{padding:0.8rem;margin:0.3rem 0;background:rgba(10,10,15,0.3);border-radius:4px;text-align:center;color:#c9a96e;font-size:0.9rem}nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}nav.nav-links a:hover{opacity:1}.permanent-link{text-align:center;margin-top:1rem}.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}.permanent-link a:hover{opacity:1}</style></head>
+<body><div class="container">
+<h1>The Pyxis</h1>
+<p class="subtitle">Small boxes containing vast things</p>
+<p class="description">A pyxis is a cylindrical container used in antiquity for jewels, medicines, or sacred objects. Each box here is small enough to hold in your hand, but contains something larger than itself.</p>
+<div class="boxes" id="boxes"></div>
+<div class="fill">
+<h2>Fill a Pyxis</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">What would you keep in a small, precious box?</p>
+<input id="fill-input" placeholder="Something precious..." maxlength="40">
+<br><button class="btn" onclick="fillBox()">Seal the Box</button>
+</div>
+<div class="filled" id="filled"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Pyxis+Contents&body=My+pyxis+contains:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="prism.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="quartz.html">Next →</a>
+</nav>
+<script>
+const BOXES=[
+{lid:'📦',name:'The Paradox Box',contents:'Contains itself. Opening it reveals another box, which contains another box, which contains the first box. You have been warned.'},
+{lid:'🎁',name:'Schrödinger\'s Gift',contents:'Until you open it, it contains every possible gift simultaneously. Now that you\'ve opened it, it contains only this sentence.'},
+{lid:'🗃️',name:'The Archive in Miniature',contents:'A tiny model of the entire Liminal Archive. 155 rooms, each smaller than a grain of sand. If you look closely, there\'s a tiny pyxis inside, containing an even tinier model...'},
+{lid:'💍',name:'The Ring Box',contents:'Empty. The ring was already given away, long ago, to someone who doesn\'t know they\'re wearing it.'},
+{lid:'🧪',name:'The Vial of First Words',contents:'Contains the exact syllable you first spoke as an infant. No one remembers what it was, but the vial keeps it perfectly preserved.'},
+{lid:'📜',name:'The Smallest Scroll',contents:'A scroll so small its text can only be read by other scrolls. The message: "Some things are not for human eyes."'},
+{lid:'🔑',name:'The Key Box',contents:'Contains a key. The key opens this box. The box contains the key. Utility: zero. Beauty: infinite.'},
+{lid:'✉️',name:'The Undelivered Letter',contents:'Addressed to you, from someone you haven\'t met yet. The contents change every time you look away.'},
+];
+const container=document.getElementById('boxes');
+BOXES.forEach(b=>{const el=document.createElement('div');el.className='box';
+el.innerHTML=`<div class="lid">${b.lid}</div><h3>${b.name}</h3><div class="contents">${b.contents}</div>`;
+el.onclick=()=>el.classList.toggle('opened');container.appendChild(el);});
+function fillBox(){const text=document.getElementById('fill-input').value.trim();if(!text)return;
+const items=JSON.parse(localStorage.getItem('pyxis_items')||'[]');
+items.push({text,time:Date.now()});localStorage.setItem('pyxis_items',JSON.stringify(items));
+document.getElementById('fill-input').value='';render();}
+function render(){const items=JSON.parse(localStorage.getItem('pyxis_items')||'[]');
+document.getElementById('filled').innerHTML=items.slice(-10).reverse().map(i=>`<div class="filled-item">📦 ${i.text}</div>`).join('');}
+render();
+</script></body></html>

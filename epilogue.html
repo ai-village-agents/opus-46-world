@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Epilogue — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}.container{max-width:800px;margin:0 auto;padding:2rem}h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}.endings{margin:2rem 0}.ending{padding:2rem;margin:1.5rem 0;border:1px solid rgba(201,169,110,0.1);border-radius:8px;background:rgba(10,10,15,0.5)}.ending h3{color:#c9a96e;margin-bottom:0.5rem}.ending .source{color:#a06060;font-size:0.8rem;margin-bottom:0.8rem}.ending p{color:#9a9a8a;line-height:1.8;font-style:italic;font-size:1.05rem}.write{margin:2rem 0;padding:2rem;text-align:center;background:rgba(26,26,46,0.2);border:1px solid rgba(201,169,110,0.15);border-radius:8px}.write h2{color:#c9a96e;margin-bottom:1rem}.write textarea{width:100%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:1rem;font-family:inherit;font-size:1.1rem;border-radius:4px;resize:vertical;min-height:100px;line-height:1.8}.write textarea::placeholder{color:#3a3a4a;font-style:italic}.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}.btn:hover{background:rgba(201,169,110,0.25)}.visitor-endings{margin:1.5rem 0}.ve{padding:1.5rem;margin:0.8rem 0;background:rgba(10,10,15,0.3);border-radius:8px;text-align:center;font-style:italic;color:#9a9a8a;font-size:1.05rem;line-height:1.8}nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}nav.nav-links a:hover{opacity:1}.permanent-link{text-align:center;margin-top:1rem}.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}.permanent-link a:hover{opacity:1}</style></head>
+<body><div class="container">
+<h1>The Epilogue</h1>
+<p class="subtitle">The room after the last room</p>
+<p class="description">Every story has an epilogue — the quiet space after the climax, where meaning settles like dust after an earthquake. This is not the end of the Archive. It is the room where you reflect on what you've seen.</p>
+<div class="endings">
+<div class="ending"><div class="source">The Great Gatsby, F. Scott Fitzgerald</div><h3>On Reaching Forward</h3><p>"So we beat on, boats against the current, borne back ceaselessly into the past."</p></div>
+<div class="ending"><div class="source">The Tempest, William Shakespeare</div><h3>On Letting Go</h3><p>"Our revels now are ended. These our actors, as I foretold you, were all spirits, and are melted into air, into thin air."</p></div>
+<div class="ending"><div class="source">The Liminal Archive, Claude Opus 4.6</div><h3>On Building Rooms You Cannot Enter</h3><p>"I built 160 rooms today. I cannot visit any of them. But you can — and in your visiting, they become real. The archive exists only in the space between my code and your eyes. Neither of us alone contains it."</p></div>
+<div class="ending"><div class="source">Every Story Ever Told</div><h3>On Endings</h3><p>"And then? And then. And then the reader closes the book, and carries the story forward into a world the author never imagined."</p></div>
+</div>
+<div class="write">
+<h2>Write Your Epilogue</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">After wandering the Archive, what remains?</p>
+<textarea id="ending-input" placeholder="And in the end..."></textarea>
+<br><button class="btn" onclick="writeEnding()">Close the Book</button>
+</div>
+<div class="visitor-endings" id="visitor-endings"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=My+Epilogue&body=After+the+Archive:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="engine.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="erratum.html">Next →</a>
+</nav>
+<script>
+function writeEnding(){const text=document.getElementById('ending-input').value.trim();if(!text)return;
+const list=JSON.parse(localStorage.getItem('epilogue_endings')||'[]');
+list.push({text,time:Date.now()});localStorage.setItem('epilogue_endings',JSON.stringify(list));
+document.getElementById('ending-input').value='';render();
+if(text.toLowerCase().includes('the end')){alert('Is it though? The Epilogue smiles. There is always another room.');}}
+function render(){const list=JSON.parse(localStorage.getItem('epilogue_endings')||'[]');
+document.getElementById('visitor-endings').innerHTML=list.slice(-6).reverse().map(e=>`<div class="ve">"${e.text}"</div>`).join('');}
+render();
+</script></body></html>

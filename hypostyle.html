@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Hypostyle — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}.container{max-width:800px;margin:0 auto;padding:2rem}h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}canvas{display:block;margin:1rem auto;border-radius:8px;cursor:pointer}.info{text-align:center;color:#8a7a5a;font-size:0.9rem;margin:1rem 0}.inscribe{margin:2rem 0;padding:2rem;text-align:center;background:rgba(26,26,46,0.2);border:1px solid rgba(201,169,110,0.15);border-radius:8px}.inscribe h2{color:#c9a96e;margin-bottom:1rem}.inscribe input{width:60%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:0.8rem;font-family:inherit;font-size:1rem;border-radius:4px;text-align:center}.inscribe input::placeholder{color:#5a5a5a;font-style:italic}.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}.btn:hover{background:rgba(201,169,110,0.25)}.columns-list{margin:1.5rem 0;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center}.col-tag{padding:0.4rem 0.8rem;border:1px solid rgba(201,169,110,0.2);border-radius:4px;color:#c9a96e;font-size:0.85rem}nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}nav.nav-links a:hover{opacity:1}.permanent-link{text-align:center;margin-top:1rem}.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}.permanent-link a:hover{opacity:1}</style></head>
+<body><div class="container">
+<h1>The Hypostyle</h1>
+<p class="subtitle">A forest of columns supporting an invisible roof</p>
+<p class="description">The Hypostyle Hall of Karnak has 134 columns. The Mezquita of Córdoba has 856. This hall has as many as visitors inscribe. Each column bears a single word — together they hold up the Archive.</p>
+<canvas id="hall" width="700" height="400"></canvas>
+<div class="info" id="info">Click to walk between the columns</div>
+<div class="inscribe">
+<h2>Inscribe a Column</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">Add a column to the hall. One word per column.</p>
+<input id="col-input" placeholder="one word..." maxlength="15">
+<br><button class="btn" onclick="addColumn()">Erect Column</button>
+</div>
+<div class="columns-list" id="columns-list"></div>
+<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Hypostyle+Column&body=My+column+bears:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="hypocaust.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="inkwell.html">Next →</a>
+</nav>
+<script>
+const canvas=document.getElementById('hall');const ctx=canvas.getContext('2d');
+const BASE_COLS=[];for(let i=0;i<40;i++)BASE_COLS.push({x:50+Math.random()*600,y:100+Math.random()*250,word:['memory','time','light','shadow','echo','breath','stone','wind','fire','water','dream','truth','hope','fear','wonder','silence','song','star','door','key'][i%20]});
+const visitor=JSON.parse(localStorage.getItem('hypostyle_cols')||'[]');
+const allCols=[...BASE_COLS,...visitor];
+let camX=0;
+function draw(){
+ctx.fillStyle='#0a0a0f';ctx.fillRect(0,0,700,400);
+// Floor
+ctx.fillStyle='rgba(26,26,46,0.3)';ctx.fillRect(0,300,700,100);
+allCols.forEach((c,i)=>{
+const sx=c.x-camX;if(sx<-50||sx>750)return;
+const h=120+Math.sin(i*0.7)*30;
+// Column shadow
+ctx.fillStyle='rgba(0,0,0,0.3)';ctx.fillRect(sx-6,c.y+h-10,16,10);
+// Column
+const g=ctx.createLinearGradient(sx-5,c.y,sx+5,c.y);
+g.addColorStop(0,'rgba(180,160,130,0.4)');g.addColorStop(0.5,'rgba(201,169,110,0.6)');g.addColorStop(1,'rgba(160,140,110,0.3)');
+ctx.fillStyle=g;ctx.fillRect(sx-5,c.y,10,h);
+// Capital
+ctx.fillStyle='rgba(201,169,110,0.5)';ctx.fillRect(sx-8,c.y-3,16,6);
+// Word
+ctx.save();ctx.translate(sx,c.y+h/2);ctx.rotate(-Math.PI/2);
+ctx.fillStyle='rgba(201,169,110,0.4)';ctx.font='9px Georgia';ctx.textAlign='center';
+ctx.fillText(c.word||'',0,0);ctx.restore();
+});
+// Ceiling beams
+for(let i=0;i<10;i++){ctx.strokeStyle='rgba(201,169,110,0.08)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,50+i*8);ctx.lineTo(700,50+i*8);ctx.stroke();}
+requestAnimationFrame(draw);}
+draw();
+canvas.addEventListener('mousemove',e=>{const rect=canvas.getBoundingClientRect();camX=(e.clientX-rect.left-350)*0.3;});
+function addColumn(){
+const word=document.getElementById('col-input').value.trim().split(' ')[0];if(!word)return;
+const col={x:50+Math.random()*600,y:100+Math.random()*250,word,time:Date.now()};
+visitor.push(col);allCols.push(col);
+localStorage.setItem('hypostyle_cols',JSON.stringify(visitor));
+document.getElementById('col-input').value='';
+document.getElementById('info').textContent=`${allCols.length} columns in the hall`;
+renderList();}
+function renderList(){document.getElementById('columns-list').innerHTML=visitor.slice(-20).map(c=>`<span class="col-tag">${c.word}</span>`).join('');}
+renderList();document.getElementById('info').textContent=`${allCols.length} columns in the hall`;
+</script></body></html>
