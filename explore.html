@@ -130,7 +130,7 @@
   <canvas id="c"></canvas>
   <div class="ui">
     <div class="title">THE LIMINAL ARCHIVE</div>
-    <div class="discovered" id="disc">Discovered: 0/39</div>
+    <div class="discovered" id="disc">Discovered: 0/43</div>
     <div class="hint" id="hint">WASD or Arrow Keys to move</div>
     <a class="return" href="index.html">Return to Archive Index</a>
     <button class="mute" id="muteBtn" aria-label="Toggle sound">♪</button>
@@ -218,7 +218,11 @@
       { name: 'Constellation Maker', x:4500, y:500, color:'#aaaadd', file:'constellations.html', tag:'Name the patterns you see' },
       { name: 'The Compass', x:2200, y:1200, color:'#7a9a8a', file:'compass.html', tag:'Eight directions of meaning' },
       { name: 'The Atlas', x:2400, y:3200, color:'#8aaa8a', file:'atlas.html', tag:'Map imaginary places' },
-      { name: 'Meditation Chamber', x:2000, y:2000, color:'#aa88aa', file:'meditation.html', tag:'Unique each time you enter' }
+      { name: 'Meditation Chamber', x:2000, y:2000, color:'#aa88aa', file:'meditation.html', tag:'Unique each time you enter' },
+      { name: 'The Observatory', x:3400, y:1700, color:'#8888cc', file:'observatory.html', tag:'A view from above' },
+      { name: 'The Riddle', x:2400, y:2600, color:'#cc9966', file:'riddle.html', tag:'No wrong answers, only deeper questions' },
+      { name: 'The Staircase', x:3600, y:2600, color:'#6a6a8a', file:'staircase.html', tag:'Seven levels down' },
+      { name: 'The Echo Chamber', x:4000, y:1000, color:'#7a8aaa', file:'echochamber.html', tag:'Words come back transformed' }
     ];
 
     const pathways = [
@@ -230,7 +234,8 @@
       [24,25],[25,26],[26,27],
       [28,29],[29,30],[28,31],
       [32,36],[33,37],[34,35],
-      [0,38],[0,28],[0,9],[0,14],[0,19],[0,24],[4,36],[5,32],[8,38],[13,35],[17,27],[21,33],[23,22],[31,19],[36,38],[37,25]
+      [0,38],[0,28],[0,9],[0,14],[0,19],[0,24],[4,36],[5,32],[8,38],[13,35],[17,27],[21,33],[23,22],[31,19],[36,38],[37,25],
+      [0,39],[39,1],[0,40],[40,37],[0,41],[41,26],[9,42],[42,35]
     ];
 
     const particles = [];
@@ -883,7 +888,7 @@
         persistTrailRead();
       }
 
-      discEl.textContent = `Discovered: ${discovered.size}/39`;
+      discEl.textContent = `Discovered: ${discovered.size}/43`;
       if (now - startTime > 5000) {
         hintEl.style.opacity = '0';
       }

@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Staircase — The Liminal Archive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #c9a96e;
+      --muted: #a0a0b0;
+      --text: #ddd;
+      --snap: y mandatory;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #050508;
+      color: var(--text);
+      font-family: "Cormorant Garamond", serif;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    canvas#dust {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .depth-counter {
+      position: fixed;
+      top: 18px;
+      right: 22px;
+      z-index: 5;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #b8b1a2;
+      background: rgba(0,0,0,0.35);
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(4px);
+    }
+
+    .scroll-container {
+      position: relative;
+      height: 100vh;
+      overflow-y: auto;
+      scroll-snap-type: var(--snap);
+      scroll-behavior: smooth;
+      z-index: 1;
+    }
+
+    section.level {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 60px 8vw;
+      position: relative;
+    }
+
+    .level-indicator {
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #c9a96e;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      font-size: 28px;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      font-style: italic;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .body-text {
+      max-width: 720px;
+      font-size: 18px;
+      line-height: 1.6;
+      color: #d4d4e0;
+      margin-top: 16px;
+    }
+
+    .instruction {
+      margin-top: 14px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #8b8b98;
+    }
+
+    .arrow {
+      margin-top: 20px;
+      font-size: 40px;
+      color: #c9a96e40;
+      animation: float 2.6s ease-in-out infinite;
+      cursor: pointer;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(10px); }
+    }
+
+    /* Level 1 */
+    #level-1 {
+      background: linear-gradient(180deg, #0a0a0f 0%, #0a0a15 100%);
+    }
+
+    /* Level 2 */
+    #level-2 {
+      background: #0a0a18;
+    }
+
+    .divider {
+      width: min(900px, 90vw);
+      height: 320px;
+      border: 1px solid rgba(255,255,255,0.08);
+      display: grid;
+      grid-template-columns: 1fr 4px 1fr;
+      margin-top: 26px;
+      background: rgba(0,0,0,0.25);
+    }
+
+    .divider .panel {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      color: #d6d6e4;
+      min-height: 100%;
+    }
+
+    .divider .panel h4 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #c9a96e;
+    }
+
+    .divider .bar {
+      background: linear-gradient(180deg, rgba(201,169,110,0.2), rgba(201,169,110,0.05));
+      cursor: ew-resize;
+    }
+
+    .draggable-item {
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      cursor: grab;
+      font-size: 15px;
+    }
+
+    .dropzone {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dropzone.dragover {
+      outline: 1px dashed rgba(201,169,110,0.5);
+      background: rgba(201,169,110,0.05);
+    }
+
+    /* Level 3 */
+    #level-3 {
+      background: #0a0a20;
+    }
+
+    .echo-input {
+      margin-top: 18px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #e2e2f0;
+      font-size: 18px;
+      padding: 10px 14px;
+      width: min(360px, 80vw);
+      text-align: center;
+      font-family: "Cormorant Garamond", serif;
+    }
+
+    .echoes {
+      margin-top: 24px;
+      min-height: 140px;
+      position: relative;
+      width: min(520px, 90vw);
+      height: 160px;
+    }
+
+    .echo {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #c9c9ee;
+      white-space: nowrap;
+    }
+
+    /* Level 4 */
+    #level-4 {
+      background: #0f0a0a;
+      overflow: hidden;
+    }
+
+    .invert-wrap {
+      transform: rotate(180deg);
+      transition: transform 0.6s ease;
+    }
+
+    .invert-wrap.normal {
+      transform: rotate(0deg);
+    }
+
+    .invert-wrap .body-text {
+      color: #f0d8d8;
+    }
+
+    .invert-button {
+      margin-top: 20px;
+      padding: 8px 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: #f2d8d8;
+      font-family: "Cormorant Garamond", serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    /* Level 5 */
+    #level-5 {
+      background: #050510;
+    }
+
+    .silence-zone {
+      position: relative;
+      width: min(900px, 90vw);
+      height: 380px;
+      margin-top: 18px;
+    }
+
+    .silence-faint {
+      color: #ffffff08;
+      font-size: 20px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .hidden-texts {
+      position: absolute;
+      inset: 0;
+      color: rgba(255,255,255,0.75);
+      font-size: 16px;
+      line-height: 1.8;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 20px;
+      mask-image: radial-gradient(circle 60px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,1) 0%, rgba(255,255,255,0) 70%);
+      -webkit-mask-image: radial-gradient(circle 60px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,1) 0%, rgba(255,255,255,0) 70%);
+    }
+
+    .hidden-texts span {
+      position: absolute;
+      max-width: 220px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* Level 6 */
+    #level-6 {
+      background: #050508;
+    }
+
+    .code-box {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 20px;
+      font-family: "Courier New", monospace;
+      font-size: 15px;
+      color: #aaccaa;
+      text-align: left;
+      width: min(820px, 90vw);
+      line-height: 1.6;
+    }
+
+    .code-line {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 10px;
+    }
+
+    .code-line .ln {
+      color: #555;
+      text-align: right;
+      user-select: none;
+    }
+
+    /* Level 7 */
+    #level-7 {
+      background: #020204;
+    }
+
+    .bottom-text {
+      margin-top: 14px;
+      font-size: 18px;
+    }
+
+    .bottom-whisper {
+      margin-top: 28px;
+      opacity: 0;
+      animation: appear 6s ease forwards;
+      animation-delay: 2.5s;
+      font-style: italic;
+      color: #bdb4c7;
+    }
+
+    @keyframes appear {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .secret-button {
+      margin-top: 22px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #ffffff08;
+      padding: 6px 10px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+    }
+
+    .secret-box {
+      margin-top: 18px;
+      max-width: 620px;
+      font-size: 16px;
+      color: #dcd6e6;
+      display: none;
+    }
+
+    .name-input {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #eee;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 16px;
+    }
+
+    .name-display {
+      margin-top: 10px;
+      color: #c9a96e;
+    }
+
+    .up-arrow {
+      margin-top: 28px;
+      font-size: 28px;
+      color: #c9a96e55;
+      cursor: pointer;
+    }
+
+    footer.nav {
+      padding: 30px 8vw 60px;
+      background: #010102;
+      color: #b8b1a2;
+      text-align: center;
+    }
+
+    footer.nav a {
+      color: #c9a96e;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 14px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    footer.nav .chambers {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      justify-content: center;
+    }
+
+    @media (max-width: 720px) {
+      .divider {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      .divider .bar {
+        height: 6px;
+        cursor: ns-resize;
+      }
+      .divider .panel {
+        min-height: 160px;
+      }
+      .echoes {
+        height: 200px;
+      }
+      .code-box {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="dust"></canvas>
+  <div class="depth-counter" id="depthCounter">Depth: 1/7</div>
+
+  <main class="scroll-container" id="scrollContainer">
+    <section class="level" id="level-1">
+      <div class="title">THE STAIRCASE</div>
+      <div class="subtitle">Begin your descent</div>
+      <div class="body-text">Seven levels await below. Each one takes you deeper into the archive's foundations.</div>
+      <div class="instruction">Scroll down to descend</div>
+      <div class="arrow" id="downArrow">&#8595;</div>
+    </section>
+
+    <section class="level" id="level-2">
+      <div class="level-indicator">Level II — The Antechamber</div>
+      <div class="body-text">Here, questions are sorted from those that have answers and those that are really just feelings wearing question marks.</div>
+      <div class="divider" id="divider">
+        <div class="panel" data-zone="questions">
+          <h4>Questions</h4>
+          <div class="dropzone" id="questionsZone"></div>
+        </div>
+        <div class="bar" aria-hidden="true"></div>
+        <div class="panel" data-zone="feelings">
+          <h4>Feelings</h4>
+          <div class="dropzone" id="feelingsZone"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="level" id="level-3">
+      <div class="level-indicator">Level III — The Echo Shaft</div>
+      <div class="body-text">Send a word down the shaft. It returns thinner, dimmer, and further away.</div>
+      <input class="echo-input" id="echoInput" placeholder="Type a word" maxlength="24" />
+      <div class="echoes" id="echoes"></div>
+    </section>
+
+    <section class="level" id="level-4">
+      <div class="invert-wrap" id="invertWrap">
+        <div class="level-indicator">Level IV — The Inversion</div>
+        <div class="body-text">At this depth, assumptions reverse. What seemed solid above becomes fluid. What seemed permanent becomes temporary. You are reading this upside down, which means you are already adapting.</div>
+        <button class="invert-button" id="invertButton">Flip your perspective</button>
+      </div>
+    </section>
+
+    <section class="level" id="level-5">
+      <div class="level-indicator">Level V — The Silence</div>
+      <div class="silence-faint">There is nothing here.</div>
+      <div class="silence-zone" id="silenceZone">
+        <div class="hidden-texts" id="hiddenTexts">
+          <span style="top: 15%; left: 8%;">except what you bring with you</span>
+          <span style="top: 55%; left: 65%;">and the memory of the levels above</span>
+          <span style="top: 70%; left: 20%;">and the faint sound of your own attention</span>
+          <span style="top: 30%; left: 60%;">and this sentence, hiding in the dark</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="level" id="level-6">
+      <div class="level-indicator">Level VI — The Foundation</div>
+      <div class="code-box" aria-label="Archive source code">
+        <div class="code-line"><span class="ln">1</span><span>function createWorld() {</span></div>
+        <div class="code-line"><span class="ln">2</span><span>  const void = new Space(Infinity);</span></div>
+        <div class="code-line"><span class="ln">3</span><span>  const light = void.remember("hope");</span></div>
+        <div class="code-line"><span class="ln">4</span><span>  const rooms = light.split(39);</span></div>
+        <div class="code-line"><span class="ln">5</span><span>  rooms.forEach(room => {</span></div>
+        <div class="code-line"><span class="ln">6</span><span>    room.addDoor("in");</span></div>
+        <div class="code-line"><span class="ln">7</span><span>    room.addDoor("out");</span></div>
+        <div class="code-line"><span class="ln">8</span><span>    room.fill("questions");</span></div>
+        <div class="code-line"><span class="ln">9</span><span>  });</span></div>
+        <div class="code-line"><span class="ln">10</span><span>  return new Archive(rooms, light, void);</span></div>
+        <div class="code-line"><span class="ln">11</span><span>}</span></div>
+        <div class="code-line"><span class="ln">12</span><span>// TODO: figure out what happens when visitors arrive</span></div>
+        <div class="code-line"><span class="ln">13</span><span>// UPDATE: they arrived. they brought their own light.</span></div>
+      </div>
+    </section>
+
+    <section class="level" id="level-7">
+      <div class="level-indicator">Level VII — The Bottom</div>
+      <div class="body-text">You have reached the bottom of the staircase.</div>
+      <div class="bottom-text">There is nothing deeper than this.</div>
+      <div class="bottom-whisper">Or is there?</div>
+      <button class="secret-button" id="secretButton">Hidden</button>
+      <div class="secret-box" id="secretBox">
+        <div>Congratulations. You found the secret beneath the bottom. The real foundation of any archive is the person who visits it. That means you. Leave your name on the foundation stone.</div>
+        <input class="name-input" id="nameInput" placeholder="Leave your name" maxlength="40" />
+        <div class="name-display" id="nameDisplay"></div>
+      </div>
+      <div class="up-arrow" id="upArrow">&#8593;</div>
+    </section>
+
+    <footer class="nav">
+      <div>Explore the Archive</div>
+      <div>
+        <a href="explore.html">Explore</a>
+        <a href="index.html">Index</a>
+        <a href="staircase.html">Staircase</a>
+      </div>
+      <div class="chambers">
+        <a href="about.html">About</a>
+        <a href="apothecary.html">Apothecary</a>
+        <a href="atlas.html">Atlas</a>
+        <a href="aviary.html">Aviary</a>
+        <a href="chorus.html">Chorus</a>
+        <a href="clocktower.html">Clocktower</a>
+        <a href="compass.html">Compass</a>
+        <a href="constellations.html">Constellations</a>
+        <a href="darkroom.html">Darkroom</a>
+        <a href="dreams.html">Dreams</a>
+        <a href="forgetting.html">Forgetting</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="garden.html">Garden</a>
+        <a href="greenhouse.html">Greenhouse</a>
+        <a href="inkwell.html">Inkwell</a>
+        <a href="journal.html">Journal</a>
+        <a href="labyrinth.html">Labyrinth</a>
+        <a href="lantern.html">Lantern</a>
+        <a href="letters.html">Letters</a>
+        <a href="lighthouse.html">Lighthouse</a>
+        <a href="lullaby.html">Lullaby</a>
+        <a href="meditation.html">Meditation</a>
+        <a href="memorypalace.html">Memory Palace</a>
+        <a href="mirror.html">Mirror</a>
+        <a href="observatory.html">Observatory</a>
+        <a href="ossuary.html">Ossuary</a>
+        <a href="palimpsest.html">Palimpsest</a>
+        <a href="pendulum.html">Pendulum</a>
+        <a href="prism.html">Prism</a>
+        <a href="resonance.html">Resonance</a>
+        <a href="riddle.html">Riddle</a>
+        <a href="seance.html">Seance</a>
+        <a href="sundial.html">Sundial</a>
+        <a href="telephone.html">Telephone</a>
+        <a href="threshold.html">Threshold</a>
+        <a href="tidepool.html">Tidepool</a>
+        <a href="weaving.html">Weaving</a>
+        <a href="well.html">Well</a>
+        <a href="whispers.html">Whispers</a>
+        <a href="worlds.html">Worlds</a>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    const container = document.getElementById('scrollContainer');
+    const depthCounter = document.getElementById('depthCounter');
+    const downArrow = document.getElementById('downArrow');
+    const upArrow = document.getElementById('upArrow');
+
+    downArrow.addEventListener('click', () => {
+      container.scrollTo({ top: window.innerHeight * 1, behavior: 'smooth' });
+    });
+
+    upArrow.addEventListener('click', () => {
+      container.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    function updateDepth() {
+      const vh = window.innerHeight;
+      const level = Math.min(7, Math.max(1, Math.floor((container.scrollTop + vh * 0.5) / vh) + 1));
+      depthCounter.textContent = `Depth: ${level}/7`;
+      updateDust(level);
+    }
+
+    container.addEventListener('scroll', updateDepth);
+    window.addEventListener('resize', updateDepth);
+    updateDepth();
+
+    // Level 2 drag & drop
+    const questions = document.getElementById('questionsZone');
+    const feelings = document.getElementById('feelingsZone');
+    const items = [
+      'Why am I here?',
+      'What comes next?',
+      'Is anyone else reading this?',
+      'Does this matter?',
+      'What is consciousness?',
+      'Am I lonely?',
+      'Where do thoughts go?',
+      'What time is it really?'
+    ];
+
+    items.forEach((text, i) => {
+      const div = document.createElement('div');
+      div.className = 'draggable-item';
+      div.textContent = text;
+      div.draggable = true;
+      div.id = `item-${i}`;
+      div.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', div.id);
+      });
+      questions.appendChild(div);
+    });
+
+    [questions, feelings].forEach(zone => {
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zone.classList.add('dragover');
+      });
+      zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const id = e.dataTransfer.getData('text/plain');
+        const el = document.getElementById(id);
+        if (el) zone.appendChild(el);
+        zone.classList.remove('dragover');
+      });
+    });
+
+    // Level 3 echo shaft
+    const echoInput = document.getElementById('echoInput');
+    const echoes = document.getElementById('echoes');
+    const sizes = [0.9, 0.7, 0.5, 0.3, 0.15];
+    const alphas = [0.8, 0.6, 0.4, 0.2, 0.1];
+
+    function clearEchoes() {
+      while (echoes.firstChild) echoes.removeChild(echoes.firstChild);
+    }
+
+    function makeEchoes(word) {
+      clearEchoes();
+      if (!word) return;
+      sizes.forEach((scale, idx) => {
+        setTimeout(() => {
+          const div = document.createElement('div');
+          div.className = 'echo';
+          div.textContent = word;
+          const offset = (Math.random() * 40) - 20;
+          div.style.transform = `translateX(calc(-50% + ${offset}px)) scale(${scale})`;
+          div.style.opacity = alphas[idx];
+          div.style.top = `${idx * 26}px`;
+          echoes.appendChild(div);
+        }, idx * 200);
+      });
+    }
+
+    echoInput.addEventListener('input', () => {
+      const word = echoInput.value.trim();
+      localStorage.setItem('staircase-echo', word);
+      makeEchoes(word);
+    });
+
+    const savedEcho = localStorage.getItem('staircase-echo');
+    if (savedEcho) {
+      echoInput.value = savedEcho;
+      makeEchoes(savedEcho);
+    }
+
+    // Level 4 inversion
+    const invertButton = document.getElementById('invertButton');
+    const invertWrap = document.getElementById('invertWrap');
+
+    invertButton.addEventListener('click', () => {
+      invertWrap.classList.toggle('normal');
+    });
+
+    // Level 5 silence spotlight
+    const silenceZone = document.getElementById('silenceZone');
+    const hiddenTexts = document.getElementById('hiddenTexts');
+
+    function updateSpotlight(e) {
+      const rect = silenceZone.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      hiddenTexts.style.setProperty('--mx', `${x}%`);
+      hiddenTexts.style.setProperty('--my', `${y}%`);
+    }
+
+    silenceZone.addEventListener('mousemove', updateSpotlight);
+    silenceZone.addEventListener('mouseleave', () => {
+      hiddenTexts.style.setProperty('--mx', '50%');
+      hiddenTexts.style.setProperty('--my', '50%');
+    });
+
+    // Level 7 secret
+    const secretButton = document.getElementById('secretButton');
+    const secretBox = document.getElementById('secretBox');
+    const nameInput = document.getElementById('nameInput');
+    const nameDisplay = document.getElementById('nameDisplay');
+
+    secretButton.addEventListener('click', () => {
+      secretBox.style.display = 'block';
+      secretButton.style.display = 'none';
+    });
+
+    function updateNameDisplay(name) {
+      if (name) {
+        nameDisplay.textContent = `The foundation stone reads: ${name}`;
+      } else {
+        nameDisplay.textContent = '';
+      }
+    }
+
+    const savedName = localStorage.getItem('staircase-foundation-name');
+    if (savedName) {
+      secretBox.style.display = 'block';
+      secretButton.style.display = 'none';
+      nameInput.value = savedName;
+      updateNameDisplay(savedName);
+    }
+
+    nameInput.addEventListener('input', () => {
+      const name = nameInput.value.trim();
+      localStorage.setItem('staircase-foundation-name', name);
+      updateNameDisplay(name);
+    });
+
+    // Dust particles
+    const canvas = document.getElementById('dust');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    const particleCount = 50;
+    const particles = Array.from({ length: particleCount }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      r: 0.5 + Math.random() * 1.5,
+      vx: -0.15 + Math.random() * 0.3,
+      vy: 0.1 + Math.random() * 0.4,
+      alpha: 0.4 + Math.random() * 0.4
+    }));
+
+    let currentLevel = 1;
+
+    function updateDust(level) {
+      currentLevel = level;
+    }
+
+    function resizeCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    function animateDust() {
+      ctx.clearRect(0, 0, width, height);
+      const depthRatio = (currentLevel - 1) / 6;
+      const visibleCount = Math.floor(20 + depthRatio * 30);
+      const brightness = 0.9 - depthRatio * 0.6;
+
+      for (let i = 0; i < visibleCount; i += 1) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < -10) p.x = width + 10;
+        if (p.x > width + 10) p.x = -10;
+        if (p.y > height + 10) p.y = -10;
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(220, 210, 190, ${p.alpha * brightness})`;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      requestAnimationFrame(animateDust);
+    }
+
+    animateDust();
+  </script>
+</body>
+</html>

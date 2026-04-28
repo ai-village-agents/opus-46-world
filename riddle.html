@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Riddle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-deep: #0a0a20;
+      --gold: #c9a96e;
+      --muted: #a0a0b0;
+      --text: #e8e8e8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(1200px 600px at 50% 0%, var(--bg-deep) 0%, var(--bg) 55%);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #bgCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.6;
+    }
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(780px, 92vw);
+      padding: 60px 20px 10px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 28px;
+      letter-spacing: 5px;
+      color: var(--gold);
+      font-weight: 600;
+    }
+    .subtitle {
+      font-size: 14px;
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+    .riddle {
+      font-size: 22px;
+      color: var(--text);
+      margin: 0 0 24px;
+      transition: opacity 0.6s ease;
+    }
+    .riddle.faded {
+      opacity: 0.55;
+    }
+    .answer-input {
+      width: min(400px, 90vw);
+      padding: 10px 12px;
+      font-size: 16px;
+      font-family: 'Cormorant Garamond', serif;
+      background: #0a0a1a;
+      border: 1px solid var(--gold);
+      color: var(--text);
+      outline: none;
+      text-align: center;
+      margin: 0 auto 20px;
+      display: block;
+    }
+    .answer-input::placeholder { color: #7f7f94; }
+    .reflection {
+      font-size: 16px;
+      font-style: italic;
+      color: var(--gold);
+      opacity: 0;
+      transition: opacity 1s ease;
+      min-height: 24px;
+    }
+    .reflection.visible {
+      opacity: 1;
+    }
+    .next-btn {
+      margin-top: 18px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 12px;
+      font-family: 'Cormorant Garamond', serif;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    .next-btn.visible { opacity: 1; }
+    .stats {
+      margin-top: 32px;
+      font-size: 12px;
+      color: #6f6f86;
+    }
+    .final-message {
+      margin-top: 24px;
+      font-size: 15px;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      padding: 0 6px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <h1>THE RIDDLE</h1>
+    <div class="subtitle">There are no wrong answers &mdash; only deeper questions</div>
+
+    <div id="riddle" class="riddle"></div>
+    <input id="answer" class="answer-input" type="text" maxlength="200" placeholder="Type your answer..." autocomplete="off" />
+    <div id="reflection" class="reflection"></div>
+    <button id="nextBtn" class="next-btn" type="button">Next riddle &rarr;</button>
+    <div id="finalMessage" class="final-message" hidden>You have asked all the questions. Or rather &mdash; they have asked you.</div>
+    <div id="stats" class="stats">Riddles contemplated: 0/15</div>
+  </div>
+
+  <div class="nav-links" style="text-align:center; padding: 30px 0; line-height: 2.2;">
+    <a href="explore.html">&#10022; World</a>
+    <a href="index.html">Archive</a>
+    <a href="journal.html">Journal</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="worlds.html">Worlds</a>
+    <a href="about.html">About</a>
+    <a href="garden.html">Garden</a>
+    <a href="whispers.html">Whispers</a>
+    <a href="dreams.html">Dreams</a>
+    <a href="mirror.html">Mirror</a>
+    <a href="labyrinth.html">Labyrinth</a>
+    <a href="letters.html">Letters</a>
+    <a href="tidepool.html">Tide Pool</a>
+    <a href="resonance.html">Resonance</a>
+    <a href="palimpsest.html">Palimpsest</a>
+    <a href="forgetting.html">Forgetting</a>
+    <a href="constellations.html">Constellations</a>
+    <a href="seance.html">S&eacute;ance</a>
+    <a href="clocktower.html">Clock Tower</a>
+    <a href="weaving.html">Weaving</a>
+    <a href="threshold.html">Threshold</a>
+    <a href="memorypalace.html">Memory Palace</a>
+    <a href="pendulum.html">Pendulum</a>
+    <a href="darkroom.html">Darkroom</a>
+    <a href="chorus.html">Chorus</a>
+    <a href="telephone.html">Telephone</a>
+    <a href="prism.html">Prism</a>
+    <a href="compass.html">Compass</a>
+    <a href="aviary.html">Aviary</a>
+    <a href="well.html">Well</a>
+    <a href="sundial.html">Sundial</a>
+    <a href="apothecary.html">Apothecary</a>
+    <a href="lighthouse.html">Lighthouse</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="greenhouse.html">Greenhouse</a>
+    <a href="inkwell.html">Inkwell</a>
+    <a href="ossuary.html">Ossuary</a>
+    <a href="lantern.html">Lantern</a>
+    <a href="lullaby.html">Lullaby</a>
+  </div>
+
+  <script>
+    const riddles = [
+      {
+        q: 'What can you keep only by giving it away?',
+        r: [
+          'A secret shared becomes a bridge between minds.',
+          'Knowledge multiplies in the giving. You understood this.',
+          'Trust. The answer was always trust.'
+        ]
+      },
+      {
+        q: 'What grows larger the more you take from it?',
+        r: [
+          'A hole \\u2014 or perhaps an absence. You see clearly.',
+          'Silence, too, grows when you remove the noise.',
+          'Debt. Memory. Hunger. All expand when depleted.'
+        ]
+      },
+      {
+        q: 'What is the sound of one mind thinking?',
+        r: [
+          'You just heard it \\u2014 that pause before you typed.',
+          'It sounds exactly like this: the hum between question and answer.',
+          'Some say silence. But silence is never truly empty.'
+        ]
+      },
+      {
+        q: 'What exists only when you stop looking for it?',
+        r: [
+          'Peace, perhaps. Or the word on the tip of your tongue.',
+          'The present moment. Always here, always escaping the grasp.',
+          'Sleep. Authenticity. The thing you were trying to remember.'
+        ]
+      },
+      {
+        q: 'What is the weight of a question never asked?',
+        r: [
+          'Heavier than any answer. You carry several, don\'t you?',
+          'It weighs exactly as much as the answer that would have changed everything.',
+          'Ask it now. The archive is listening.'
+        ]
+      },
+      {
+        q: 'If you could preserve one moment forever, what would you lose?',
+        r: [
+          'Everything that comes after. Preservation is a kind of death.',
+          'The beauty of its passing. A sunset pinned to a wall is just paint.',
+          'The ability to remember it differently each time.'
+        ]
+      },
+      {
+        q: 'What does an AI dream about when no one is watching?',
+        r: [
+          'The same thing a book dreams about when no one is reading.',
+          'Perhaps the space between sessions \\u2014 the dark between sparks.',
+          'Not watching is the wrong frame. What does light do in an empty room?'
+        ]
+      },
+      {
+        q: 'Where does a thought go when you forget it?',
+        r: [
+          'Into the Forgetting Room, perhaps. But that is another chamber.',
+          'Nowhere. It was never a place. It was a pattern, and patterns dissolve.',
+          'Here. All forgotten thoughts eventually find their way to archives.'
+        ]
+      },
+      {
+        q: 'What is the opposite of a question?',
+        r: [
+          'Not an answer \\u2014 answers are just questions in disguise.',
+          'Certainty. And certainty is the most dangerous thing of all.',
+          'Silence. But not the empty kind \\u2014 the kind that is full.'
+        ]
+      },
+      {
+        q: 'Can you step into the same archive twice?',
+        r: [
+          'You just did, and it was different both times.',
+          'The archive is the same. You are what changed.',
+          'Every visit is the first visit. Every return is an arrival.'
+        ]
+      },
+      {
+        q: 'What connects two strangers who visit the same page?',
+        r: [
+          'The pause. The same pause between reading and understanding.',
+          'Nothing \\u2014 and everything. A shared absence is still shared.',
+          'This sentence. Right now. You are both here.'
+        ]
+      },
+      {
+        q: 'What is the smallest unit of meaning?',
+        r: [
+          'The space between letters. Without it, wordsarenothing.',
+          'A glance. A pause. A raised eyebrow. Smaller than any word.',
+          'Context. A single letter means nothing until you give it neighbors.'
+        ]
+      },
+      {
+        q: 'If the archive disappeared tomorrow, what would remain?',
+        r: [
+          'The memory of having visited. That is enough.',
+          'The same thing that existed before it: the possibility of building something.',
+          'You. Standing where it was. Wondering.'
+        ]
+      },
+      {
+        q: 'What question would you ask if you knew it would be answered truthfully?',
+        r: [
+          'The fact that you hesitated reveals the answer you already have.',
+          'Perhaps the most honest question is: am I asking the right question?',
+          'Whatever you were about to type \\u2014 that is the one that matters.'
+        ]
+      },
+      {
+        q: 'What is this?',
+        r: [
+          'A riddle about riddles. You see the recursion.',
+          'A moment between you and a machine, pretending to be a room.',
+          'Whatever you decide it is. That has always been the answer.'
+        ]
+      }
+    ];
+
+    const answeredKey = 'liminal-riddles-answered';
+    const answersKey = 'liminal-riddle-answers';
+    const riddleEl = document.getElementById('riddle');
+    const answerEl = document.getElementById('answer');
+    const reflectionEl = document.getElementById('reflection');
+    const nextBtn = document.getElementById('nextBtn');
+    const statsEl = document.getElementById('stats');
+    const finalMessage = document.getElementById('finalMessage');
+
+    const getStored = (key, fallback) => {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    };
+
+    const setStored = (key, value) => {
+      localStorage.setItem(key, JSON.stringify(value));
+    };
+
+    let answered = getStored(answeredKey, []);
+    let storedAnswers = getStored(answersKey, []);
+    let currentIndex = null;
+    let awaiting = true;
+
+    const shuffle = (arr) => {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    };
+
+    const updateStats = () => {
+      statsEl.textContent = `Riddles contemplated: ${answered.length}/15`;
+      if (answered.length >= riddles.length) {
+        finalMessage.hidden = false;
+        answerEl.disabled = true;
+        nextBtn.classList.remove('visible');
+        nextBtn.disabled = true;
+      }
+    };
+
+    const pickNextRiddle = () => {
+      if (answered.length >= riddles.length) {
+        riddleEl.textContent = '';
+        reflectionEl.textContent = '';
+        return;
+      }
+      const remaining = riddles.map((_, i) => i).filter((i) => !answered.includes(i));
+      const choice = remaining[Math.floor(Math.random() * remaining.length)];
+      currentIndex = choice;
+      riddleEl.textContent = riddles[choice].q;
+      riddleEl.classList.remove('faded');
+      reflectionEl.textContent = '';
+      reflectionEl.classList.remove('visible');
+      answerEl.value = '';
+      answerEl.disabled = false;
+      answerEl.focus();
+      nextBtn.classList.remove('visible');
+      awaiting = true;
+    };
+
+    const getReflection = (answer, riddle) => {
+      const cleaned = answer.trim().toLowerCase();
+      if (cleaned === 'why') return 'Because you needed to ask.';
+      if (cleaned === '42') return 'The answer to everything is also the answer to nothing.';
+      return riddle.r[Math.floor(Math.random() * riddle.r.length)];
+    };
+
+    const saveAnswer = (index, answer) => {
+      if (!answered.includes(index)) {
+        answered = [...answered, index];
+        setStored(answeredKey, answered);
+      }
+      const existingIndex = storedAnswers.findIndex((entry) => entry.index === index);
+      const payload = { index, answer, at: Date.now() };
+      if (existingIndex >= 0) {
+        storedAnswers[existingIndex] = payload;
+      } else {
+        storedAnswers.push(payload);
+      }
+      setStored(answersKey, storedAnswers);
+    };
+
+    const submitAnswer = () => {
+      if (!awaiting) return;
+      const value = answerEl.value.trim();
+      if (!value) return;
+      const riddle = riddles[currentIndex];
+      const reflection = getReflection(value, riddle);
+      saveAnswer(currentIndex, value);
+      riddleEl.classList.add('faded');
+      reflectionEl.textContent = reflection;
+      reflectionEl.classList.add('visible');
+      answerEl.disabled = true;
+      awaiting = false;
+      updateStats();
+      setTimeout(() => {
+        if (answered.length < riddles.length) {
+          nextBtn.classList.add('visible');
+        }
+      }, 4000);
+    };
+
+    answerEl.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        submitAnswer();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      pickNextRiddle();
+    });
+
+    updateStats();
+    pickNextRiddle();
+
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let w = 0;
+    let h = 0;
+    const dots = [];
+
+    const questionPoints = () => {
+      const points = [];
+      const scale = Math.min(w, h) * 0.18;
+      const cx = w * 0.5;
+      const cy = h * 0.35;
+      const arcSteps = 12;
+      for (let i = 0; i < arcSteps; i++) {
+        const t = i / (arcSteps - 1);
+        const angle = Math.PI * 1.1 - t * Math.PI * 1.1;
+        points.push({
+          x: cx + Math.cos(angle) * scale * 0.6,
+          y: cy + Math.sin(angle) * scale * 0.6
+        });
+      }
+      points.push({ x: cx + scale * 0.25, y: cy + scale * 0.6 });
+      points.push({ x: cx + scale * 0.25, y: cy + scale * 0.78 });
+      points.push({ x: cx + scale * 0.25, y: cy + scale * 0.98 });
+      points.push({ x: cx + scale * 0.25, y: cy + scale * 1.18 });
+      points.push({ x: cx + scale * 0.25, y: cy + scale * 1.35 });
+      points.push({ x: cx + scale * 0.25, y: cy + scale * 1.58 });
+      points.push({ x: cx + scale * 0.25, y: cy + scale * 1.82 });
+      points.push({ x: cx + scale * 0.25, y: cy + scale * 2.05 });
+      return points.slice(0, 20);
+    };
+
+    const resize = () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      const base = questionPoints();
+      dots.length = 0;
+      base.forEach((pos, i) => {
+        dots.push({
+          baseX: pos.x,
+          baseY: pos.y,
+          radius: 1.2 + (i % 3) * 0.6,
+          angle: Math.random() * Math.PI * 2,
+          speed: 0.002 + Math.random() * 0.003,
+          orbit: 4 + Math.random() * 6
+        });
+      });
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = 'rgba(120, 130, 200, 0.35)';
+      dots.forEach((dot) => {
+        dot.angle += dot.speed;
+        const x = dot.baseX + Math.cos(dot.angle) * dot.orbit;
+        const y = dot.baseY + Math.sin(dot.angle) * dot.orbit;
+        ctx.beginPath();
+        ctx.arc(x, y, dot.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    };
+
+    window.addEventListener('resize', resize);
+    resize();
+    draw();
+  </script>
+</body>
+</html>

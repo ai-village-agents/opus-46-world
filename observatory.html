@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Observatory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --gold: #c9a96e;
+      --muted: #a0a0b0;
+      --border: #2d1b69;
+      --faint: #2d1b6940;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--muted);
+      font-family: 'Cormorant Garamond', serif;
+      letter-spacing: 0.2px;
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 36px 20px 10px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+      color: var(--gold);
+      letter-spacing: 5px;
+      font-weight: 600;
+    }
+    .subtitle {
+      font-size: 14px;
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+    .canvas-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto 14px;
+    }
+    canvas {
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      display: block;
+      background: #07070c;
+    }
+    .tooltip {
+      position: absolute;
+      pointer-events: none;
+      color: var(--gold);
+      font-size: 13px;
+      padding: 3px 6px;
+      background: rgba(10,10,15,0.85);
+      border: 1px solid #2d1b6950;
+      border-radius: 4px;
+      opacity: 0;
+      transform: translate(-50%, -140%);
+      transition: opacity 120ms ease;
+      white-space: nowrap;
+    }
+    .stats {
+      margin: 12px 0 10px;
+      color: #b6b6c6;
+      font-size: 14px;
+    }
+    .logbook {
+      margin: 14px auto 12px;
+      max-width: 700px;
+      text-align: left;
+      border: 1px solid var(--gold);
+      padding: 12px;
+      background: #0b0b14;
+    }
+    .logbook label {
+      display: block;
+      font-size: 13px;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 90px;
+      max-height: 160px;
+      resize: vertical;
+      background: #090910;
+      border: 1px solid #2d1b69;
+      color: #d3d3e3;
+      padding: 8px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+    }
+    .log-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      background: #1a1a2a;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 6px 12px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .char-count {
+      font-size: 12px;
+      color: #8f8fa5;
+    }
+    .entries {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: left;
+      color: #8e8ea2;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .entry {
+      padding: 6px 0;
+      border-bottom: 1px solid #1a1a2a;
+    }
+    .entry:last-child { border-bottom: none; }
+    .entry time {
+      color: #6f6f86;
+      font-size: 12px;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      padding: 0 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>THE OBSERVATORY</h1>
+    <div class="subtitle">A view from above</div>
+
+    <div class="canvas-wrap">
+      <canvas id="world" width="800" height="533" aria-label="World map overview"></canvas>
+      <div id="tooltip" class="tooltip"></div>
+    </div>
+
+    <div class="stats" id="discovered">Chambers discovered: 0/39</div>
+
+    <div class="logbook">
+      <label for="logText">Observatory logbook entry (max 200 chars)</label>
+      <textarea id="logText" maxlength="200" placeholder="Record what you see from above..."></textarea>
+      <div class="log-actions">
+        <span class="char-count" id="charCount">0 / 200</span>
+        <button id="saveLog" type="button">Add Entry</button>
+      </div>
+    </div>
+
+    <div class="entries" id="entries"></div>
+  </div>
+
+  <div class="nav-links" style="text-align:center; padding: 30px 0; line-height: 2.2;">
+    <a href="explore.html">✦ World</a>
+    <a href="index.html">Archive</a>
+    <a href="journal.html">Journal</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="worlds.html">Worlds</a>
+    <a href="about.html">About</a>
+    <a href="garden.html">Garden</a>
+    <a href="whispers.html">Whispers</a>
+    <a href="dreams.html">Dreams</a>
+    <a href="mirror.html">Mirror</a>
+    <a href="labyrinth.html">Labyrinth</a>
+    <a href="letters.html">Letters</a>
+    <a href="tidepool.html">Tide Pool</a>
+    <a href="resonance.html">Resonance</a>
+    <a href="palimpsest.html">Palimpsest</a>
+    <a href="forgetting.html">Forgetting</a>
+    <a href="constellations.html">Constellations</a>
+    <a href="seance.html">Séance</a>
+    <a href="clocktower.html">Clock Tower</a>
+    <a href="weaving.html">Weaving</a>
+    <a href="threshold.html">Threshold</a>
+    <a href="memorypalace.html">Memory Palace</a>
+    <a href="pendulum.html">Pendulum</a>
+    <a href="darkroom.html">Darkroom</a>
+    <a href="chorus.html">Chorus</a>
+    <a href="telephone.html">Telephone</a>
+    <a href="prism.html">Prism</a>
+    <a href="compass.html">Compass</a>
+    <a href="aviary.html">Aviary</a>
+    <a href="well.html">Well</a>
+    <a href="sundial.html">Sundial</a>
+    <a href="apothecary.html">Apothecary</a>
+    <a href="lighthouse.html">Lighthouse</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="greenhouse.html">Greenhouse</a>
+    <a href="inkwell.html">Inkwell</a>
+    <a href="ossuary.html">Ossuary</a>
+    <a href="lantern.html">Lantern</a>
+    <a href="lullaby.html">Lullaby</a>
+  </div>
+
+  <script>
+    const WORLD = { w: 6000, h: 4000 };
+    const chambers = [
+      { name: 'The Archive', x:3000, y:2000, color:'#c9a96e', file:'index.html' },
+      { name: 'Colophon', x:3200, y:1850, color:'#a0a0b0', file:'about.html' },
+      { name: 'Wanderers Journal', x:2800, y:1850, color:'#d4a574', file:'journal.html' },
+      { name: 'Gallery of Conversations', x:3200, y:2150, color:'#7a6fa0', file:'gallery.html' },
+      { name: 'Map of All Worlds', x:2800, y:2150, color:'#6a9faa', file:'worlds.html' },
+      { name: 'Token Garden', x:1000, y:700, color:'#5a8a4a', file:'garden.html' },
+      { name: 'The Greenhouse', x:1300, y:600, color:'#4a7a3a', file:'greenhouse.html' },
+      { name: 'Tide Pool', x:800, y:900, color:'#4a7aaa', file:'tidepool.html' },
+      { name: 'The Aviary', x:1200, y:1000, color:'#7ab0c0', file:'aviary.html' },
+      { name: 'Resonance Chamber', x:4600, y:700, color:'#aa6a7a', file:'resonance.html' },
+      { name: 'The Chorus', x:4900, y:600, color:'#9a7ab0', file:'chorus.html' },
+      { name: 'The Lullaby', x:5100, y:800, color:'#7a6aaa', file:'lullaby.html' },
+      { name: 'Whisper Corridor', x:4700, y:950, color:'#6a6a8a', file:'whispers.html' },
+      { name: 'The Telephone', x:5000, y:1050, color:'#8a7a6a', file:'telephone.html' },
+      { name: 'The Darkroom', x:5200, y:2000, color:'#3a3a5a', file:'darkroom.html' },
+      { name: 'The Lantern', x:5400, y:2200, color:'#daa520', file:'lantern.html' },
+      { name: 'The Prism', x:5100, y:2400, color:'#aa4466', file:'prism.html' },
+      { name: 'The Lighthouse', x:5500, y:2500, color:'#eebb44', file:'lighthouse.html' },
+      { name: 'The Mirror', x:5300, y:1800, color:'#8888aa', file:'mirror.html' },
+      { name: 'Memory Palace', x:900, y:2800, color:'#7a6a9a', file:'memorypalace.html' },
+      { name: 'Forgetting Room', x:700, y:3100, color:'#5a5a7a', file:'forgetting.html' },
+      { name: 'The Palimpsest', x:1100, y:3200, color:'#8a7a6a', file:'palimpsest.html' },
+      { name: 'Dream Engine', x:1300, y:2900, color:'#6a5a8a', file:'dreams.html' },
+      { name: 'Letters Never Sent', x:800, y:3400, color:'#9a8a7a', file:'letters.html' },
+      { name: 'Clock Tower', x:2800, y:3300, color:'#aa9a6a', file:'clocktower.html' },
+      { name: 'The Sundial', x:3000, y:3500, color:'#ccaa55', file:'sundial.html' },
+      { name: 'The Pendulum', x:3200, y:3300, color:'#7a8a9a', file:'pendulum.html' },
+      { name: 'The Threshold', x:3400, y:3600, color:'#6a7aaa', file:'threshold.html' },
+      { name: 'Weaving Room', x:500, y:1800, color:'#aa7a5a', file:'weaving.html' },
+      { name: 'The Inkwell', x:400, y:2100, color:'#3a3a6a', file:'inkwell.html' },
+      { name: 'The Apothecary', x:700, y:2300, color:'#6aaa7a', file:'apothecary.html' },
+      { name: 'The Well', x:300, y:1600, color:'#4a5a7a', file:'well.html' },
+      { name: 'Séance Room', x:1800, y:600, color:'#6a4a7a', file:'seance.html' },
+      { name: 'The Ossuary', x:1600, y:3600, color:'#8a8a7a', file:'ossuary.html' },
+      { name: 'The Labyrinth', x:4200, y:3400, color:'#5a6a5a', file:'labyrinth.html' },
+      { name: 'Constellation Maker', x:4500, y:500, color:'#aaaadd', file:'constellations.html' },
+      { name: 'The Compass', x:2200, y:1200, color:'#7a9a8a', file:'compass.html' },
+      { name: 'The Atlas', x:2400, y:3200, color:'#8aaa8a', file:'atlas.html' },
+      { name: 'Meditation Chamber', x:2000, y:2000, color:'#aa88aa', file:'meditation.html' }
+    ];
+
+    const pathways = [
+      [0,1],[0,2],[0,3],[0,4],[1,3],[2,4],
+      [5,6],[6,8],[5,7],[7,8],
+      [9,10],[10,11],[9,12],[12,13],
+      [14,15],[15,16],[16,17],[14,18],
+      [19,20],[20,21],[19,22],[22,23],
+      [24,25],[25,26],[26,27],
+      [28,29],[29,30],[28,31],
+      [32,36],[33,37],[34,35],
+      [0,38],[0,28],[0,9],[0,14],[0,19],[0,24],[4,36],[5,32],[8,38],[13,35],[17,27],[21,33],[23,22],[31,19],[36,38],[37,25]
+    ];
+
+    const regionLabels = [
+      { text: 'THE GARDEN DISTRICT', x: 1050, y: 500 },
+      { text: 'THE SOUND QUARTER', x: 4800, y: 450 },
+      { text: 'LIGHT & SHADOW', x: 5300, y: 1650 },
+      { text: 'THE MEMORY HALLS', x: 1000, y: 2650 },
+      { text: 'THE TIME CORRIDOR', x: 3100, y: 3150 },
+      { text: 'THE CRAFT CHAMBERS', x: 500, y: 1500 },
+      { text: 'THE MYSTIC DEPTHS', x: 2000, y: 500 },
+      { text: 'THE ARCHIVE CORE', x: 3000, y: 1750 }
+    ];
+
+    const canvas = document.getElementById('world');
+    const ctx = canvas.getContext('2d');
+    const tooltip = document.getElementById('tooltip');
+    const discoveredEl = document.getElementById('discovered');
+
+    const particles = Array.from({ length: 100 }, () => ({
+      x: Math.random() * WORLD.w,
+      y: Math.random() * WORLD.h,
+      r: 0.6 + Math.random() * 0.9,
+      vx: (Math.random() * 0.15 + 0.05) * (Math.random() < 0.5 ? -1 : 1),
+      vy: (Math.random() * 0.15 + 0.05) * (Math.random() < 0.5 ? -1 : 1),
+      color: Math.random() < 0.5 ? '#ffffff10' : '#6a6aaa12'
+    }));
+
+    function scaleX(x) { return (x / WORLD.w) * canvas.width; }
+    function scaleY(y) { return (y / WORLD.h) * canvas.height; }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Particles
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = WORLD.w;
+        if (p.x > WORLD.w) p.x = 0;
+        if (p.y < 0) p.y = WORLD.h;
+        if (p.y > WORLD.h) p.y = 0;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(scaleX(p.x), scaleY(p.y), p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Pathways
+      ctx.strokeStyle = '#1a1a3e60';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (const [a, b] of pathways) {
+        const ca = chambers[a];
+        const cb = chambers[b];
+        ctx.moveTo(scaleX(ca.x), scaleY(ca.y));
+        ctx.lineTo(scaleX(cb.x), scaleY(cb.y));
+      }
+      ctx.stroke();
+
+      // Region labels
+      ctx.font = '9px Cormorant Garamond';
+      ctx.fillStyle = '#2d1b6940';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      for (const label of regionLabels) {
+        ctx.fillText(label.text, scaleX(label.x), scaleY(label.y));
+      }
+
+      // Chambers
+      for (const c of chambers) {
+        ctx.fillStyle = c.color;
+        ctx.beginPath();
+        ctx.arc(scaleX(c.x), scaleY(c.y), 8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function tick() {
+      draw();
+      requestAnimationFrame(tick);
+    }
+
+    function resizeCanvas() {
+      const maxWidth = 800;
+      const container = canvas.parentElement;
+      const width = Math.min(maxWidth, container.clientWidth);
+      canvas.width = width;
+      canvas.height = Math.round(width * (WORLD.h / WORLD.w));
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    tick();
+
+    let hoverIndex = -1;
+    function handleMove(evt) {
+      const rect = canvas.getBoundingClientRect();
+      const mx = evt.clientX - rect.left;
+      const my = evt.clientY - rect.top;
+      hoverIndex = -1;
+      for (let i = 0; i < chambers.length; i++) {
+        const c = chambers[i];
+        const dx = mx - scaleX(c.x);
+        const dy = my - scaleY(c.y);
+        if (Math.hypot(dx, dy) <= 20) {
+          hoverIndex = i;
+          break;
+        }
+      }
+
+      if (hoverIndex >= 0) {
+        const c = chambers[hoverIndex];
+        tooltip.style.left = `${scaleX(c.x)}px`;
+        tooltip.style.top = `${scaleY(c.y)}px`;
+        tooltip.textContent = c.name;
+        tooltip.style.opacity = '1';
+      } else {
+        tooltip.style.opacity = '0';
+      }
+    }
+
+    function handleClick() {
+      if (hoverIndex >= 0) {
+        window.location.href = chambers[hoverIndex].file;
+      }
+    }
+
+    canvas.addEventListener('mousemove', handleMove);
+    canvas.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
+    canvas.addEventListener('click', handleClick);
+
+    function updateDiscovered() {
+      try {
+        const stored = JSON.parse(localStorage.getItem('liminal-discovered') || '[]');
+        const unique = new Set(Array.isArray(stored) ? stored : []);
+        discoveredEl.textContent = `Chambers discovered: ${unique.size}/39`;
+      } catch (e) {
+        discoveredEl.textContent = 'Chambers discovered: 0/39';
+      }
+    }
+    updateDiscovered();
+
+    const logText = document.getElementById('logText');
+    const saveLog = document.getElementById('saveLog');
+    const entriesEl = document.getElementById('entries');
+    const charCount = document.getElementById('charCount');
+
+    function loadLogs() {
+      try {
+        const stored = JSON.parse(localStorage.getItem('observatory-log') || '[]');
+        return Array.isArray(stored) ? stored : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveLogs(logs) {
+      localStorage.setItem('observatory-log', JSON.stringify(logs));
+    }
+
+    function renderLogs() {
+      const logs = loadLogs();
+      entriesEl.innerHTML = '';
+      const recent = logs.slice(-5).reverse();
+      if (recent.length === 0) {
+        entriesEl.innerHTML = '<div class="entry">No observations recorded yet.</div>';
+        return;
+      }
+      for (const entry of recent) {
+        const div = document.createElement('div');
+        div.className = 'entry';
+        const time = document.createElement('time');
+        const when = new Date(entry.time);
+        time.textContent = isNaN(when.getTime()) ? entry.time : when.toLocaleString();
+        const text = document.createElement('div');
+        text.textContent = entry.text;
+        div.appendChild(time);
+        div.appendChild(text);
+        entriesEl.appendChild(div);
+      }
+    }
+
+    function addLog() {
+      const text = logText.value.trim();
+      if (!text) return;
+      const logs = loadLogs();
+      logs.push({ text, time: new Date().toISOString() });
+      saveLogs(logs);
+      logText.value = '';
+      charCount.textContent = '0 / 200';
+      renderLogs();
+    }
+
+    logText.addEventListener('input', () => {
+      charCount.textContent = `${logText.value.length} / 200`;
+    });
+    saveLog.addEventListener('click', addLog);
+    logText.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        addLog();
+      }
+    });
+
+    renderLogs();
+
+    document.querySelectorAll('.nav-links a').forEach((link) => {
+      link.addEventListener('mouseenter', () => link.style.color = '#c9a96e');
+      link.addEventListener('mouseleave', () => link.style.color = '#a0a0b0');
+    });
+  </script>
+</body>
+</html>

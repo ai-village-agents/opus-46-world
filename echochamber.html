@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Echo Chamber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --gold: #c9a96e;
+      --muted: #a0a0b0;
+      --ring: #2d1b6910;
+      --ring-pulse: #2d1b6930;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: #e8e8e8;
+      font-family: "Cormorant Garamond", serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: min(900px, 92vw);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 0 24px;
+      gap: 18px;
+    }
+
+    .title {
+      font-size: 28px;
+      color: var(--gold);
+      letter-spacing: 5px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .input-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 12px;
+    }
+
+    #echo-input {
+      width: min(500px, 90vw);
+      background: #0f0f16;
+      border: 1px solid var(--gold);
+      color: #e8e8e8;
+      padding: 14px 18px;
+      font-size: 18px;
+      font-family: "Cormorant Garamond", serif;
+      letter-spacing: 0.5px;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #echo-input::placeholder {
+      color: #6c6c7a;
+    }
+
+    #echo-input:focus {
+      border-color: #e6c68f;
+      box-shadow: 0 0 12px #c9a96e33;
+    }
+
+    .echo-list {
+      width: min(640px, 92vw);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .echo-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: opacity 0.4s ease;
+    }
+
+    .echo-original {
+      font-size: 12px;
+      color: #a0a0b060;
+    }
+
+    .echo-transformed {
+      font-size: 16px;
+      color: #e8e8e8;
+    }
+
+    .rise {
+      animation: riseFade 2s ease forwards;
+    }
+
+    .slide-in {
+      animation: slideIn 0.8s ease forwards;
+    }
+
+    @keyframes riseFade {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-24px); }
+    }
+
+    @keyframes slideIn {
+      0% { opacity: 0; transform: translateY(18px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    nav {
+      margin-top: auto;
+      padding: 28px 0 20px;
+      display: flex;
+      gap: 18px;
+      font-size: 13px;
+    }
+
+    nav a {
+      color: #7f7f95;
+      text-decoration: none;
+      letter-spacing: 1px;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: var(--gold);
+    }
+
+    .echo-pending {
+      font-size: 12px;
+      color: #a0a0b060;
+      text-align: center;
+      min-height: 18px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="rings"></canvas>
+  <div class="container">
+    <div class="title">THE ECHO CHAMBER</div>
+    <div class="subtitle">Speak, and hear what returns</div>
+
+    <div class="input-wrap">
+      <input id="echo-input" type="text" placeholder="Speak into the chamber..." autocomplete="off" />
+    </div>
+    <div class="echo-pending" id="pending"></div>
+
+    <div class="echo-list" id="echo-list"></div>
+  </div>
+
+  <nav>
+    <a href="explore.html">Explore</a>
+    <a href="index.html">Index</a>
+    <a href="chambers.html">All Chambers</a>
+  </nav>
+
+  <script>
+    const input = document.getElementById("echo-input");
+    const echoList = document.getElementById("echo-list");
+    const pending = document.getElementById("pending");
+    const historyKey = "echo-chamber-history";
+
+    const transforms = [
+      {
+        name: "REVERSAL",
+        prefix: "↩ ",
+        fn: (text) => text.split(/\s+/).reverse().join(" ")
+      },
+      {
+        name: "WHISPER",
+        prefix: "(whisper) ",
+        fn: (text) => text.toLowerCase().split(/\s+/).join("... ") + "..."
+      },
+      {
+        name: "QUESTION",
+        prefix: "❓ ",
+        fn: (text) => {
+          const words = text.split(/\s+/);
+          if (words.length) {
+            words[0] = "Why";
+          }
+          return words.join(" ") + "?";
+        }
+      },
+      {
+        name: "FRAGMENT",
+        prefix: "◇ ",
+        fn: (text) => text.split(/\s+/).map((w, i) => (i % 2 === 0 ? w : "···")).join(" ")
+      },
+      {
+        name: "UPPERCASE ECHO",
+        prefix: "📢 ",
+        fn: (text) => text.toUpperCase().split("").join(" ")
+      },
+      {
+        name: "MIRROR",
+        prefix: "🪞 ",
+        fn: (text) => text.split(/\s+/).map((w) => w.split("").reverse().join("")).join(" ")
+      },
+      {
+        name: "POETIC",
+        prefix: "",
+        fn: (text) => `and the void replied: <em>${escapeHtml(text)}</em>`
+      },
+      {
+        name: "DECAY",
+        prefix: "🕳️ ",
+        fn: (text) => decayText(text)
+      }
+    ];
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function decayText(text) {
+      const words = text.split(/\s+/);
+      return words.map((word, idx) => {
+        if (idx === 0) return word;
+        const chars = word.split("");
+        const replaceCount = Math.min(idx, chars.length);
+        const positions = new Set();
+        while (positions.size < replaceCount) {
+          positions.add(Math.floor(Math.random() * chars.length));
+        }
+        return chars.map((ch, i) => (positions.has(i) ? "·" : ch)).join("");
+      }).join(" ");
+    }
+
+    function addEcho(original, transformed, useHtml = false) {
+      const item = document.createElement("div");
+      item.className = "echo-item";
+
+      const originalEl = document.createElement("div");
+      originalEl.className = "echo-original rise";
+      originalEl.textContent = original;
+
+      const transformedEl = document.createElement("div");
+      transformedEl.className = "echo-transformed slide-in";
+      if (useHtml) {
+        transformedEl.innerHTML = transformed;
+      } else {
+        transformedEl.textContent = transformed;
+      }
+
+      item.appendChild(originalEl);
+      item.appendChild(transformedEl);
+      echoList.prepend(item);
+
+      while (echoList.children.length > 8) {
+        echoList.removeChild(echoList.lastElementChild);
+      }
+
+      updateOpacities();
+    }
+
+    function updateOpacities() {
+      Array.from(echoList.children).forEach((child, index) => {
+        const opacity = Math.max(0.25, 1 - index * 0.1);
+        child.style.opacity = opacity.toFixed(2);
+      });
+    }
+
+    function loadHistory() {
+      const stored = localStorage.getItem(historyKey);
+      if (!stored) return;
+      try {
+        const items = JSON.parse(stored);
+        items.slice(0, 8).forEach((item) => {
+          addEcho(item.original, item.transformed, item.useHtml);
+        });
+      } catch (err) {
+        console.warn("Failed to parse history", err);
+      }
+    }
+
+    function saveHistory() {
+      const items = Array.from(echoList.children).map((child) => {
+        const original = child.querySelector(".echo-original").textContent;
+        const transformedEl = child.querySelector(".echo-transformed");
+        return {
+          original,
+          transformed: transformedEl.innerHTML,
+          useHtml: transformedEl.innerHTML !== transformedEl.textContent
+        };
+      });
+      localStorage.setItem(historyKey, JSON.stringify(items));
+    }
+
+    function handleSpecialCases(text) {
+      const normalized = text.trim().toLowerCase();
+      if (normalized === "hello") {
+        const parts = ["hello...", "hello...", "hello..."];
+        const html = parts.map((part, idx) => {
+          const size = 1 - idx * 0.15;
+          return `<span style=\"font-size:${size}em\">${part}</span>`;
+        }).join(" ");
+        return {
+          transformed: html,
+          useHtml: true
+        };
+      }
+      if (normalized === "who are you") {
+        return {
+          transformed: "I am the space between your question and your answer.",
+          useHtml: false
+        };
+      }
+      if (normalized === "echo") {
+        const parts = ["echo", "echo", "echo", "echo", "echo"];
+        const html = parts.map((part, idx) => {
+          const size = 1 - idx * 0.1;
+          return `<span style=\"font-size:${size}em\">${part}</span>`;
+        }).join(" ");
+        return {
+          transformed: html,
+          useHtml: true
+        };
+      }
+      return null;
+    }
+
+    function createEcho(text) {
+      const trimmed = text.trim();
+      if (!trimmed) return;
+
+      const special = handleSpecialCases(trimmed);
+      if (special) {
+        addEcho(trimmed, special.transformed, special.useHtml);
+        saveHistory();
+        pulseRings();
+        return;
+      }
+
+      const choice = transforms[Math.floor(Math.random() * transforms.length)];
+      const transformed = choice.prefix + choice.fn(trimmed);
+
+      pending.textContent = trimmed;
+      pending.classList.remove("rise");
+      void pending.offsetWidth;
+      pending.classList.add("rise");
+
+      setTimeout(() => {
+        addEcho(trimmed, transformed, choice.name === "POETIC");
+        saveHistory();
+        pulseRings();
+        pending.textContent = "";
+      }, 1500);
+    }
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        createEcho(input.value);
+        input.value = "";
+      }
+    });
+
+    loadHistory();
+
+    const canvas = document.getElementById("rings");
+    const ctx = canvas.getContext("2d");
+    let width = 0;
+    let height = 0;
+    let centerX = 0;
+    let centerY = 0;
+    let pulseBoost = 0;
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      centerX = width / 2;
+      centerY = height / 2;
+    }
+
+    function pulseRings() {
+      pulseBoost = 1;
+    }
+
+    function drawRings(time) {
+      ctx.clearRect(0, 0, width, height);
+      const baseRadius = Math.min(width, height) * 0.15;
+      const ringCount = 6;
+      const drift = (time / 1000) * 20;
+      for (let i = 0; i < ringCount; i += 1) {
+        const radius = baseRadius + i * 70 + (drift + i * 30) % 140;
+        const alpha = 0.12 + (pulseBoost * 0.2);
+        const baseAlpha = pulseBoost > 0.01 ? 0.18 : 0.06;
+        ctx.strokeStyle = `rgba(45, 27, 105, ${(baseAlpha / (1 + i * 0.3)).toFixed(3)})`;
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      pulseBoost *= 0.95;
+      requestAnimationFrame(drawRings);
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+    requestAnimationFrame(drawRings);
+  </script>
+</body>
+</html>
