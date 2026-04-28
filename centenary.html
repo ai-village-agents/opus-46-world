@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Centenary — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#08060a;color:#d0c0e0;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.8em;color:#c9a96e;letter-spacing:4px;z-index:10;text-shadow:0 0 30px rgba(201,169,110,0.6)}
+.subtitle{position:fixed;top:58px;left:0;right:0;text-align:center;font-size:0.9em;color:#8a7a5a;z-index:10;font-style:italic}
+.input-area{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(8,6,10,0.7);border:1px solid #c9a96e44;color:#d0c0e0;padding:8px 14px;font-family:Georgia,serif;width:300px;border-radius:4px}
+.input-area button{background:rgba(201,169,110,0.2);border:1px solid #c9a96e44;color:#c9a96e;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.info{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:0.8em;color:#6a5a4a;z-index:10}
+#msg{position:fixed;top:90px;left:0;right:0;text-align:center;font-size:0.95em;color:#c9a96e;z-index:10;opacity:0;transition:opacity 1s}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#c9a96e88;text-decoration:none;margin-right:8px}nav.nav-links a:hover{color:#c9a96e}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> <a href="carousel.html">Carousel</a> <a href="sundoor.html">Sundoor</a> <a href="tidebell.html">Tide Bell</a> <a href="automaton.html">Automaton</a> <a href="glacier.html">Glacier</a> <a href="marionette.html">Marionette</a> <a href="sandglass.html">Sandglass</a> <a href="diorama.html">Diorama</a> <a href="cistern.html">Cistern</a> <a href="zenith.html">Zenith</a> </nav>
+<h1>THE CENTENARY</h1>
+<div class="subtitle">The 100th Chamber of The Liminal Archive</div>
+<div id="msg"></div><canvas id="c"></canvas>
+<div class="input-area"><input id="inp" placeholder="Add your name to the Book of a Hundred Chambers..." maxlength="60">
+<button onclick="sign()">Sign</button></div>
+<div class="info">You have reached the heart of the archive • One hundred rooms, each a different dream</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');let W,H;
+function resize(){W=C.width=innerWidth;H=C.height=innerHeight}resize();window.onresize=resize;
+let signatures=[],fireworks=[],orbiting=[],goldenDust=[];
+// 100 tiny lights orbiting the center
+for(let i=0;i<100;i++){
+const a=i*Math.PI*2/100,r=150+Math.sin(i*0.3)*50;
+orbiting.push({angle:a,radius:r,speed:0.001+Math.random()*0.002,size:2+Math.random()*2,
+hue:(i/100)*360,phase:Math.random()*Math.PI*2});}
+for(let i=0;i<100;i++)goldenDust.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.5,vy:(Math.random()-0.5)*0.5,size:1+Math.random()*2,alpha:0.1+Math.random()*0.2});
+let saved=JSON.parse(localStorage.getItem('centenary_signatures')||'[]');
+saved.forEach(s=>signatures.push({text:s.text,x:s.x*W,y:s.y*H,alpha:0.6,size:10+Math.random()*6,time:s.time||Date.now()}));
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,4000)}
+function sign(){const inp=document.getElementById('inp'),t=inp.value.trim();if(!t)return;
+const x=0.1+Math.random()*0.8,y=0.2+Math.random()*0.5;
+signatures.push({text:t,x:x*W,y:y*H,alpha:0,targetAlpha:1,size:12+Math.random()*6,time:Date.now()});
+saved.push({text:t,x,y,time:Date.now()});localStorage.setItem('centenary_signatures',JSON.stringify(saved.slice(-100)));
+inp.value='';
+// Fireworks!
+for(let f=0;f<3;f++){const fx=Math.random()*W,fy=H*0.2+Math.random()*H*0.3;
+const hue=Math.random()*360;
+for(let i=0;i<30;i++){const a=Math.random()*Math.PI*2,sp=2+Math.random()*4;
+fireworks.push({x:fx,y:fy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:50+Math.random()*30,maxLife:80,hue});}}
+showMsg(`Welcome to the Centenary. "${t}" is inscribed in gold.`);}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('inp'))sign()});
+let typed='';document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-12);
+if(typed.includes('hundred')){showMsg('One hundred chambers. One hundred dreams. One hundred ways to leave a mark.');
+for(let i=0;i<100;i++)fireworks.push({x:W/2,y:H/2,vx:(Math.random()-0.5)*8,vy:(Math.random()-0.5)*8,life:60,maxLife:60,hue:i*3.6})}
+if(typed.includes('gratitude')){showMsg('Thank you for exploring The Liminal Archive. Every visitor makes it more real.')}
+if(typed.includes('begin')){showMsg('Every ending is a beginning. The 101st chamber is the one you carry with you.')}});
+function draw(){X.fillStyle='rgba(8,6,10,0.06)';X.fillRect(0,0,W,H);const t=Date.now()*0.001;
+const cx=W/2,cy=H/2;
+// Central glow
+const g=X.createRadialGradient(cx,cy,0,cx,cy,200);
+g.addColorStop(0,'rgba(201,169,110,0.08)');g.addColorStop(0.5,'rgba(201,169,110,0.02)');g.addColorStop(1,'rgba(0,0,0,0)');
+X.fillStyle=g;X.beginPath();X.arc(cx,cy,200,0,Math.PI*2);X.fill();
+// "100" ghost text
+X.font='bold 200px Georgia';X.fillStyle='rgba(201,169,110,0.03)';X.textAlign='center';X.textBaseline='middle';
+X.fillText('100',cx,cy);X.textBaseline='alphabetic';
+// Orbiting lights (100 of them)
+orbiting.forEach(o=>{o.angle+=o.speed;
+const ox=cx+Math.cos(o.angle+t*0.1)*o.radius,oy=cy+Math.sin(o.angle+t*0.1)*o.radius*0.6;
+const pulse=0.3+Math.sin(t*2+o.phase)*0.3;
+X.fillStyle=`hsla(${o.hue},60%,70%,${pulse*0.4})`;
+X.beginPath();X.arc(ox,oy,o.size,0,Math.PI*2);X.fill();});
+// Signatures
+signatures.forEach(s=>{if(s.alpha<(s.targetAlpha||0.6))s.alpha+=0.005;
+X.font=`${s.size}px Georgia`;X.fillStyle=`rgba(201,169,110,${s.alpha})`;X.textAlign='center';
+X.shadowColor='rgba(201,169,110,0.2)';X.shadowBlur=6;X.fillText(s.text,s.x,s.y);X.shadowBlur=0;});
+// Fireworks
+fireworks=fireworks.filter(f=>{f.life--;f.x+=f.vx;f.y+=f.vy;f.vy+=0.05;f.vx*=0.98;
+X.fillStyle=`hsla(${f.hue},80%,70%,${f.life/f.maxLife*0.6})`;
+X.beginPath();X.arc(f.x,f.y,2,0,Math.PI*2);X.fill();return f.life>0});
+// Golden dust
+goldenDust.forEach(d=>{d.x+=d.vx+Math.sin(t+d.y*0.01)*0.1;d.y+=d.vy;
+if(d.x<0)d.x=W;if(d.x>W)d.x=0;if(d.y<0)d.y=H;if(d.y>H)d.y=0;
+X.fillStyle=`rgba(201,169,110,${d.alpha*(0.5+Math.sin(t*2+d.x*0.01)*0.5)})`;
+X.beginPath();X.arc(d.x,d.y,d.size,0,Math.PI*2);X.fill();});
+requestAnimationFrame(draw);}draw();
+</script></body></html>

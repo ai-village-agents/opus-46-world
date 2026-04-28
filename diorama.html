@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Diorama — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#08080c;color:#b0b8d0;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6em;color:#8090c0;letter-spacing:3px;z-index:10;text-shadow:0 0 20px rgba(128,144,192,0.4)}
+.input-area{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(8,8,12,0.8);border:1px solid #8090c044;color:#b0b8d0;padding:8px 14px;font-family:Georgia,serif;width:280px;border-radius:4px}
+.input-area button{background:rgba(128,144,192,0.2);border:1px solid #8090c044;color:#8090c0;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.info{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:0.8em;color:#506080;z-index:10}
+#msg{position:fixed;top:60px;left:0;right:0;text-align:center;font-size:0.9em;color:#8090c0;z-index:10;opacity:0;transition:opacity 1s}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#8090c088;text-decoration:none;margin-right:8px}nav.nav-links a:hover{color:#8090c0}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> <a href="carousel.html">Carousel</a> <a href="sundoor.html">Sundoor</a> <a href="tidebell.html">Tide Bell</a> <a href="automaton.html">Automaton</a> <a href="glacier.html">Glacier</a> <a href="marionette.html">Marionette</a> <a href="sandglass.html">Sandglass</a> <a href="cistern.html">Cistern</a> <a href="zenith.html">Zenith</a> <a href="centenary.html">Centenary</a> </nav>
+<h1>THE DIORAMA</h1><div id="msg"></div><canvas id="c"></canvas>
+<div class="input-area"><input id="inp" placeholder="Describe a miniature world..." maxlength="60">
+<button onclick="create()">Create</button></div>
+<div class="info">Each glass box contains a tiny world • Click to peer inside • Describe your own</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');let W,H;
+function resize(){W=C.width=innerWidth;H=C.height=innerHeight}resize();window.onresize=resize;
+const defaults=[
+{title:'A Forest at Twilight',color:'#306040',scene:'tiny trees casting long shadows'},
+{title:'The Last City',color:'#604060',scene:'spires reaching toward a painted sky'},
+{title:'An Ocean in a Box',color:'#304060',scene:'waves frozen mid-crash against miniature cliffs'},
+{title:'The Clockwork Garden',color:'#606030',scene:'brass flowers that never stop blooming'},
+{title:'A Storm Captured',color:'#404060',scene:'lightning suspended in glass, clouds of cotton'},
+{title:'The Empty Classroom',color:'#504838',scene:'tiny desks, a chalkboard with one equation'}
+];
+let dioramas=[...defaults],particles=[];
+let saved=JSON.parse(localStorage.getItem('diorama_worlds')||'[]');
+saved.forEach(s=>dioramas.push({title:s.title,color:'#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0'),scene:s.title,visitor:true}));
+let selected=-1;
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,3500)}
+function create(){const inp=document.getElementById('inp'),t=inp.value.trim();if(!t)return;
+dioramas.push({title:t,color:'#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0'),scene:t,visitor:true});
+saved.push({title:t,time:Date.now()});localStorage.setItem('diorama_worlds',JSON.stringify(saved.slice(-20)));
+inp.value='';showMsg(`A new diorama appears on the shelf: "${t}"`);}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('inp'))create()});
+C.addEventListener('click',e=>{
+const cols=Math.min(dioramas.length,4),rows=Math.ceil(dioramas.length/cols);
+const bw=W*0.8/cols,bh=H*0.6/rows;
+dioramas.forEach((d,i)=>{const c=i%cols,r=Math.floor(i/cols);
+const bx=W*0.1+c*bw+bw*0.1,by=H*0.15+r*bh+bh*0.1;
+if(e.clientX>bx&&e.clientX<bx+bw*0.8&&e.clientY>by&&e.clientY<by+bh*0.8){
+selected=i;showMsg(`"${d.title}" — ${d.scene}`);}});});
+let typed='';document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('shake')){showMsg('The shelf trembles! Miniature worlds shift inside their cases.');for(let i=0;i<30;i++)particles.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*3,vy:(Math.random()-0.5)*3,life:30,maxLife:30})}
+if(typed.includes('shrink')){showMsg('You shrink down... small enough to step inside a diorama.')}});
+function draw(){X.fillStyle='rgba(8,8,12,0.12)';X.fillRect(0,0,W,H);const t=Date.now()*0.001;
+const cols=Math.min(dioramas.length,4),rows=Math.ceil(dioramas.length/cols);
+const bw=W*0.8/cols,bh=H*0.6/rows;
+// Shelf
+for(let r=0;r<=rows;r++){const sy=H*0.15+r*bh;
+X.fillStyle='rgba(60,50,40,0.2)';X.fillRect(W*0.08,sy-3,W*0.84,6);}
+dioramas.forEach((d,i)=>{const c=i%cols,r=Math.floor(i/cols);
+const bx=W*0.1+c*bw+bw*0.1,by=H*0.15+r*bh+bh*0.1,bwi=bw*0.8,bhi=bh*0.8;
+const isSel=i===selected;
+// Glass box
+X.strokeStyle=`rgba(128,144,192,${isSel?0.4:0.15})`;X.lineWidth=isSel?2:1;
+X.strokeRect(bx,by,bwi,bhi);
+// Scene inside (colored background)
+X.fillStyle=d.color+'15';X.fillRect(bx+1,by+1,bwi-2,bhi-2);
+// Miniature elements
+const seed=d.title.length*7;
+for(let j=0;j<5;j++){const ex=bx+10+((seed+j*37)%Math.floor(bwi-20)),ey=by+bhi*0.4+((seed+j*53)%Math.floor(bhi*0.5));
+X.fillStyle=d.color+'40';X.beginPath();X.arc(ex,ey,3+j,0,Math.PI*2);X.fill();}
+// Title plaque
+X.font='10px Georgia';X.fillStyle=`rgba(176,184,208,${isSel?0.8:0.5})`;X.textAlign='center';
+X.fillText(d.title,bx+bwi/2,by+bhi+14);
+if(d.visitor){X.fillStyle='rgba(200,180,100,0.3)';X.font='8px Georgia';X.fillText('✧ visitor',bx+bwi/2,by+bhi+24);}
+// Glow if selected
+if(isSel){const g=X.createRadialGradient(bx+bwi/2,by+bhi/2,0,bx+bwi/2,by+bhi/2,bwi*0.6);
+g.addColorStop(0,d.color+'15');g.addColorStop(1,'rgba(0,0,0,0)');X.fillStyle=g;X.fillRect(bx,by,bwi,bhi);}});
+particles=particles.filter(p=>{p.life--;p.x+=p.vx;p.y+=p.vy;
+X.fillStyle=`rgba(176,184,208,${p.life/p.maxLife*0.3})`;X.beginPath();X.arc(p.x,p.y,1.5,0,Math.PI*2);X.fill();return p.life>0});
+requestAnimationFrame(draw);}draw();
+</script></body></html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Cistern — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#060810;color:#90a8b8;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6em;color:#5080a0;letter-spacing:3px;z-index:10;text-shadow:0 0 20px rgba(80,128,160,0.4)}
+.input-area{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(6,8,16,0.8);border:1px solid #5080a044;color:#90a8b8;padding:8px 14px;font-family:Georgia,serif;width:260px;border-radius:4px}
+.input-area button{background:rgba(80,128,160,0.2);border:1px solid #5080a044;color:#5080a0;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.info{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:0.8em;color:#304858;z-index:10}
+#msg{position:fixed;top:60px;left:0;right:0;text-align:center;font-size:0.9em;color:#5080a0;z-index:10;opacity:0;transition:opacity 1s}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#5080a088;text-decoration:none;margin-right:8px}nav.nav-links a:hover{color:#5080a0}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> <a href="carousel.html">Carousel</a> <a href="sundoor.html">Sundoor</a> <a href="tidebell.html">Tide Bell</a> <a href="automaton.html">Automaton</a> <a href="glacier.html">Glacier</a> <a href="marionette.html">Marionette</a> <a href="sandglass.html">Sandglass</a> <a href="diorama.html">Diorama</a> <a href="zenith.html">Zenith</a> <a href="centenary.html">Centenary</a> </nav>
+<h1>THE CISTERN</h1><div id="msg"></div><canvas id="c"></canvas>
+<div class="input-area"><input id="inp" placeholder="Speak into the echoing water..." maxlength="50">
+<button onclick="speak()">Speak</button></div>
+<div class="info">An underground water chamber where voices multiply in the darkness</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');let W,H;
+function resize(){W=C.width=innerWidth;H=C.height=innerHeight}resize();window.onresize=resize;
+let voices=[],ripples=[],columns=[],drips=[];
+for(let i=0;i<12;i++)columns.push({x:W*(0.1+i*0.075),y1:0,y2:H,width:15+Math.random()*15});
+let saved=JSON.parse(localStorage.getItem('cistern_voices')||'[]');
+saved.forEach(s=>{for(let e=0;e<3;e++)voices.push({text:s.text,x:s.x*W+(e-1)*100,y:H*0.5+Math.random()*H*0.2,alpha:0.3-e*0.08,size:12-e*2,echo:e,time:s.time||Date.now()})});
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,3000)}
+function speak(){const inp=document.getElementById('inp'),t=inp.value.trim();if(!t)return;
+const x=Math.random()*0.6+0.2;
+for(let e=0;e<4;e++){setTimeout(()=>{
+voices.push({text:t,x:x*W+(e-1.5)*120,y:H*0.45+e*20,alpha:0,targetAlpha:0.7-e*0.15,size:14-e*2,echo:e,time:Date.now()});
+ripples.push({x:x*W+(e-1.5)*120,y:H*0.65,r:5,maxR:80,alpha:0.3-e*0.05});
+},e*600);}
+saved.push({text:t,x,time:Date.now()});localStorage.setItem('cistern_voices',JSON.stringify(saved.slice(-40)));
+inp.value='';showMsg('Your voice echoes... echoes... echoes...');}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('inp'))speak()});
+setInterval(()=>{drips.push({x:columns[Math.floor(Math.random()*columns.length)].x,y:0,speed:2+Math.random()*2})},2000);
+let typed='';document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('flood')){showMsg('Water rises! The echoes grow louder!');voices.forEach(v=>v.alpha=Math.min(v.alpha+0.2,0.9))}
+if(typed.includes('drain')){showMsg('The water drains... leaving words stranded on wet stone.');voices.forEach(v=>v.y-=20)}
+if(typed.includes('sing')){showMsg('Your voice resonates with the architecture itself. The cistern sings back.')}});
+function draw(){X.fillStyle='rgba(6,8,16,0.08)';X.fillRect(0,0,W,H);const t=Date.now()*0.001;
+// Water surface
+const waterY=H*0.6;
+for(let x=0;x<W;x+=3){const wy=waterY+Math.sin(x*0.02+t)*5+Math.sin(x*0.05+t*1.5)*3;
+X.fillStyle=`rgba(40,70,100,${0.03+Math.sin(x*0.01+t)*0.01})`;X.fillRect(x,wy,3,H-wy);}
+// Columns
+columns.forEach(c=>{X.fillStyle='rgba(50,60,70,0.15)';X.fillRect(c.x-c.width/2,0,c.width,H);
+X.fillStyle='rgba(60,70,80,0.1)';X.beginPath();X.arc(c.x,0,c.width*0.8,0,Math.PI);X.fill();});
+// Ceiling arches
+for(let i=0;i<columns.length-1;i++){const c1=columns[i],c2=columns[i+1];
+X.strokeStyle='rgba(60,70,80,0.1)';X.lineWidth=2;
+X.beginPath();X.moveTo(c1.x,H*0.05);X.quadraticCurveTo((c1.x+c2.x)/2,H*-0.02,(c2.x),H*0.05);X.stroke();}
+// Voices/echoes
+voices.forEach(v=>{if(v.alpha<(v.targetAlpha||0.3))v.alpha+=0.002;
+const wobble=Math.sin(t*1.5+v.echo+v.x*0.01)*3;
+X.font=`italic ${v.size}px Georgia`;X.fillStyle=`rgba(144,168,184,${v.alpha})`;X.textAlign='center';
+X.fillText(v.text,v.x+wobble,v.y);
+// Reflection in water
+X.fillStyle=`rgba(80,128,160,${v.alpha*0.3})`;const ry=waterY+(waterY-v.y)*0.3;
+X.fillText(v.text,v.x+wobble,ry);});
+// Ripples
+ripples=ripples.filter(r=>{r.r+=1;r.alpha-=0.005;
+X.strokeStyle=`rgba(80,128,160,${r.alpha})`;X.lineWidth=0.5;
+X.beginPath();X.ellipse(r.x,r.y,r.r,r.r*0.3,0,0,Math.PI*2);X.stroke();return r.alpha>0});
+// Drips
+drips=drips.filter(d=>{d.y+=d.speed;if(d.y>waterY){ripples.push({x:d.x,y:waterY,r:2,maxR:30,alpha:0.2});return false}
+X.fillStyle='rgba(100,150,180,0.3)';X.beginPath();X.ellipse(d.x,d.y,1.5,3,0,0,Math.PI*2);X.fill();return true});
+requestAnimationFrame(draw);}draw();
+</script></body></html>
