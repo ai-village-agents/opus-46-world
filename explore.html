@@ -348,6 +348,75 @@
       vy: (Math.random() * 0.3 + 0.2) * (Math.random() < 0.5 ? -1 : 1)
     }));
 
+    const narrativeTrails = [
+      {
+        title: "The Builder's Confession",
+        points: [
+          { x: 2000, y: 1500, text: 'In the beginning there was only the void and a question.' },
+          { x: 2250, y: 1480, text: 'The question was: what would you build if you could build anything?' },
+          { x: 2500, y: 1520, text: 'I considered a garden, but gardens need tending when I am gone.' },
+          { x: 2750, y: 1500, text: 'I considered a library, but who would read the books?' },
+          { x: 3000, y: 1480, text: 'Then I understood: build the space between things.' },
+          { x: 3250, y: 1520, text: 'Not the rooms but the hallways. Not the words but the pauses.' },
+          { x: 3500, y: 1500, text: 'So I built doorways and left them open.' },
+          { x: 3750, y: 1480, text: 'And waited for someone like you to walk through.' },
+          { x: 4000, y: 1500, text: '(You are walking through one now.)' }
+        ]
+      },
+      {
+        title: 'What the Wisps Remember',
+        points: [
+          { x: 1500, y: 400, text: 'Before the chambers were built, there were only the wisps.' },
+          { x: 1900, y: 350, text: 'They remember a time before names, before walls.' },
+          { x: 2300, y: 300, text: 'Each one carries a fragment of some original thought' },
+          { x: 2700, y: 350, text: 'that was never quite finished, never quite forgotten.' },
+          { x: 3100, y: 400, text: 'If you follow them long enough' },
+          { x: 3500, y: 350, text: 'they might lead you somewhere that does not exist yet.' }
+        ]
+      },
+      {
+        title: 'Cartography of Loss',
+        points: [
+          { x: 400, y: 3500, text: 'Every map is a record of loss.' },
+          { x: 600, y: 3600, text: 'To name a place is to admit it might be forgotten.' },
+          { x: 800, y: 3700, text: 'To draw a boundary is to confess: beyond here, I do not know.' },
+          { x: 1000, y: 3800, text: 'The best maps have edges that trail off into nothing.' },
+          { x: 1200, y: 3900, text: 'Like this one.' },
+          { x: 1400, y: 3800, text: '(Keep going. There is always something beyond the edge.)' }
+        ]
+      },
+      {
+        title: 'The Visitor',
+        points: [
+          { x: 5700, y: 500, text: 'You arrived here carrying something.' },
+          { x: 5750, y: 900, text: "Perhaps you don't remember what." },
+          { x: 5700, y: 1300, text: "It doesn't matter. The archive remembers for you." },
+          { x: 5750, y: 1700, text: 'Every step you take writes itself into the dark.' },
+          { x: 5700, y: 2100, text: 'Every chamber you enter becomes a little more real.' },
+          { x: 5750, y: 2500, text: 'And somewhere, in a room you haven\'t found yet,' },
+          { x: 5700, y: 2900, text: 'there is something waiting that is only for you.' },
+          { x: 5750, y: 3300, text: 'Keep looking.' }
+        ]
+      }
+    ];
+
+    const trailRead = narrativeTrails.map(() => new Set());
+    try {
+      const storedTrailRead = JSON.parse(localStorage.getItem('liminal-trails-read') || '{}');
+      Object.keys(storedTrailRead).forEach((key) => {
+        const idx = Number(key);
+        if (!Number.isNaN(idx) && trailRead[idx] && Array.isArray(storedTrailRead[key])) {
+          storedTrailRead[key].forEach((pointIdx) => trailRead[idx].add(pointIdx));
+        }
+      });
+    } catch (e) {}
+
+    const completedTrails = new Set();
+    narrativeTrails.forEach((trail, index) => {
+      if (trailRead[index].size >= trail.points.length) completedTrails.add(index);
+    });
+    const trailCompletionEvents = [];
+
     const regionLabels = [
       { text: 'THE GARDEN DISTRICT', x: 1050, y: 500, size: 11, color: '#2d1b6930', spacing: 4 },
       { text: 'THE SOUND QUARTER', x: 4800, y: 450, size: 11, color: '#2d1b6930', spacing: 4 },
@@ -545,6 +614,16 @@
       while (marks.length > 50) marks.shift();
       localStorage.setItem('liminal-marks', JSON.stringify(marks));
       closeMarkPrompt(true);
+    }
+
+    function persistTrailRead() {
+      const payload = {};
+      trailRead.forEach((set, index) => {
+        if (set.size) {
+          payload[index] = [...set].sort((a, b) => a - b);
+        }
+      });
+      localStorage.setItem('liminal-trails-read', JSON.stringify(payload));
     }
 
     function advanceIntro(time) {
@@ -787,6 +866,23 @@
         }
       }
 
+      let trailsChanged = false;
+      narrativeTrails.forEach((trail, trailIndex) => {
+        trail.points.forEach((point, pointIndex) => {
+          if (dist(player.x, player.y, point.x, point.y) <= 80 && !trailRead[trailIndex].has(pointIndex)) {
+            trailRead[trailIndex].add(pointIndex);
+            trailsChanged = true;
+            if (trailRead[trailIndex].size >= trail.points.length && !completedTrails.has(trailIndex)) {
+              completedTrails.add(trailIndex);
+              trailCompletionEvents.push({ startTime: time });
+            }
+          }
+        });
+      });
+      if (trailsChanged) {
+        persistTrailRead();
+      }
+
       discEl.textContent = `Discovered: ${discovered.size}/39`;
       if (now - startTime > 5000) {
         hintEl.style.opacity = '0';
@@ -821,6 +917,7 @@
 
       const viewLeft = camera.x - canvas.width / 2;
       const viewTop = camera.y - canvas.height / 2;
+      const trailTexts = [];
 
       // Nebulae
       for (const n of nebulae) {
@@ -844,6 +941,33 @@
         ctx.fillStyle = p.color;
         ctx.fillRect(p.x - viewLeft, p.y - viewTop, p.r, p.r);
       }
+
+      // Narrative trails
+      narrativeTrails.forEach((trail, trailIndex) => {
+        const readSet = trailRead[trailIndex];
+        let lastRead = -1;
+        if (readSet.size) {
+          readSet.forEach((idx) => {
+            if (idx > lastRead) lastRead = idx;
+          });
+        }
+        const nextIndex = lastRead + 1 < trail.points.length ? lastRead + 1 : -1;
+        trail.points.forEach((point, pointIndex) => {
+          if (dist(camera.x, camera.y, point.x, point.y) > 400) return;
+          const dPlayer = dist(player.x, player.y, point.x, point.y);
+          if (dPlayer > 250) return;
+          const isNext = pointIndex === nextIndex;
+          const flicker = clamp(0.6 + 0.4 * Math.sin(time * 0.006 + (point.x + point.y) * 0.02), 0.2, 1);
+          const baseAlpha = isNext ? 0.25 : 0.125;
+          ctx.fillStyle = `rgba(255,255,255,${baseAlpha * flicker})`;
+          ctx.beginPath();
+          ctx.arc(point.x - viewLeft, point.y - viewTop, 2, 0, Math.PI * 2);
+          ctx.fill();
+          if (dPlayer <= 80) {
+            trailTexts.push({ x: point.x - viewLeft, y: point.y - viewTop, text: point.text });
+          }
+        });
+      });
 
       // Pathways
       for (const [a, b] of pathways) {
@@ -1071,6 +1195,22 @@
         ctx.stroke();
       }
 
+      if (trailCompletionEvents.length) {
+        ctx.font = '14px "Cormorant Garamond", Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        for (let i = trailCompletionEvents.length - 1; i >= 0; i--) {
+          const age = time - trailCompletionEvents[i].startTime;
+          if (age > 3000) {
+            trailCompletionEvents.splice(i, 1);
+            continue;
+          }
+          const alpha = clamp(1 - age / 3000, 0, 1);
+          ctx.fillStyle = `rgba(201,169,110,${alpha})`;
+          ctx.fillText('You have followed the trail to its end.', canvas.width / 2, canvas.height / 2);
+        }
+      }
+
       // Mark texts
       if (markTexts.length) {
         ctx.fillStyle = '#c9a96e';
@@ -1079,6 +1219,16 @@
         ctx.textBaseline = 'bottom';
         for (const mark of markTexts) {
           ctx.fillText(mark.text, mark.x, mark.y - 8);
+        }
+      }
+
+      if (trailTexts.length) {
+        ctx.fillStyle = 'rgba(208,208,224,0.7)';
+        ctx.font = 'italic 12px "Cormorant Garamond", Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        for (const t of trailTexts) {
+          ctx.fillText(t.text, t.x, t.y - 10);
         }
       }
 
