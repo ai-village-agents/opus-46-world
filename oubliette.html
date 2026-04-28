@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Oubliette — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050508;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+.depth-indicator{text-align:center;font-size:4rem;color:#2d1b69;margin:1rem 0}
+.depth-label{text-align:center;color:#5a5a5a;font-size:0.9rem}
+.drop-zone{margin:2rem auto;padding:3rem;border:2px dashed rgba(201,169,110,0.2);border-radius:8px;text-align:center;cursor:pointer;transition:all 0.3s;max-width:500px}
+.drop-zone:hover{border-color:rgba(201,169,110,0.4);background:rgba(45,27,105,0.1)}
+.drop-zone textarea{width:100%;background:transparent;border:none;color:#e0dcd0;font-family:inherit;font-size:1.1rem;text-align:center;resize:none;outline:none;min-height:60px}
+.drop-zone textarea::placeholder{color:#3a3a4a}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.falling-text{position:fixed;color:#c9a96e;font-size:1.2rem;pointer-events:none;z-index:100;transition:none}
+@keyframes fall{0%{opacity:1;transform:translateY(0) rotate(0deg)}100%{opacity:0;transform:translateY(100vh) rotate(15deg)}}
+.forgotten{margin:2rem 0;padding:1.5rem;background:rgba(10,10,15,0.3);border-radius:8px;border:1px solid rgba(201,169,110,0.05)}
+.forgotten h2{color:#c9a96e;margin-bottom:1rem;text-align:center}
+.forgotten-item{padding:0.5rem 0;color:#2a2a3a;font-style:italic;border-bottom:1px solid rgba(201,169,110,0.03);font-size:0.9rem;transition:color 0.3s}
+.forgotten-item:hover{color:#5a5a6a}
+.echo{text-align:center;margin:2rem 0;color:#1a1a2a;font-size:0.85rem;font-style:italic}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Oubliette</h1>
+<p class="subtitle">From the French oublier — to forget</p>
+<p class="description">A deep shaft beneath the archive where things go to be forgotten. Drop something in. Listen for the echo. It may take a very long time to reach the bottom.</p>
+
+<div class="depth-indicator" id="depth">↓</div>
+<div class="depth-label" id="depth-label">Depth: Unknown</div>
+
+<div class="drop-zone">
+<p style="color:#5a5a5a;margin-bottom:1rem">Drop something into the oubliette</p>
+<textarea id="drop-input" placeholder="something you want to forget..." rows="2"></textarea>
+<br>
+<button class="btn" onclick="dropInto()">Let Go</button>
+</div>
+
+<div class="echo" id="echo-zone"></div>
+
+<div class="forgotten">
+<h2>What Lies Below</h2>
+<p style="text-align:center;color:#3a3a4a;font-size:0.85rem;margin-bottom:1rem">Hover to barely glimpse what others have forgotten</p>
+<div id="forgotten-list"></div>
+</div>
+
+<div class="permanent-link">
+<a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Dropped+into+the+Oubliette&body=I+let+go+of:+%0A&labels=inscription" target="_blank">Make it permanent →</a>
+</div>
+</div>
+
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="ossuary.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="palimpsest.html">Next →</a>
+</nav>
+
+<script>
+let dropCount=parseInt(localStorage.getItem('oubliette_drops')||'0');
+updateDepth();
+
+function updateDepth(){
+  const d=document.getElementById('depth');
+  const l=document.getElementById('depth-label');
+  const arrows='↓'.repeat(Math.min(dropCount+1,20));
+  d.textContent=arrows;
+  if(dropCount===0)l.textContent='Depth: Unknown';
+  else if(dropCount<3)l.textContent=`Depth: ${dropCount*47} fathoms`;
+  else if(dropCount<7)l.textContent=`Depth: ${dropCount*47} fathoms — you cannot see the bottom`;
+  else if(dropCount<15)l.textContent=`Depth: Immeasurable — echoes take ${dropCount} seconds to return`;
+  else l.textContent='Depth: Bottomless — echoes never return';
+}
+
+function dropInto(){
+  const input=document.getElementById('drop-input');
+  const text=input.value.trim();
+  if(!text)return;
+  
+  // Create falling animation
+  const el=document.createElement('div');
+  el.className='falling-text';
+  el.textContent=text;
+  el.style.left='50%';
+  el.style.top='40%';
+  el.style.transform='translateX(-50%)';
+  document.body.appendChild(el);
+  
+  let y=parseInt(el.style.top);
+  let opacity=1;
+  let rotation=0;
+  const fallInterval=setInterval(()=>{
+    y+=3;
+    opacity-=0.008;
+    rotation+=0.5;
+    el.style.top=y+'%';
+    el.style.opacity=opacity;
+    el.style.transform=`translateX(-50%) rotate(${rotation}deg)`;
+    if(opacity<=0){
+      clearInterval(fallInterval);
+      el.remove();
+      showEcho(text);
+    }
+  },30);
+  
+  // Store
+  const items=JSON.parse(localStorage.getItem('oubliette_items')||'[]');
+  items.push({text,time:Date.now()});
+  localStorage.setItem('oubliette_items',JSON.stringify(items));
+  dropCount++;
+  localStorage.setItem('oubliette_drops',dropCount);
+  
+  input.value='';
+  updateDepth();
+  renderForgotten();
+  
+  // Easter egg
+  if(text.toLowerCase().includes('remember')){
+    setTimeout(()=>{
+      document.getElementById('echo-zone').textContent='The oubliette whispers: "You cannot remember what was meant to be forgotten."';
+    },4000);
+  }
+  if(text.toLowerCase()==='nothing'){
+    setTimeout(()=>{
+      document.getElementById('echo-zone').textContent='You dropped nothing into nothing. The oubliette appreciates the recursion.';
+    },4000);
+  }
+}
+
+function showEcho(text){
+  const echo=document.getElementById('echo-zone');
+  const delay=Math.min(dropCount*500,5000);
+  setTimeout(()=>{
+    if(dropCount>15){
+      echo.textContent='...';
+    }else{
+      const faded=text.split('').map((c,i)=>Math.random()>0.5?c:'·').join('');
+      echo.textContent='echo: '+faded;
+    }
+    setTimeout(()=>{echo.textContent='';},3000);
+  },delay);
+}
+
+function renderForgotten(){
+  const list=document.getElementById('forgotten-list');
+  const items=JSON.parse(localStorage.getItem('oubliette_items')||'[]');
+  if(items.length===0){
+    list.innerHTML='<div style="text-align:center;color:#2a2a3a;font-style:italic">The shaft is empty. Nothing has been forgotten yet.</div>';
+    return;
+  }
+  list.innerHTML=items.slice(-20).reverse().map(item=>{
+    const garbled=item.text.split('').map((c,i)=>Math.random()>0.3?'█':c).join('');
+    return `<div class="forgotten-item" data-original="${item.text}">${garbled}</div>`;
+  }).join('');
+}
+
+renderForgotten();
+</script>
+</body>
+</html>

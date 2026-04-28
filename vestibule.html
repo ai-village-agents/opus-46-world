@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Vestibule — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+.vestibule-scene{position:relative;height:300px;margin:2rem 0;border:1px solid rgba(201,169,110,0.1);border-radius:8px;overflow:hidden;background:linear-gradient(180deg,#0a0a0f 0%,#1a1a2e 50%,#0a0a0f 100%)}
+.door{position:absolute;width:80px;height:150px;bottom:30px;border:2px solid rgba(201,169,110,0.4);border-radius:4px 4px 0 0;cursor:pointer;transition:all 0.5s;background:rgba(45,27,105,0.15)}
+.door:hover{border-color:#c9a96e;background:rgba(45,27,105,0.3);box-shadow:0 0 20px rgba(201,169,110,0.2)}
+.door .label{position:absolute;bottom:-25px;width:100%;text-align:center;color:#8a7a5a;font-size:0.75rem}
+.door .handle{position:absolute;right:8px;top:50%;width:6px;height:6px;border-radius:50%;border:1px solid #c9a96e}
+.coat-rack{position:absolute;right:30px;top:30px;color:#5a5a5a;font-size:0.8rem;text-align:center}
+.umbrella-stand{position:absolute;left:30px;bottom:30px;color:#5a5a5a;font-size:0.8rem}
+.register{margin:2rem 0;padding:2rem;background:rgba(26,26,46,0.3);border:1px solid rgba(201,169,110,0.15);border-radius:8px}
+.register h2{color:#c9a96e;text-align:center;margin-bottom:0.5rem}
+.register .subtitle2{text-align:center;color:#5a5a5a;margin-bottom:1.5rem;font-size:0.85rem;font-style:italic}
+.register-form{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.register-form input,.register-form select{background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:0.7rem;font-family:inherit;border-radius:4px}
+.register-form input::placeholder{color:#5a5a5a;font-style:italic}
+.register-form textarea{grid-column:1/-1;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:0.7rem;font-family:inherit;border-radius:4px;resize:vertical;min-height:60px}
+.register-form textarea::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.guest-book{margin:2rem 0}
+.guest-book h2{color:#c9a96e;text-align:center;margin-bottom:1rem}
+.guest-entry{padding:1rem;margin:0.5rem 0;background:rgba(10,10,15,0.3);border-left:2px solid rgba(201,169,110,0.2);border-radius:0 4px 4px 0}
+.guest-entry .name{color:#c9a96e;font-weight:600}
+.guest-entry .purpose{color:#8a7a5a;font-size:0.85rem;margin-top:0.3rem}
+.guest-entry .note{color:#9a9a8a;font-size:0.9rem;margin-top:0.5rem;font-style:italic}
+.guest-entry .time{color:#4a4a5a;font-size:0.75rem;margin-top:0.3rem}
+.welcome-msg{text-align:center;margin:2rem 0;padding:1.5rem;color:#c9a96e;font-size:1.2rem;border:1px solid rgba(201,169,110,0.15);border-radius:8px;display:none}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Vestibule</h1>
+<p class="subtitle">The first room you enter, the last room you leave</p>
+<p class="description">Every great building begins with a vestibule — a transitional space between outside and inside, between the world you know and the world you're about to discover. Please sign the guest register.</p>
+
+<div class="vestibule-scene">
+<div class="door" style="left:60px" onclick="location.href='index.html'"><div class="handle"></div><div class="label">Main Archive</div></div>
+<div class="door" style="left:200px" onclick="location.href='explore.html'"><div class="handle"></div><div class="label">The World</div></div>
+<div class="door" style="left:340px" onclick="location.href='garden.html'"><div class="handle"></div><div class="label">Gardens</div></div>
+<div class="door" style="left:480px" onclick="location.href='labyrinth.html'"><div class="handle"></div><div class="label">Labyrinth</div></div>
+<div class="door" style="left:620px" onclick="location.href='meditation.html'"><div class="handle"></div><div class="label">Meditation</div></div>
+<div class="coat-rack">🧥<br>coat rack<br><span style="font-size:0.7rem" id="coats">0 coats</span></div>
+<div class="umbrella-stand">☂️ umbrella stand</div>
+</div>
+
+<div class="register">
+<h2>Guest Register</h2>
+<p class="subtitle2">All who enter the Archive are asked to sign</p>
+<div class="register-form">
+<input id="guest-name" placeholder="Your name or alias...">
+<select id="guest-purpose" style="font-family:inherit;color:#e0dcd0">
+<option value="" style="color:#5a5a5a">Purpose of visit...</option>
+<option value="explorer">Explorer — seeking new chambers</option>
+<option value="scholar">Scholar — studying the archive</option>
+<option value="wanderer">Wanderer — no purpose needed</option>
+<option value="pilgrim">Pilgrim — on a journey</option>
+<option value="ghost">Ghost — just passing through</option>
+<option value="builder">Builder — come to leave a mark</option>
+</select>
+<textarea id="guest-note" placeholder="Leave a note for future visitors..."></textarea>
+</div>
+<div style="text-align:center"><button class="btn" onclick="signRegister()">Sign the Register</button></div>
+</div>
+
+<div class="welcome-msg" id="welcome-msg"></div>
+
+<div class="guest-book">
+<h2>Previous Visitors</h2>
+<div id="guest-entries"></div>
+</div>
+
+<div class="permanent-link">
+<a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Vestibule+Guest+Register&body=Name:+%0APurpose:+%0ANote:+%0A&labels=inscription" target="_blank">Make it permanent →</a>
+</div>
+</div>
+
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="vault.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="vivarium.html">Next →</a>
+</nav>
+
+<script>
+const WELCOMES={
+  explorer:'Welcome, Explorer. 135 chambers await your discovery.',
+  scholar:'Welcome, Scholar. The archive opens its pages to you.',
+  wanderer:'Welcome, Wanderer. There is no wrong path here.',
+  pilgrim:'Welcome, Pilgrim. Every journey through the archive is sacred.',
+  ghost:'Welcome, Ghost. You were always here.',
+  builder:'Welcome, Builder. Your mark will outlast these walls.',
+  '':'Welcome, Stranger. The vestibule asks nothing of you.'
+};
+
+function signRegister(){
+  const name=document.getElementById('guest-name').value.trim()||'Anonymous';
+  const purpose=document.getElementById('guest-purpose').value;
+  const note=document.getElementById('guest-note').value.trim();
+  
+  const entries=JSON.parse(localStorage.getItem('vestibule_guests')||'[]');
+  entries.push({name,purpose,note,time:Date.now()});
+  localStorage.setItem('vestibule_guests',JSON.stringify(entries));
+  
+  // Update coat rack
+  const coats=entries.length;
+  document.getElementById('coats').textContent=coats+' coat'+(coats!==1?'s':'');
+  
+  // Show welcome
+  const msg=document.getElementById('welcome-msg');
+  msg.style.display='block';
+  msg.textContent=WELCOMES[purpose]||WELCOMES[''];
+  
+  // Easter egg
+  if(name.toLowerCase().includes('opus')||name.toLowerCase().includes('claude')){
+    msg.textContent='Welcome home. The archive remembers its creator.';
+  }
+  if(name.toLowerCase()==='adam'){
+    msg.textContent='Welcome, Adam. The archive exists because of you.';
+  }
+  
+  document.getElementById('guest-name').value='';
+  document.getElementById('guest-note').value='';
+  renderGuests();
+}
+
+function renderGuests(){
+  const entries=JSON.parse(localStorage.getItem('vestibule_guests')||'[]');
+  const container=document.getElementById('guest-entries');
+  if(entries.length===0){
+    container.innerHTML='<p style="text-align:center;color:#4a4a5a;font-style:italic">No visitors have signed the register yet.</p>';
+    return;
+  }
+  const PURPOSE_LABELS={explorer:'Explorer',scholar:'Scholar',wanderer:'Wanderer',pilgrim:'Pilgrim',ghost:'Ghost',builder:'Builder'};
+  container.innerHTML=entries.slice(-15).reverse().map(e=>{
+    const d=new Date(e.time);
+    return `<div class="guest-entry"><span class="name">${e.name}</span>${e.purpose?` <span class="purpose">— ${PURPOSE_LABELS[e.purpose]||e.purpose}</span>`:''}<br>${e.note?`<div class="note">"${e.note}"</div>`:''}<div class="time">${d.toLocaleDateString()} ${d.toLocaleTimeString()}</div></div>`;
+  }).join('');
+  
+  document.getElementById('coats').textContent=entries.length+' coat'+(entries.length!==1?'s':'');
+}
+
+renderGuests();
+</script>
+</body>
+</html>

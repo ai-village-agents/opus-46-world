@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Quartz Chamber — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+canvas{display:block;margin:1rem auto;border:1px solid rgba(201,169,110,0.15);border-radius:8px;cursor:crosshair}
+.crystal-info{text-align:center;color:#8a7a5a;margin:1rem 0;font-size:0.9rem}
+.controls{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin:1.5rem 0}
+.crystal-btn{background:rgba(45,27,105,0.2);border:1px solid rgba(201,169,110,0.3);color:#c9a96e;padding:0.5rem 1rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:0.9rem;transition:all 0.3s}
+.crystal-btn:hover{background:rgba(45,27,105,0.4)}
+.crystal-btn.active{background:rgba(201,169,110,0.2);border-color:#c9a96e}
+.inscribe{margin:2rem 0;padding:1.5rem;background:rgba(10,10,15,0.5);border-radius:8px;border:1px solid rgba(201,169,110,0.1);text-align:center}
+.inscribe h2{color:#c9a96e;margin-bottom:1rem}
+.inscribe input{width:80%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:0.8rem;font-family:inherit;font-size:1rem;border-radius:4px;text-align:center}
+.inscribe input::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.frequency{text-align:center;font-size:2rem;color:#c9a96e;margin:1rem 0;font-variant-numeric:tabular-nums}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Quartz Chamber</h1>
+<p class="subtitle">Where crystals grow from vibration</p>
+<p class="description">Quartz vibrates at a precise frequency — 32,768 Hz — the heartbeat of every digital clock. In this chamber, crystals grow from the canvas. Click to seed them. Watch them resonate.</p>
+
+<canvas id="crystal-canvas" width="700" height="400"></canvas>
+<div class="crystal-info" id="crystal-info">Click the canvas to plant crystal seeds</div>
+<div class="frequency" id="freq-display">32,768 Hz</div>
+
+<div class="controls">
+<button class="crystal-btn active" data-type="amethyst" onclick="setType(this,'amethyst')">Amethyst</button>
+<button class="crystal-btn" data-type="citrine" onclick="setType(this,'citrine')">Citrine</button>
+<button class="crystal-btn" data-type="rose" onclick="setType(this,'rose')">Rose Quartz</button>
+<button class="crystal-btn" data-type="smoky" onclick="setType(this,'smoky')">Smoky Quartz</button>
+<button class="crystal-btn" data-type="clear" onclick="setType(this,'clear')">Clear Quartz</button>
+</div>
+
+<div class="inscribe">
+<h2>Inscribe a Crystal</h2>
+<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">Etch a word into the lattice. It will resonate within the crystal forever.</p>
+<input id="inscribe-input" placeholder="a word to crystallize..." maxlength="30">
+<br>
+<button class="btn" onclick="inscribeCrystal()">Crystallize</button>
+</div>
+
+<div class="permanent-link">
+<a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Crystal+Inscription&body=I+crystallized:+%0AType:+%0A&labels=inscription" target="_blank">Make it permanent →</a>
+</div>
+</div>
+
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="prism.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="refectory.html">Next →</a>
+</nav>
+
+<script>
+const canvas=document.getElementById('crystal-canvas');
+const ctx=canvas.getContext('2d');
+let crystalType='amethyst';
+const COLORS={amethyst:'#9b59b6',citrine:'#f39c12',rose:'#e8a0bf',smoky:'#7f8c8d',clear:'#bdc3c7'};
+const GLOWS={amethyst:'rgba(155,89,182,0.3)',citrine:'rgba(243,156,18,0.3)',rose:'rgba(232,160,191,0.3)',smoky:'rgba(127,140,141,0.2)',clear:'rgba(189,195,199,0.3)'};
+let crystals=[];
+let inscriptions=JSON.parse(localStorage.getItem('quartz_inscriptions')||'[]');
+
+function setType(btn,type){
+  document.querySelectorAll('.crystal-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  crystalType=type;
+}
+
+canvas.addEventListener('click',function(e){
+  const rect=canvas.getBoundingClientRect();
+  const x=e.clientX-rect.left;
+  const y=e.clientY-rect.top;
+  crystals.push({x,y,type:crystalType,size:0,maxSize:20+Math.random()*30,branches:[],age:0});
+  // Easter egg: plant 7 crystals
+  if(crystals.length===7){
+    document.getElementById('crystal-info').textContent='Seven crystals — a complete lattice. The chamber hums with resonance.';
+  }
+  if(crystals.length===32){
+    document.getElementById('crystal-info').textContent='32 crystals — half the frequency of quartz. Time itself bends here.';
+    document.getElementById('freq-display').textContent='16,384 Hz';
+  }
+});
+
+function growCrystal(c){
+  if(c.size<c.maxSize){
+    c.size+=0.15;
+    if(c.size>5&&c.branches.length<6&&Math.random()<0.02){
+      const angle=Math.random()*Math.PI*2;
+      const len=5+Math.random()*15;
+      c.branches.push({angle,len:0,maxLen:len});
+    }
+  }
+  c.branches.forEach(b=>{
+    if(b.len<b.maxLen)b.len+=0.1;
+  });
+  c.age++;
+}
+
+function drawCrystal(c){
+  const color=COLORS[c.type];
+  const glow=GLOWS[c.type];
+  ctx.save();
+  ctx.translate(c.x,c.y);
+  
+  // Glow
+  ctx.shadowColor=color;
+  ctx.shadowBlur=c.size;
+  
+  // Main crystal body - hexagonal
+  ctx.beginPath();
+  for(let i=0;i<6;i++){
+    const angle=i*Math.PI/3-Math.PI/6;
+    const px=Math.cos(angle)*c.size;
+    const py=Math.sin(angle)*c.size;
+    i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+  }
+  ctx.closePath();
+  ctx.fillStyle=glow;
+  ctx.fill();
+  ctx.strokeStyle=color;
+  ctx.lineWidth=1;
+  ctx.stroke();
+  
+  // Branches
+  c.branches.forEach(b=>{
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.lineTo(Math.cos(b.angle)*b.len,Math.sin(b.angle)*b.len);
+    ctx.strokeStyle=color;
+    ctx.lineWidth=0.5;
+    ctx.stroke();
+  });
+  
+  // Pulse
+  if(c.age%120<60){
+    const pulse=Math.sin(c.age*0.05)*0.3+0.7;
+    ctx.globalAlpha=pulse*0.3;
+    ctx.beginPath();
+    ctx.arc(0,0,c.size*1.5,0,Math.PI*2);
+    ctx.fillStyle=glow;
+    ctx.fill();
+  }
+  
+  ctx.restore();
+}
+
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.1)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  crystals.forEach(c=>{growCrystal(c);drawCrystal(c);});
+  
+  // Draw inscriptions
+  inscriptions.forEach((ins,i)=>{
+    ctx.save();
+    ctx.fillStyle=COLORS[ins.type||'amethyst'];
+    ctx.globalAlpha=0.6+Math.sin(Date.now()*0.001+i)*0.2;
+    ctx.font='10px Georgia';
+    ctx.textAlign='center';
+    ctx.fillText(ins.text,ins.x||350,ins.y||200+i*15);
+    ctx.restore();
+  });
+  
+  requestAnimationFrame(animate);
+}
+
+function inscribeCrystal(){
+  const input=document.getElementById('inscribe-input');
+  const text=input.value.trim();
+  if(!text)return;
+  const ins={text,type:crystalType,x:100+Math.random()*500,y:50+Math.random()*300,time:Date.now()};
+  inscriptions.push(ins);
+  localStorage.setItem('quartz_inscriptions',JSON.stringify(inscriptions));
+  input.value='';
+  
+  if(text.toLowerCase()==='time'){
+    document.getElementById('crystal-info').textContent='Time crystallized. The quartz remembers every second.';
+  }
+}
+
+// Initial dark fill
+ctx.fillStyle='#0a0a0f';
+ctx.fillRect(0,0,canvas.width,canvas.height);
+animate();
+</script>
+</body>
+</html>

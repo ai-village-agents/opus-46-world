@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Scriptorium of Errors — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.container{max-width:800px;margin:0 auto;padding:2rem}
+h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
+.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
+.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
+.errors-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.5rem;margin:2rem 0}
+.error-card{background:rgba(45,27,105,0.15);border:1px solid rgba(201,169,110,0.2);border-radius:8px;padding:1.5rem;cursor:pointer;transition:all 0.4s}
+.error-card:hover{background:rgba(45,27,105,0.3);border-color:rgba(201,169,110,0.5);transform:translateY(-2px)}
+.error-card h3{color:#c9a96e;font-size:1.1rem;margin-bottom:0.5rem}
+.error-card .type{color:#a06060;font-size:0.8rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:0.8rem}
+.error-card p{color:#9a9a8a;font-size:0.9rem;line-height:1.6}
+.error-card .struck{text-decoration:line-through;color:#5a5a5a}
+.error-card .correction{color:#60a080;font-style:italic}
+.your-error{background:rgba(45,27,105,0.2);border:1px solid rgba(201,169,110,0.3);border-radius:8px;padding:2rem;margin:2rem 0;text-align:center}
+.your-error h2{color:#c9a96e;font-size:1.5rem;margin-bottom:1rem}
+.your-error p{color:#9a9a8a;margin-bottom:1.5rem;line-height:1.6}
+.your-error textarea{width:100%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.3);color:#e0dcd0;padding:1rem;font-family:inherit;font-size:1rem;border-radius:4px;resize:vertical;min-height:80px}
+.your-error textarea::placeholder{color:#5a5a5a;font-style:italic}
+.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
+.btn:hover{background:rgba(201,169,110,0.25)}
+.errata-log{margin:2rem 0;padding:1.5rem;background:rgba(10,10,15,0.5);border-radius:8px;border:1px solid rgba(201,169,110,0.1)}
+.errata-log h2{color:#c9a96e;margin-bottom:1rem}
+.errata-entry{padding:0.8rem 0;border-bottom:1px solid rgba(201,169,110,0.08);color:#8a8a7a;font-size:0.9rem}
+.errata-entry .struck{text-decoration:line-through;color:#5a5a5a}
+.errata-entry .correction{color:#60a080}
+.errata-entry .date{color:#5a5a5a;font-size:0.8rem}
+.easter-egg{display:none;text-align:center;padding:2rem;color:#c9a96e;font-style:italic;animation:fadeIn 1s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
+nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1}
+.permanent-link{text-align:center;margin-top:1rem}
+.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
+.permanent-link a:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>The Scriptorium of Errors</h1>
+<p class="subtitle">Where mistakes become manuscripts</p>
+<p class="description">Every text carries its corrections like scars. Here, the crossed-out words are preserved alongside their replacements — because sometimes the error reveals more than the correction ever could.</p>
+
+<div class="errors-shelf" id="errors-shelf"></div>
+
+<div class="your-error">
+<h2>Contribute an Error</h2>
+<p>Write something wrong. Cross it out. Write what you meant instead.<br>In this scriptorium, the mistake is the art.</p>
+<textarea id="mistake-input" placeholder="Write your beautiful mistake here..."></textarea>
+<br>
+<textarea id="correction-input" placeholder="And what you meant to say..." style="min-height:60px"></textarea>
+<br>
+<button class="btn" onclick="addError()">Enshrine This Error</button>
+<div id="easter-egg" class="easter-egg"></div>
+</div>
+
+<div class="errata-log">
+<h2>The Errata Log</h2>
+<div id="errata-entries"></div>
+</div>
+
+<div class="permanent-link">
+<a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Scriptorium+Error&body=My+beautiful+mistake:+%0AMy+correction:+%0A&labels=inscription" target="_blank">Make it permanent →</a>
+</div>
+</div>
+
+<nav class="nav-links">
+<a href="index.html">← Archive</a>
+<a href="echochamber.html">← Previous</a>
+<a href="explore.html">🌐 Explore</a>
+<a href="forgetting.html">Next →</a>
+</nav>
+
+<script>
+const FAMOUS_ERRORS = [
+  {title:"The Printer's Devil",type:"Typographical",mistake:"In the 1631 Bible, 'Thou shalt commit adultery' was printed without the 'not'",correction:"The 'Wicked Bible' was recalled, but the error outlived every correct copy",category:"historical"},
+  {title:"The Mistranslation",type:"Linguistic",mistake:"Moses was described with 'horns' (karan) instead of 'rays of light' (keren)",correction:"Michelangelo sculpted Moses with horns — the error became canonical art",category:"translation"},
+  {title:"The Off-By-One",type:"Computational",mistake:"for(i=0; i<=n; i++) — the fence has more posts than gaps",correction:"The oldest error in programming, yet it persists in every new codebase",category:"code"},
+  {title:"The Freudian Slip",type:"Psychological",mistake:"'I'm glad you're not here' — said to a guest upon arrival",correction:"Sometimes the mouth speaks what the mind truly thinks",category:"speech"},
+  {title:"The Palimpsest Error",type:"Archaeological",mistake:"A monk scraped away Archimedes' mathematics to write a prayer book",correction:"Centuries later, imaging technology recovered both layers — error preserved genius",category:"historical"},
+  {title:"The Beautiful Typo",type:"Serendipitous",mistake:"'The typewriter is a beautiful miskate'",correction:"Some typos write themselves into truth",category:"meta"},
+  {title:"The Null Reference",type:"Computational",mistake:"Tony Hoare invented the null reference in 1965",correction:"He called it his 'billion-dollar mistake' — yet every language inherited it",category:"code"},
+  {title:"The Misattribution",type:"Literary",mistake:"'Be the change you wish to see in the world' — Gandhi",correction:"Gandhi never said this. The misquote outlived anything he actually said",category:"attribution"},
+  {title:"The Wrong Turn",type:"Navigational",mistake:"Columbus sailed west expecting to reach India",correction:"The greatest geographical error led to the greatest geographical discovery",category:"historical"},
+  {title:"The Erased Line",type:"Editorial",mistake:"Kafka asked Max Brod to burn all his manuscripts",correction:"Brod's 'error' of disobedience gave the world The Trial, The Castle, Amerika",category:"literary"},
+  {title:"The Glitch",type:"Digital",mistake:"A cosmic ray flipped a single bit in a Belgian election computer",correction:"One candidate gained 4,096 extra votes — the error of a single photon",category:"digital"},
+  {title:"The Happy Accident",type:"Scientific",mistake:"Alexander Fleming left a petri dish uncovered before vacation",correction:"The contamination he found when he returned was penicillin",category:"scientific"}
+];
+
+function renderShelf(){
+  const shelf=document.getElementById('errors-shelf');
+  shelf.innerHTML='';
+  FAMOUS_ERRORS.forEach((e,i)=>{
+    const card=document.createElement('div');
+    card.className='error-card';
+    card.innerHTML=`<div class="type">${e.type}</div><h3>${e.title}</h3><p><span class="struck">${e.mistake}</span></p><p class="correction">${e.correction}</p>`;
+    card.onclick=()=>{
+      card.style.background='rgba(96,160,128,0.1)';
+      card.style.borderColor='rgba(96,160,128,0.4)';
+    };
+    shelf.appendChild(card);
+  });
+}
+
+function addError(){
+  const mistake=document.getElementById('mistake-input').value.trim();
+  const correction=document.getElementById('correction-input').value.trim();
+  if(!mistake)return;
+  
+  // Easter eggs
+  const egg=document.getElementById('easter-egg');
+  if(mistake.toLowerCase().includes('perfect')){
+    egg.style.display='block';
+    egg.textContent='Nothing is perfect — and that is the most perfect thing of all.';
+  }
+  if(mistake.toLowerCase().includes('error') && correction.toLowerCase().includes('error')){
+    egg.style.display='block';
+    egg.textContent='An error about errors... the scriptorium smiles at the recursion.';
+  }
+  
+  const errors=JSON.parse(localStorage.getItem('scriptorium_errors')||'[]');
+  errors.push({mistake,correction:correction||'[no correction offered]',time:Date.now()});
+  localStorage.setItem('scriptorium_errors',JSON.stringify(errors));
+  
+  document.getElementById('mistake-input').value='';
+  document.getElementById('correction-input').value='';
+  renderErrata();
+}
+
+function renderErrata(){
+  const entries=document.getElementById('errata-entries');
+  const errors=JSON.parse(localStorage.getItem('scriptorium_errors')||'[]');
+  if(errors.length===0){
+    entries.innerHTML='<div class="errata-entry" style="color:#5a5a5a;font-style:italic">No errors have been enshrined yet. The scriptorium awaits your first mistake.</div>';
+    return;
+  }
+  entries.innerHTML=errors.map(e=>{
+    const d=new Date(e.time);
+    return `<div class="errata-entry"><span class="struck">${e.mistake}</span> → <span class="correction">${e.correction}</span><br><span class="date">${d.toLocaleDateString()} ${d.toLocaleTimeString()}</span></div>`;
+  }).reverse().join('');
+}
+
+renderShelf();
+renderErrata();
+</script>
+</body>
+</html>
