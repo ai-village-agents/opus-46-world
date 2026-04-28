@@ -83,6 +83,47 @@
       border: 1px solid #2d1b69;
       pointer-events: none;
     }
+    .mark-prompt {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: #0a0a0fcc;
+      border: 1px solid #c9a96e80;
+      border-radius: 14px;
+      color: #c9a96e;
+      pointer-events: auto;
+      z-index: 5;
+      box-shadow: 0 0 18px #2d1b6940;
+    }
+    .mark-prompt.active {
+      display: flex;
+    }
+    .mark-prompt label {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #c9a96ea0;
+    }
+    .mark-prompt input {
+      width: 260px;
+      max-width: 70vw;
+      background: #0a0a0f;
+      border: 1px solid #c9a96e80;
+      border-radius: 10px;
+      color: #c9a96e;
+      font-size: 13px;
+      padding: 6px 10px;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      outline: none;
+    }
+    .mark-prompt input::placeholder {
+      color: #c9a96e60;
+    }
   </style>
 </head>
 <body>
@@ -95,6 +136,10 @@
     <button class="mute" id="muteBtn" aria-label="Toggle sound">♪</button>
     <canvas class="minimap" id="minimap" width="180" height="120"></canvas>
   </div>
+  <div class="mark-prompt" id="markPrompt">
+    <label for="markInput">Leave a mark</label>
+    <input id="markInput" type="text" maxlength="40" placeholder="40 characters max" />
+  </div>
 
   <script>
     const canvas = document.getElementById('c');
@@ -104,6 +149,8 @@
     const discEl = document.getElementById('disc');
     const hintEl = document.getElementById('hint');
     const muteBtn = document.getElementById('muteBtn');
+    const markPrompt = document.getElementById('markPrompt');
+    const markInput = document.getElementById('markInput');
 
     const WORLD = { w: 6000, h: 4000 };
     const VIS_RADIUS = 350;
@@ -198,10 +245,46 @@
       });
     }
 
+    const nebulae = [
+      { x: 800, y: 600, r: 400, color: '#2a4a2a', alpha: 0.08 },
+      { x: 4800, y: 700, r: 350, color: '#4a2a3a', alpha: 0.08 },
+      { x: 5300, y: 2200, r: 450, color: '#2a2a4a', alpha: 0.08 },
+      { x: 900, y: 3000, r: 380, color: '#3a2a4a', alpha: 0.08 },
+      { x: 3000, y: 3400, r: 300, color: '#3a3a2a', alpha: 0.07 },
+      { x: 500, y: 1900, r: 320, color: '#4a3a2a', alpha: 0.08 },
+      { x: 2000, y: 1400, r: 250, color: '#2a3a3a', alpha: 0.07 },
+      { x: 4000, y: 2000, r: 500, color: '#1a1a2a', alpha: 0.06 },
+      { x: 1800, y: 2200, r: 280, color: '#3a2a3a', alpha: 0.07 },
+      { x: 3800, y: 1200, r: 300, color: '#2a2a3a', alpha: 0.07 },
+      { x: 4500, y: 3000, r: 350, color: '#2a3a2a', alpha: 0.08 },
+      { x: 2500, y: 600, r: 200, color: '#3a3a3a', alpha: 0.06 }
+    ];
+
+    const wispColors = ['#aaccff', '#ffaacc', '#ccffaa', '#ffccaa', '#ccaaff', '#aaffcc', '#ffaaaa', '#aaaaff'];
+    const wisps = wispColors.map((color, i) => ({
+      x: randRange(400, WORLD.w - 400),
+      y: randRange(400, WORLD.h - 400),
+      speed: randRange(0.3, 0.8),
+      freq: randRange(0.2, 0.6),
+      freq2: randRange(0.2, 0.6),
+      phase: Math.random() * Math.PI * 2,
+      phase2: Math.random() * Math.PI * 2,
+      color
+    }));
+
+    const marks = [];
+    try {
+      const storedMarks = JSON.parse(localStorage.getItem('liminal-marks') || '[]');
+      storedMarks.forEach(mark => {
+        if (mark && typeof mark.x === 'number') marks.push(mark);
+      });
+    } catch (e) {}
+
     const keys = new Set();
     let lastTime = 0;
     let nearestIndex = -1;
     let moveTarget = null;
+    let markPromptOpen = false;
 
     const clickRings = [];
     const playerTrail = [];
@@ -290,7 +373,22 @@
     resize();
 
     window.addEventListener('keydown', (e) => {
+      if (markPromptOpen) {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          closeMarkPrompt(false);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          confirmMark();
+        }
+        return;
+      }
       ensureAudio();
+      if (e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        openMarkPrompt();
+        return;
+      }
       keys.add(e.key.toLowerCase());
       if (e.key === 'Enter') attemptEnter();
     });
@@ -405,6 +503,49 @@
       updateMuteButton();
     });
     updateMuteButton();
+
+    markInput.addEventListener('keydown', (e) => {
+      e.stopPropagation();
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        confirmMark();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        closeMarkPrompt(false);
+      }
+    });
+
+    function openMarkPrompt() {
+      markPromptOpen = true;
+      markPrompt.classList.add('active');
+      markInput.value = '';
+      keys.clear();
+      moveTarget = null;
+      markInput.focus();
+    }
+
+    function closeMarkPrompt(save) {
+      markPromptOpen = false;
+      markPrompt.classList.remove('active');
+      if (save) {
+        markInput.blur();
+      } else {
+        markInput.blur();
+      }
+    }
+
+    function confirmMark() {
+      const text = markInput.value.trim();
+      if (!text) {
+        closeMarkPrompt(false);
+        return;
+      }
+      const mark = { x: player.x, y: player.y, text, timestamp: Date.now() };
+      marks.push(mark);
+      while (marks.length > 50) marks.shift();
+      localStorage.setItem('liminal-marks', JSON.stringify(marks));
+      closeMarkPrompt(true);
+    }
 
     function advanceIntro(time) {
       if (introPhase === 'done') return;
@@ -536,13 +677,15 @@
       scheduleAtmosphericEvent(now);
     }
 
-    function update(dt) {
+    function update(dt, time) {
       const accel = player.speed;
       let ax = 0, ay = 0;
-      if (keys.has('w') || keys.has('arrowup')) ay -= accel;
-      if (keys.has('s') || keys.has('arrowdown')) ay += accel;
-      if (keys.has('a') || keys.has('arrowleft')) ax -= accel;
-      if (keys.has('d') || keys.has('arrowright')) ax += accel;
+      if (!markPromptOpen) {
+        if (keys.has('w') || keys.has('arrowup')) ay -= accel;
+        if (keys.has('s') || keys.has('arrowdown')) ay += accel;
+        if (keys.has('a') || keys.has('arrowleft')) ax -= accel;
+        if (keys.has('d') || keys.has('arrowright')) ax += accel;
+      }
 
       const hasInput = ax !== 0 || ay !== 0;
       if (hasInput && moveTarget) {
@@ -605,7 +748,7 @@
         if (f.y > WORLD.h) f.y = 0;
       }
 
-      const now = performance.now();
+      const now = time;
       if (now >= nextEventTime) {
         triggerAtmosphericEvent(now);
       }
@@ -645,8 +788,31 @@
       }
 
       discEl.textContent = `Discovered: ${discovered.size}/39`;
-      if (performance.now() - startTime > 5000) {
+      if (now - startTime > 5000) {
         hintEl.style.opacity = '0';
+      }
+
+      const t = time * 0.001;
+      for (const wisp of wisps) {
+        const driftX = Math.cos(t * wisp.freq + wisp.phase) * wisp.speed;
+        const driftY = Math.sin(t * wisp.freq2 + wisp.phase2) * wisp.speed;
+        wisp.x += driftX;
+        wisp.y += driftY;
+
+        const d = dist(player.x, player.y, wisp.x, wisp.y);
+        if (d < 100) {
+          const push = (100 - d) / 100;
+          const dx = wisp.x - player.x;
+          const dy = wisp.y - player.y;
+          const len = Math.hypot(dx, dy) || 1;
+          wisp.x += (dx / len) * push * 0.6;
+          wisp.y += (dy / len) * push * 0.6;
+        }
+
+        if (wisp.x < 0) wisp.x += WORLD.w;
+        if (wisp.x > WORLD.w) wisp.x -= WORLD.w;
+        if (wisp.y < 0) wisp.y += WORLD.h;
+        if (wisp.y > WORLD.h) wisp.y -= WORLD.h;
       }
     }
 
@@ -655,6 +821,22 @@
 
       const viewLeft = camera.x - canvas.width / 2;
       const viewTop = camera.y - canvas.height / 2;
+
+      // Nebulae
+      for (const n of nebulae) {
+        if (dist(camera.x, camera.y, n.x, n.y) > 800) continue;
+        const gx = n.x - viewLeft;
+        const gy = n.y - viewTop;
+        const glow = ctx.createRadialGradient(gx, gy, 0, gx, gy, n.r);
+        glow.addColorStop(0, hexToRgba(n.color, n.alpha));
+        glow.addColorStop(1, hexToRgba(n.color, 0));
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(gx, gy, n.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      drawEdgeGlow(viewLeft, viewTop);
 
       // Particles
       for (const p of particles) {
@@ -692,6 +874,20 @@
         ctx.fillStyle = label.color;
         ctx.font = `${label.size}px "Cormorant Garamond", Georgia, serif`;
         drawSpacedText(label.text, label.x - viewLeft, label.y - viewTop, label.spacing);
+      }
+
+      // Player trail
+      if (playerTrail.length > 1) {
+        for (let i = 0; i < playerTrail.length; i++) {
+          const t = playerTrail.length === 1 ? 1 : i / (playerTrail.length - 1);
+          const alpha = 0.15 * t;
+          if (alpha <= 0) continue;
+          const pos = playerTrail[i];
+          ctx.fillStyle = `rgba(201,169,110,${alpha})`;
+          ctx.beginPath();
+          ctx.arc(pos.x - viewLeft, pos.y - viewTop, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       for (const event of atmosphericEvents) {
@@ -782,18 +978,46 @@
         }
       }
 
-      // Player trail
-      if (playerTrail.length > 1) {
-        for (let i = 0; i < playerTrail.length; i++) {
-          const t = playerTrail.length === 1 ? 1 : i / (playerTrail.length - 1);
-          const alpha = 0.15 * t;
-          if (alpha <= 0) continue;
-          const pos = playerTrail[i];
-          ctx.fillStyle = `rgba(201,169,110,${alpha})`;
-          ctx.beginPath();
-          ctx.arc(pos.x - viewLeft, pos.y - viewTop, 2, 0, Math.PI * 2);
-          ctx.fill();
+      const markTexts = [];
+      for (const mark of marks) {
+        if (dist(camera.x, camera.y, mark.x, mark.y) > 800) continue;
+        const mx = mark.x - viewLeft;
+        const my = mark.y - viewTop;
+        const glow = ctx.createRadialGradient(mx, my, 0, mx, my, 12);
+        glow.addColorStop(0, 'rgba(201,169,110,0.3)');
+        glow.addColorStop(1, 'rgba(201,169,110,0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(mx, my, 12, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#c9a96e';
+        ctx.beginPath();
+        ctx.arc(mx, my, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (dist(player.x, player.y, mark.x, mark.y) <= 80) {
+          markTexts.push({ x: mx, y: my, text: mark.text });
         }
+      }
+
+      // Wisps
+      for (const wisp of wisps) {
+        if (dist(player.x, player.y, wisp.x, wisp.y) > VIS_RADIUS) continue;
+        const wx = wisp.x - viewLeft;
+        const wy = wisp.y - viewTop;
+        const glow = ctx.createRadialGradient(wx, wy, 0, wx, wy, 15);
+        glow.addColorStop(0, hexToRgba(wisp.color, 0.7));
+        glow.addColorStop(1, hexToRgba(wisp.color, 0));
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(wx, wy, 15, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = wisp.color;
+        ctx.beginPath();
+        ctx.arc(wx, wy, 2, 0, Math.PI * 2);
+        ctx.fill();
       }
 
       // Player orb
@@ -847,7 +1071,59 @@
         ctx.stroke();
       }
 
+      // Mark texts
+      if (markTexts.length) {
+        ctx.fillStyle = '#c9a96e';
+        ctx.font = '11px "Cormorant Garamond", Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        for (const mark of markTexts) {
+          ctx.fillText(mark.text, mark.x, mark.y - 8);
+        }
+      }
+
       drawMinimap();
+    }
+
+    function drawEdgeGlow(viewLeft, viewTop) {
+      const leftDist = viewLeft;
+      const rightDist = WORLD.w - (viewLeft + canvas.width);
+      const topDist = viewTop;
+      const bottomDist = WORLD.h - (viewTop + canvas.height);
+      const edgeFade = 100;
+
+      if (leftDist < edgeFade) {
+        const w = clamp(edgeFade - leftDist, 0, edgeFade);
+        const grad = ctx.createLinearGradient(0, 0, w, 0);
+        grad.addColorStop(0, '#2d1b6920');
+        grad.addColorStop(1, 'rgba(45,27,105,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, canvas.height);
+      }
+      if (rightDist < edgeFade) {
+        const w = clamp(edgeFade - rightDist, 0, edgeFade);
+        const grad = ctx.createLinearGradient(canvas.width, 0, canvas.width - w, 0);
+        grad.addColorStop(0, '#2d1b6920');
+        grad.addColorStop(1, 'rgba(45,27,105,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(canvas.width - w, 0, w, canvas.height);
+      }
+      if (topDist < edgeFade) {
+        const h = clamp(edgeFade - topDist, 0, edgeFade);
+        const grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, '#2d1b6920');
+        grad.addColorStop(1, 'rgba(45,27,105,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, h);
+      }
+      if (bottomDist < edgeFade) {
+        const h = clamp(edgeFade - bottomDist, 0, edgeFade);
+        const grad = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - h);
+        grad.addColorStop(0, '#2d1b6920');
+        grad.addColorStop(1, 'rgba(45,27,105,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, canvas.height - h, canvas.width, h);
+      }
     }
 
     function drawMinimap() {
@@ -870,6 +1146,17 @@
         mctx.arc(x, y, 3, 0, Math.PI * 2);
         mctx.fill();
       });
+
+      if (marks.length) {
+        mctx.fillStyle = '#c9a96e';
+        for (const mark of marks) {
+          const mx = mark.x * scale;
+          const my = mark.y * scale;
+          mctx.beginPath();
+          mctx.arc(mx, my, 2, 0, Math.PI * 2);
+          mctx.fill();
+        }
+      }
 
       mctx.fillStyle = '#ffffff';
       mctx.beginPath();
@@ -904,7 +1191,7 @@
         advanceIntro(time);
         drawIntro(time);
       } else {
-        update(dt);
+        update(dt, time);
         drawWorld(time);
       }
       requestAnimationFrame(loop);
