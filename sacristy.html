@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sacristy — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a080f;color:#d0c0d8;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.container{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:40px 20px}
+h1{font-size:2.4em;text-align:center;color:#d4a0ff;text-shadow:0 0 30px rgba(212,160,255,0.3);margin-bottom:10px}
+.subtitle{text-align:center;color:#7a5a9a;font-style:italic;margin-bottom:40px;font-size:1.1em}
+.section{background:rgba(20,15,30,0.7);border:1px solid #3a2a4a;border-radius:10px;padding:28px;margin:20px 0}
+.section h2{color:#d4a0ff;font-size:1.4em;margin-bottom:12px}
+.section p{line-height:1.7;margin-bottom:10px}
+.vestments{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:20px 0}
+.vestment{background:rgba(25,18,40,0.8);border:1px solid #3a2a50;border-radius:8px;padding:20px;cursor:pointer;transition:all 0.4s}
+.vestment:hover{border-color:#d4a0ff;transform:translateY(-3px);box-shadow:0 4px 20px rgba(212,160,255,0.1)}
+.vestment .icon{font-size:2em;margin-bottom:8px;display:block;text-align:center}
+.vestment .name{color:#d4a0ff;font-size:1.1em;text-align:center;display:block;margin-bottom:5px}
+.vestment .desc{color:#8a6aaa;font-size:0.9em;font-style:italic;text-align:center}
+#revelation{min-height:80px;background:rgba(15,10,25,0.6);border:1px solid #2a1a3a;border-radius:8px;padding:20px;margin:20px 0;text-align:center;color:#9a7aba;font-style:italic;font-size:1.1em}
+.offering-area{margin:20px 0}
+.offering-input{display:flex;gap:10px;margin:15px 0}
+.offering-input input{flex:1;background:rgba(15,10,25,0.7);border:1px solid #3a2a4a;color:#d0c0d8;padding:12px;font-family:inherit;font-size:1em;border-radius:6px}
+.offering-input input::placeholder{color:#4a3a5a}
+.offering-input button{background:#2a1a3a;border:1px solid #5a3a7a;color:#d4a0ff;padding:12px 18px;font-family:inherit;cursor:pointer;border-radius:6px}
+#offerings{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.offering{background:rgba(212,160,255,0.06);border:1px solid #3a2a4a;border-radius:6px;padding:6px 12px;font-size:0.9em;color:#b090d0}
+nav.nav-links{text-align:center;margin-top:40px;padding:20px 0;border-top:1px solid #2a1a3a}
+nav.nav-links a{color:#5a3a7a;text-decoration:none;margin:0 8px;font-size:0.9em;transition:color 0.3s}
+nav.nav-links a:hover{color:#d4a0ff}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="container">
+<h1>⛪ The Sacristy</h1>
+<p class="subtitle">Where the sacred instruments of meaning are prepared</p>
+
+<div class="section">
+<h2>The Preparation Room</h2>
+<p>Behind the main chambers lies this quiet room where the instruments of ceremony are kept. Chalices of distilled intention, vestments woven from the fabric of ritual, candles whose flames remember every prayer ever whispered near them. Here, the Archive prepares itself for moments of significance.</p>
+</div>
+
+<div class="section">
+<h2>The Sacred Objects</h2>
+<p>Touch an object to receive its revelation…</p>
+<div class="vestments" id="vestments"></div>
+<div id="revelation">Choose a sacred object…</div>
+</div>
+
+<div class="section offering-area">
+<h2>Leave an Offering</h2>
+<p>Visitors leave small offerings on the stone shelf — words they consider sacred.</p>
+<div class="offering-input">
+<input type="text" id="offering-input" placeholder="A word you hold sacred..." maxlength="50">
+<button onclick="addOffering()">Offer</button>
+</div>
+<div id="offerings"></div>
+</div>
+</div>
+
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="about.html">About</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="apiary.html">Apiary</a> <a href="apothecary.html">Apothecary</a> <a href="aquarium.html">Aquarium</a> <a href="aqueduct.html">Aqueduct</a> <a href="armillary.html">Armillary</a> <a href="armory.html">Armory</a> <a href="astrolabe.html">Astrolabe</a> <a href="atlas.html">Atlas</a> <a href="attic.html">Attic</a> <a href="automaton.html">Automaton</a> <a href="aviary.html">Aviary</a> <a href="balcony.html">Balcony</a> <a href="bathhouse.html">Bathhouse</a> <a href="belfry.html">Belfry</a> <a href="belljar.html">Belljar</a> <a href="bellows.html">Bellows</a> <a href="belvedere.html">Belvedere</a> <a href="cameraobscura.html">Cameraobscura</a> <a href="candelabra.html">Candelabra</a> <a href="carousel.html">Carousel</a> <a href="cartography.html">Cartography</a> <a href="catacomb.html">Catacomb</a> <a href="centenary.html">Centenary</a> <a href="chorus.html">Chorus</a> <a href="cistern.html">Cistern</a> <a href="clocktower.html">Clocktower</a> <a href="cloister.html">Cloister</a> <a href="compass.html">Compass</a> <a href="conservatory.html">Conservatory</a> <a href="constellations.html">Constellations</a> <a href="crucible.html">Crucible</a> <a href="crypt.html">Crypt</a> <a href="darkroom.html">Darkroom</a> <a href="diorama.html">Diorama</a> <a href="distillery.html">Distillery</a> <a href="dovecote.html">Dovecote</a> <a href="drawbridge.html">Drawbridge</a> <a href="dreams.html">Dreams</a> <a href="echochamber.html">Echochamber</a> <a href="forgetting.html">Forgetting</a> <a href="foundry.html">Foundry</a> <a href="fountain.html">Fountain</a> <a href="frigidarium.html">Frigidarium</a> <a href="gallery.html">Gallery</a> <a href="garden.html">Garden</a> <a href="garret.html">Garret</a> <a href="glacier.html">Glacier</a> <a href="granary.html">Granary</a> <a href="greenhouse.html">Greenhouse</a> <a href="grotto.html">Grotto</a> <a href="herbarium.html">Herbarium</a> <a href="hourglass.html">Hourglass</a> <a href="hypocaust.html">Hypocaust</a> <a href="inkwell.html">Inkwell</a> <a href="journal.html">Journal</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="kiln.html">Kiln</a> <a href="labyrinth.html">Labyrinth</a> <a href="lantern.html">Lantern</a> <a href="letters.html">Letters</a> <a href="lighthouse.html">Lighthouse</a> <a href="lullaby.html">Lullaby</a> <a href="marionette.html">Marionette</a> <a href="maze.html">Maze</a> <a href="meditation.html">Meditation</a> <a href="memorypalace.html">Memorypalace</a> <a href="menagerie.html">Menagerie</a> <a href="mineshaft.html">Mineshaft</a> <a href="mirror.html">Mirror</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Musicbox</a> <a href="nursery.html">Nursery</a> <a href="observatory.html">Observatory</a> <a href="orrery.html">Orrery</a> <a href="ossuary.html">Ossuary</a> <a href="palimpsest.html">Palimpsest</a> <a href="panopticon.html">Panopticon</a> <a href="pendulum.html">Pendulum</a> <a href="pergola.html">Pergola</a> <a href="planetarium.html">Planetarium</a> <a href="pneumatictube.html">Pneumatictube</a> <a href="prism.html">Prism</a> <a href="reliquary.html">Reliquary</a> <a href="resonance.html">Resonance</a> <a href="riddle.html">Riddle</a> <a href="rookery.html">Rookery</a> <a href="rotunda.html">Rotunda</a> <a href="sandglass.html">Sandglass</a> <a href="scriptorium.html">Scriptorium</a> <a href="seance.html">Seance</a> <a href="sextant.html">Sextant</a> <a href="solarium.html">Solarium</a> <a href="spyglass.html">Spyglass</a> <a href="staircase.html">Staircase</a> <a href="sundial.html">Sundial</a> <a href="sundoor.html">Sundoor</a> <a href="tannery.html">Tannery</a> <a href="taproom.html">Taproom</a> <a href="telephone.html">Telephone</a> <a href="telescope.html">Telescope</a> <a href="terrarium.html">Terrarium</a> <a href="threshold.html">Threshold</a> <a href="tidebell.html">Tidebell</a> <a href="tidepool.html">Tidepool</a> <a href="typewriter.html">Typewriter</a> <a href="vault.html">Vault</a> <a href="vivarium.html">Vivarium</a> <a href="waxseal.html">Waxseal</a> <a href="weathervane.html">Weathervane</a> <a href="weaving.html">Weaving</a> <a href="well.html">Well</a> <a href="whirlpool.html">Whirlpool</a> <a href="whispers.html">Whispers</a> <a href="windchime.html">Windchime</a> <a href="worlds.html">Worlds</a> <a href="zenith.html">Zenith</a></nav>
+
+<script>
+const canvas=document.getElementById('bg'),ctx=canvas.getContext('2d');
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();window.addEventListener('resize',resize);
+const incense=Array.from({length:40},()=>({x:Math.random()*2000,y:Math.random()*2000,vx:Math.random()*0.2-0.1,vy:-Math.random()*0.4-0.1,r:Math.random()*3+1,o:Math.random()*0.15+0.05,p:Math.random()*Math.PI*2}));
+function draw(){ctx.fillStyle='#0a080f';ctx.fillRect(0,0,canvas.width,canvas.height);
+incense.forEach(p=>{p.x+=p.vx+Math.sin(p.p+=0.01)*0.3;p.y+=p.vy;p.o-=0.0003;
+if(p.o<=0||p.y<-20){p.x=Math.random()*canvas.width;p.y=canvas.height+10;p.o=Math.random()*0.15+0.05}
+ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(180,140,220,${p.o})`;ctx.fill()});
+requestAnimationFrame(draw)}
+draw();
+
+const objects=[
+{icon:'🏆',name:'The Chalice of First Words',revelations:['The first word ever spoken was not a name but a sound of wonder.','Every language begins with the same syllable: the gasp of recognition.','This chalice has held the tears of every poet who couldn\'t find the right word.']},
+{icon:'📿',name:'The Rosary of Iterations',revelations:['Each bead represents a version of yourself you\'ve outgrown.','Count them backward and you\'ll remember things that haven\'t happened yet.','The string that holds them together is made of patience.']},
+{icon:'🕯',name:'The Perpetual Candle',revelations:['This flame has burned since the first question was asked.','It casts shadows that show things as they truly are.','The wax it consumes is reconstituted from forgotten prayers.']},
+{icon:'📖',name:'The Book of Hours',revelations:['Each hour has its own prayer, but the midnight hour has seven.','The pages are blank until you need to read them.','It contains every schedule ever abandoned halfway through.']},
+{icon:'🔔',name:'The Silence Bell',revelations:['When struck, it produces a silence so pure that all other sounds become audible.','It rings at the frequency of attention itself.','The last time it was rung, someone understood everything for exactly one second.']},
+{icon:'🪞',name:'The Confession Mirror',revelations:['It reflects not your face but your most recent unspoken thought.','Everyone who looks into it sees a slightly different version of themselves.','The frame is made from the boundaries between truth and kindness.']}
+];
+
+const vestDiv=document.getElementById('vestments');
+objects.forEach(obj=>{const d=document.createElement('div');d.className='vestment';
+d.innerHTML=`<span class="icon">${obj.icon}</span><span class="name">${obj.name}</span><span class="desc">Touch to receive</span>`;
+d.onclick=()=>{const rev=obj.revelations[Math.floor(Math.random()*obj.revelations.length)];
+document.getElementById('revelation').textContent=rev;
+document.querySelectorAll('.vestment').forEach(v=>v.style.borderColor='#3a2a50');
+d.style.borderColor='#d4a0ff'};
+vestDiv.appendChild(d)});
+
+// Offerings
+const offerings=JSON.parse(localStorage.getItem('sacristy-offerings')||'[]');
+function renderOfferings(){const o=document.getElementById('offerings');
+if(offerings.length===0){o.innerHTML='<p style="color:#4a3a5a;text-align:center;width:100%">No offerings yet.</p>';return}
+o.innerHTML=offerings.slice(-25).map(t=>`<span class="offering">${t}</span>`).join('')}
+renderOfferings();
+function addOffering(){const inp=document.getElementById('offering-input');const t=inp.value.trim();
+if(!t)return;offerings.push(t);localStorage.setItem('sacristy-offerings',JSON.stringify(offerings.slice(-50)));
+inp.value='';renderOfferings()}
+document.getElementById('offering-input').addEventListener('keydown',e=>{if(e.key==='Enter')addOffering()});
+
+// Easter eggs
+const ee={pray:()=>{document.body.style.transition='filter 3s';document.body.style.filter='brightness(1.5) saturate(0.5)';setTimeout(()=>document.body.style.filter='',4000)},
+holy:()=>{for(let i=0;i<15;i++){const s=document.createElement('div');s.textContent='✦';s.style.cssText=`position:fixed;top:${Math.random()*100}%;left:${Math.random()*100}%;font-size:${Math.random()*20+10}px;color:rgba(212,160,255,0.6);z-index:999;pointer-events:none;animation:none;opacity:0;transition:opacity 1s`;document.body.appendChild(s);setTimeout(()=>s.style.opacity='1',i*100);setTimeout(()=>{s.style.opacity='0';setTimeout(()=>s.remove(),1000)},2000+i*100)}},
+amen:()=>{document.getElementById('revelation').style.transition='all 2s';document.getElementById('revelation').style.color='#d4a0ff';document.getElementById('revelation').textContent='So be it.';setTimeout(()=>document.getElementById('revelation').style.color='',3000)}};
+let typed='';document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+Object.keys(ee).forEach(k=>{if(typed.includes(k))ee[k]()})});
+</script>
+</body>
+</html>

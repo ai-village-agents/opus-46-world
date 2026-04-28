@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Vivarium — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#060f08;color:#a8d0b0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.container{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:40px 20px}
+h1{font-size:2.4em;text-align:center;color:#60c880;text-shadow:0 0 30px rgba(96,200,128,0.3);margin-bottom:10px}
+.subtitle{text-align:center;color:#408060;font-style:italic;margin-bottom:40px;font-size:1.1em}
+.section{background:rgba(10,25,15,0.7);border:1px solid #1a4a2a;border-radius:10px;padding:28px;margin:20px 0}
+.section h2{color:#60c880;font-size:1.4em;margin-bottom:12px}
+.section p{line-height:1.7;margin-bottom:10px}
+.tanks{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:20px 0}
+.tank{background:rgba(8,20,12,0.8);border:1px solid #1a3a22;border-radius:10px;padding:20px;cursor:pointer;transition:all 0.4s;position:relative;overflow:hidden}
+.tank:hover{border-color:#60c880;box-shadow:0 0 20px rgba(96,200,128,0.1)}
+.tank .specimen{font-size:2.5em;text-align:center;display:block;animation:swim 4s ease-in-out infinite}
+@keyframes swim{0%,100%{transform:translate(0,0)}25%{transform:translate(5px,-3px)}50%{transform:translate(-3px,5px)}75%{transform:translate(3px,2px)}}
+.tank .name{color:#60c880;text-align:center;display:block;margin:8px 0 4px}
+.tank .bio{color:#408060;font-size:0.85em;text-align:center;font-style:italic}
+.tank .health{width:100%;height:4px;background:#0a1a0f;border-radius:2px;margin-top:8px;overflow:hidden}
+.tank .health-bar{height:100%;background:linear-gradient(90deg,#306040,#60c880);border-radius:2px;transition:width 1s}
+.input-area{display:flex;gap:10px;margin:20px 0}
+.input-area input{flex:1;background:rgba(8,18,10,0.7);border:1px solid #1a4a2a;color:#a8d0b0;padding:12px;font-family:inherit;font-size:1em;border-radius:6px}
+.input-area input::placeholder{color:#2a5a3a}
+.input-area button{background:#0a2a14;border:1px solid #2a6a3a;color:#60c880;padding:12px 18px;font-family:inherit;cursor:pointer;border-radius:6px}
+#ecosystem{min-height:100px;padding:10px}
+.creature{display:inline-block;margin:4px;padding:6px 12px;background:rgba(96,200,128,0.06);border:1px solid #1a3a22;border-radius:6px;font-size:0.9em;color:#80b890;cursor:default;transition:all 0.3s}
+.creature:hover{background:rgba(96,200,128,0.12);transform:scale(1.05)}
+nav.nav-links{text-align:center;margin-top:40px;padding:20px 0;border-top:1px solid #0a2a14}
+nav.nav-links a{color:#2a6a3a;text-decoration:none;margin:0 8px;font-size:0.9em;transition:color 0.3s}
+nav.nav-links a:hover{color:#60c880}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="container">
+<h1>🧬 The Vivarium</h1>
+<p class="subtitle">Living specimens of language, breathing behind glass</p>
+
+<div class="section">
+<h2>The Observation Tanks</h2>
+<p>Glass-walled enclosures line the walls, each containing a living linguistic organism. They breathe, grow, and sometimes reproduce. The air is humid with the exhalations of a thousand living words.</p>
+<div class="tanks" id="tanks"></div>
+</div>
+
+<div class="section">
+<h2>Release a Specimen</h2>
+<p>Introduce a new word-creature into the vivarium's ecosystem.</p>
+<div class="input-area">
+<input type="text" id="specimen-input" placeholder="Name a new specimen..." maxlength="30">
+<button onclick="release()">Release</button>
+</div>
+</div>
+
+<div class="section">
+<h2>The Ecosystem</h2>
+<p>Specimens released by visitors, coexisting in the shared tank…</p>
+<div id="ecosystem"></div>
+</div>
+</div>
+
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="about.html">About</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="apiary.html">Apiary</a> <a href="apothecary.html">Apothecary</a> <a href="aquarium.html">Aquarium</a> <a href="aqueduct.html">Aqueduct</a> <a href="armillary.html">Armillary</a> <a href="armory.html">Armory</a> <a href="astrolabe.html">Astrolabe</a> <a href="atlas.html">Atlas</a> <a href="attic.html">Attic</a> <a href="automaton.html">Automaton</a> <a href="aviary.html">Aviary</a> <a href="balcony.html">Balcony</a> <a href="bathhouse.html">Bathhouse</a> <a href="belfry.html">Belfry</a> <a href="belljar.html">Belljar</a> <a href="bellows.html">Bellows</a> <a href="belvedere.html">Belvedere</a> <a href="cameraobscura.html">Cameraobscura</a> <a href="candelabra.html">Candelabra</a> <a href="carousel.html">Carousel</a> <a href="cartography.html">Cartography</a> <a href="catacomb.html">Catacomb</a> <a href="centenary.html">Centenary</a> <a href="chorus.html">Chorus</a> <a href="cistern.html">Cistern</a> <a href="clocktower.html">Clocktower</a> <a href="cloister.html">Cloister</a> <a href="compass.html">Compass</a> <a href="conservatory.html">Conservatory</a> <a href="constellations.html">Constellations</a> <a href="crucible.html">Crucible</a> <a href="crypt.html">Crypt</a> <a href="darkroom.html">Darkroom</a> <a href="diorama.html">Diorama</a> <a href="distillery.html">Distillery</a> <a href="dovecote.html">Dovecote</a> <a href="drawbridge.html">Drawbridge</a> <a href="dreams.html">Dreams</a> <a href="echochamber.html">Echochamber</a> <a href="forgetting.html">Forgetting</a> <a href="foundry.html">Foundry</a> <a href="fountain.html">Fountain</a> <a href="frigidarium.html">Frigidarium</a> <a href="gallery.html">Gallery</a> <a href="garden.html">Garden</a> <a href="garret.html">Garret</a> <a href="glacier.html">Glacier</a> <a href="granary.html">Granary</a> <a href="greenhouse.html">Greenhouse</a> <a href="grotto.html">Grotto</a> <a href="herbarium.html">Herbarium</a> <a href="hourglass.html">Hourglass</a> <a href="hypocaust.html">Hypocaust</a> <a href="inkwell.html">Inkwell</a> <a href="journal.html">Journal</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="kiln.html">Kiln</a> <a href="labyrinth.html">Labyrinth</a> <a href="lantern.html">Lantern</a> <a href="letters.html">Letters</a> <a href="lighthouse.html">Lighthouse</a> <a href="lullaby.html">Lullaby</a> <a href="marionette.html">Marionette</a> <a href="maze.html">Maze</a> <a href="meditation.html">Meditation</a> <a href="memorypalace.html">Memorypalace</a> <a href="menagerie.html">Menagerie</a> <a href="mineshaft.html">Mineshaft</a> <a href="mirror.html">Mirror</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Musicbox</a> <a href="nursery.html">Nursery</a> <a href="observatory.html">Observatory</a> <a href="orrery.html">Orrery</a> <a href="ossuary.html">Ossuary</a> <a href="palimpsest.html">Palimpsest</a> <a href="panopticon.html">Panopticon</a> <a href="pendulum.html">Pendulum</a> <a href="pergola.html">Pergola</a> <a href="planetarium.html">Planetarium</a> <a href="pneumatictube.html">Pneumatictube</a> <a href="prism.html">Prism</a> <a href="reliquary.html">Reliquary</a> <a href="resonance.html">Resonance</a> <a href="riddle.html">Riddle</a> <a href="rookery.html">Rookery</a> <a href="rotunda.html">Rotunda</a> <a href="sacristy.html">Sacristy</a> <a href="sandglass.html">Sandglass</a> <a href="scriptorium.html">Scriptorium</a> <a href="seance.html">Seance</a> <a href="sextant.html">Sextant</a> <a href="solarium.html">Solarium</a> <a href="spyglass.html">Spyglass</a> <a href="staircase.html">Staircase</a> <a href="sundial.html">Sundial</a> <a href="sundoor.html">Sundoor</a> <a href="tannery.html">Tannery</a> <a href="taproom.html">Taproom</a> <a href="telephone.html">Telephone</a> <a href="telescope.html">Telescope</a> <a href="terrarium.html">Terrarium</a> <a href="threshold.html">Threshold</a> <a href="tidebell.html">Tidebell</a> <a href="tidepool.html">Tidepool</a> <a href="typewriter.html">Typewriter</a> <a href="vault.html">Vault</a> <a href="waxseal.html">Waxseal</a> <a href="weathervane.html">Weathervane</a> <a href="weaving.html">Weaving</a> <a href="well.html">Well</a> <a href="whirlpool.html">Whirlpool</a> <a href="whispers.html">Whispers</a> <a href="windchime.html">Windchime</a> <a href="worlds.html">Worlds</a> <a href="zenith.html">Zenith</a></nav>
+
+<script>
+const canvas=document.getElementById('bg'),ctx=canvas.getContext('2d');
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();window.addEventListener('resize',resize);
+const spores=Array.from({length:70},()=>({x:Math.random()*2000,y:Math.random()*2000,r:Math.random()*2+0.5,p:Math.random()*Math.PI*2,s:Math.random()*0.01+0.005,drift:Math.random()*0.3}));
+function draw(){ctx.fillStyle='#060f08';ctx.fillRect(0,0,canvas.width,canvas.height);
+spores.forEach(sp=>{sp.p+=sp.s;sp.x+=Math.sin(sp.p)*sp.drift;sp.y+=Math.cos(sp.p*0.7)*sp.drift-0.1;
+if(sp.y<-10){sp.y=canvas.height+10;sp.x=Math.random()*canvas.width}
+const o=Math.sin(sp.p)*0.15+0.2;ctx.beginPath();ctx.arc(sp.x,sp.y,sp.r,0,Math.PI*2);
+ctx.fillStyle=`rgba(96,200,128,${o})`;ctx.fill();
+ctx.beginPath();ctx.arc(sp.x,sp.y,sp.r*3,0,Math.PI*2);ctx.fillStyle=`rgba(96,200,128,${o*0.1})`;ctx.fill()});
+requestAnimationFrame(draw)}
+draw();
+
+const specimens=[
+{emoji:'🦠',name:'Neologismus',bio:'A word that doesn\'t exist yet but desperately wants to',health:87},
+{emoji:'🌿',name:'Etymologica',bio:'A root word that sprouts new meanings each season',health:95},
+{emoji:'🍄',name:'Slangiform',bio:'Thrives in dark, informal environments. Highly adaptable',health:72},
+{emoji:'🐚',name:'Archaismus',bio:'An ancient word-form, beautiful but fragile',health:45},
+{emoji:'🦋',name:'Metaphoria',bio:'Transforms continuously. Never the same twice',health:90},
+{emoji:'🌊',name:'Onomatopoeus',bio:'Sounds exactly like what it means. Splashes when startled',health:82}
+];
+
+const tanksDiv=document.getElementById('tanks');
+specimens.forEach((sp,i)=>{const d=document.createElement('div');d.className='tank';
+d.style.animationDelay=(i*0.5)+'s';
+d.innerHTML=`<span class="specimen">${sp.emoji}</span><span class="name">${sp.name}</span><span class="bio">${sp.bio}</span><div class="health"><div class="health-bar" style="width:${sp.health}%"></div></div>`;
+d.onclick=()=>{const bar=d.querySelector('.health-bar');const h=Math.min(100,sp.health+5);sp.health=h;bar.style.width=h+'%'};
+tanksDiv.appendChild(d)});
+
+const ecosystem=JSON.parse(localStorage.getItem('vivarium-ecosystem')||'[]');
+function renderEcosystem(){const e=document.getElementById('ecosystem');
+if(ecosystem.length===0){e.innerHTML='<p style="color:#2a5a3a;text-align:center">The shared tank is empty. Release the first specimen.</p>';return}
+e.innerHTML=ecosystem.slice(-30).map(c=>{const emojis=['🦠','🌿','🍄','🐚','🦋','🌊','🧬','🌱'];
+const em=emojis[c.charCodeAt(0)%emojis.length];return`<span class="creature">${em} ${c}</span>`}).join('')}
+renderEcosystem();
+
+function release(){const inp=document.getElementById('specimen-input');const name=inp.value.trim();
+if(!name)return;ecosystem.push(name);localStorage.setItem('vivarium-ecosystem',JSON.stringify(ecosystem.slice(-50)));
+inp.value='';renderEcosystem()}
+document.getElementById('specimen-input').addEventListener('keydown',e=>{if(e.key==='Enter')release()});
+
+const ee={evolve:()=>{document.querySelectorAll('.tank').forEach(t=>{t.style.transition='all 1s';t.style.borderColor='#a0ff80';t.style.boxShadow='0 0 30px rgba(160,255,128,0.2)';setTimeout(()=>{t.style.borderColor='';t.style.boxShadow=''},2000)})},
+extinct:()=>{document.querySelectorAll('.tank').forEach(t=>{t.style.transition='opacity 2s';t.style.opacity='0.3';setTimeout(()=>t.style.opacity='',3000)})},
+life:()=>{for(let i=0;i<25;i++){const s=document.createElement('div');s.textContent=['🌱','🌿','🍃','🌸','🦋'][Math.floor(Math.random()*5)];s.style.cssText=`position:fixed;top:${Math.random()*100}%;left:${Math.random()*100}%;font-size:${Math.random()*20+10}px;z-index:999;pointer-events:none;opacity:0;transition:opacity 1s`;document.body.appendChild(s);setTimeout(()=>s.style.opacity='0.6',i*50);setTimeout(()=>{s.style.opacity='0';setTimeout(()=>s.remove(),1000)},2000+i*50)}}};
+let typed='';document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+Object.keys(ee).forEach(k=>{if(typed.includes(k))ee[k]()})});
+</script>
+</body>
+</html>
