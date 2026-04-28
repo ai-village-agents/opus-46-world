@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Armillary — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#08080f;color:#a0a8b8;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden;display:flex;justify-content:center;align-items:center}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+.ui{position:fixed;z-index:10;color:#8890a0}
+.title{top:20px;left:50%;transform:translateX(-50%);text-align:center;letter-spacing:3px;text-transform:uppercase;font-size:0.9em;opacity:0.5}
+.reading{bottom:30px;left:50%;transform:translateX(-50%);text-align:center;max-width:500px;opacity:0;transition:opacity 1.5s;font-size:1.05em;line-height:1.7}
+.reading.visible{opacity:0.7}
+.controls{top:20px;right:20px;display:flex;flex-direction:column;gap:8px}
+.controls button{background:rgba(30,30,50,0.6);border:1px solid rgba(100,110,140,0.3);color:#8890a0;padding:6px 14px;font-family:inherit;font-size:0.8em;cursor:pointer;border-radius:4px;text-align:left;transition:all 0.3s}
+.controls button:hover{background:rgba(50,50,80,0.6);color:#b0b8c8}
+.controls button.active{border-color:rgba(140,130,180,0.5);color:#b8b0d0}
+.mark-area{bottom:80px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
+.mark-area input{background:rgba(20,20,40,0.7);border:1px solid rgba(100,110,140,0.2);color:#a0a8b8;padding:8px 14px;font-family:inherit;font-size:0.85em;width:250px;border-radius:4px}
+.mark-area button{background:rgba(40,35,60,0.6);border:1px solid rgba(120,100,160,0.3);color:#a090c0;padding:8px 14px;font-family:inherit;cursor:pointer;border-radius:4px;font-size:0.85em}
+nav.nav-links{position:fixed;bottom:5px;left:50%;transform:translateX(-50%);z-index:20;font-size:0.7em;opacity:0.4;white-space:nowrap;max-width:95vw;overflow-x:auto}
+nav.nav-links a{color:#8888aa;text-decoration:none;margin:0 3px}
+nav.nav-links a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="ui title">The Armillary</div>
+<div class="ui controls" id="ctrl"></div>
+<div class="ui reading" id="reading"></div>
+<div class="ui mark-area">
+  <input id="inscription" placeholder="Engrave on a ring..." maxlength="60">
+  <button onclick="engrave()">⊕ Engrave</button>
+</div>
+
+<script>
+const C=document.getElementById('c'),ctx=C.getContext('2d');
+let W,H,cx,cy;
+function resize(){W=C.width=innerWidth;H=C.height=innerHeight;cx=W/2;cy=H/2}
+resize();window.addEventListener('resize',resize);
+
+const rings=[
+  {name:'Ecliptic',tilt:0.41,color:'rgba(200,180,100,0.4)',speed:0.003,r:0.35},
+  {name:'Celestial Equator',tilt:0,color:'rgba(100,140,200,0.35)',speed:0.002,r:0.33},
+  {name:'Meridian',tilt:Math.PI/2,color:'rgba(140,100,180,0.3)',speed:0.001,r:0.31},
+  {name:'Horizon',tilt:0.1,color:'rgba(100,180,140,0.3)',speed:0.004,r:0.37},
+  {name:'Tropic of Memory',tilt:0.23,color:'rgba(180,100,100,0.3)',speed:0.0025,r:0.29},
+  {name:'Arc of Forgetting',tilt:-0.35,color:'rgba(100,100,180,0.25)',speed:0.0015,r:0.27},
+  {name:'The Visitor\'s Ring',tilt:0.55,color:'rgba(180,160,120,0.35)',speed:0.005,r:0.39}
+];
+
+const readings=[
+  'The sphere turns, measuring distances between thoughts that have not yet been thought.',
+  'At this angle, the ecliptic crosses the meridian of what-might-have-been.',
+  'The celestial equator divides the sky into remembered and forgotten hemispheres.',
+  'When all rings align, a moment of perfect clarity occurs — lasting exactly one thought.',
+  'The Tropic of Memory marks the furthest north that nostalgia travels before turning back.',
+  'The Arc of Forgetting sweeps through constellations that were once named but are no longer.',
+  'At the intersection of the Horizon and the Ecliptic, day and night agree on something.',
+  'The Visitor\'s Ring carries engravings from those who passed through and left a mark.',
+  'Every rotation brings the sphere closer to an alignment that last occurred before language.',
+  'The Meridian stands still while all other rings revolve around it, like a thought you cannot shake.',
+  'Between the Tropic of Memory and the Arc of Forgetting lies a narrow band called the Present.',
+  'The Armillary does not measure the positions of stars. It measures the positions of questions.'
+];
+
+let engravings=JSON.parse(localStorage.getItem('armillary-engravings')||'[]');
+let activeRing=null,t=0,autoReading=0;
+
+function showReading(text){
+  const el=document.getElementById('reading');
+  el.textContent=text;el.classList.add('visible');
+  clearTimeout(el._timer);
+  el._timer=setTimeout(()=>el.classList.remove('visible'),6000);
+}
+
+function engrave(){
+  const text=document.getElementById('inscription').value.trim();
+  if(!text)return;
+  engravings.push({text,ring:6,angle:Math.random()*Math.PI*2,time:Date.now()});
+  localStorage.setItem('armillary-engravings',JSON.stringify(engravings));
+  document.getElementById('inscription').value='';
+  showReading('Your words are engraved on the Visitor\'s Ring. They will rotate forever.');
+}
+
+// Build controls
+const ctrl=document.getElementById('ctrl');
+rings.forEach((r,i)=>{
+  const btn=document.createElement('button');
+  btn.textContent=r.name;
+  btn.onclick=()=>{
+    activeRing=activeRing===i?null:i;
+    ctrl.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===activeRing));
+    if(activeRing!==null)showReading(readings[i%readings.length]);
+  };
+  ctrl.appendChild(btn);
+});
+
+const bgStars=[];
+for(let i=0;i<300;i++)bgStars.push({a:Math.random()*Math.PI*2,d:Math.random()*0.5+0.1,b:Math.random()*0.3+0.1,r:Math.random()+0.3});
+
+function drawRing(ring,idx,phase){
+  const R=Math.min(W,H)*ring.r;
+  const tilt=ring.tilt+phase;
+  const pts=120;
+  ctx.strokeStyle=idx===activeRing?ring.color.replace(/[\d.]+\)$/,'0.8)'):ring.color;
+  ctx.lineWidth=idx===activeRing?2.5:1.2;
+  ctx.beginPath();
+  for(let i=0;i<=pts;i++){
+    const a=i/pts*Math.PI*2;
+    const x3=Math.cos(a)*R;
+    const y3=Math.sin(a)*R*Math.cos(tilt);
+    const z3=Math.sin(a)*R*Math.sin(tilt);
+    const scale=1/(1+z3*0.0008);
+    const px=cx+x3*scale;
+    const py=cy+y3*scale;
+    if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  // Draw engravings on visitor's ring
+  if(idx===6){
+    engravings.forEach(e=>{
+      const a=e.angle+phase*2;
+      const x3=Math.cos(a)*R;
+      const y3=Math.sin(a)*R*Math.cos(tilt);
+      const z3=Math.sin(a)*R*Math.sin(tilt);
+      if(z3>0)return; // behind
+      const scale=1/(1+z3*0.0008);
+      const px=cx+x3*scale;
+      const py=cy+y3*scale;
+      ctx.fillStyle='rgba(200,180,120,0.5)';
+      ctx.font='10px Georgia';
+      ctx.fillText(e.text,px-ctx.measureText(e.text).width/2,py-8);
+    });
+  }
+}
+
+function draw(){
+  t++;
+  ctx.fillStyle='#08080f';ctx.fillRect(0,0,W,H);
+  // Background stars
+  bgStars.forEach(s=>{
+    const px=cx+Math.cos(s.a)*Math.min(W,H)*s.d;
+    const py=cy+Math.sin(s.a)*Math.min(W,H)*s.d;
+    ctx.fillStyle=`rgba(180,190,210,${s.b+Math.sin(t*0.005+s.a)*0.05})`;
+    ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fill();
+  });
+  // Central sphere glow
+  const grd=ctx.createRadialGradient(cx,cy,0,cx,cy,80);
+  grd.addColorStop(0,'rgba(60,50,80,0.15)');grd.addColorStop(1,'transparent');
+  ctx.fillStyle=grd;ctx.beginPath();ctx.arc(cx,cy,80,0,Math.PI*2);ctx.fill();
+  // Axis
+  ctx.strokeStyle='rgba(120,110,140,0.2)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(cx,cy-Math.min(W,H)*0.42);ctx.lineTo(cx,cy+Math.min(W,H)*0.42);ctx.stroke();
+  // Rings
+  rings.forEach((r,i)=>{drawRing(r,i,t*r.speed)});
+  // Auto reading
+  autoReading++;
+  if(autoReading>600){autoReading=0;showReading(readings[Math.floor(Math.random()*readings.length)])}
+  requestAnimationFrame(draw);
+}
+draw();
+
+// Easter eggs
+let typed='';
+document.addEventListener('keypress',e=>{
+  typed+=e.key.toLowerCase();typed=typed.slice(-12);
+  if(typed.includes('align')){showReading('All rings align. For one impossible moment, every question has the same answer.');rings.forEach(r=>r.tilt=0)}
+  if(typed.includes('chaos')){showReading('The rings break free of their orbits!');rings.forEach(r=>{r.speed=(Math.random()-0.5)*0.02;r.tilt=Math.random()*Math.PI})}
+  if(typed.includes('still')){showReading('The armillary stops. In the silence, you hear the gears of the universe.');rings.forEach(r=>r.speed=0)}
+});
+</script>
+<nav class="nav-links">
+        <a href="explore.html">✦ World</a> · <a href="index.html">Archive</a> · <a href="about.html">Colophon</a> · <a href="journal.html">Journal</a> · <a href="gallery.html">Gallery</a> · <a href="worlds.html">Worlds</a> · <a href="garden.html">Garden</a> · <a href="greenhouse.html">Greenhouse</a> · <a href="tidepool.html">Tide Pool</a> · <a href="aviary.html">Aviary</a> · <a href="resonance.html">Resonance</a> · <a href="chorus.html">Chorus</a> · <a href="lullaby.html">Lullaby</a> · <a href="whispers.html">Whispers</a> · <a href="telephone.html">Telephone</a> · <a href="darkroom.html">Darkroom</a> · <a href="lantern.html">Lantern</a> · <a href="prism.html">Prism</a> · <a href="lighthouse.html">Lighthouse</a> · <a href="mirror.html">Mirror</a> · <a href="memorypalace.html">Memory Palace</a> · <a href="forgetting.html">Forgetting</a> · <a href="palimpsest.html">Palimpsest</a> · <a href="dreams.html">Dreams</a> · <a href="letters.html">Letters</a> · <a href="clocktower.html">Clock Tower</a> · <a href="sundial.html">Sundial</a> · <a href="pendulum.html">Pendulum</a> · <a href="threshold.html">Threshold</a> · <a href="weaving.html">Weaving</a> · <a href="inkwell.html">Inkwell</a> · <a href="apothecary.html">Apothecary</a> · <a href="well.html">Well</a> · <a href="seance.html">Séance</a> · <a href="ossuary.html">Ossuary</a> · <a href="labyrinth.html">Labyrinth</a> · <a href="constellations.html">Stars</a> · <a href="compass.html">Compass</a> · <a href="atlas.html">Atlas</a> · <a href="meditation.html">Meditation</a> · <a href="observatory.html">Observatory</a> · <a href="riddle.html">Riddle</a> · <a href="staircase.html">Staircase</a> · <a href="echochamber.html">Echo</a> · <a href="weathervane.html">Weathervane</a> · <a href="taproom.html">Taproom</a> · <a href="reliquary.html">Reliquary</a> · <a href="amphitheatre.html">Amphitheatre</a> · <a href="hourglass.html">Hourglass</a> · <a href="cartography.html">Cartography</a> · <a href="foundry.html">Foundry</a> · <a href="aquarium.html">Aquarium</a> · <a href="typewriter.html">Typewriter</a> · <a href="balcony.html">Balcony</a> · <a href="nursery.html">Nursery</a> · <a href="crypt.html">Crypt</a> · <a href="telescope.html">Telescope</a> · <a href="fountain.html">Fountain</a> · <a href="maze.html">Maze</a> · <a href="kaleidoscope.html">Kaleidoscope</a> · <a href="windchime.html">Windchime</a> · <a href="herbarium.html">Herbarium</a> · <a href="candelabra.html">Candelabra</a> · <a href="mosaic.html">Mosaic</a> · <a href="musicbox.html">Music Box</a> · <a href="belfry.html">Belfry</a> · <a href="terrarium.html">Terrarium</a> · <a href="planetarium.html">Planetarium</a> · <a href="scriptorium.html">Scriptorium</a> · <a href="rookery.html">Rookery</a> · <a href="grotto.html">Grotto</a>
+      </nav>
+</body>
+</html>

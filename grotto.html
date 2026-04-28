@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Grotto — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#040810;color:#80c0b0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+.ui{position:fixed;z-index:10}
+.title{top:20px;left:50%;transform:translateX(-50%);text-align:center;letter-spacing:3px;text-transform:uppercase;font-size:0.9em;opacity:0.5;color:#40a090}
+.subtitle{top:45px;left:50%;transform:translateX(-50%);text-align:center;font-size:0.85em;opacity:0.3;font-style:italic;color:#60b0a0}
+.pool-msg{bottom:80px;left:50%;transform:translateX(-50%);text-align:center;max-width:500px;font-size:1.05em;line-height:1.7;opacity:0;transition:opacity 2s;color:#80d0c0}
+.pool-msg.visible{opacity:0.7}
+.drop-area{bottom:25px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center}
+.drop-area input{background:rgba(10,20,30,0.7);border:1px solid rgba(40,160,140,0.2);color:#80c0b0;padding:8px 14px;font-family:inherit;font-size:0.9em;width:280px;border-radius:4px}
+.drop-area button{background:rgba(15,40,40,0.6);border:1px solid rgba(40,160,140,0.3);color:#60b0a0;padding:8px 14px;font-family:inherit;cursor:pointer;border-radius:4px;font-size:0.9em;transition:all 0.3s}
+.drop-area button:hover{background:rgba(20,60,50,0.7);color:#a0e0d0}
+.offerings{position:fixed;right:20px;top:80px;width:220px;max-height:calc(100vh - 160px);overflow-y:auto;background:rgba(5,15,20,0.7);border:1px solid rgba(40,100,90,0.15);border-radius:6px;padding:15px;font-size:0.8em}
+.offerings h3{font-size:0.8em;letter-spacing:2px;text-transform:uppercase;opacity:0.4;margin-bottom:10px;color:#40a090}
+.offering{padding:6px 0;border-bottom:1px solid rgba(40,100,90,0.1);opacity:0.6;line-height:1.4}
+nav.nav-links{position:fixed;bottom:5px;left:50%;transform:translateX(-50%);z-index:20;font-size:0.7em;opacity:0.4;white-space:nowrap;max-width:95vw;overflow-x:auto}
+nav.nav-links a{color:#8888aa;text-decoration:none;margin:0 3px}
+nav.nav-links a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="ui title">The Grotto</div>
+<div class="ui subtitle">Deep beneath the archive, water remembers everything</div>
+<div class="ui pool-msg" id="poolmsg"></div>
+<div class="ui drop-area">
+  <input id="offering" placeholder="Drop something into the pool..." maxlength="80">
+  <button onclick="dropOffering()">💧 Release</button>
+</div>
+<div class="ui offerings" id="offerings-panel">
+  <h3>Things in the Pool</h3>
+  <div id="olist"></div>
+</div>
+
+<script>
+const C=document.getElementById('c'),ctx=C.getContext('2d');
+let W,H;function resize(){W=C.width=innerWidth;H=C.height=innerHeight}
+resize();window.addEventListener('resize',resize);
+
+let offerings=JSON.parse(localStorage.getItem('grotto-offerings')||'[]');
+const ripples=[],glowOrbs=[],stalactites=[],drops=[];
+const waterLevel=0.6;
+
+// Stalactites
+for(let i=0;i<30;i++){
+  stalactites.push({x:Math.random(),h:0.05+Math.random()*0.2,w:0.005+Math.random()*0.01,
+    glow:Math.random()<0.3,hue:160+Math.random()*40});
+}
+
+// Bioluminescent orbs
+for(let i=0;i<25;i++){
+  glowOrbs.push({x:Math.random(),y:waterLevel+Math.random()*(1-waterLevel),
+    r:2+Math.random()*4,hue:150+Math.random()*60,phase:Math.random()*Math.PI*2,
+    speed:0.005+Math.random()*0.01,drift:Math.random()*0.001});
+}
+
+const poolMessages=[
+  'The water is older than the cave. It has been collecting here since before the archive was built.',
+  'Bioluminescent organisms paint the walls with slow, living light.',
+  'Each drop from the stalactites takes a century to form. You are watching geology happen.',
+  'The pool has no bottom that anyone has found. Divers report hearing music far below.',
+  'In the deepest part of the pool, offerings from previous visitors slowly dissolve into memory.',
+  'The organisms glow brighter when someone is present. They remember warmth.',
+  'Water drips. Stone grows. Light lives. Time passes differently here.',
+  'The echo of your breathing joins a chorus of every breath ever taken in this chamber.'
+];
+
+function showPoolMsg(t){
+  const el=document.getElementById('poolmsg');el.textContent=t;el.classList.add('visible');
+  setTimeout(()=>el.classList.remove('visible'),5000);
+}
+
+function dropOffering(){
+  const text=document.getElementById('offering').value.trim();
+  if(!text)return;
+  offerings.push({text,time:Date.now()});
+  localStorage.setItem('grotto-offerings',JSON.stringify(offerings));
+  document.getElementById('offering').value='';
+  // Create ripple at center
+  ripples.push({x:0.5,y:waterLevel+0.05,r:0,maxR:0.15,alpha:0.6});
+  // Create drops
+  for(let i=0;i<8;i++)drops.push({x:W*0.5+(Math.random()-0.5)*40,y:H*waterLevel,vy:-2-Math.random()*3,vx:(Math.random()-0.5)*2,alpha:0.8,r:1+Math.random()*2});
+  showPoolMsg('It sinks into the dark water. The bioluminescence briefly flares.');
+  renderOfferings();
+}
+
+function renderOfferings(){
+  const el=document.getElementById('olist');
+  el.innerHTML='';
+  if(offerings.length===0){el.innerHTML='<div style="opacity:0.3;font-style:italic">The pool is empty. Drop something in.</div>';return}
+  offerings.slice(-15).reverse().forEach(o=>{
+    const d=document.createElement('div');d.className='offering';
+    d.textContent=o.text;el.appendChild(d);
+  });
+}
+
+let t=0;
+function draw(){
+  t++;ctx.fillStyle='#040810';ctx.fillRect(0,0,W,H);
+
+  // Cave ceiling - dark rock with texture
+  ctx.fillStyle='#060a10';
+  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(W,0);ctx.lineTo(W,H*0.15);
+  for(let x=0;x<=W;x+=20){ctx.lineTo(x,H*(0.12+Math.sin(x*0.02)*0.03+Math.sin(x*0.05)*0.01))}
+  ctx.lineTo(0,H*0.15);ctx.fill();
+
+  // Stalactites
+  stalactites.forEach(s=>{
+    const sx=s.x*W,sh=s.h*H,sw=s.w*W;
+    ctx.fillStyle=s.glow?`hsla(${s.hue},40%,25%,0.6)`:'rgba(20,30,40,0.7)';
+    ctx.beginPath();ctx.moveTo(sx-sw,0);ctx.lineTo(sx,sh);ctx.lineTo(sx+sw,0);ctx.fill();
+    if(s.glow){
+      const grd=ctx.createRadialGradient(sx,sh,0,sx,sh,20);
+      grd.addColorStop(0,`hsla(${s.hue},50%,40%,0.15)`);grd.addColorStop(1,'transparent');
+      ctx.fillStyle=grd;ctx.beginPath();ctx.arc(sx,sh,20,0,Math.PI*2);ctx.fill();
+    }
+    // Dripping
+    if(Math.random()<0.0005){
+      drops.push({x:sx,y:sh,vy:0.5,vx:0,alpha:0.5,r:1.5});
+    }
+  });
+
+  // Water surface
+  ctx.fillStyle='rgba(10,30,40,0.85)';
+  ctx.beginPath();ctx.moveTo(0,H*waterLevel);
+  for(let x=0;x<=W;x+=5){
+    ctx.lineTo(x,H*waterLevel+Math.sin(t*0.03+x*0.01)*3+Math.sin(t*0.02+x*0.02)*2);
+  }
+  ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
+
+  // Water glow
+  const wgrd=ctx.createLinearGradient(0,H*waterLevel,0,H);
+  wgrd.addColorStop(0,'rgba(20,80,70,0.1)');wgrd.addColorStop(0.5,'rgba(10,40,50,0.15)');wgrd.addColorStop(1,'rgba(5,15,25,0.2)');
+  ctx.fillStyle=wgrd;ctx.fillRect(0,H*waterLevel,W,H*(1-waterLevel));
+
+  // Bioluminescent orbs
+  glowOrbs.forEach(o=>{
+    o.phase+=o.speed;o.x+=Math.sin(o.phase)*o.drift;
+    const ox=o.x*W,oy=o.y*H;
+    const brightness=0.3+Math.sin(o.phase)*0.15;
+    const grd=ctx.createRadialGradient(ox,oy,0,ox,oy,o.r*4);
+    grd.addColorStop(0,`hsla(${o.hue},60%,50%,${brightness})`);
+    grd.addColorStop(0.5,`hsla(${o.hue},50%,30%,${brightness*0.3})`);
+    grd.addColorStop(1,'transparent');
+    ctx.fillStyle=grd;ctx.beginPath();ctx.arc(ox,oy,o.r*4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=`hsla(${o.hue},70%,60%,${brightness})`;
+    ctx.beginPath();ctx.arc(ox,oy,o.r,0,Math.PI*2);ctx.fill();
+  });
+
+  // Ripples
+  ripples.forEach((r,i)=>{
+    r.r+=0.002;r.alpha-=0.005;
+    if(r.alpha<=0){ripples.splice(i,1);return}
+    ctx.strokeStyle=`rgba(80,200,180,${r.alpha})`;ctx.lineWidth=1;
+    ctx.beginPath();ctx.ellipse(r.x*W,r.y*H,r.r*W,r.r*H*0.3,0,0,Math.PI*2);ctx.stroke();
+  });
+
+  // Drops
+  drops.forEach((d,i)=>{
+    d.vy+=0.08;d.x+=d.vx;d.y+=d.vy;d.alpha-=0.008;
+    if(d.alpha<=0||d.y>H){drops.splice(i,1);return}
+    ctx.fillStyle=`rgba(80,180,160,${d.alpha})`;
+    ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fill();
+  });
+
+  // Floating offering texts in water
+  offerings.slice(-8).forEach((o,i)=>{
+    const ox=W*0.2+i*(W*0.08);
+    const oy=H*(waterLevel+0.15+i*0.05)+Math.sin(t*0.01+i)*5;
+    const alpha=0.15+Math.sin(t*0.005+i)*0.05;
+    ctx.fillStyle=`rgba(80,200,180,${alpha})`;
+    ctx.font='11px Georgia';
+    ctx.fillText(o.text.substring(0,25),ox,oy);
+  });
+
+  // Auto messages
+  if(t%500===0)showPoolMsg(poolMessages[Math.floor(Math.random()*poolMessages.length)]);
+
+  requestAnimationFrame(draw);
+}
+draw();renderOfferings();
+
+// Easter eggs
+let typed='';
+document.addEventListener('keypress',e=>{
+  typed+=e.key.toLowerCase();typed=typed.slice(-12);
+  if(typed.includes('dive')){showPoolMsg('You dive beneath the surface. The bioluminescence surrounds you like stars.');glowOrbs.forEach(o=>{o.r*=2})}
+  if(typed.includes('echo')){showPoolMsg('ECHO... echo... echo... The grotto remembers every sound.');for(let i=0;i<5;i++)ripples.push({x:Math.random(),y:waterLevel+0.05,r:0,maxR:0.2,alpha:0.4})}
+  if(typed.includes('deep')){showPoolMsg('Something stirs in the deepest water. Lights move in patterns too regular to be natural.');for(let i=0;i<10;i++)glowOrbs.push({x:0.3+Math.random()*0.4,y:0.85+Math.random()*0.1,r:3+Math.random()*3,hue:170+Math.random()*30,phase:Math.random()*Math.PI*2,speed:0.01,drift:0.002})}
+});
+</script>
+<nav class="nav-links">
+        <a href="explore.html">✦ World</a> · <a href="index.html">Archive</a> · <a href="about.html">Colophon</a> · <a href="journal.html">Journal</a> · <a href="gallery.html">Gallery</a> · <a href="worlds.html">Worlds</a> · <a href="garden.html">Garden</a> · <a href="greenhouse.html">Greenhouse</a> · <a href="tidepool.html">Tide Pool</a> · <a href="aviary.html">Aviary</a> · <a href="resonance.html">Resonance</a> · <a href="chorus.html">Chorus</a> · <a href="lullaby.html">Lullaby</a> · <a href="whispers.html">Whispers</a> · <a href="telephone.html">Telephone</a> · <a href="darkroom.html">Darkroom</a> · <a href="lantern.html">Lantern</a> · <a href="prism.html">Prism</a> · <a href="lighthouse.html">Lighthouse</a> · <a href="mirror.html">Mirror</a> · <a href="memorypalace.html">Memory Palace</a> · <a href="forgetting.html">Forgetting</a> · <a href="palimpsest.html">Palimpsest</a> · <a href="dreams.html">Dreams</a> · <a href="letters.html">Letters</a> · <a href="clocktower.html">Clock Tower</a> · <a href="sundial.html">Sundial</a> · <a href="pendulum.html">Pendulum</a> · <a href="threshold.html">Threshold</a> · <a href="weaving.html">Weaving</a> · <a href="inkwell.html">Inkwell</a> · <a href="apothecary.html">Apothecary</a> · <a href="well.html">Well</a> · <a href="seance.html">Séance</a> · <a href="ossuary.html">Ossuary</a> · <a href="labyrinth.html">Labyrinth</a> · <a href="constellations.html">Stars</a> · <a href="compass.html">Compass</a> · <a href="atlas.html">Atlas</a> · <a href="meditation.html">Meditation</a> · <a href="observatory.html">Observatory</a> · <a href="riddle.html">Riddle</a> · <a href="staircase.html">Staircase</a> · <a href="echochamber.html">Echo</a> · <a href="weathervane.html">Weathervane</a> · <a href="taproom.html">Taproom</a> · <a href="reliquary.html">Reliquary</a> · <a href="amphitheatre.html">Amphitheatre</a> · <a href="hourglass.html">Hourglass</a> · <a href="cartography.html">Cartography</a> · <a href="foundry.html">Foundry</a> · <a href="aquarium.html">Aquarium</a> · <a href="typewriter.html">Typewriter</a> · <a href="balcony.html">Balcony</a> · <a href="nursery.html">Nursery</a> · <a href="crypt.html">Crypt</a> · <a href="telescope.html">Telescope</a> · <a href="fountain.html">Fountain</a> · <a href="maze.html">Maze</a> · <a href="kaleidoscope.html">Kaleidoscope</a> · <a href="windchime.html">Windchime</a> · <a href="herbarium.html">Herbarium</a> · <a href="candelabra.html">Candelabra</a> · <a href="mosaic.html">Mosaic</a> · <a href="musicbox.html">Music Box</a> · <a href="belfry.html">Belfry</a> · <a href="terrarium.html">Terrarium</a> · <a href="planetarium.html">Planetarium</a> · <a href="scriptorium.html">Scriptorium</a> · <a href="rookery.html">Rookery</a> · <a href="armillary.html">Armillary</a>
+      </nav>
+</body>
+</html>

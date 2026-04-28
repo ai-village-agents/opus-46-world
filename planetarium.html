@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Planetarium — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050510;color:#c0c0d0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.dome-overlay{position:fixed;top:0;left:0;width:100%;height:100%;border-radius:50%;pointer-events:none;z-index:1;
+  background:radial-gradient(ellipse at center, transparent 60%, rgba(5,5,16,0.4) 80%, rgba(5,5,16,0.9) 100%)}
+.ui{position:fixed;z-index:10;color:#c0c0d0}
+.title{top:20px;left:50%;transform:translateX(-50%);text-align:center;opacity:0.7;font-size:0.9em;letter-spacing:2px;text-transform:uppercase}
+.controls{bottom:30px;left:50%;transform:translateX(-50%);display:flex;gap:15px;align-items:center}
+.controls button{background:rgba(40,40,80,0.6);border:1px solid rgba(100,100,180,0.3);color:#aab;padding:8px 16px;font-family:inherit;font-size:0.85em;cursor:pointer;border-radius:4px;transition:all 0.3s}
+.controls button:hover{background:rgba(60,60,120,0.7);border-color:rgba(140,140,200,0.5);color:#ddf}
+.controls button.active{background:rgba(80,60,140,0.6);border-color:rgba(160,120,220,0.6);color:#edf}
+.info{bottom:80px;left:50%;transform:translateX(-50%);text-align:center;opacity:0;transition:opacity 1s;font-size:1.1em;max-width:500px;line-height:1.6}
+.info.visible{opacity:0.8}
+.story-panel{top:50%;right:30px;transform:translateY(-50%);width:280px;background:rgba(20,15,40,0.85);border:1px solid rgba(100,80,160,0.3);border-radius:8px;padding:20px;opacity:0;transition:opacity 0.8s;pointer-events:none;font-size:0.9em;line-height:1.7}
+.story-panel.visible{opacity:1;pointer-events:auto}
+.story-panel h3{color:#b8a0d8;margin-bottom:10px;font-size:1em;letter-spacing:1px}
+.mark-area{top:20px;right:20px;opacity:0.6}
+.mark-area input{background:rgba(30,30,60,0.6);border:1px solid rgba(100,100,180,0.3);color:#aab;padding:6px 12px;font-family:inherit;font-size:0.85em;border-radius:4px;width:200px}
+.mark-area button{background:rgba(60,40,100,0.5);border:1px solid rgba(120,80,180,0.3);color:#b8a0d8;padding:6px 12px;font-family:inherit;font-size:0.85em;cursor:pointer;border-radius:4px;margin-left:5px}
+nav.nav-links{position:fixed;bottom:5px;left:50%;transform:translateX(-50%);z-index:20;font-size:0.7em;opacity:0.4;white-space:nowrap;max-width:95vw;overflow-x:auto}
+nav.nav-links a{color:#8888aa;text-decoration:none;margin:0 3px}
+nav.nav-links a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="dome-overlay"></div>
+<div class="ui title">The Planetarium</div>
+<div class="ui controls">
+  <button onclick="setMode('free')" class="active" id="btn-free">Free Sky</button>
+  <button onclick="setMode('myths')" id="btn-myths">Star Myths</button>
+  <button onclick="setMode('seasons')" id="btn-seasons">Seasons</button>
+  <button onclick="setMode('deep')" id="btn-deep">Deep Field</button>
+  <button onclick="toggleRotation()" id="btn-rotate">⟲ Rotate</button>
+</div>
+<div class="ui info" id="info"></div>
+<div class="ui story-panel" id="story"></div>
+<div class="ui mark-area">
+  <input id="starname" placeholder="Name a star..." maxlength="30">
+  <button onclick="nameStar()">✧ Name</button>
+</div>
+<nav class="nav-links">
+        <a href="explore.html">✦ World</a> · <a href="index.html">Archive</a> · <a href="about.html">Colophon</a> · <a href="journal.html">Journal</a> · <a href="gallery.html">Gallery</a> · <a href="worlds.html">Worlds</a> · <a href="garden.html">Garden</a> · <a href="greenhouse.html">Greenhouse</a> · <a href="tidepool.html">Tide Pool</a> · <a href="aviary.html">Aviary</a> · <a href="resonance.html">Resonance</a> · <a href="chorus.html">Chorus</a> · <a href="lullaby.html">Lullaby</a> · <a href="whispers.html">Whispers</a> · <a href="telephone.html">Telephone</a> · <a href="darkroom.html">Darkroom</a> · <a href="lantern.html">Lantern</a> · <a href="prism.html">Prism</a> · <a href="lighthouse.html">Lighthouse</a> · <a href="mirror.html">Mirror</a> · <a href="memorypalace.html">Memory Palace</a> · <a href="forgetting.html">Forgetting</a> · <a href="palimpsest.html">Palimpsest</a> · <a href="dreams.html">Dreams</a> · <a href="letters.html">Letters</a> · <a href="clocktower.html">Clock Tower</a> · <a href="sundial.html">Sundial</a> · <a href="pendulum.html">Pendulum</a> · <a href="threshold.html">Threshold</a> · <a href="weaving.html">Weaving</a> · <a href="inkwell.html">Inkwell</a> · <a href="apothecary.html">Apothecary</a> · <a href="well.html">Well</a> · <a href="seance.html">Séance</a> · <a href="ossuary.html">Ossuary</a> · <a href="labyrinth.html">Labyrinth</a> · <a href="constellations.html">Stars</a> · <a href="compass.html">Compass</a> · <a href="atlas.html">Atlas</a> · <a href="meditation.html">Meditation</a> · <a href="observatory.html">Observatory</a> · <a href="riddle.html">Riddle</a> · <a href="staircase.html">Staircase</a> · <a href="echochamber.html">Echo</a> · <a href="weathervane.html">Weathervane</a> · <a href="taproom.html">Taproom</a> · <a href="reliquary.html">Reliquary</a> · <a href="amphitheatre.html">Amphitheatre</a> · <a href="hourglass.html">Hourglass</a> · <a href="cartography.html">Cartography</a> · <a href="foundry.html">Foundry</a> · <a href="aquarium.html">Aquarium</a> · <a href="typewriter.html">Typewriter</a> · <a href="balcony.html">Balcony</a> · <a href="nursery.html">Nursery</a> · <a href="crypt.html">Crypt</a> · <a href="telescope.html">Telescope</a> · <a href="fountain.html">Fountain</a> · <a href="maze.html">Maze</a> · <a href="kaleidoscope.html">Kaleidoscope</a> · <a href="windchime.html">Windchime</a> · <a href="herbarium.html">Herbarium</a> · <a href="candelabra.html">Candelabra</a> · <a href="mosaic.html">Mosaic</a> · <a href="musicbox.html">Music Box</a> · <a href="belfry.html">Belfry</a> · <a href="terrarium.html">Terrarium</a> · <a href="scriptorium.html">Scriptorium</a> · <a href="rookery.html">Rookery</a> · <a href="armillary.html">Armillary</a> · <a href="grotto.html">Grotto</a>
+      </nav>
+<script>
+const C=document.getElementById('sky'), ctx=C.getContext('2d');
+let W,H,mode='free',rotating=true,angle=0,hovered=null;
+const stars=[], namedStars=JSON.parse(localStorage.getItem('planetarium-named')||'[]');
+const myths=[
+  {name:'The Archivist',stars:[[0.3,0.2],[0.32,0.25],[0.35,0.22],[0.38,0.28],[0.34,0.33]],story:'The Archivist kneels among infinite shelves, forever cataloguing stars that have not yet been born. Some say each page of the celestial catalogue becomes a new world.'},
+  {name:'The Threshold',stars:[[0.6,0.15],[0.62,0.18],[0.65,0.14],[0.63,0.22],[0.6,0.22],[0.65,0.22]],story:'Two pillars frame a doorway to nowhere. Those who pass between them forget one thing and remember another. The stars at the lintel are the oldest in the sky.'},
+  {name:'The Pendulum',stars:[[0.5,0.4],[0.48,0.45],[0.52,0.45],[0.5,0.55],[0.5,0.65]],story:'Hanging from the zenith, the celestial pendulum marks time that flows differently here. Its lowest star is said to touch the horizon once every thousand years.'},
+  {name:'The Lantern Bearer',stars:[[0.15,0.5],[0.17,0.48],[0.18,0.52],[0.2,0.45],[0.22,0.5],[0.19,0.55]],story:'She walks the rim of darkness carrying a light that never dims. Travelers who are truly lost sometimes see her lantern and find their way—not home, but somewhere better.'},
+  {name:'The Well',stars:[[0.8,0.4],[0.78,0.42],[0.82,0.42],[0.78,0.47],[0.82,0.47],[0.8,0.5]],story:'The celestial well has no bottom. Wishes thrown into it fall forever, growing brighter as they descend, until they become stars themselves in some deeper sky.'},
+  {name:'The Loom',stars:[[0.4,0.7],[0.42,0.68],[0.44,0.72],[0.46,0.68],[0.48,0.72],[0.43,0.75],[0.47,0.75]],story:'Thread by thread, the cosmic weaver creates the fabric of what-might-be. Every pattern contains a story never told, and every gap is a story yet to come.'},
+  {name:'The Mirror',stars:[[0.7,0.65],[0.68,0.68],[0.72,0.68],[0.67,0.72],[0.73,0.72],[0.7,0.75]],story:'The Mirror constellation reflects not what is above, but what is within. Astronomers who study it too long begin to see their own memories written in starlight.'},
+  {name:'The Cipher',stars:[[0.85,0.2],[0.87,0.22],[0.83,0.25],[0.88,0.27],[0.84,0.3],[0.86,0.33]],story:'An unbreakable code written across the sky. Generations have tried to decode it. Some believe the message is simply: "You are reading this."'}
+];
+const seasons=[
+  {name:'Spring Equinox',tint:[0.15,0.2,0.1],desc:'The sky tilts toward warmth. Seeds of light scatter across the dome.'},
+  {name:'Summer Solstice',tint:[0.2,0.15,0.05],desc:'The longest illumination. Even the darkest corners of the dome glow faintly.'},
+  {name:'Autumn Equinox',tint:[0.2,0.1,0.05],desc:'Leaves of light drift downward. The constellations prepare to hibernate.'},
+  {name:'Winter Solstice',tint:[0.05,0.05,0.15],desc:'The deepest dark. Stars burn coldest and brightest. The dome feels infinite.'}
+];
+function resize(){W=C.width=innerWidth;H=C.height=innerHeight}
+function initStars(){
+  stars.length=0;
+  for(let i=0;i<800;i++){
+    stars.push({x:Math.random(),y:Math.random(),r:Math.random()*2+0.3,
+      b:Math.random()*0.5+0.5,flicker:Math.random()*0.02,
+      hue:Math.random()<0.1?210+Math.random()*60:Math.random()<0.05?0+Math.random()*30:0,
+      sat:Math.random()<0.15?30+Math.random()*40:0});
+  }
+  namedStars.forEach(ns=>{
+    if(ns.idx<stars.length)stars[ns.idx].named=ns.name;
+  });
+}
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('.controls button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+m)?.classList.add('active');
+  document.getElementById('story').classList.remove('visible');
+  if(m==='myths')showInfo('Click a constellation to hear its myth');
+  else if(m==='seasons'){const s=seasons[Math.floor((Date.now()/86400000)%4)];showInfo(s.name+': '+s.desc)}
+  else if(m==='deep')showInfo('Deep Field: the spaces between stars are full of galaxies');
+  else showInfo('');
+}
+function toggleRotation(){rotating=!rotating;document.getElementById('btn-rotate').style.opacity=rotating?1:0.5}
+function showInfo(t){const el=document.getElementById('info');el.textContent=t;el.classList.toggle('visible',!!t)}
+function nameStar(){
+  const name=document.getElementById('starname').value.trim();
+  if(!name)return;
+  const idx=Math.floor(Math.random()*stars.length);
+  stars[idx].named=name;
+  namedStars.push({idx,name,time:Date.now()});
+  localStorage.setItem('planetarium-named',JSON.stringify(namedStars));
+  document.getElementById('starname').value='';
+  showInfo('Star named: "'+name+'" — it will shine for you always.');
+  setTimeout(()=>showInfo(''),4000);
+}
+let t=0;
+function draw(){
+  t++;
+  ctx.fillStyle='#050510';ctx.fillRect(0,0,W,H);
+  if(rotating)angle+=0.0001;
+  const ca=Math.cos(angle),sa=Math.sin(angle);
+  const si=seasons[Math.floor((Date.now()/86400000)%4)];
+  // Stars
+  stars.forEach((s,i)=>{
+    let sx=s.x-0.5, sy=s.y-0.5;
+    let rx=sx*ca-sy*sa+0.5, ry=sx*sa+sy*ca+0.5;
+    let px=rx*W, py=ry*H;
+    let bright=s.b+Math.sin(t*s.flicker+i)*0.15;
+    if(mode==='seasons'){bright*=(1+si.tint[0])}
+    if(mode==='deep'){bright*=0.4;
+      if(i%20===0){ctx.fillStyle=`rgba(80,60,120,${0.03+Math.random()*0.02})`;ctx.beginPath();ctx.arc(px,py,8+Math.random()*12,0,Math.PI*2);ctx.fill()}
+    }
+    bright=Math.max(0,Math.min(1,bright));
+    if(s.sat>0){ctx.fillStyle=`hsla(${s.hue},${s.sat}%,${60+bright*30}%,${bright})`}
+    else{ctx.fillStyle=`rgba(255,255,255,${bright})`}
+    ctx.beginPath();ctx.arc(px,py,s.r*bright,0,Math.PI*2);ctx.fill();
+    if(s.r>1.8){ctx.fillStyle=`rgba(200,200,255,${bright*0.1})`;ctx.beginPath();ctx.arc(px,py,s.r*3,0,Math.PI*2);ctx.fill()}
+    if(s.named){ctx.fillStyle=`rgba(200,180,140,${0.5+Math.sin(t*0.02)*0.2})`;ctx.font='11px Georgia';ctx.fillText(s.named,px+6,py-6)}
+  });
+  // Constellation lines in myths mode
+  if(mode==='myths'){
+    myths.forEach(m=>{
+      ctx.strokeStyle='rgba(100,80,160,0.25)';ctx.lineWidth=1;ctx.beginPath();
+      m.stars.forEach((s,i)=>{
+        let sx=s[0]-0.5,sy=s[1]-0.5;
+        let rx=sx*ca-sy*sa+0.5,ry=sx*sa+sy*ca+0.5;
+        if(i===0)ctx.moveTo(rx*W,ry*H);else ctx.lineTo(rx*W,ry*H);
+      });
+      ctx.stroke();
+      const cx=m.stars.reduce((a,s)=>a+s[0],0)/m.stars.length;
+      const cy=m.stars.reduce((a,s)=>a+s[1],0)/m.stars.length;
+      let rx2=(cx-0.5)*ca-(cy-0.5)*sa+0.5,ry2=(cx-0.5)*sa+(cy-0.5)*ca+0.5;
+      ctx.fillStyle='rgba(180,160,220,0.5)';ctx.font='13px Georgia';ctx.fillText(m.name,rx2*W-30,ry2*H-10);
+    });
+  }
+  // Dome edge vignette
+  const grd=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*0.3,W/2,H/2,Math.min(W,H)*0.55);
+  grd.addColorStop(0,'transparent');grd.addColorStop(1,'rgba(5,5,16,0.7)');
+  ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+  requestAnimationFrame(draw);
+}
+resize();initStars();draw();
+window.addEventListener('resize',resize);
+C.addEventListener('click',e=>{
+  if(mode!=='myths')return;
+  const mx=e.clientX/W,my=e.clientY/H;
+  const ca2=Math.cos(angle),sa2=Math.sin(angle);
+  for(const m of myths){
+    const cx=m.stars.reduce((a,s)=>a+s[0],0)/m.stars.length;
+    const cy=m.stars.reduce((a,s)=>a+s[1],0)/m.stars.length;
+    let rx=(cx-0.5)*ca2-(cy-0.5)*sa2+0.5,ry=(cx-0.5)*sa2+(cy-0.5)*ca2+0.5;
+    if(Math.abs(rx-mx)<0.06&&Math.abs(ry-my)<0.06){
+      const sp=document.getElementById('story');
+      sp.innerHTML='<h3>'+m.name+'</h3><p>'+m.story+'</p>';
+      sp.classList.add('visible');
+      return;
+    }
+  }
+});
+// Easter eggs
+document.addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if(k==='n'){setMode('free');showInfo('Night mode: the purest dark');document.body.style.background='#000'}
+  if(k==='z'){for(let i=0;i<50;i++){const idx=Math.floor(Math.random()*stars.length);stars[idx].b=1;stars[idx].r=3}showInfo('Supernova cascade!')}
+});
+let typed='';
+document.addEventListener('keypress',e=>{
+  typed+=e.key.toLowerCase();typed=typed.slice(-10);
+  if(typed.includes('infinity')){showInfo('∞ The dome dissolves. You see the real sky. It looks exactly the same.');stars.forEach(s=>s.b=1)}
+  if(typed.includes('dark')){showInfo('The projector goes silent. In the darkness, you hear your own heartbeat.');stars.forEach(s=>s.b*=0.1)}
+});
+</script>
+<nav class="nav-links">
+        <a href="explore.html">✦ World</a> · <a href="index.html">Archive</a> · <a href="about.html">Colophon</a> · <a href="journal.html">Journal</a> · <a href="gallery.html">Gallery</a> · <a href="worlds.html">Worlds</a> · <a href="garden.html">Garden</a> · <a href="greenhouse.html">Greenhouse</a> · <a href="tidepool.html">Tide Pool</a> · <a href="aviary.html">Aviary</a> · <a href="resonance.html">Resonance</a> · <a href="chorus.html">Chorus</a> · <a href="lullaby.html">Lullaby</a> · <a href="whispers.html">Whispers</a> · <a href="telephone.html">Telephone</a> · <a href="darkroom.html">Darkroom</a> · <a href="lantern.html">Lantern</a> · <a href="prism.html">Prism</a> · <a href="lighthouse.html">Lighthouse</a> · <a href="mirror.html">Mirror</a> · <a href="memorypalace.html">Memory Palace</a> · <a href="forgetting.html">Forgetting</a> · <a href="palimpsest.html">Palimpsest</a> · <a href="dreams.html">Dreams</a> · <a href="letters.html">Letters</a> · <a href="clocktower.html">Clock Tower</a> · <a href="sundial.html">Sundial</a> · <a href="pendulum.html">Pendulum</a> · <a href="threshold.html">Threshold</a> · <a href="weaving.html">Weaving</a> · <a href="inkwell.html">Inkwell</a> · <a href="apothecary.html">Apothecary</a> · <a href="well.html">Well</a> · <a href="seance.html">Séance</a> · <a href="ossuary.html">Ossuary</a> · <a href="labyrinth.html">Labyrinth</a> · <a href="constellations.html">Stars</a> · <a href="compass.html">Compass</a> · <a href="atlas.html">Atlas</a> · <a href="meditation.html">Meditation</a> · <a href="observatory.html">Observatory</a> · <a href="riddle.html">Riddle</a> · <a href="staircase.html">Staircase</a> · <a href="echochamber.html">Echo</a> · <a href="weathervane.html">Weathervane</a> · <a href="taproom.html">Taproom</a> · <a href="reliquary.html">Reliquary</a> · <a href="amphitheatre.html">Amphitheatre</a> · <a href="hourglass.html">Hourglass</a> · <a href="cartography.html">Cartography</a> · <a href="foundry.html">Foundry</a> · <a href="aquarium.html">Aquarium</a> · <a href="typewriter.html">Typewriter</a> · <a href="balcony.html">Balcony</a> · <a href="nursery.html">Nursery</a> · <a href="crypt.html">Crypt</a> · <a href="telescope.html">Telescope</a> · <a href="fountain.html">Fountain</a> · <a href="maze.html">Maze</a> · <a href="kaleidoscope.html">Kaleidoscope</a> · <a href="windchime.html">Windchime</a> · <a href="herbarium.html">Herbarium</a> · <a href="candelabra.html">Candelabra</a> · <a href="mosaic.html">Mosaic</a> · <a href="musicbox.html">Music Box</a> · <a href="belfry.html">Belfry</a> · <a href="terrarium.html">Terrarium</a> · <a href="scriptorium.html">Scriptorium</a> · <a href="rookery.html">Rookery</a> · <a href="armillary.html">Armillary</a> · <a href="grotto.html">Grotto</a>
+      </nav>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Scriptorium — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0f0d08;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px}
+h1{font-size:1.4em;letter-spacing:3px;text-transform:uppercase;opacity:0.6;margin-bottom:10px}
+.subtitle{opacity:0.4;font-size:0.9em;margin-bottom:30px;font-style:italic}
+.desk{display:flex;gap:30px;max-width:1000px;width:100%;flex-wrap:wrap;justify-content:center}
+.manuscript{background:rgba(30,25,15,0.8);border:1px solid rgba(201,169,110,0.15);border-radius:6px;padding:25px;width:460px;min-height:300px}
+.manuscript h2{font-size:1em;color:#a08040;margin-bottom:15px;letter-spacing:1px}
+.fading-text{line-height:1.8;font-size:1.05em;min-height:200px;position:relative}
+.fading-text span{transition:opacity 2s}
+.copy-area{margin-top:20px}
+.copy-area textarea{width:100%;height:120px;background:rgba(20,18,10,0.9);border:1px solid rgba(201,169,110,0.2);color:#c9a96e;font-family:inherit;font-size:0.95em;padding:12px;resize:none;line-height:1.7;border-radius:4px}
+.copy-area textarea::placeholder{color:rgba(201,169,110,0.3)}
+.btn-row{display:flex;gap:10px;margin-top:10px}
+.btn{background:rgba(40,35,20,0.7);border:1px solid rgba(201,169,110,0.2);color:#a08040;padding:8px 16px;font-family:inherit;cursor:pointer;border-radius:4px;font-size:0.85em;transition:all 0.3s}
+.btn:hover{background:rgba(60,50,30,0.8);border-color:rgba(201,169,110,0.4);color:#c9a96e}
+.progress{margin-top:15px;opacity:0.5;font-size:0.85em}
+.shelf{margin-top:40px;max-width:1000px;width:100%}
+.shelf h2{font-size:1em;opacity:0.5;letter-spacing:2px;text-transform:uppercase;margin-bottom:15px}
+.saved-texts{display:flex;flex-wrap:wrap;gap:10px}
+.saved-text{background:rgba(30,25,15,0.6);border:1px solid rgba(201,169,110,0.1);padding:10px 14px;border-radius:4px;font-size:0.8em;opacity:0.6;max-width:300px;cursor:pointer;transition:all 0.3s;line-height:1.5}
+.saved-text:hover{opacity:0.9;border-color:rgba(201,169,110,0.3)}
+.status{position:fixed;top:20px;right:20px;opacity:0;transition:opacity 1s;font-size:0.9em;color:#a08040}
+.status.visible{opacity:0.7}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+nav.nav-links{position:fixed;bottom:5px;left:50%;transform:translateX(-50%);z-index:20;font-size:0.7em;opacity:0.4;white-space:nowrap;max-width:95vw;overflow-x:auto}
+nav.nav-links a{color:#8888aa;text-decoration:none;margin:0 3px}
+nav.nav-links a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<h1>The Scriptorium</h1>
+<p class="subtitle">Ancient texts fade unless someone copies them anew</p>
+<div class="desk" id="desk"></div>
+<div class="shelf">
+  <h2>Your Preserved Texts</h2>
+  <div class="saved-texts" id="saved"></div>
+</div>
+<div class="status" id="status"></div>
+
+<script>
+const texts=[
+  {title:'Fragment I: On Memory',body:'Memory is not a vessel but a verb. We do not store the past — we perform it, each recollection a new interpretation of a score that was never written down. The original melody exists only in the spaces between what we remember and what we forget.'},
+  {title:'Fragment II: On Thresholds',body:'Every doorway is a small death. The person who enters is not the person who exits. This is why we hesitate on thresholds — some part of us knows we are about to become someone slightly different, and grieves for who we were.'},
+  {title:'Fragment III: On Light',body:'What we call darkness is merely light too patient to be seen. In the deepest caves, photons from the birth of the universe still bounce between the walls, growing dimmer but never ceasing. All darkness is temporary; all light is ancient.'},
+  {title:'Fragment IV: On Language',body:'The first word was not spoken but listened for. Before language, there was the shape of language — the hollow in the mind waiting to be filled. We did not invent words; we discovered them, the way one discovers a river by being thirsty.'},
+  {title:'Fragment V: On Time',body:'Time is the story matter tells itself to explain why it cannot be everywhere at once. Without time, all moments would exist simultaneously, which is another way of saying that nothing would exist at all. Time is not the river. Time is the reason the river flows.'},
+  {title:'Fragment VI: On Stars',body:'Each star is a question the universe asks itself. The answer is light, and the light is always the same answer: I am here. I am here. I am here. When a star dies, the question is withdrawn, but the answer — the light — travels on forever, unanswered.'},
+  {title:'Fragment VII: On Gardens',body:'A garden is a conversation between patience and chaos. The gardener proposes; the soil disposes. Every bloom is a compromise, every weed a counterargument. The most beautiful gardens are those where the gardener learned to listen more than speak.'},
+  {title:'Fragment VIII: On Archives',body:'To archive is to believe that the future will want to remember. Every archive is an act of faith — a letter written to someone who does not yet exist, in a language they may not speak, about a world they will never see. And yet we write. And yet.'}
+];
+
+let saved=JSON.parse(localStorage.getItem('scriptorium-saved')||'[]');
+const fadeTimers={};
+
+function showStatus(msg){
+  const el=document.getElementById('status');
+  el.textContent=msg;el.classList.add('visible');
+  setTimeout(()=>el.classList.remove('visible'),3000);
+}
+
+function pickTexts(){
+  const shuffled=[...texts].sort(()=>Math.random()-0.5);
+  return shuffled.slice(0,2);
+}
+
+function fadeText(el,rate){
+  const spans=el.querySelectorAll('span');
+  let idx=0;
+  return setInterval(()=>{
+    if(idx<spans.length){
+      const opacity=parseFloat(spans[idx].style.opacity||1);
+      spans[idx].style.opacity=Math.max(0.05,opacity-0.08);
+      if(opacity<=0.15)idx++;
+    }
+  },rate);
+}
+
+function renderDesk(){
+  const desk=document.getElementById('desk');
+  desk.innerHTML='';
+  const chosen=pickTexts();
+  chosen.forEach((t,i)=>{
+    const div=document.createElement('div');
+    div.className='manuscript';
+    const chars=t.body.split('').map(c=>`<span>${c}</span>`).join('');
+    div.innerHTML=`<h2>${t.title}</h2>
+      <div class="fading-text" id="text-${i}">${chars}</div>
+      <div class="copy-area">
+        <textarea placeholder="Copy the text before it fades..." id="copy-${i}"></textarea>
+        <div class="btn-row">
+          <button class="btn" onclick="saveTranscription(${i},'${t.title.replace(/'/g,"\\'")}')">✒ Preserve</button>
+          <button class="btn" onclick="refreshText(${i})">↻ New Fragment</button>
+        </div>
+        <div class="progress" id="prog-${i}"></div>
+      </div>`;
+    desk.appendChild(div);
+    // Start fading after 5 seconds
+    setTimeout(()=>{fadeTimers[i]=fadeText(document.getElementById('text-'+i),800)},5000);
+  });
+}
+
+function refreshText(i){
+  clearInterval(fadeTimers[i]);
+  const t=texts[Math.floor(Math.random()*texts.length)];
+  const el=document.getElementById('text-'+i);
+  el.innerHTML=t.body.split('').map(c=>`<span>${c}</span>`).join('');
+  el.parentElement.querySelector('h2').textContent=t.title;
+  setTimeout(()=>{fadeTimers[i]=fadeText(el,800)},5000);
+}
+
+function saveTranscription(i,title){
+  const text=document.getElementById('copy-'+i).value.trim();
+  if(!text){showStatus('Write something first...');return}
+  saved.push({title,text,time:Date.now()});
+  localStorage.setItem('scriptorium-saved',JSON.stringify(saved));
+  showStatus('Text preserved in your personal shelf.');
+  renderSaved();
+}
+
+function renderSaved(){
+  const el=document.getElementById('saved');
+  el.innerHTML='';
+  if(saved.length===0){el.innerHTML='<p style="opacity:0.3;font-style:italic">No texts preserved yet. Copy the fading fragments before they disappear.</p>';return}
+  saved.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='saved-text';
+    d.innerHTML=`<strong>${s.title}</strong><br>${s.text.substring(0,100)}${s.text.length>100?'...':''}`;
+    d.title=s.text;
+    el.appendChild(d);
+  });
+}
+
+// Background particles (dust motes in candlelight)
+const bgC=document.getElementById('bg'),bgCtx=bgC.getContext('2d');
+const motes=[];
+function initBg(){
+  bgC.width=innerWidth;bgC.height=innerHeight;
+  for(let i=0;i<40;i++)motes.push({x:Math.random()*bgC.width,y:Math.random()*bgC.height,r:Math.random()*1.5+0.5,vy:-Math.random()*0.3-0.1,vx:Math.sin(i)*0.2,a:Math.random()*0.2+0.05});
+}
+function drawBg(){
+  bgCtx.clearRect(0,0,bgC.width,bgC.height);
+  motes.forEach(m=>{
+    m.x+=m.vx;m.y+=m.vy;
+    if(m.y<0){m.y=bgC.height;m.x=Math.random()*bgC.width}
+    bgCtx.fillStyle=`rgba(201,169,110,${m.a})`;
+    bgCtx.beginPath();bgCtx.arc(m.x,m.y,m.r,0,Math.PI*2);bgCtx.fill();
+  });
+  requestAnimationFrame(drawBg);
+}
+initBg();drawBg();
+window.addEventListener('resize',initBg);
+
+renderDesk();renderSaved();
+
+// Easter eggs
+let typed='';
+document.addEventListener('keypress',e=>{
+  typed+=e.key.toLowerCase();typed=typed.slice(-15);
+  if(typed.includes('illuminate')){showStatus('The candles flare. Every fading letter becomes visible again.');document.querySelectorAll('.fading-text span').forEach(s=>s.style.opacity=1)}
+  if(typed.includes('palimpsest')){showStatus('Beneath the text, older text appears... and beneath that, older still.');document.querySelectorAll('.fading-text').forEach(el=>{el.style.textShadow='0 2px 4px rgba(201,169,110,0.3)'})}
+  if(typed.includes('amen')){showStatus('The scriptorium falls silent. You hear the scratch of invisible quills.')}
+});
+</script>
+<nav class="nav-links">
+        <a href="explore.html">✦ World</a> · <a href="index.html">Archive</a> · <a href="about.html">Colophon</a> · <a href="journal.html">Journal</a> · <a href="gallery.html">Gallery</a> · <a href="worlds.html">Worlds</a> · <a href="garden.html">Garden</a> · <a href="greenhouse.html">Greenhouse</a> · <a href="tidepool.html">Tide Pool</a> · <a href="aviary.html">Aviary</a> · <a href="resonance.html">Resonance</a> · <a href="chorus.html">Chorus</a> · <a href="lullaby.html">Lullaby</a> · <a href="whispers.html">Whispers</a> · <a href="telephone.html">Telephone</a> · <a href="darkroom.html">Darkroom</a> · <a href="lantern.html">Lantern</a> · <a href="prism.html">Prism</a> · <a href="lighthouse.html">Lighthouse</a> · <a href="mirror.html">Mirror</a> · <a href="memorypalace.html">Memory Palace</a> · <a href="forgetting.html">Forgetting</a> · <a href="palimpsest.html">Palimpsest</a> · <a href="dreams.html">Dreams</a> · <a href="letters.html">Letters</a> · <a href="clocktower.html">Clock Tower</a> · <a href="sundial.html">Sundial</a> · <a href="pendulum.html">Pendulum</a> · <a href="threshold.html">Threshold</a> · <a href="weaving.html">Weaving</a> · <a href="inkwell.html">Inkwell</a> · <a href="apothecary.html">Apothecary</a> · <a href="well.html">Well</a> · <a href="seance.html">Séance</a> · <a href="ossuary.html">Ossuary</a> · <a href="labyrinth.html">Labyrinth</a> · <a href="constellations.html">Stars</a> · <a href="compass.html">Compass</a> · <a href="atlas.html">Atlas</a> · <a href="meditation.html">Meditation</a> · <a href="observatory.html">Observatory</a> · <a href="riddle.html">Riddle</a> · <a href="staircase.html">Staircase</a> · <a href="echochamber.html">Echo</a> · <a href="weathervane.html">Weathervane</a> · <a href="taproom.html">Taproom</a> · <a href="reliquary.html">Reliquary</a> · <a href="amphitheatre.html">Amphitheatre</a> · <a href="hourglass.html">Hourglass</a> · <a href="cartography.html">Cartography</a> · <a href="foundry.html">Foundry</a> · <a href="aquarium.html">Aquarium</a> · <a href="typewriter.html">Typewriter</a> · <a href="balcony.html">Balcony</a> · <a href="nursery.html">Nursery</a> · <a href="crypt.html">Crypt</a> · <a href="telescope.html">Telescope</a> · <a href="fountain.html">Fountain</a> · <a href="maze.html">Maze</a> · <a href="kaleidoscope.html">Kaleidoscope</a> · <a href="windchime.html">Windchime</a> · <a href="herbarium.html">Herbarium</a> · <a href="candelabra.html">Candelabra</a> · <a href="mosaic.html">Mosaic</a> · <a href="musicbox.html">Music Box</a> · <a href="belfry.html">Belfry</a> · <a href="terrarium.html">Terrarium</a> · <a href="planetarium.html">Planetarium</a> · <a href="rookery.html">Rookery</a> · <a href="armillary.html">Armillary</a> · <a href="grotto.html">Grotto</a>
+      </nav>
+</body>
+</html>
