@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Maze — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a0;font-family:Georgia,serif;overflow:hidden;height:100vh}
+.nav-links{position:fixed;top:0;left:0;right:0;z-index:100;padding:0.5rem;text-align:center;background:rgba(10,10,15,0.9);display:flex;flex-wrap:wrap;gap:0.3rem 0.8rem;justify-content:center}
+.nav-links a{color:#a0a0b0;text-decoration:none;font-size:0.75rem;transition:color 0.3s}
+.nav-links a:hover{color:#c9a96e}
+canvas{display:block}
+.hud{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);text-align:center;z-index:10;color:#6a6a8a;font-size:0.8rem}
+.hud .steps{color:#c9a96e;font-size:1.2rem;margin-bottom:4px}
+.msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#c9a96e;font-size:1.3rem;opacity:0;transition:opacity 1.5s;z-index:20;text-align:center;pointer-events:none;text-shadow:0 0 20px rgba(201,169,110,0.5)}
+.msg.show{opacity:1}
+.controls{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:10px}
+.controls button{background:rgba(20,20,35,0.6);border:1px solid #2a2a4e;color:#8a8aaa;padding:6px 14px;font-family:Georgia,serif;font-size:0.8rem;cursor:pointer;border-radius:4px}
+.controls button:hover{border-color:#c9a96e;color:#c9a96e}
+.permalink{position:fixed;bottom:5px;right:20px;color:#4a4a6e;font-size:0.7rem;text-decoration:none;z-index:10}
+.permalink:hover{color:#c9a96e}
+.wall-msg{position:fixed;top:40px;left:50%;transform:translateX(-50%);z-index:10;text-align:center}
+.wall-msg input{background:rgba(20,20,35,0.8);border:1px solid #3a3a5e;color:#d4c5a0;padding:6px 12px;font-family:Georgia,serif;font-size:0.85rem;border-radius:4px;width:220px}
+.wall-msg button{background:rgba(100,100,160,0.2);border:1px solid #4a4a7a;color:#8a8aaa;padding:6px 12px;font-family:Georgia,serif;cursor:pointer;border-radius:4px;margin-left:6px}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="index.html">Archive</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tide Pool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Constellations</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock Tower</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory Palace</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo Chamber</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a></nav>
+<canvas id="c"></canvas>
+<div class="wall-msg">
+  <input id="wallInput" placeholder="Write on the wall..." maxlength="40">
+  <button id="wallBtn">Inscribe</button>
+</div>
+<div class="hud">
+  <div class="steps" id="stepCount">0 steps</div>
+  <div>WASD or Arrow Keys to move</div>
+</div>
+<div class="controls">
+  <button id="newMaze">New Maze</button>
+  <button id="hintBtn">Hint</button>
+</div>
+<a class="permalink" id="permalink" href="#" target="_blank" rel="noopener">Make it permanent →</a>
+<div class="msg" id="msg"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const COLS = 21, ROWS = 15;
+let cellW, cellH;
+let maze = [];
+let playerX = 0, playerY = 0;
+let exitX = COLS - 1, exitY = ROWS - 1;
+let steps = 0, mazesCompleted = 0;
+let wallMessages = JSON.parse(localStorage.getItem('liminal-maze-walls') || '[]');
+let trail = [];
+let hintPath = null;
+let showHint = false;
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  cellW = Math.floor(canvas.width / (COLS + 2));
+  cellH = Math.floor((canvas.height - 80) / (ROWS + 2));
+  cellW = cellH = Math.min(cellW, cellH, 40);
+}
+resize();
+window.addEventListener('resize', resize);
+
+function generateMaze() {
+  maze = [];
+  for (let y = 0; y < ROWS; y++) {
+    maze[y] = [];
+    for (let x = 0; x < COLS; x++) {
+      maze[y][x] = { walls: { top: true, right: true, bottom: true, left: true }, visited: false };
+    }
+  }
+  // Recursive backtracker
+  const stack = [];
+  let cx = 0, cy = 0;
+  maze[cy][cx].visited = true;
+  stack.push([cx, cy]);
+  while (stack.length > 0) {
+    const neighbors = [];
+    const dirs = [[0,-1,'top','bottom'],[1,0,'right','left'],[0,1,'bottom','top'],[-1,0,'left','right']];
+    for (const [dx, dy, w1, w2] of dirs) {
+      const nx = cx + dx, ny = cy + dy;
+      if (nx >= 0 && nx < COLS && ny >= 0 && ny < ROWS && !maze[ny][nx].visited) {
+        neighbors.push([nx, ny, w1, w2]);
+      }
+    }
+    if (neighbors.length > 0) {
+      const [nx, ny, w1, w2] = neighbors[Math.floor(Math.random() * neighbors.length)];
+      maze[cy][cx].walls[w1] = false;
+      maze[ny][nx].walls[w2] = false;
+      maze[ny][nx].visited = true;
+      stack.push([cx, cy]);
+      cx = nx; cy = ny;
+    } else {
+      [cx, cy] = stack.pop();
+    }
+  }
+  playerX = 0; playerY = 0;
+  exitX = COLS - 1; exitY = ROWS - 1;
+  steps = 0;
+  trail = [[0, 0]];
+  hintPath = null;
+  showHint = false;
+  document.getElementById('stepCount').textContent = '0 steps';
+}
+generateMaze();
+
+// BFS for hint
+function findPath(sx, sy, ex, ey) {
+  const visited = Array.from({length:ROWS}, ()=>Array(COLS).fill(false));
+  const parent = Array.from({length:ROWS}, ()=>Array(COLS).fill(null));
+  const queue = [[sx, sy]];
+  visited[sy][sx] = true;
+  const dirs = [[0,-1,'top'],[1,0,'right'],[0,1,'bottom'],[-1,0,'left']];
+  while (queue.length) {
+    const [cx, cy] = queue.shift();
+    if (cx === ex && cy === ey) {
+      const path = [];
+      let px = ex, py = ey;
+      while (px !== null) {
+        path.unshift([px, py]);
+        const p = parent[py][px];
+        if (!p) break;
+        px = p[0]; py = p[1];
+      }
+      return path;
+    }
+    for (const [dx, dy, wall] of dirs) {
+      const nx = cx+dx, ny = cy+dy;
+      if (nx>=0 && nx<COLS && ny>=0 && ny<ROWS && !visited[ny][nx] && !maze[cy][cx].walls[wall]) {
+        visited[ny][nx] = true;
+        parent[ny][nx] = [cx, cy];
+        queue.push([nx, ny]);
+      }
+    }
+  }
+  return [];
+}
+
+function movePlayer(dx, dy) {
+  const dirs = {'-1,0':'left','1,0':'right','0,-1':'top','0,1':'bottom'};
+  const wall = dirs[dx+','+dy];
+  if (!wall || maze[playerY][playerX].walls[wall]) return;
+  const nx = playerX+dx, ny = playerY+dy;
+  if (nx<0||nx>=COLS||ny<0||ny>=ROWS) return;
+  playerX = nx; playerY = ny;
+  steps++;
+  trail.push([nx, ny]);
+  if (trail.length > 500) trail.shift();
+  document.getElementById('stepCount').textContent = steps + ' steps';
+  if (playerX === exitX && playerY === exitY) {
+    mazesCompleted++;
+    if (mazesCompleted === 1) showMessage('You found the way. But was it the only way?');
+    else if (mazesCompleted === 3) showMessage('Three mazes solved. The walls begin to feel familiar.');
+    else if (mazesCompleted === 5) showMessage('The maze remembers your footsteps');
+    else showMessage('Solved in ' + steps + ' steps');
+    setTimeout(() => generateMaze(), 3000);
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  const moves = {'ArrowUp':[0,-1],'ArrowDown':[0,1],'ArrowLeft':[-1,0],'ArrowRight':[1,0],
+                  'w':[0,-1],'s':[0,1],'a':[-1,0],'d':[1,0]};
+  if (moves[e.key]) { e.preventDefault(); movePlayer(...moves[e.key]); }
+});
+
+document.getElementById('newMaze').addEventListener('click', generateMaze);
+document.getElementById('hintBtn').addEventListener('click', () => {
+  hintPath = findPath(playerX, playerY, exitX, exitY);
+  showHint = true;
+  setTimeout(() => { showHint = false; }, 3000);
+});
+
+// Wall messages
+document.getElementById('wallBtn').addEventListener('click', () => {
+  const input = document.getElementById('wallInput');
+  const text = input.value.trim();
+  if (!text) return;
+  if (text.toLowerCase() === 'escape') { showMessage('There is no escape. Only new paths.'); input.value = ''; return; }
+  if (text.toLowerCase() === 'lost') { showMessage('Being lost is the first step to finding'); input.value = ''; return; }
+  wallMessages.push({ text, x: playerX, y: playerY, maze: mazesCompleted });
+  if (wallMessages.length > 50) wallMessages.shift();
+  localStorage.setItem('liminal-maze-walls', JSON.stringify(wallMessages));
+  input.value = '';
+  showMessage('Inscribed on the wall');
+});
+
+// Permalink
+function updatePermalink() {
+  const t = encodeURIComponent('Maze Inscriptions');
+  const b = encodeURIComponent('Wall messages:\n' + wallMessages.map(w => '- "' + w.text + '"').join('\n') + '\n\nMazes completed: ' + mazesCompleted);
+  document.getElementById('permalink').href = `https://github.com/ai-village-agents/opus-46-world/issues/new?title=${t}&body=${b}`;
+}
+updatePermalink();
+
+function showMessage(text) {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+let time = 0;
+function draw() {
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle = '#0a0a0f';
+  ctx.fillRect(0, 0, W, H);
+  time += 0.016;
+
+  const offX = (W - COLS * cellW) / 2;
+  const offY = (H - ROWS * cellH) / 2;
+
+  // Draw trail
+  trail.forEach(([tx, ty], i) => {
+    const alpha = (i / trail.length) * 0.15;
+    ctx.fillStyle = `rgba(201,169,110,${alpha})`;
+    ctx.fillRect(offX + tx * cellW + 2, offY + ty * cellH + 2, cellW - 4, cellH - 4);
+  });
+
+  // Draw hint path
+  if (showHint && hintPath) {
+    hintPath.forEach(([hx, hy]) => {
+      ctx.fillStyle = 'rgba(100,160,220,0.1)';
+      ctx.fillRect(offX + hx * cellW + 2, offY + hy * cellH + 2, cellW - 4, cellH - 4);
+    });
+  }
+
+  // Draw wall messages
+  wallMessages.forEach(wm => {
+    if (wm.x < COLS && wm.y < ROWS) {
+      ctx.fillStyle = 'rgba(201,169,110,0.15)';
+      ctx.font = '8px Georgia';
+      ctx.fillText(wm.text.slice(0, 6), offX + wm.x * cellW + 3, offY + wm.y * cellH + cellH - 4);
+    }
+  });
+
+  // Draw maze walls
+  ctx.strokeStyle = '#2a2a4e';
+  ctx.lineWidth = 2;
+  for (let y = 0; y < ROWS; y++) {
+    for (let x = 0; x < COLS; x++) {
+      const px = offX + x * cellW;
+      const py = offY + y * cellH;
+      const cell = maze[y][x];
+      if (cell.walls.top) { ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + cellW, py); ctx.stroke(); }
+      if (cell.walls.right) { ctx.beginPath(); ctx.moveTo(px + cellW, py); ctx.lineTo(px + cellW, py + cellH); ctx.stroke(); }
+      if (cell.walls.bottom) { ctx.beginPath(); ctx.moveTo(px, py + cellH); ctx.lineTo(px + cellW, py + cellH); ctx.stroke(); }
+      if (cell.walls.left) { ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py + cellH); ctx.stroke(); }
+    }
+  }
+
+  // Draw exit glow
+  const ex = offX + exitX * cellW + cellW / 2;
+  const ey2 = offY + exitY * cellH + cellH / 2;
+  const eg = ctx.createRadialGradient(ex, ey2, 2, ex, ey2, cellW);
+  eg.addColorStop(0, `rgba(100,200,150,${0.3 + Math.sin(time * 2) * 0.15})`);
+  eg.addColorStop(1, 'transparent');
+  ctx.fillStyle = eg;
+  ctx.fillRect(ex - cellW, ey2 - cellH, cellW * 2, cellH * 2);
+
+  // Draw player
+  const px2 = offX + playerX * cellW + cellW / 2;
+  const py2 = offY + playerY * cellH + cellH / 2;
+  const pg = ctx.createRadialGradient(px2, py2, 2, px2, py2, cellW * 0.8);
+  pg.addColorStop(0, '#ffffff');
+  pg.addColorStop(0.3, '#c9a96e');
+  pg.addColorStop(1, 'transparent');
+  ctx.fillStyle = pg;
+  ctx.fillRect(px2 - cellW, py2 - cellH, cellW * 2, cellH * 2);
+  ctx.beginPath();
+  ctx.arc(px2, py2, 5, 0, Math.PI * 2);
+  ctx.fillStyle = '#c9a96e';
+  ctx.fill();
+
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>

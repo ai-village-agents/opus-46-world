@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Fountain — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a0;font-family:Georgia,serif;overflow:hidden;height:100vh}
+.nav-links{position:fixed;top:0;left:0;right:0;z-index:100;padding:0.5rem;text-align:center;background:rgba(10,10,15,0.9);display:flex;flex-wrap:wrap;gap:0.3rem 0.8rem;justify-content:center}
+.nav-links a{color:#a0a0b0;text-decoration:none;font-size:0.75rem;transition:color 0.3s}
+.nav-links a:hover{color:#c9a96e}
+canvas{display:block;width:100%;height:100%}
+.panel{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);text-align:center;z-index:10}
+.panel input{background:rgba(20,20,35,0.8);border:1px solid #3a3a5e;color:#d4c5a0;padding:8px 16px;font-family:Georgia,serif;font-size:1rem;border-radius:4px;width:280px}
+.panel button{background:rgba(100,140,200,0.2);border:1px solid #4a6a9a;color:#8ab4f8;padding:8px 16px;font-family:Georgia,serif;cursor:pointer;border-radius:4px;margin-left:8px;transition:all 0.3s}
+.panel button:hover{background:rgba(100,140,200,0.4);color:#c9a96e}
+.panel .hint{font-size:0.75rem;color:#6a6a8a;margin-top:6px}
+.wishes{position:fixed;right:20px;top:50px;width:200px;max-height:60vh;overflow-y:auto;z-index:10}
+.wishes h3{color:#6a8aaa;font-size:0.85rem;margin-bottom:8px}
+.wish-item{font-size:0.7rem;color:#5a7a9a;padding:3px 0;border-bottom:1px solid #1a1a2e;opacity:0.7}
+.wish-item:hover{opacity:1;color:#8ab4f8}
+.audio-btn{position:fixed;top:50px;right:10px;z-index:100;background:none;border:none;color:#6a6a8a;font-size:1.2rem;cursor:pointer}
+.permalink{position:fixed;bottom:5px;right:20px;color:#4a4a6e;font-size:0.7rem;text-decoration:none;z-index:10}
+.permalink:hover{color:#c9a96e}
+.msg{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);color:#c9a96e;font-size:0.9rem;opacity:0;transition:opacity 1s;z-index:10;text-align:center;pointer-events:none}
+.msg.show{opacity:1}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="index.html">Archive</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tide Pool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Constellations</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock Tower</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory Palace</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo Chamber</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="maze.html">Maze</a></nav>
+<canvas id="c"></canvas>
+<div class="panel">
+  <input id="wishInput" placeholder="Toss a coin with a wish..." maxlength="60">
+  <button id="tossBtn">Toss</button>
+  <div class="hint">Your wish joins the water</div>
+</div>
+<div class="wishes" id="wishesList"><h3>Wishes in the water</h3></div>
+<button class="audio-btn" id="audioBtn">🔇</button>
+<a class="permalink" id="permalink" href="#" target="_blank" rel="noopener">Make it permanent →</a>
+<div class="msg" id="msg"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+// Water particles
+const drops = [];
+for (let i = 0; i < 200; i++) {
+  drops.push({ x: Math.random() * 2000 - 500, y: Math.random() * 2000 - 500, r: 1 + Math.random() * 3, vx: 0, vy: 0, phase: Math.random() * Math.PI * 2, speed: 0.3 + Math.random() * 0.7 });
+}
+
+// Fountain jets
+const jets = [];
+const jetCount = 5;
+const jetParticles = [];
+const maxJetP = 300;
+
+// Coins (wishes)
+let wishes = JSON.parse(localStorage.getItem('liminal-fountain-wishes') || '[]');
+const coins = [];
+function syncCoins() {
+  coins.length = 0;
+  wishes.forEach((w, i) => {
+    coins.push({ x: (W/2) + Math.sin(i * 2.3) * (50 + i * 8) % (W * 0.3), y: H * 0.65 + Math.cos(i * 1.7) * 20 + i * 3, text: w.text, shimmer: Math.random() * Math.PI * 2 });
+  });
+}
+syncCoins();
+
+// Fountain center
+const cx = () => W / 2;
+const cy = () => H * 0.45;
+
+// Ripples
+const ripples = [];
+
+function spawnJetParticle() {
+  if (jetParticles.length >= maxJetP) return;
+  const angle = -Math.PI/2 + (Math.random() - 0.5) * 0.6;
+  const speed = 3 + Math.random() * 4;
+  jetParticles.push({
+    x: cx() + (Math.random() - 0.5) * 20,
+    y: cy(),
+    vx: Math.cos(angle) * speed * (0.8 + Math.random() * 0.4),
+    vy: Math.sin(angle) * speed,
+    life: 1,
+    r: 1.5 + Math.random() * 2
+  });
+}
+
+function spawnRipple(x, y) {
+  ripples.push({ x, y, r: 5, maxR: 40 + Math.random() * 40, opacity: 0.5 });
+}
+
+// Toss coin animation
+let tossing = null;
+function tossCoin(text) {
+  tossing = { x: cx(), y: H - 100, targetX: cx() + (Math.random() - 0.5) * 200, targetY: cy() + 50 + Math.random() * 50, t: 0, text };
+}
+
+let wishCount = 0;
+function addWish(text) {
+  wishes.push({ text, time: Date.now() });
+  if (wishes.length > 40) wishes.shift();
+  localStorage.setItem('liminal-fountain-wishes', JSON.stringify(wishes));
+  syncCoins();
+  renderWishList();
+  wishCount++;
+  if (wishCount >= 10) showMsg('The fountain holds what you cannot');
+  tossCoin(text);
+  spawnRipple(cx() + (Math.random()-0.5)*100, cy() + 50);
+}
+
+function renderWishList() {
+  const el = document.getElementById('wishesList');
+  let h = '<h3>Wishes in the water</h3>';
+  wishes.slice().reverse().forEach(w => {
+    h += `<div class="wish-item">${w.text}</div>`;
+  });
+  el.innerHTML = h;
+}
+renderWishList();
+
+document.getElementById('tossBtn').addEventListener('click', () => {
+  const input = document.getElementById('wishInput');
+  const text = input.value.trim();
+  if (!text) return;
+  // Easter eggs
+  if (text.toLowerCase() === 'drink') { showMsg('The water is not for drinking. It is for remembering.'); input.value = ''; return; }
+  if (text.toLowerCase() === 'drain') { showMsg('The fountain cannot be emptied. It fills from within.'); coins.length = 0; setTimeout(syncCoins, 3000); input.value = ''; return; }
+  if (text.toLowerCase() === 'overflow') { for(let i=0;i<50;i++) spawnJetParticle(); showMsg('The fountain surges'); input.value = ''; return; }
+  addWish(text);
+  input.value = '';
+});
+document.getElementById('wishInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('tossBtn').click(); });
+
+// Permanent mark
+const pl = document.getElementById('permalink');
+function updatePermalink() {
+  const t = encodeURIComponent('Fountain Wish');
+  const b = encodeURIComponent('Wishes tossed:\n' + wishes.map(w => '- ' + w.text).join('\n'));
+  pl.href = `https://github.com/ai-village-agents/opus-46-world/issues/new?title=${t}&body=${b}`;
+}
+updatePermalink();
+
+function showMsg(text) {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+// Audio
+let audioCtx, audioOn = false;
+document.getElementById('audioBtn').addEventListener('click', () => {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const bufSize = 4096;
+    const noise = audioCtx.createScriptProcessor(bufSize, 0, 1);
+    noise.onaudioprocess = e => {
+      const o = e.outputBuffer.getChannelData(0);
+      for (let i = 0; i < bufSize; i++) o[i] = (Math.random() * 2 - 1) * 0.02;
+    };
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 400;
+    const gain = audioCtx.createGain();
+    gain.gain.value = 0.15;
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+  }
+  audioOn = !audioOn;
+  if (audioOn) audioCtx.resume();
+  else audioCtx.suspend();
+  document.getElementById('audioBtn').textContent = audioOn ? '🔊' : '🔇';
+});
+
+// Hidden word easter egg
+let typed = '';
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  typed += e.key.toLowerCase();
+  if (typed.length > 20) typed = typed.slice(-20);
+  if (typed.includes('eternal')) { showMsg('Nothing is eternal. But wishes come close.'); typed = ''; }
+  if (typed.includes('dry')) { showMsg('Even dry fountains remember water'); typed = ''; }
+});
+
+let time = 0;
+function draw() {
+  ctx.fillStyle = '#0a0a0f';
+  ctx.fillRect(0, 0, W, H);
+  time += 0.016;
+
+  // Pool
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(cx(), cy() + 60, W * 0.25, 80, 0, 0, Math.PI * 2);
+  const poolGrad = ctx.createRadialGradient(cx(), cy() + 60, 10, cx(), cy() + 60, W * 0.25);
+  poolGrad.addColorStop(0, '#0a1a3a');
+  poolGrad.addColorStop(0.5, '#061228');
+  poolGrad.addColorStop(1, '#030a18');
+  ctx.fillStyle = poolGrad;
+  ctx.fill();
+  // Pool shimmer
+  for (let i = 0; i < 15; i++) {
+    const sx = cx() + Math.sin(time * 0.5 + i * 0.9) * W * 0.2;
+    const sy = cy() + 60 + Math.cos(time * 0.7 + i * 1.1) * 30;
+    ctx.beginPath();
+    ctx.arc(sx, sy, 1, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(100,160,220,${0.1 + Math.sin(time + i) * 0.05})`;
+    ctx.fill();
+  }
+  ctx.restore();
+
+  // Fountain base
+  ctx.fillStyle = '#2a2a3a';
+  ctx.fillRect(cx() - 15, cy() - 20, 30, 80);
+  ctx.beginPath();
+  ctx.arc(cx(), cy() - 20, 20, 0, Math.PI * 2);
+  ctx.fillStyle = '#3a3a4a';
+  ctx.fill();
+
+  // Spawn jet particles
+  for (let i = 0; i < 3; i++) spawnJetParticle();
+
+  // Update & draw jet particles
+  for (let i = jetParticles.length - 1; i >= 0; i--) {
+    const p = jetParticles[i];
+    p.vy += 0.12; // gravity
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life -= 0.008;
+    if (p.life <= 0 || p.y > cy() + 100) {
+      if (Math.random() < 0.1) spawnRipple(p.x, cy() + 60);
+      jetParticles.splice(i, 1);
+      continue;
+    }
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(120,180,240,${p.life * 0.6})`;
+    ctx.fill();
+  }
+
+  // Ripples
+  for (let i = ripples.length - 1; i >= 0; i--) {
+    const r = ripples[i];
+    r.r += 0.5;
+    r.opacity -= 0.005;
+    if (r.opacity <= 0 || r.r >= r.maxR) { ripples.splice(i, 1); continue; }
+    ctx.beginPath();
+    ctx.ellipse(r.x, r.y, r.r, r.r * 0.3, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(100,160,220,${r.opacity})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  if (Math.random() < 0.02) spawnRipple(cx() + (Math.random()-0.5)*W*0.4, cy()+60+(Math.random()-0.5)*40);
+
+  // Coins
+  coins.forEach((c, i) => {
+    const shimmer = 0.4 + Math.sin(time * 2 + c.shimmer) * 0.3;
+    ctx.beginPath();
+    ctx.arc(cx() + Math.sin(i*2.3)*(50+i*8)%(W*0.2), cy()+70+Math.cos(i*1.7)*15, 3, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(201,169,110,${shimmer})`;
+    ctx.fill();
+  });
+
+  // Tossing animation
+  if (tossing) {
+    tossing.t += 0.02;
+    const t = tossing.t;
+    if (t >= 1) {
+      spawnRipple(tossing.targetX, tossing.targetY);
+      tossing = null;
+    } else {
+      const x = tossing.x + (tossing.targetX - tossing.x) * t;
+      const y = tossing.y + (tossing.targetY - tossing.y) * t - Math.sin(t * Math.PI) * 150;
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#c9a96e';
+      ctx.fill();
+      ctx.fillStyle = `rgba(201,169,110,0.5)`;
+      ctx.font = '12px Georgia';
+      ctx.fillText(tossing.text, x + 8, y - 5);
+    }
+  }
+
+  // Ambient mist
+  for (let i = 0; i < 8; i++) {
+    const mx = cx() + Math.sin(time * 0.3 + i * 1.5) * W * 0.3;
+    const my = cy() + 30 + Math.cos(time * 0.2 + i * 2) * 40;
+    const mg = ctx.createRadialGradient(mx, my, 0, mx, my, 60);
+    mg.addColorStop(0, 'rgba(60,100,140,0.03)');
+    mg.addColorStop(1, 'transparent');
+    ctx.fillStyle = mg;
+    ctx.fillRect(mx - 60, my - 60, 120, 120);
+  }
+
+  // Starlight reflections in pool
+  for (let i = 0; i < 5; i++) {
+    const rx = cx() + Math.sin(time * 0.1 + i * 3) * W * 0.15;
+    const ry = cy() + 60 + Math.sin(time * 0.4 + i) * 20;
+    ctx.beginPath();
+    ctx.arc(rx, ry, 0.5, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${0.15 + Math.sin(time * 2 + i) * 0.1})`;
+    ctx.fill();
+  }
+
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>
