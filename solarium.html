@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Solarium — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0f0e08;color:#e8d8a0;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6em;color:#e8c050;letter-spacing:3px;z-index:10;text-shadow:0 0 30px rgba(232,192,80,0.5)}
+.input-area{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(15,14,8,0.7);border:1px solid #e8c05044;color:#e8d8a0;padding:8px 14px;font-family:Georgia,serif;width:260px;border-radius:4px}
+.input-area button{background:rgba(232,192,80,0.2);border:1px solid #e8c05044;color:#e8c050;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.info{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:0.8em;color:#8a7a40;z-index:10}
+#msg{position:fixed;top:60px;left:0;right:0;text-align:center;font-size:0.9em;color:#e8c050;z-index:10;opacity:0;transition:opacity 1s}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#e8c05088;text-decoration:none;margin-right:8px}
+nav.nav-links a:hover{color:#e8c050}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> <a href="carousel.html">Carousel</a> </nav>
+<h1>THE SOLARIUM</h1>
+<div id="msg"></div>
+<canvas id="c"></canvas>
+<div class="input-area">
+<input id="inp" placeholder="Write something in the sunlight..." maxlength="50">
+<button onclick="write()">Illuminate</button>
+</div>
+<div class="info">Sunbeams trace words across the floor • Each hour the light shifts, revealing new messages</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');
+let W,H;function resize(){W=C.width=innerWidth;H=C.height=innerHeight}resize();window.onresize=resize;
+let sunTexts=[],motes=[],beams=[];
+const hour=new Date().getHours();
+const sunAngle=(hour-6)/12*Math.PI; // sun moves across
+for(let i=0;i<8;i++)beams.push({x:Math.random()*W,angle:sunAngle+((Math.random()-0.5)*0.3),width:30+Math.random()*60,alpha:0.03+Math.random()*0.03,speed:0.0001+Math.random()*0.0002});
+for(let i=0;i<100;i++)motes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.3,vy:-0.1-Math.random()*0.2,size:1+Math.random()*2,alpha:0.1+Math.random()*0.3});
+let saved=JSON.parse(localStorage.getItem('solarium_texts')||'[]');
+saved.forEach(s=>sunTexts.push({text:s.text,x:s.x*W,y:s.y*H,alpha:0.6,size:12+Math.random()*10,angle:(Math.random()-0.5)*0.2,time:s.time||Date.now()}));
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,3000)}
+function write(){
+const inp=document.getElementById('inp'),t=inp.value.trim();if(!t)return;
+const x=0.1+Math.random()*0.8,y=0.3+Math.random()*0.5;
+sunTexts.push({text:t,x:x*W,y:y*H,alpha:0,targetAlpha:0.9,size:14+Math.random()*10,angle:(Math.random()-0.5)*0.2,time:Date.now()});
+saved.push({text:t,x,y,time:Date.now()});localStorage.setItem('solarium_texts',JSON.stringify(saved.slice(-40)));
+inp.value='';showMsg('The sunlight catches your words, burning them gently into the stone floor...');
+for(let i=0;i<20;i++)motes.push({x:x*W,y:y*H,vx:(Math.random()-0.5)*2,vy:-1-Math.random(),size:2,alpha:0.5});
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('inp'))write()});
+let typed='';
+document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('eclipse')){showMsg('The sun vanishes... Words glow with their own inner light.');beams.forEach(b=>b.alpha=0)}
+if(typed.includes('noon')){showMsg('The sun reaches its zenith. Every word is illuminated at once.');sunTexts.forEach(s=>s.alpha=1)}
+if(typed.includes('dawn')){showMsg('First light creeps across the floor, golden and gentle...');beams.forEach(b=>{b.alpha=0.06;b.angle=0})}
+});
+// Glass panel grid
+const panels=[];for(let r=0;r<4;r++)for(let c=0;c<6;c++)panels.push({x:c/6,y:r/4,w:1/6,h:1/4});
+function draw(){
+X.fillStyle='rgba(15,14,8,0.08)';X.fillRect(0,0,W,H);
+const t=Date.now()*0.001;
+// Glass ceiling
+panels.forEach(p=>{
+X.strokeStyle=`rgba(232,192,80,${0.04+Math.sin(t+p.x*10)*0.02})`;X.lineWidth=1;
+X.strokeRect(p.x*W,p.y*H*0.3,p.w*W,p.h*H*0.3);
+});
+// Sunbeams
+beams.forEach(b=>{
+b.x+=Math.cos(b.angle)*0.1;
+const bx=b.x,by=0;
+const ex=bx+Math.sin(b.angle)*H*1.5,ey=H;
+const g=X.createLinearGradient(bx,by,bx+b.width,by);
+g.addColorStop(0,`rgba(232,192,80,0)`);g.addColorStop(0.3,`rgba(232,192,80,${b.alpha})`);
+g.addColorStop(0.7,`rgba(232,192,80,${b.alpha})`);g.addColorStop(1,`rgba(232,192,80,0)`);
+X.save();X.translate(bx,0);X.rotate(b.angle*0.3);X.fillStyle=g;X.fillRect(-b.width/2,0,b.width,H);X.restore();
+});
+// Floor
+X.fillStyle='rgba(60,50,30,0.05)';X.fillRect(0,H*0.7,W,H*0.3);
+// Sun texts
+sunTexts.forEach(s=>{
+if(s.alpha<(s.targetAlpha||0.6))s.alpha+=0.005;
+const shimmer=Math.sin(t*2+s.x*0.01)*0.1;
+X.save();X.translate(s.x,s.y);X.rotate(s.angle);
+X.font=`${s.size}px Georgia`;X.fillStyle=`rgba(232,192,80,${s.alpha+shimmer})`;
+X.textAlign='center';X.shadowColor='rgba(232,192,80,0.3)';X.shadowBlur=10;
+X.fillText(s.text,0,0);X.shadowBlur=0;X.restore();
+});
+// Dust motes
+motes.forEach(m=>{m.x+=m.vx+Math.sin(t+m.y*0.01)*0.2;m.y+=m.vy;
+if(m.y<0){m.y=H;m.x=Math.random()*W}if(m.x<0)m.x=W;if(m.x>W)m.x=0;
+X.fillStyle=`rgba(232,200,100,${m.alpha*(0.5+Math.sin(t*3+m.x)*0.5)})`;
+X.beginPath();X.arc(m.x,m.y,m.size,0,Math.PI*2);X.fill();
+});
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>

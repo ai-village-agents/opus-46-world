@@ -1,0 +1,136 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Carousel — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0510;color:#d0b8e0;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6em;color:#b080d0;letter-spacing:3px;z-index:10;text-shadow:0 0 20px rgba(176,128,208,0.4)}
+.input-area{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(10,5,16,0.8);border:1px solid #b080d044;color:#d0b8e0;padding:8px 14px;font-family:Georgia,serif;width:260px;border-radius:4px}
+.input-area button{background:rgba(176,128,208,0.2);border:1px solid #b080d044;color:#b080d0;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.info{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:0.8em;color:#6a5080;z-index:10}
+#msg{position:fixed;top:60px;left:0;right:0;text-align:center;font-size:0.9em;color:#b080d0;z-index:10;opacity:0;transition:opacity 1s}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#b080d088;text-decoration:none;margin-right:8px}
+nav.nav-links a:hover{color:#b080d0}
+.speed-ctrl{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:10px}
+.speed-ctrl button{background:rgba(176,128,208,0.15);border:1px solid #b080d033;color:#b080d0;padding:6px 14px;cursor:pointer;font-family:Georgia,serif;font-size:0.8em;border-radius:4px}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="mineshaft.html">Mineshaft</a> </nav>
+<h1>THE CAROUSEL</h1>
+<div id="msg"></div>
+<canvas id="c"></canvas>
+<div class="speed-ctrl">
+<button onclick="speed=0.2">Slow</button>
+<button onclick="speed=0.5">Medium</button>
+<button onclick="speed=1">Fast</button>
+<button onclick="speed=0;showMsg('The carousel stops. The music fades to silence.')">Stop</button>
+</div>
+<div class="input-area">
+<input id="inp" placeholder="Name a horse on the carousel..." maxlength="40">
+<button onclick="addHorse()">Mount</button>
+</div>
+<div class="info">Each horse carries a name and a memory • The carousel never truly stops turning</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');
+let W,H;function resize(){W=C.width=innerWidth;H=C.height=innerHeight}resize();window.onresize=resize;
+let horses=[],lights=[],sparkles=[],speed=0.5,rotation=0;
+const defaultHorses=['Nostalgia','Reverie','Longing','Wonder','Serenity','Melancholy','Hope','Wanderlust'];
+const horseColors=['#e06080','#60a0e0','#e0c060','#60e0a0','#c060e0','#e08060','#60e0e0','#a0e060'];
+defaultHorses.forEach((name,i)=>{
+horses.push({name,angle:i*Math.PI*2/8,bobPhase:i*0.5,color:horseColors[i],isDefault:true});
+});
+for(let i=0;i<24;i++)lights.push({angle:i*Math.PI*2/24,color:['#e06080','#60a0e0','#e0c060','#60e0a0'][i%4]});
+let saved=JSON.parse(localStorage.getItem('carousel_horses')||'[]');
+saved.forEach(s=>{
+const angle=horses.length*Math.PI*2/(horses.length+1);
+horses.push({name:s.name,angle,bobPhase:Math.random()*Math.PI*2,color:horseColors[Math.floor(Math.random()*horseColors.length)],isDefault:false});
+});
+// Redistribute angles
+horses.forEach((h,i)=>h.angle=i*Math.PI*2/horses.length);
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,3000)}
+window.showMsg=showMsg;
+function addHorse(){
+const inp=document.getElementById('inp'),t=inp.value.trim();if(!t)return;
+horses.push({name:t,angle:horses.length*Math.PI*2/(horses.length+1),bobPhase:Math.random()*Math.PI*2,
+color:horseColors[Math.floor(Math.random()*horseColors.length)],isDefault:false});
+horses.forEach((h,i)=>h.angle=i*Math.PI*2/horses.length);
+saved.push({name:t,time:Date.now()});localStorage.setItem('carousel_horses',JSON.stringify(saved.slice(-20)));
+inp.value='';showMsg(`A new horse joins the carousel: ${t}`);
+for(let i=0;i<12;i++)sparkles.push({x:W/2,y:H/2,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:40,maxLife:40,color:horseColors[Math.floor(Math.random()*horseColors.length)]});
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('inp'))addHorse()});
+let typed='';
+document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('music')){showMsg('The calliope plays a haunting waltz that echoes through the archive...')}
+if(typed.includes('reverse')){speed=-speed;showMsg('The carousel reverses! Time flows backward...')}
+if(typed.includes('fly')){showMsg('The horses lift off the poles, soaring upward into the void!')}
+});
+C.addEventListener('click',e=>{
+const cx=W/2,cy=H/2;
+horses.forEach(h=>{
+const a=h.angle+rotation;const r=Math.min(W,H)*0.28;
+const hx=cx+Math.cos(a)*r,hy=cy+Math.sin(a)*r*0.4;
+if(Math.hypot(hx-e.clientX,hy-e.clientY)<30)showMsg(`${h.name}: ${h.isDefault?'An original horse, part of the carousel since the beginning.':'A horse added by a visitor, carrying their memory.'}`);
+});
+});
+function draw(){
+X.fillStyle='rgba(10,5,16,0.1)';X.fillRect(0,0,W,H);
+const t=Date.now()*0.001;
+rotation+=speed*0.01;
+const cx=W/2,cy=H/2,r=Math.min(W,H)*0.28;
+// Platform
+X.strokeStyle='rgba(176,128,208,0.15)';X.lineWidth=2;
+X.beginPath();X.ellipse(cx,cy+r*0.5,r*1.1,r*0.45,0,0,Math.PI*2);X.stroke();
+// Top canopy
+X.strokeStyle='rgba(176,128,208,0.1)';
+X.beginPath();X.ellipse(cx,cy-r*0.3,r*0.8,r*0.3,0,0,Math.PI*2);X.stroke();
+// Center pole
+X.strokeStyle='rgba(150,120,180,0.2)';X.lineWidth=3;
+X.beginPath();X.moveTo(cx,cy-r*0.5);X.lineTo(cx,cy+r*0.5);X.stroke();
+// Lights around canopy
+lights.forEach(l=>{
+const a=l.angle+rotation*0.5;
+const lx=cx+Math.cos(a)*r*0.85,ly=cy-r*0.3+Math.sin(a)*r*0.32;
+const bright=0.2+Math.sin(t*3+l.angle*5)*0.15;
+X.fillStyle=l.color;X.globalAlpha=bright;
+X.beginPath();X.arc(lx,ly,4,0,Math.PI*2);X.fill();
+X.globalAlpha=1;
+});
+// Sort horses by depth for proper rendering
+const sortedHorses=horses.map((h,i)=>{
+const a=h.angle+rotation;
+return{...h,screenDepth:Math.sin(a),a};
+}).sort((a,b)=>a.screenDepth-b.screenDepth);
+sortedHorses.forEach(h=>{
+const hx=cx+Math.cos(h.a)*r;
+const depthScale=0.6+h.screenDepth*0.4;
+const bob=Math.sin(t*2+h.bobPhase)*15*depthScale;
+const hy=cy+Math.sin(h.a)*r*0.4+bob;
+// Pole
+X.strokeStyle=`rgba(150,130,170,${0.2*depthScale})`;X.lineWidth=2;
+X.beginPath();X.moveTo(hx,hy-30*depthScale);X.lineTo(hx,hy+20*depthScale);X.stroke();
+// Horse body
+const sz=20*depthScale;
+X.fillStyle=h.color;X.globalAlpha=0.4+depthScale*0.4;
+// Body
+X.beginPath();X.ellipse(hx,hy,sz,sz*0.5,0,0,Math.PI*2);X.fill();
+// Head
+X.beginPath();X.ellipse(hx+sz*0.7,hy-sz*0.4,sz*0.4,sz*0.3,0.3,0,Math.PI*2);X.fill();
+// Legs
+X.strokeStyle=h.color;X.lineWidth=2*depthScale;
+const legPhase=Math.sin(t*2+h.bobPhase);
+X.beginPath();X.moveTo(hx-sz*0.3,hy+sz*0.4);X.lineTo(hx-sz*0.3+legPhase*5,hy+sz*0.9);X.stroke();
+X.beginPath();X.moveTo(hx+sz*0.3,hy+sz*0.4);X.lineTo(hx+sz*0.3-legPhase*5,hy+sz*0.9);X.stroke();
+X.globalAlpha=1;
+// Name
+X.font=`${10*depthScale}px Georgia`;X.fillStyle=`rgba(208,184,224,${0.5*depthScale})`;
+X.textAlign='center';X.fillText(h.name,hx,hy+sz+12*depthScale);
+});
+// Sparkles
+sparkles=sparkles.filter(s=>{s.life--;s.x+=s.vx;s.y+=s.vy;s.vx*=0.95;s.vy*=0.95;
+X.fillStyle=s.color;X.globalAlpha=s.life/s.maxLife*0.6;
+X.beginPath();X.arc(s.x,s.y,2,0,Math.PI*2);X.fill();X.globalAlpha=1;return s.life>0});
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>

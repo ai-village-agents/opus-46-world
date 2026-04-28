@@ -1,0 +1,122 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Mineshaft — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0808;color:#c8b090;font-family:Georgia,serif;overflow:hidden;height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+h1{position:fixed;top:20px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6em;color:#b89060;letter-spacing:3px;z-index:10;text-shadow:0 0 20px rgba(184,144,96,0.4)}
+.input-area{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px}
+.input-area input{background:rgba(10,8,8,0.8);border:1px solid #b8906044;color:#c8b090;padding:8px 14px;font-family:Georgia,serif;width:260px;border-radius:4px}
+.input-area button{background:rgba(184,144,96,0.2);border:1px solid #b8906044;color:#b89060;padding:8px 14px;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.info{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:0.8em;color:#6a5a40;z-index:10}
+#msg{position:fixed;top:60px;left:0;right:0;text-align:center;font-size:0.9em;color:#b89060;z-index:10;opacity:0;transition:opacity 1s}
+#depth{position:fixed;top:90px;right:20px;font-size:0.8em;color:#6a5a40;z-index:10}
+nav.nav-links{position:fixed;top:8px;left:8px;z-index:20;font-size:0.75em}
+nav.nav-links a{color:#b8906088;text-decoration:none;margin-right:8px}
+nav.nav-links a:hover{color:#b89060}
+.dig-btn{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);z-index:10}
+.dig-btn button{background:rgba(184,144,96,0.2);border:1px solid #b8906044;color:#b89060;padding:10px 24px;cursor:pointer;font-family:Georgia,serif;font-size:1em;border-radius:4px}
+.dig-btn button:hover{background:rgba(184,144,96,0.35)}
+</style></head><body>
+<nav class="nav-links"><a href="explore.html">✦ World</a> <a href="journal.html">Journal</a> <a href="meditation.html">Meditation</a> <a href="gallery.html">Gallery</a> <a href="worlds.html">Worlds</a> <a href="about.html">Colophon</a> <a href="garden.html">Garden</a> <a href="whispers.html">Whispers</a> <a href="dreams.html">Dreams</a> <a href="mirror.html">Mirror</a> <a href="labyrinth.html">Labyrinth</a> <a href="letters.html">Letters</a> <a href="tidepool.html">Tidepool</a> <a href="resonance.html">Resonance</a> <a href="palimpsest.html">Palimpsest</a> <a href="forgetting.html">Forgetting</a> <a href="constellations.html">Stars</a> <a href="seance.html">Séance</a> <a href="clocktower.html">Clock</a> <a href="weaving.html">Weaving</a> <a href="threshold.html">Threshold</a> <a href="memorypalace.html">Memory</a> <a href="pendulum.html">Pendulum</a> <a href="darkroom.html">Darkroom</a> <a href="chorus.html">Chorus</a> <a href="telephone.html">Telephone</a> <a href="prism.html">Prism</a> <a href="compass.html">Compass</a> <a href="aviary.html">Aviary</a> <a href="well.html">Well</a> <a href="sundial.html">Sundial</a> <a href="apothecary.html">Apothecary</a> <a href="lighthouse.html">Lighthouse</a> <a href="atlas.html">Atlas</a> <a href="greenhouse.html">Greenhouse</a> <a href="inkwell.html">Inkwell</a> <a href="ossuary.html">Ossuary</a> <a href="lantern.html">Lantern</a> <a href="lullaby.html">Lullaby</a> <a href="observatory.html">Observatory</a> <a href="riddle.html">Riddle</a> <a href="staircase.html">Staircase</a> <a href="echochamber.html">Echo</a> <a href="weathervane.html">Weathervane</a> <a href="taproom.html">Taproom</a> <a href="reliquary.html">Reliquary</a> <a href="amphitheatre.html">Amphitheatre</a> <a href="hourglass.html">Hourglass</a> <a href="cartography.html">Cartography</a> <a href="foundry.html">Foundry</a> <a href="aquarium.html">Aquarium</a> <a href="typewriter.html">Typewriter</a> <a href="balcony.html">Balcony</a> <a href="nursery.html">Nursery</a> <a href="crypt.html">Crypt</a> <a href="telescope.html">Telescope</a> <a href="fountain.html">Fountain</a> <a href="maze.html">Maze</a> <a href="kaleidoscope.html">Kaleidoscope</a> <a href="windchime.html">Windchime</a> <a href="herbarium.html">Herbarium</a> <a href="candelabra.html">Candelabra</a> <a href="mosaic.html">Mosaic</a> <a href="musicbox.html">Music Box</a> <a href="belfry.html">Belfry</a> <a href="terrarium.html">Terrarium</a> <a href="planetarium.html">Planetarium</a> <a href="scriptorium.html">Scriptorium</a> <a href="rookery.html">Rookery</a> <a href="armillary.html">Armillary</a> <a href="grotto.html">Grotto</a> <a href="cloister.html">Cloister</a> <a href="distillery.html">Distillery</a> <a href="orrery.html">Orrery</a> <a href="belljar.html">Bell Jars</a> <a href="attic.html">Attic</a> <a href="kiln.html">Kiln</a> <a href="vault.html">Vault</a> <a href="whirlpool.html">Whirlpool</a> <a href="pergola.html">Pergola</a> <a href="cameraobscura.html">Camera Obscura</a> <a href="aqueduct.html">Aqueduct</a> <a href="dovecote.html">Dovecote</a> <a href="conservatory.html">Conservatory</a> <a href="catacomb.html">Catacomb</a> <a href="solarium.html">Solarium</a> <a href="drawbridge.html">Drawbridge</a> <a href="apiary.html">Apiary</a> <a href="carousel.html">Carousel</a> </nav>
+<h1>THE MINESHAFT</h1>
+<div id="msg"></div>
+<div id="depth">Depth: 0 meters</div>
+<canvas id="c"></canvas>
+<div class="dig-btn"><button onclick="dig()">⛏️ Dig Deeper</button></div>
+<div class="input-area">
+<input id="inp" placeholder="Leave a gem of wisdom in the earth..." maxlength="50">
+<button onclick="bury()">Bury</button>
+</div>
+<div class="info">Dig to discover buried gems • Leave your own wisdom for future miners</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');
+let W,H;function resize(){W=C.width=innerWidth;H=C.height=innerHeight}resize();window.onresize=resize;
+let depth=0,gems=[],rocks=[],sparks=[];
+const gemColors=['#e04040','#40a0e0','#40e070','#e0c040','#c040e0','#e08040','#40e0e0','#e040a0'];
+const wisdoms=['What you seek is seeking you','The cave you fear holds the treasure you need','Pressure creates diamonds','Deep roots are not reached by the frost',
+'Still waters run deep','Gold is tested by fire','Every stone tells a story','The deeper the well, the clearer the water',
+'In the depths, light becomes precious','Even darkness has its own kind of warmth','The earth remembers what we forget','Dig with patience, find with wonder'];
+// Pre-generate rock layers
+for(let d=0;d<500;d+=10){
+for(let i=0;i<3+Math.floor(Math.random()*4);i++){
+rocks.push({x:Math.random()*W,depth:d,size:10+Math.random()*30,color:`rgba(${60+Math.random()*40},${45+Math.random()*30},${30+Math.random()*20},0.4)`})}}
+// Hidden gems at various depths
+for(let i=0;i<wisdoms.length;i++){
+gems.push({text:wisdoms[i],depth:20+i*35,x:0.1+Math.random()*0.8,found:false,color:gemColors[i%gemColors.length],size:6+Math.random()*4})}
+let saved=JSON.parse(localStorage.getItem('mineshaft_gems')||'[]');
+saved.forEach(s=>gems.push({text:s.text,depth:s.depth||Math.random()*400,x:s.x||Math.random()*0.8+0.1,found:false,color:gemColors[Math.floor(Math.random()*gemColors.length)],size:5,buried:true}));
+function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,4000)}
+function updateDepth(){document.getElementById('depth').textContent=`Depth: ${Math.floor(depth)} meters`}
+function dig(){
+depth+=5+Math.random()*10;updateDepth();
+for(let i=0;i<8;i++)sparks.push({x:W/2+(Math.random()-0.5)*60,y:H*0.5,vx:(Math.random()-0.5)*4,vy:-2-Math.random()*3,life:30+Math.random()*20,maxLife:50});
+// Check for gems
+const found=gems.filter(g=>!g.found&&Math.abs(g.depth-depth)<10);
+if(found.length>0){found[0].found=true;showMsg(`💎 You unearthed: "${found[0].text}"`)}
+else{const msgs=['The pickaxe strikes stone...','Deeper into the earth...','Rock crumbles away...','You hear a faint echo from below...'];
+showMsg(msgs[Math.floor(Math.random()*msgs.length)])}
+}
+function bury(){
+const inp=document.getElementById('inp'),t=inp.value.trim();if(!t)return;
+gems.push({text:t,depth:depth+Math.random()*20,x:Math.random()*0.8+0.1,found:false,color:gemColors[Math.floor(Math.random()*gemColors.length)],size:5,buried:true});
+saved.push({text:t,depth:depth,x:Math.random()*0.8+0.1,time:Date.now()});
+localStorage.setItem('mineshaft_gems',JSON.stringify(saved.slice(-50)));
+inp.value='';showMsg('Your wisdom is buried in the earth, waiting to be discovered...');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('inp'))bury()});
+let typed='';
+document.addEventListener('keydown',e=>{if(document.activeElement.tagName==='INPUT')return;typed+=e.key.toLowerCase();typed=typed.slice(-10);
+if(typed.includes('blast')){depth+=50;updateDepth();showMsg('💥 Dynamite! You blast through 50 meters of rock!');for(let i=0;i<40;i++)sparks.push({x:W/2+(Math.random()-0.5)*200,y:H*0.5,vx:(Math.random()-0.5)*8,vy:(Math.random()-0.5)*8,life:50,maxLife:50})}
+if(typed.includes('core')){depth=999;updateDepth();showMsg('You have reached the molten core. Here, thoughts glow white-hot.')}
+if(typed.includes('surface')){depth=0;updateDepth();showMsg('You return to the surface. Daylight blinds you momentarily.')}
+});
+function draw(){
+X.fillStyle='rgba(10,8,8,0.1)';X.fillRect(0,0,W,H);
+const t=Date.now()*0.001;
+// Earth layers based on depth
+const baseHue=20+depth*0.1;
+for(let y=0;y<H;y+=40){
+const layerDepth=depth+(y/H)*100;
+const r=40+Math.sin(layerDepth*0.05)*15,g=30+Math.sin(layerDepth*0.03)*10,b=20+Math.sin(layerDepth*0.07)*8;
+X.fillStyle=`rgba(${r},${g},${b},0.05)`;X.fillRect(0,y,W,40);
+}
+// Shaft walls
+X.fillStyle='rgba(30,25,18,0.3)';X.fillRect(0,0,W*0.15,H);X.fillRect(W*0.85,0,W*0.15,H);
+// Support beams
+for(let i=0;i<5;i++){
+const by=i*H/5+((depth*2)%H/5);
+X.fillStyle='rgba(90,60,30,0.3)';X.fillRect(W*0.12,by,W*0.76,6);
+X.fillRect(W*0.15,by-30,6,30);X.fillRect(W*0.83,by-30,6,30);
+}
+// Rocks at current depth
+rocks.filter(r=>Math.abs(r.depth-depth)<60).forEach(r=>{
+const screenY=H*0.3+(r.depth-depth)/60*H*0.4;
+X.fillStyle=r.color;X.beginPath();
+X.ellipse(r.x,screenY,r.size,r.size*0.7,0,0,Math.PI*2);X.fill();
+});
+// Gems near current depth
+gems.filter(g=>Math.abs(g.depth-depth)<40).forEach(g=>{
+const screenY=H*0.3+(g.depth-depth)/40*H*0.3;
+const gx=g.x*W;
+if(!g.found){
+// Glint
+X.fillStyle=`${g.color}${Math.floor((0.2+Math.sin(t*3+g.depth)*0.15)*255).toString(16).padStart(2,'0')}`;
+X.beginPath();X.arc(gx,screenY,g.size,0,Math.PI*2);X.fill();
+}else{
+X.fillStyle=g.color;X.beginPath();
+for(let i=0;i<6;i++){const a=i*Math.PI/3;X.lineTo(gx+Math.cos(a)*g.size*1.5,screenY+Math.sin(a)*g.size*1.5)}
+X.closePath();X.fill();X.font='9px Georgia';X.fillStyle='rgba(200,180,140,0.6)';X.textAlign='center';
+X.fillText(g.text.slice(0,20),gx,screenY+g.size*2+10);
+}});
+// Sparks
+sparks=sparks.filter(s=>{s.life--;s.x+=s.vx;s.y+=s.vy;s.vy+=0.1;
+X.fillStyle=`rgba(232,180,80,${s.life/s.maxLife*0.7})`;X.beginPath();X.arc(s.x,s.y,2,0,Math.PI*2);X.fill();
+return s.life>0});
+// Lantern glow at center
+const lg=X.createRadialGradient(W/2,H*0.3,0,W/2,H*0.3,200);
+lg.addColorStop(0,'rgba(200,150,60,0.08)');lg.addColorStop(1,'rgba(200,150,60,0)');
+X.fillStyle=lg;X.fillRect(0,0,W,H);
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>
