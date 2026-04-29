@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Fugue — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh;overflow-x:hidden}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.voices{display:flex;flex-direction:column;gap:0.5rem;width:100%;max-width:600px;margin:1rem 0}
+.voice{height:40px;border-radius:4px;position:relative;overflow:hidden;cursor:pointer;border:1px solid #1a1a3e}
+.voice-bar{height:100%;position:absolute;left:0;top:0;transition:width 0.1s linear}
+.voice-label{position:absolute;left:1rem;top:50%;transform:translateY(-50%);z-index:1;font-size:0.85rem;color:#e0dcd0}
+#status{color:#c9a96e;text-align:center;margin:1rem 0;font-style:italic}
+button{background:#1a1a3e;color:#c9a96e;border:1px solid #2d1b69;padding:0.5rem 1.5rem;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:0.5rem}
+button:hover{background:#2d1b69}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>♫ The Fugue</h1>
+<p class="subtitle">Where voices chase each other through corridors of counterpoint</p>
+<p class="description">A fugue is a conversation between voices that enter one by one, each carrying the same subject but at different pitches and times. In this chamber, watch four voices weave together — subject, answer, counter-subject, stretto — in an endless musical architecture.</p>
+<div class="voices" id="voices"></div>
+<p id="status">Click Play to begin the fugue...</p>
+<div><button onclick="startFugue()">▶ Play</button><button onclick="stopFugue()">■ Stop</button></div>
+<p class="secret">Bach wrote The Art of Fugue while going blind — the final fugue breaks off mid-phrase</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const names=['Soprano','Alto','Tenor','Bass'],colors=['#8b5a5a','#5a7a5a','#5a5a8b','#7a6a5a'];
+const vDiv=document.getElementById('voices');
+names.forEach((n,i)=>{const d=document.createElement('div');d.className='voice';d.innerHTML=`<div class="voice-bar" id="bar${i}" style="background:${colors[i]};width:0%"></div><span class="voice-label">${n}</span>`;vDiv.appendChild(d)});
+let running=false,t=0,aCtx;
+const pattern=[1,0,1,1,0,1,1,1,0,0,1,0,1,1,0,1];
+function startFugue(){if(running)return;running=true;
+try{aCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}
+animate()}
+function stopFugue(){running=false;document.getElementById('status').textContent='Fugue paused. Voices suspended in silence.'}
+function animate(){if(!running)return;t++;
+const msgs=['Subject announced...','Answer enters...','Counter-subject weaves...','Stretto — voices overlap...','Development...','Episode — free counterpoint...','Subject returns in new key...','Final statement...'];
+document.getElementById('status').textContent=msgs[Math.floor(t/120)%msgs.length];
+names.forEach((n,i)=>{const offset=i*60;const phase=(t+offset)%240;const idx=Math.floor(((t+offset*2)%960)/60)%16;
+const w=pattern[idx]?50+Math.sin((t+offset)*0.05)*30:10+Math.sin(t*0.02)*5;
+document.getElementById('bar'+i).style.width=w+'%'});
+requestAnimationFrame(animate)}
+</script></body></html>

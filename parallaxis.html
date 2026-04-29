@@ -1,0 +1,34 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Parallaxis — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh;overflow-x:hidden}
+.chamber{max-width:900px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.scene{width:100%;height:400px;position:relative;overflow:hidden;border:1px solid #1a1a3e;border-radius:4px}
+.layer{position:absolute;width:200%;height:100%;top:0}
+.star{position:absolute;border-radius:50%}
+#info{color:#c9a96e;text-align:center;margin:1rem 0;font-style:italic}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>⋈ The Parallaxis</h1>
+<p class="subtitle">The apparent shift of position caused by a change in point of view</p>
+<p class="description">Move your cursor across this chamber and watch the layers shift at different speeds. Close things move fast; distant things barely move at all. This is parallax — the universe's way of encoding depth through motion.</p>
+<div class="scene" id="scene"></div>
+<p id="info">Move your cursor to shift perspective...</p>
+<p class="secret">The nearest star shows a parallax of 0.77 arcseconds — a shift smaller than a human hair at arm's length</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const scene=document.getElementById('scene');const layers=[];
+const depths=[0.02,0.05,0.1,0.2,0.5];const layerColors=['#1a1a2e','#2a1a3e','#3a2a4e','#4a3a5e','#c9a96e'];
+depths.forEach((d,li)=>{const l=document.createElement('div');l.className='layer';l.style.left='0px';l.dataset.depth=d;
+const count=li===4?5:10+li*5;
+for(let i=0;i<count;i++){const s=document.createElement('div');s.className='star';
+const size=li===4?(8+Math.random()*6):(1+Math.random()*(li+1));
+s.style.cssText=`width:${size}px;height:${size}px;background:${layerColors[li]};left:${Math.random()*180}%;top:${Math.random()*100}%;opacity:${0.3+li*0.15}`;
+l.appendChild(s)}scene.appendChild(l);layers.push(l)});
+scene.addEventListener('mousemove',e=>{const r=scene.getBoundingClientRect();const pct=(e.clientX-r.left)/r.width-0.5;
+layers.forEach(l=>{const d=parseFloat(l.dataset.depth);l.style.transform=`translateX(${pct*d*-800}px)`});
+document.getElementById('info').textContent=`Parallax shift: ${(pct*100).toFixed(1)}% — ${Math.abs(pct)<0.1?'near-center, layers aligned':'layers diverge, depth revealed'}`});
+</script></body></html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Analemma — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garabmond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;text-align:center;margin-bottom:1rem;letter-spacing:0.1em}
+.subtitle{text-align:center;color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem}
+canvas{display:block;margin:1rem auto;border-radius:50%;border:1px solid #2d1b69}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>☽ The Analemma</h1>
+<p class="subtitle">Where the sun's path traces a figure-eight across the sky of memory</p>
+<p class="description">Each year the sun returns to almost-but-not-quite the same position. This chamber maps the drift — the slow wobble of every recurring thought, each annual revisitation shifted slightly from the last. Stand here and watch your patterns describe their own figure-eight.</p>
+<canvas id="c" width="400" height="400"></canvas>
+<p class="description" id="msg">Watch the analemma form...</p>
+<p class="secret">Easter egg: the tilt is 23.4° — Earth's own axial memory</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">�encyclopaedia</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');
+let t=0,points=[];
+function draw(){ctx.fillStyle='rgba(10,10,15,0.03)';ctx.fillRect(0,0,400,400);
+ctx.strokeStyle='#1a1a3e';ctx.beginPath();ctx.moveTo(200,20);ctx.lineTo(200,380);ctx.stroke();
+ctx.beginPath();ctx.moveTo(100,200);ctx.lineTo(300,200);ctx.stroke();
+const angle=t*0.02,x=200+Math.sin(angle)*80,y=200+Math.sin(angle*2)*150;
+points.push({x,y,age:0});
+if(points.length>500)points.shift();
+points.forEach((p,i)=>{p.age++;const a=1-p.age/500;
+ctx.fillStyle=`rgba(201,169,110,${a*0.8})`;ctx.beginPath();ctx.arc(p.x,p.y,2,0,Math.PI*2);ctx.fill()});
+ctx.fillStyle='#c9a96e';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();
+ctx.shadowBlur=15;ctx.shadowColor='#c9a96e';ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+t++;requestAnimationFrame(draw)}
+draw();
+</script></body></html>

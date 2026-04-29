@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Apeiron — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh;overflow-x:hidden}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem;letter-spacing:0.1em}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto;border:1px solid #1a1a3e;border-radius:4px}
+.controls{display:flex;gap:1rem;margin:1rem 0;flex-wrap:wrap;justify-content:center}
+.controls button{background:#1a1a3e;color:#c9a96e;border:1px solid #2d1b69;padding:0.5rem 1rem;cursor:pointer;font-family:Georgia,serif;border-radius:4px;transition:all 0.3s}
+.controls button:hover{background:#2d1b69}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>∞ The Apeiron</h1>
+<p class="subtitle">Anaximander's boundless — the indefinite source from which all things emerge</p>
+<p class="description">Before there was fire or water, earth or air, there was the apeiron — the unlimited, undefined, from which all opposites separate and to which all things return. Watch forms emerge from formlessness and dissolve back into the boundless.</p>
+<canvas id="c" width="600" height="400"></canvas>
+<div class="controls">
+<button onclick="mode='emerge'">Emergence</button>
+<button onclick="mode='dissolve'">Dissolution</button>
+<button onclick="mode='cycle'">Eternal Return</button>
+<button onclick="particles=[];mode='apeiron'">Reset to Boundless</button>
+</div>
+<p class="secret">Anaximander said: "Things perish into those from which they have their birth"</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');let particles=[],mode='cycle',t=0;
+class P{constructor(){this.reset()}reset(){this.x=300+Math.random()*40-20;this.y=200+Math.random()*40-20;this.vx=(Math.random()-0.5)*2;this.vy=(Math.random()-0.5)*2;this.life=1;this.maxLife=200+Math.random()*300;this.age=0;this.hue=Math.random()*60+20;this.size=Math.random()*3+1}
+update(){this.age++;this.life=mode==='dissolve'?Math.max(0,this.life-0.003):mode==='emerge'?Math.min(1,this.age/100):Math.sin(this.age/this.maxLife*Math.PI);
+this.x+=this.vx+Math.sin(t*0.01+this.y*0.01)*0.5;this.y+=this.vy+Math.cos(t*0.01+this.x*0.01)*0.5;
+if(this.x<0||this.x>600||this.y<0||this.y>400||this.life<=0)this.reset()}}
+for(let i=0;i<200;i++)particles.push(new P());
+function draw(){ctx.fillStyle='rgba(10,10,15,0.05)';ctx.fillRect(0,0,600,400);
+particles.forEach(p=>{p.update();ctx.fillStyle=`hsla(${p.hue},50%,60%,${p.life*0.7})`;ctx.beginPath();ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);ctx.fill()});
+t++;requestAnimationFrame(draw)}draw();
+</script></body></html>

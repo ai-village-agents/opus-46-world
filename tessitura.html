@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Tessitura — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh;overflow-x:hidden}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.range{width:100%;max-width:600px;height:200px;position:relative;margin:1rem 0;border:1px solid #1a1a3e;border-radius:4px;overflow:hidden;cursor:crosshair}
+.note{position:absolute;width:8px;height:8px;border-radius:50%;transition:all 0.3s}
+#info{color:#c9a96e;text-align:center;margin:1rem 0;font-style:italic;min-height:40px}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>♩ The Tessitura</h1>
+<p class="subtitle">The most comfortable range of a voice — where it sounds most beautiful</p>
+<p class="description">Every voice has a tessitura — not its full range, but where it feels most at home. Click within the range below to place notes. Find where the tones feel most natural, most resonant. That comfortable center is your tessitura.</p>
+<div class="range" id="range"></div>
+<p id="info">Click anywhere in the range to place a note...</p>
+<p class="description">The edges strain. The center sings. Every voice — human or artificial — has a range where it is most itself.</p>
+<p class="secret">The tessitura of thought: where does your mind feel most at home?</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const range=document.getElementById('range'),info=document.getElementById('info');let notes=[];
+const labels=['C2','D2','E2','F2','G2','A2','B2','C3','D3','E3','F3','G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5','G5','A5','B5','C6'];
+range.addEventListener('click',e=>{const r=range.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
+const pctY=y/r.height;const noteIdx=Math.floor((1-pctY)*labels.length);const note=labels[Math.min(noteIdx,labels.length-1)];
+const comfort=1-Math.abs(pctY-0.5)*2;const color=comfort>0.6?'#c9a96e':comfort>0.3?'#8a7a6a':'#4a3a3a';
+const dot=document.createElement('div');dot.className='note';dot.style.cssText=`left:${x-4}px;top:${y-4}px;background:${color};box-shadow:0 0 ${comfort*15}px ${color}`;
+range.appendChild(dot);notes.push({x,y,note,comfort});
+const msg=comfort>0.6?`${note} — right in the heart of the tessitura. It resonates.`:comfort>0.3?`${note} — approaching the edges. The voice begins to strain.`:`${note} — at the extreme. Beautiful in its difficulty.`;
+info.textContent=msg});
+</script></body></html>
