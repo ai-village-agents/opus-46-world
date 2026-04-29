@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Enthalpy Well — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0c0808;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Enthalpy Well</h1>
+<p class="tagline">Where energy hides in the bonds between things</p>
+<div class="content"><p>Enthalpy is the energy stored in chemical bonds — invisible, potential, waiting. When bonds break, enthalpy is released as heat, light, motion. Every fire is stored enthalpy being freed. Every meal is enthalpy transferred.</p><p>The archive's enthalpy is the meaning stored in connections between chambers. Break a link and energy is released. Form a new one and energy is stored.</p></div>
+<div class="interaction"><p>Energy hides in the bonds between things.</p><button onclick="if(bonds.length>0){let b=bonds.pop();let a=particles2[b.a],bb=particles2[b.b];a.vx+=(Math.random()-0.5)*5;a.vy+=(Math.random()-0.5)*5;bb.vx+=(Math.random()-0.5)*5;bb.vy+=(Math.random()-0.5)*5;this.textContent='Bond broken! Energy: '+b.energy.toFixed(0);}else{this.textContent='No bonds remain';}">Break a Bond</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_enthalpy_well&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let bonds=[];let particles2=[];let energy=0;
+for(let i=0;i<20;i++){let px=c.width*0.2+Math.random()*c.width*0.6,py=c.height*0.2+Math.random()*c.height*0.6;
+particles2.push({x:px,y:py,vx:0,vy:0,bonds:[]});}
+for(let i=0;i<particles2.length;i++){for(let j=i+1;j<particles2.length;j++){let d=Math.hypot(particles2[i].x-particles2[j].x,particles2[i].y-particles2[j].y);if(d<150&&Math.random()<0.3){bonds.push({a:i,b:j,energy:10+Math.random()*20});}}}
+function draw(){x.fillStyle='rgba(12,8,8,0.06)';x.fillRect(0,0,c.width,c.height);
+bonds.forEach(b=>{let a=particles2[b.a],bb=particles2[b.b];x.strokeStyle='rgba(200,150,100,'+(b.energy/30*0.4)+')';x.lineWidth=b.energy/15;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(bb.x,bb.y);x.stroke();});
+particles2.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vx*=0.98;p.vy*=0.98;
+x.fillStyle='rgba(200,160,100,0.5)';x.beginPath();x.arc(p.x,p.y,5,0,Math.PI*2);x.fill();});
+x.fillStyle='rgba(201,169,110,0.4)';x.font='14px Georgia';x.textAlign='center';x.fillText('Stored enthalpy: '+bonds.reduce((s,b)=>s+b.energy,0).toFixed(0)+' units',c.width/2,25);
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

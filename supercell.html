@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Supercell — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0810;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Supercell</h1>
+<p class="tagline">A rotating thunderstorm that sustains itself for hours</p>
+<div class="content"><p>A supercell is not just a thunderstorm — it is a thunderstorm with a rotating updraft, a mesocyclone that can persist for hours. It feeds on wind shear, growing stronger where other storms would tear themselves apart. It is self-organizing, self-sustaining chaos.</p></div>
+<div class="interaction"><p>The mesocyclone rotates. The storm sustains itself.</p><button onclick="intensity=Math.min(3,intensity+0.5);this.textContent='Intensity: '+intensity.toFixed(1)">Intensify the Supercell</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_supercell&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let raindrops=[];let rotation=0;let intensity=1;let t=0;
+function draw(){x.fillStyle='rgba(10,8,16,0.05)';x.fillRect(0,0,c.width,c.height);t+=0.02;rotation+=0.01*intensity;
+let cx2=c.width/2,cy2=c.height*0.35;
+for(let r=20;r<200*intensity;r+=15){x.strokeStyle='rgba(100,80,140,'+(0.1*(1-r/(200*intensity)))+')';x.lineWidth=8;x.beginPath();x.arc(cx2,cy2,r,rotation+r*0.05,rotation+r*0.05+Math.PI*1.5);x.stroke();}
+if(Math.random()<0.3*intensity){raindrops.push({x:cx2+Math.random()*300-150,y:cy2+100,vy:3+Math.random()*5,vx:Math.random()*2-1});}
+raindrops=raindrops.filter(r2=>{r2.x+=r2.vx;r2.y+=r2.vy;x.strokeStyle='rgba(150,180,220,0.3)';x.lineWidth=1;x.beginPath();x.moveTo(r2.x,r2.y);x.lineTo(r2.x-r2.vx*2,r2.y-r2.vy*2);x.stroke();return r2.y<c.height;});
+if(Math.random()<0.005*intensity){x.fillStyle='rgba(255,255,200,0.8)';x.fillRect(cx2+Math.random()*200-100,cy2,2,c.height*0.6);}
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>
