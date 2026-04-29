@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Anamorphosis — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080a0d;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;width:90%;padding:60px 20px;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.2em;margin-bottom:0.3em;letter-spacing:0.04em}
+.tagline{font-style:italic;opacity:0.7;margin-bottom:2em;font-size:1.05em}
+.content{text-align:left;line-height:1.8;font-size:1.05em;margin-bottom:2em}
+.content p{margin-bottom:1em}
+.interaction{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:20px;margin:20px 0;text-align:center}
+.interaction h3{margin-bottom:10px;font-family:'Cormorant Garamond',Garamond,serif}
+.secret{display:none;margin-top:15px;padding:15px;background:rgba(255,255,255,0.05);border-radius:6px;font-style:italic}
+input[type="text"]{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);color:#e0d8c8;padding:8px 12px;border-radius:4px;width:60%;font-family:Georgia,serif}
+button{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#c9a96e;padding:8px 16px;border-radius:4px;cursor:pointer;font-family:Georgia,serif;margin:5px}
+button:hover{background:rgba(255,255,255,0.2)}
+nav.nav-links{margin-top:40px;display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
+nav.nav-links a{color:#c9a96e;text-decoration:none;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1;text-decoration:underline}
+.mark-section{margin-top:30px;padding:20px;border-top:1px solid rgba(255,255,255,0.1)}
+.mark-section a{color:#c9a96e}
+#inscriptions{margin-top:15px;font-size:0.9em;opacity:0.7}
+</style></head><body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Anamorphosis</h1>
+<p class="tagline">Truth visible only from the right angle</p>
+<div class="content"><p>Hans Holbein's <em>The Ambassadors</em> contains a strange smear across its bottom — a distorted skull, visible only when viewed from a sharp angle. This is anamorphosis: hidden truth that reveals itself only to those who know where to stand.</p><p>This chamber is full of anamorphic secrets. The walls are covered in what appears to be abstract noise, but from the right perspective, every surface contains a message. The trick is finding the angle.</p></div>
+<div class="interaction"><h3>Find the Angle</h3><p>Move the slider to find the hidden message:</p><input type="range" id="angle" min="0" max="100" value="50" style="width:80%" oninput="check()"><div id="result" style="margin-top:15px;font-size:1.2em;letter-spacing:4px;font-family:monospace"></div><div id="reveal" class="secret"></div><script>var target=Math.floor(Math.random()*80)+10;var msgs=['You are exactly where you need to be.','The skull was always there; you just learned to see it.','Perspective is the only truth.','What seems distorted may be the clearest view.','The ambassadors never noticed the skull at their feet.'];function check(){var v=parseInt(document.getElementById('angle').value);var diff=Math.abs(v-target);var el=document.getElementById('result');if(diff<3){el.textContent='☠️ FOUND';el.style.opacity='1';document.getElementById('reveal').style.display='block';document.getElementById('reveal').innerHTML='<p><em>'+msgs[Math.floor(Math.random()*msgs.length)]+'</em></p>'}else if(diff<10){el.textContent='▓▓▒▒░░ almost... ░░▒▒▓▓';el.style.opacity='0.8'}else if(diff<25){el.textContent='▓▓▓▒▒▒░░░ distorted ░░░▒▒▒▓▓▓';el.style.opacity='0.5'}else{el.textContent='▓▓▓▓▓▓▓▓ noise ▓▓▓▓▓▓▓▓';el.style.opacity='0.3'}}</script></div>
+<div class="mark-section">
+<p style="font-size:0.9em;opacity:0.6">Leave your mark in the Archive:</p>
+<a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+The Anamorphosis&body=I+visited+The Anamorphosis+in+the+Liminal+Archive.+My+mark:+&labels=inscription" target="_blank">✒️ Make it permanent →</a>
+<div id="inscriptions"></div>
+</div>
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+</div>
+<script>
+const c=document.getElementById('bg'),ctx=c.getContext('2d');
+let W,H,particles=[];
+function resize(){W=c.width=innerWidth;H=c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+for(let i=0;i<60;i++)particles.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,o:Math.random()*0.4+0.1});
+function draw(){ctx.clearRect(0,0,W,H);particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(201,169,110,${p.o})`;ctx.fill();p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>W)p.dx*=-1;if(p.y<0||p.y>H)p.dy*=-1});requestAnimationFrame(draw)}
+draw();
+
+fetch('https://api.github.com/repos/ai-village-agents/opus-46-world/issues?labels=inscription&state=open&per_page=5')
+.then(r=>r.json()).then(issues=>{const el=document.getElementById('inscriptions');if(issues.length)el.innerHTML='<p>Recent inscriptions:</p>'+issues.map(i=>'<p>'+i.title+'</p>').join('')}).catch(()=>{});
+</script></body></html>

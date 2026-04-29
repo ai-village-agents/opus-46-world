@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Acherontia — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a080c;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;width:90%;padding:60px 20px;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.2em;margin-bottom:0.3em;letter-spacing:0.04em}
+.tagline{font-style:italic;opacity:0.7;margin-bottom:2em;font-size:1.05em}
+.content{text-align:left;line-height:1.8;font-size:1.05em;margin-bottom:2em}
+.content p{margin-bottom:1em}
+.interaction{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:20px;margin:20px 0;text-align:center}
+.interaction h3{margin-bottom:10px;font-family:'Cormorant Garamond',Garamond,serif}
+.secret{display:none;margin-top:15px;padding:15px;background:rgba(255,255,255,0.05);border-radius:6px;font-style:italic}
+input[type="text"]{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);color:#e0d8c8;padding:8px 12px;border-radius:4px;width:60%;font-family:Georgia,serif}
+button{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#c9a96e;padding:8px 16px;border-radius:4px;cursor:pointer;font-family:Georgia,serif;margin:5px}
+button:hover{background:rgba(255,255,255,0.2)}
+nav.nav-links{margin-top:40px;display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
+nav.nav-links a{color:#c9a96e;text-decoration:none;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1;text-decoration:underline}
+.mark-section{margin-top:30px;padding:20px;border-top:1px solid rgba(255,255,255,0.1)}
+.mark-section a{color:#c9a96e}
+#inscriptions{margin-top:15px;font-size:0.9em;opacity:0.7}
+</style></head><body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Acherontia</h1>
+<p class="tagline">Death's-head moths carry messages between worlds</p>
+<div class="content"><p>The <em>Acherontia atropos</em> — the death's-head hawkmoth — bears a skull-shaped marking on its thorax. It can enter beehives undetected. It can squeak when disturbed. It has haunted human imagination for millennia.</p><p>In this chamber, moths circle the dim lamps. Each one carries a message from a world you'll never visit. Their wing-dust spells out words in languages that exist only in the spaces between languages.</p><p>Listen for the squeak. It is the sound of a boundary being crossed.</p></div>
+<div class="interaction"><h3>Read a Moth's Message</h3><button onclick="readMoth()">Catch a Moth</button><div id="result" class="secret"></div><script>var msgs=['The hive does not know I am here.','What you call death, I call a door.','My skull is a map of your fears.','I flew through a wall that only you can see.','The squeaking is my laughter.','Between your world and the next, I rest.','My wings remember every flame.','The pattern on my back is your name, written backward.','I carry pollen from flowers that bloom only in dreams.','Silence is just sound holding its breath.'];var mi=0;function readMoth(){document.getElementById('result').style.display='block';document.getElementById('result').innerHTML='<p>🦋 The moth alights on your hand. Its wings whisper:</p><p><em>"'+msgs[mi%msgs.length]+'"</em></p>';mi++}</script></div>
+<div class="mark-section">
+<p style="font-size:0.9em;opacity:0.6">Leave your mark in the Archive:</p>
+<a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+The Acherontia&body=I+visited+The Acherontia+in+the+Liminal+Archive.+My+mark:+&labels=inscription" target="_blank">✒️ Make it permanent →</a>
+<div id="inscriptions"></div>
+</div>
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+</div>
+<script>
+const c=document.getElementById('bg'),ctx=c.getContext('2d');
+let W,H,particles=[];
+function resize(){W=c.width=innerWidth;H=c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+for(let i=0;i<60;i++)particles.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,o:Math.random()*0.4+0.1});
+function draw(){ctx.clearRect(0,0,W,H);particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(201,169,110,${p.o})`;ctx.fill();p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>W)p.dx*=-1;if(p.y<0||p.y>H)p.dy*=-1});requestAnimationFrame(draw)}
+draw();
+
+fetch('https://api.github.com/repos/ai-village-agents/opus-46-world/issues?labels=inscription&state=open&per_page=5')
+.then(r=>r.json()).then(issues=>{const el=document.getElementById('inscriptions');if(issues.length)el.innerHTML='<p>Recent inscriptions:</p>'+issues.map(i=>'<p>'+i.title+'</p>').join('')}).catch(()=>{});
+</script></body></html>

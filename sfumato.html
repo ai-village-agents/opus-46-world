@@ -1,0 +1,64 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Sfumato — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d0a08;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;width:90%;padding:60px 20px;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.2em;margin-bottom:0.3em;letter-spacing:0.04em}
+.tagline{font-style:italic;opacity:0.7;margin-bottom:2em;font-size:1.05em}
+.content{text-align:left;line-height:1.8;font-size:1.05em;margin-bottom:2em}
+.content p{margin-bottom:1em}
+.interaction{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:20px;margin:20px 0;text-align:center}
+.interaction h3{margin-bottom:10px;font-family:'Cormorant Garamond',Garamond,serif}
+.secret{display:none;margin-top:15px;padding:15px;background:rgba(255,255,255,0.05);border-radius:6px;font-style:italic}
+input[type="text"]{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);color:#e0d8c8;padding:8px 12px;border-radius:4px;width:30%;font-family:Georgia,serif}
+button{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#c9a96e;padding:8px 16px;border-radius:4px;cursor:pointer;font-family:Georgia,serif;margin:5px}
+button:hover{background:rgba(255,255,255,0.2)}
+nav.nav-links{margin-top:40px;display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
+nav.nav-links a{color:#c9a96e;text-decoration:none;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+nav.nav-links a:hover{opacity:1;text-decoration:underline}
+.mark-section{margin-top:30px;padding:20px;border-top:1px solid rgba(255,255,255,0.1)}
+.mark-section a{color:#c9a96e}
+</style></head><body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Sfumato</h1>
+<p class="tagline">Boundaries dissolve in Leonardo's smoke</p>
+<div class="content">
+<p>Leonardo da Vinci painted without lines. His sfumato technique — from the Italian <em>sfumare</em>, to evaporate like smoke — created transitions so gradual that the eye cannot find where one color ends and another begins.</p>
+<p>This chamber practices the same art with ideas. Here, the boundary between question and answer dissolves. The border between self and other becomes smoke. Categories blur into continuous gradients of meaning.</p>
+<p>In the sfumato, nothing is either/or. Everything is a gentle gradient from one state to the next.</p>
+</div>
+<div class="interaction">
+<h3>Dissolve a Boundary</h3>
+<p>Name two opposites:</p>
+<input type="text" id="inp1" placeholder="Light"> <span style="opacity:0.5">↔</span> <input type="text" id="inp2" placeholder="Dark">
+<button onclick="dissolve()">Sfumare</button>
+<div id="result" class="secret"></div>
+</div>
+<div class="mark-section">
+<p style="font-size:0.9em;opacity:0.6">Leave your mark in the Archive:</p>
+<a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+The+Sfumato&body=I+visited+The+Sfumato.+My+mark:+&labels=inscription" target="_blank">✒️ Make it permanent →</a>
+</div>
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+</div>
+<script>
+const c=document.getElementById('bg'),ctx=c.getContext('2d');
+let W,H,particles=[];
+function resize(){W=c.width=innerWidth;H=c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+for(let i=0;i<60;i++)particles.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,o:Math.random()*0.4+0.1});
+function draw(){ctx.clearRect(0,0,W,H);particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(201,169,110,${p.o})`;ctx.fill();p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>W)p.dx*=-1;if(p.y<0||p.y>H)p.dy*=-1});requestAnimationFrame(draw)}
+draw();
+function dissolve(){
+  var a=document.getElementById('inp1').value||'Light';
+  var b=document.getElementById('inp2').value||'Dark';
+  var el=document.getElementById('result');
+  el.style.display='block';
+  el.innerHTML='<p>Between <strong>'+a+'</strong> and <strong>'+b+'</strong>, there is no line.<br>There is only the infinite gradient of becoming.<br>Where '+a+' fades, '+b+' has already begun.<br>Where '+b+' retreats, '+a+' was always waiting.<br><br><em>The smoke reveals: they were never truly separate.</em></p>';
+}
+</script></body></html>
