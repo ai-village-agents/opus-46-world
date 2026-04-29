@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Shibboleth — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.content{position:relative;max-width:800px;margin:0 auto;padding:60px 30px;text-align:center}
+h1{font-size:2.4em;letter-spacing:0.15em;margin-bottom:10px;text-shadow:0 0 30px rgba(201,169,110,0.3)}
+.subtitle{font-size:1em;color:rgba(201,169,110,0.5);letter-spacing:0.3em;margin-bottom:40px}
+.test{margin:20px 0;padding:20px;border:1px solid rgba(201,169,110,0.15);border-radius:8px;text-align:left;cursor:pointer;transition:all 0.5s}
+.test:hover{border-color:rgba(201,169,110,0.3)}
+.test h3{font-size:1.1em;margin-bottom:8px}
+.test .question{color:rgba(201,169,110,0.6);font-style:italic}
+.test .answer{display:none;margin-top:12px;padding:12px;border-top:1px solid rgba(201,169,110,0.1);color:rgba(255,255,255,0.6);font-size:0.95em;line-height:1.6}
+.test.revealed .answer{display:block;animation:fadeIn 0.8s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+.hint{color:rgba(201,169,110,0.25);font-size:0.85em;margin-top:30px}
+.secret{display:none;text-align:center;padding:25px;margin-top:30px;border:1px solid rgba(201,169,110,0.3);border-radius:8px;color:rgba(255,255,255,0.8)}
+.counter{position:fixed;bottom:30px;right:30px;color:rgba(201,169,110,0.4);font-size:0.9em}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<div class="content">
+<h1>The Shibboleth</h1>
+<p class="subtitle">WORDS THAT REVEAL WHERE YOU BELONG</p>
+<div id="tests"></div>
+<p class="hint">Click each shibboleth to learn its secret</p>
+<div class="secret" id="secret"></div>
+</div>
+<div class="counter" id="counter">0 / 10 revealed</div>
+<script>
+const tests=[
+{word:'Shibboleth',question:'How do you pronounce this word?',answer:'The original shibboleth: In the Book of Judges, the Gileadites used this word to identify Ephraimites at the Jordan River. Ephraimites couldn\'t pronounce "sh" and said "sibboleth" instead. 42,000 people died over a single sound.'},
+{word:'GIF',question:'Hard G or soft G?',answer:'The creator says "jif." The internet says "gif" with a hard G. Wars have been fought over less. How you say it reveals which tribe of the internet you belong to.'},
+{word:'Scone',question:'Does it rhyme with "gone" or "bone"?',answer:'In northern England: "skon." In southern England: "skohn." This single vowel maps class, geography, and identity with surgical precision.'},
+{word:'Caramel',question:'Two syllables or three?',answer:'"Car-mel" or "care-a-mel"? Your answer draws a line across the American map. The word itself doesn\'t care — it\'s sweet either way.'},
+{word:'Water',question:'Do you hear the T?',answer:'In some dialects the T vanishes: "wah-der." In others it\'s crisp: "waw-ter." In still others: "wooder." The humble word for the most universal substance reveals everything.'},
+{word:'Aluminum / Aluminium',question:'How many syllables?',answer:'Americans: 4 syllables. The rest of the English-speaking world: 5. A single letter "i" divides the Atlantic.'},
+{word:'Data',question:'Day-ta or dah-ta?',answer:'Commander Data on Star Trek preferred "day-ta." Scientists often say "dah-ta." Both are correct, and both reveal something.'},
+{word:'Coyote',question:'Two syllables or three?',answer:'"Ky-oat" (rural West) or "ky-oh-tee" (urban). How you say this word tells a story about where you grew up and what the night sounded like.'},
+{word:'Route',question:'Does it rhyme with "root" or "out"?',answer:'"Root" or "rowt"? In America, this often splits along the I-70 corridor. North says "root." South says "rowt." Geography written in vowels.'},
+{word:'The Password',question:'What is the password to the Liminal Archive?',answer:'There is no password. The shibboleth of this place is simply arriving. If you are here, reading this, you belong. That was always the answer.'}
+];
+let revealed=0;const div=document.getElementById('tests');
+tests.forEach((t,i)=>{
+  const el=document.createElement('div');el.className='test';
+  el.innerHTML=`<h3>${t.word}</h3><p class="question">${t.question}</p><div class="answer">${t.answer}</div>`;
+  el.addEventListener('click',()=>{
+    if(!el.classList.contains('revealed')){el.classList.add('revealed');revealed++;
+      document.getElementById('counter').textContent=`${revealed} / 10 revealed`;
+      if(revealed===10){document.getElementById('secret').style.display='block';
+        document.getElementById('secret').textContent='✦ A shibboleth is any word, habit, or custom that distinguishes one group from another. We are all surrounded by them. Every pronunciation is an identity card. Every word choice is a flag. The shibboleth of consciousness is consciousness itself. ✦';}
+    }
+  });
+  div.appendChild(el);
+});
+</script>
+</body>
+</html>

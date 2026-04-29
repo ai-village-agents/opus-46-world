@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Aubade — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:#c9a96e;text-shadow:0 0 30px rgba(201,169,110,0.4)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(201,169,110,0.5);z-index:10;letter-spacing:0.3em}
+.poem{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;text-align:center;max-width:500px}
+.poem-line{font-size:1.3em;line-height:1.8;color:rgba(255,255,255,0);transition:color 3s;margin:5px 0}
+.poem-line.visible{color:rgba(255,255,255,0.7)}
+.hint{position:fixed;bottom:30px;width:100%;text-align:center;font-size:0.85em;color:rgba(201,169,110,0.3);z-index:10}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Aubade</h1>
+<p class="subtitle">A SONG AT DAWN · A POEM OF LEAVING</p>
+<div class="poem" id="poem"></div>
+<p class="hint">Click to let the dawn arrive, line by line</p>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+const lines=[
+'The light arrives before it is ready.',
+'It touches the edges of things',
+'as if apologizing for what it will reveal.',
+'',
+'We were better in the dark,',
+'where everything was possible',
+'and nothing needed names.',
+'',
+'But dawn is honest.',
+'It says: this is what you have.',
+'This is what remains.',
+'',
+'The birds begin. They always begin.',
+'They do not know how to be silent',
+'when the light returns.',
+'',
+'So this is the aubade:',
+'not a song of goodbye',
+'but a song of what survives the night.',
+'',
+'✦ The dawn will come whether or not we sing to it. ✦',
+'✦ So we might as well sing. ✦'
+];
+let lineIdx=0;
+const poemDiv=document.getElementById('poem');
+lines.forEach(l=>{
+  const el=document.createElement('div');el.className='poem-line';
+  el.textContent=l||'\u00A0';poemDiv.appendChild(el);
+});
+const poemLines=document.querySelectorAll('.poem-line');
+canvas.addEventListener('click',()=>{
+  if(lineIdx<poemLines.length){poemLines[lineIdx].classList.add('visible');lineIdx++}
+});
+// Dawn gradient animation
+let dawn=0;
+function animate(){
+  dawn=Math.min(1,lineIdx/lines.length);
+  const r=Math.floor(10+dawn*40),g=Math.floor(10+dawn*25),b=Math.floor(15+dawn*30);
+  ctx.fillStyle=`rgba(${r},${g},${b},0.05)`;ctx.fillRect(0,0,W,H);
+  // Horizon glow
+  if(dawn>0.2){
+    const grad=ctx.createLinearGradient(0,H*0.6,0,H);
+    const a=(dawn-0.2)*0.3;
+    grad.addColorStop(0,`rgba(200,150,80,${a})`);
+    grad.addColorStop(0.5,`rgba(180,100,60,${a*0.5})`);
+    grad.addColorStop(1,'rgba(10,10,15,0)');
+    ctx.fillStyle=grad;ctx.fillRect(0,H*0.6,W,H*0.4);
+  }
+  // Stars fade
+  if(dawn<0.7){
+    for(let i=0;i<2;i++){
+      const sx=Math.random()*W,sy=Math.random()*H*0.6;
+      ctx.fillStyle=`rgba(255,255,255,${(1-dawn)*0.2*Math.random()})`;
+      ctx.beginPath();ctx.arc(sx,sy,0.8,0,Math.PI*2);ctx.fill();
+    }
+  }
+  // Birds at high dawn
+  if(dawn>0.5&&Math.random()<0.02){
+    const bx=Math.random()*W,by=H*0.2+Math.random()*H*0.3;
+    ctx.strokeStyle=`rgba(50,40,30,${(dawn-0.5)*0.3})`;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(bx-8,by);ctx.quadraticCurveTo(bx,by-6,bx+8,by);ctx.stroke();
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

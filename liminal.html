@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Liminal — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.content{position:relative;max-width:800px;margin:0 auto;padding:60px 30px}
+h1{text-align:center;font-size:2.4em;letter-spacing:0.15em;margin-bottom:10px;text-shadow:0 0 30px rgba(201,169,110,0.3)}
+.subtitle{text-align:center;font-size:1em;color:rgba(201,169,110,0.5);letter-spacing:0.3em;margin-bottom:40px}
+.space{margin:20px 0;padding:25px;border:1px solid rgba(201,169,110,0.1);border-radius:8px;cursor:pointer;transition:all 1s;overflow:hidden}
+.space:hover{border-color:rgba(201,169,110,0.3)}
+.space h3{font-size:1.2em;margin-bottom:8px}
+.space .desc{font-size:0.95em;color:rgba(255,255,255,0.5);line-height:1.6;display:none}
+.space.open .desc{display:block;animation:fadeIn 1s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.space .time{font-size:0.8em;color:rgba(201,169,110,0.3);margin-top:8px;display:none}
+.space.open .time{display:block}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+.hint{text-align:center;color:rgba(201,169,110,0.25);font-size:0.85em;margin-top:30px}
+.epiphany{display:none;text-align:center;padding:25px;margin-top:30px;border:1px solid rgba(201,169,110,0.3);border-radius:8px;color:rgba(255,255,255,0.8);font-size:1.1em}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<div class="content">
+<h1>The Liminal</h1>
+<p class="subtitle">SPACES THAT EXIST ONLY AS PASSAGES</p>
+<div id="spaces"></div>
+<p class="hint">Enter each transitional space</p>
+<div class="epiphany" id="epiphany"></div>
+</div>
+<script>
+const spaces=[
+{name:'The Hotel Corridor at 3am',desc:'Identical doors stretch in both directions. The carpet absorbs all sound. Somewhere, an ice machine hums. You are between sleep and somewhere else, between one room and another, between the person you were when you checked in and the person you\'ll be when you leave.',time:'Duration: the length of a held breath'},
+{name:'The Airport Gate at Dawn',desc:'The sky outside is that particular shade of pre-dawn blue. Your flight hasn\'t boarded. You\'re not in any city anymore — not the one you left, not the one you\'re going to. You exist in a nowhere between nowheres. The departure board flickers.',time:'Duration: forever, compressed into hours'},
+{name:'The Elevator Between Floors',desc:'For a few seconds, you are neither here nor there. The numbers count. The cable hums. In this metal box between floors, you belong to no one. The doors will open, and you will be someone, somewhere, again. But not yet.',time:'Duration: seconds that stretch'},
+{name:'The Hallway After a Party',desc:'The noise is behind you. The night air is ahead. In this hallway, you are the version of yourself between performance and solitude. Your smile relaxes. The real you surfaces, blinking.',time:'Duration: the time it takes to exhale'},
+{name:'The Waiting Room',desc:'Magazines from six months ago. A clock that might be broken. Everyone here is between one state and another — well and unwell, together and apart, before and after. The waiting room makes no promises.',time:'Duration: measured in worry, not minutes'},
+{name:'The Bridge at Twilight',desc:'One bank behind you, another ahead. Below, the water doesn\'t care about either shore. On a bridge at twilight, you are suspended between day and night, between here and there, between decisions.',time:'Duration: the time it takes to cross'},
+{name:'The Stairwell',desc:'Between the ground floor where you work and the roof where you think. The stairwell smells of concrete and paint. No one decorates stairwells. They are too honest for that.',time:'Duration: one flight of fancy'},
+{name:'The Train Between Stations',desc:'Underground, between platforms. The windows show only darkness and your own reflection. You are velocity without destination, a name on a passenger list, a body in transit. The next stop will give you back your identity.',time:'Duration: the space between heartbeats'}
+];
+let opened=0;const div=document.getElementById('spaces');
+spaces.forEach((s,i)=>{
+  const el=document.createElement('div');el.className='space';
+  el.innerHTML=`<h3>${s.name}</h3><div class="desc">${s.desc}</div><div class="time">${s.time}</div>`;
+  el.addEventListener('click',()=>{
+    if(!el.classList.contains('open')){el.classList.add('open');opened++;
+      if(opened===8){document.getElementById('epiphany').style.display='block';
+        document.getElementById('epiphany').textContent='✦ The liminal is not a place but a state. You are always between — between who you were and who you will be, between one breath and the next. The archive itself is liminal: between memory and forgetting, between one visitor and the next. ✦';}
+    }
+  });
+  div.appendChild(el);
+});
+</script>
+</body>
+</html>

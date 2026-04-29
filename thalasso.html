@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Thalassophobia — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#020810;color:#4a8aaa;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:#4a8aaa;text-shadow:0 0 30px rgba(74,138,170,0.4)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(74,138,170,0.4);z-index:10;letter-spacing:0.3em}
+.depth{position:fixed;right:30px;top:50%;transform:translateY(-50%);z-index:10;color:rgba(74,138,170,0.5);font-size:0.9em;text-align:right}
+.msg{position:fixed;bottom:80px;width:100%;text-align:center;font-size:1.2em;z-index:10;color:rgba(150,200,220,0.6);opacity:0;transition:opacity 2s}
+.msg.show{opacity:1}
+.hint{position:fixed;bottom:30px;width:100%;text-align:center;font-size:0.85em;color:rgba(74,138,170,0.3);z-index:10}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(74,138,170,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#4a8aaa}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Thalassophobia</h1>
+<p class="subtitle">THE FEAR OF VAST, DEEP WATER</p>
+<div class="depth" id="depth">Surface</div>
+<div class="msg" id="msg"></div>
+<p class="hint">Scroll down to descend · Click to shine your light into the deep</p>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+let depth=0,maxDepth=11000,lightX=W/2,lightY=H/2;
+const depthZones=[
+{d:0,name:'Surface — sunlight zone',color:'#0a2a4a'},
+{d:200,name:'200m — twilight zone begins',color:'#081830'},
+{d:1000,name:'1,000m — midnight zone',color:'#050f20'},
+{d:2000,name:'2,000m — no sunlight reaches here',color:'#030a15'},
+{d:4000,name:'4,000m — the abyssal plain',color:'#020810'},
+{d:6000,name:'6,000m — hadal zone',color:'#010508'},
+{d:8000,name:'8,000m — the trenches',color:'#010305'},
+{d:10000,name:'10,000m — the deepest known',color:'#000203'},
+{d:11000,name:'11,034m — Challenger Deep',color:'#000102'}
+];
+const msgs=['The pressure here would crush a human skull','Light fades. Sound changes. The water becomes something else.','Creatures here have never seen the sun','The deep ocean is less explored than the surface of Mars','At this depth, the water is just above freezing — forever','Something large just moved at the edge of your light','The Mariana Trench is deeper than Everest is tall','In the hadal zone, even bacteria struggle','✦ Thalassophobia: the fear is not of water, but of what water hides ✦'];
+let msgIdx=0;
+const creatures=[];const bubbles=[];
+canvas.addEventListener('wheel',e=>{
+  e.preventDefault();depth=Math.max(0,Math.min(maxDepth,depth+e.deltaY*2));
+  updateDepth();
+},{passive:false});
+canvas.addEventListener('mousemove',e=>{lightX=e.clientX;lightY=e.clientY});
+canvas.addEventListener('click',()=>{
+  const m=document.getElementById('msg');m.textContent=msgs[msgIdx%msgs.length];m.classList.add('show');
+  setTimeout(()=>m.classList.remove('show'),4000);msgIdx++;
+  for(let i=0;i<5;i++)bubbles.push({x:lightX+(Math.random()-0.5)*20,y:lightY,vy:-1-Math.random()*2,r:2+Math.random()*4,life:1});
+  // Spawn deep creature
+  if(depth>2000)creatures.push({x:Math.random()*W,y:Math.random()*H,size:5+Math.random()*30,speed:(Math.random()-0.5)*2,glow:depth>6000,life:200+Math.random()*200});
+});
+function updateDepth(){
+  let zone=depthZones[0];
+  for(const z of depthZones)if(depth>=z.d)zone=z;
+  document.getElementById('depth').textContent=`${Math.floor(depth)}m\n${zone.name}`;
+  document.body.style.background=zone.color;
+}
+let time=0;
+function animate(){
+  const darkness=Math.min(0.95,depth/5000);
+  ctx.fillStyle=`rgba(2,8,16,${0.1+darkness*0.1})`;ctx.fillRect(0,0,W,H);
+  time+=0.016;
+  // Light cone
+  const lightR=Math.max(50,300-depth*0.025);
+  const grad=ctx.createRadialGradient(lightX,lightY,0,lightX,lightY,lightR);
+  grad.addColorStop(0,`rgba(100,180,220,${0.15-darkness*0.1})`);grad.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=grad;ctx.beginPath();ctx.arc(lightX,lightY,lightR,0,Math.PI*2);ctx.fill();
+  // Particles (plankton, sediment)
+  for(let i=0;i<3;i++){
+    const px=Math.random()*W,py=Math.random()*H;
+    ctx.fillStyle=`rgba(100,150,180,${Math.random()*0.05*(1-darkness)})`;
+    ctx.beginPath();ctx.arc(px,py,1,0,Math.PI*2);ctx.fill();
+  }
+  // Creatures
+  for(let i=creatures.length-1;i>=0;i--){
+    const c=creatures[i];c.x+=c.speed;c.life--;
+    if(c.life<=0||c.x<-50||c.x>W+50){creatures.splice(i,1);continue}
+    if(c.glow){
+      ctx.fillStyle=`rgba(100,200,255,${0.1+Math.sin(time*3)*0.05})`;
+      ctx.beginPath();ctx.arc(c.x,c.y,c.size*1.5,0,Math.PI*2);ctx.fill();
+    }
+    ctx.fillStyle=`rgba(80,120,140,${0.3})`;ctx.beginPath();
+    ctx.ellipse(c.x,c.y,c.size,c.size*0.4,0,0,Math.PI*2);ctx.fill();
+  }
+  // Bubbles
+  for(let i=bubbles.length-1;i>=0;i--){
+    const b=bubbles[i];b.y+=b.vy;b.life-=0.01;
+    if(b.life<=0){bubbles.splice(i,1);continue}
+    ctx.strokeStyle=`rgba(100,180,220,${b.life*0.3})`;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.stroke();
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
