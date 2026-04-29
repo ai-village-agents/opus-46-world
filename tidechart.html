@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Tide Chart — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:15px;text-align:center;max-width:600px;font-size:1.05em}
+canvas{border-radius:12px;margin:15px;cursor:crosshair}
+.mood-select{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:15px 0;max-width:600px}
+.mood{padding:8px 16px;border:1px solid #2d1b69;border-radius:20px;cursor:pointer;transition:all 0.3s;font-size:0.9em}
+.mood:hover{border-color:#c9a96e;transform:scale(1.05)}
+.mood.active{background:rgba(201,169,110,0.15);border-color:#c9a96e}
+.chart-info{text-align:center;max-width:500px;margin:10px 0}
+.chart-info p{color:#8a7a5a;font-size:0.95em;line-height:1.7}
+.stats{color:#6a5a7a;font-size:0.85em;margin:10px 0}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.nav-links{margin:30px 0;text-align:center}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;max-width:500px;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style></head><body>
+<h1>🌊 The Tide Chart</h1>
+<p class="subtitle">Chart the emotional tides of this moment. Click on the canvas to place a point. Watch the currents form.</p>
+<canvas id="c" width="600" height="400"></canvas>
+<div class="mood-select" id="moods"></div>
+<div class="chart-info"><p>Each point you place becomes part of a collective emotional map. The tides rise and fall with the feelings of everyone who visits.</p></div>
+<div class="stats" id="stats">Points placed: 0</div>
+<button onclick="clearChart()">↺ New Chart</button>
+<div class="egg" id="egg"></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a> <a href="index.html">Main Hall</a></nav>
+<script>
+const moods=[
+{name:'Calm',color:'#5a8a8a',emoji:'🌊'},
+{name:'Joy',color:'#c9a96e',emoji:'☀️'},
+{name:'Melancholy',color:'#4a5a8a',emoji:'🌧️'},
+{name:'Wonder',color:'#7ab8c4',emoji:'✨'},
+{name:'Restless',color:'#c97a4e',emoji:'🌀'},
+{name:'Tender',color:'#b88ad4',emoji:'🌸'},
+{name:'Fierce',color:'#c94040',emoji:'🔥'},
+{name:'Quiet',color:'#6a5a7a',emoji:'🌙'}
+];
+let currentMood=0,points=[];
+const saved=JSON.parse(localStorage.getItem('tidechart-points')||'[]');
+points=saved;
+const moodContainer=document.getElementById('moods');
+moods.forEach((m,i)=>{
+const div=document.createElement('div');div.className='mood'+(i===0?' active':'');
+div.style.color=m.color;div.textContent=m.emoji+' '+m.name;
+div.onclick=()=>{currentMood=i;document.querySelectorAll('.mood').forEach(d=>d.classList.remove('active'));div.classList.add('active');};
+moodContainer.appendChild(div);
+});
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+cv.onclick=function(e){
+const rect=cv.getBoundingClientRect();
+const x=(e.clientX-rect.left)*(600/rect.width);
+const y=(e.clientY-rect.top)*(400/rect.height);
+points.push({x,y,mood:currentMood,time:Date.now()});
+localStorage.setItem('tidechart-points',JSON.stringify(points.slice(-200)));
+document.getElementById('stats').textContent=`Points placed: ${points.length}`;
+if(points.length>=20){document.getElementById('egg').textContent='✦ Twenty points of feeling charted. The tide chart reveals patterns you couldn\'t see while you were in them.';document.getElementById('egg').classList.add('show');}
+};
+function clearChart(){points=[];localStorage.removeItem('tidechart-points');document.getElementById('stats').textContent='Points placed: 0';}
+function draw(){
+ctx.fillStyle='rgba(10,10,15,0.05)';ctx.fillRect(0,0,600,400);
+const t=Date.now()/1000;
+// Draw tide lines
+for(let i=0;i<5;i++){
+ctx.beginPath();ctx.strokeStyle='#1a1a3e';
+for(let x=0;x<600;x+=3){ctx.lineTo(x,80*i+80+Math.sin(x*0.01+t*0.3+i)*15);}
+ctx.stroke();
+}
+// Draw points and connections
+points.forEach((p,i)=>{
+const m=moods[p.mood];
+ctx.beginPath();ctx.fillStyle=m.color+'88';
+ctx.arc(p.x,p.y,5+Math.sin(t+i)*2,0,Math.PI*2);ctx.fill();
+// Glow
+const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,20);
+g.addColorStop(0,m.color+'33');g.addColorStop(1,'transparent');
+ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,20,0,Math.PI*2);ctx.fill();
+// Connect nearby same-mood points
+points.forEach((q,j)=>{
+if(j<=i||q.mood!==p.mood)return;
+const d=Math.hypot(q.x-p.x,q.y-p.y);
+if(d<120){ctx.beginPath();ctx.strokeStyle=m.color+Math.floor((1-d/120)*30).toString(16).padStart(2,'0');ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.stroke();}
+});
+});
+// Flowing current
+const moodCounts={};
+points.forEach(p=>{moodCounts[p.mood]=(moodCounts[p.mood]||0)+1;});
+const dominant=Object.entries(moodCounts).sort((a,b)=>b[1]-a[1])[0];
+if(dominant){
+const m=moods[dominant[0]];
+ctx.fillStyle=m.color+'11';
+ctx.beginPath();
+for(let x=0;x<600;x+=5){ctx.lineTo(x,200+Math.sin(x*0.02+t)*50*Math.sin(t*0.5));}
+ctx.lineTo(600,400);ctx.lineTo(0,400);ctx.fill();
+}
+requestAnimationFrame(draw);
+}
+document.getElementById('stats').textContent=`Points placed: ${points.length}`;
+draw();
+</script></body></html>

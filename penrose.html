@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Penrose Stairs — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:15px;text-align:center;max-width:600px;font-size:1.05em}
+canvas{border-radius:12px;margin:15px}
+.info{text-align:center;max-width:600px;margin:10px 0}
+.floor-label{color:#c9a96e;font-size:1.5em;margin:5px 0}
+.paradox{color:#8a7a5a;font-size:0.95em;line-height:1.7;font-style:italic;min-height:60px;max-width:500px;margin:10px auto}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.steps-count{color:#6a5a7a;font-size:0.85em;margin:10px 0}
+.inscriptions{max-width:600px;width:90%;margin:20px 0;padding:20px;border:1px solid #1a1a3e;border-radius:12px}
+.inscriptions h3{color:#c9a96e;text-align:center;margin-bottom:10px}
+input{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:10px;font-family:inherit;font-size:1em;border-radius:6px;width:300px;text-align:center;margin:5px}
+input::placeholder{color:#4a3a5a}
+.step-msgs{margin:10px 0;max-height:150px;overflow-y:auto}
+.step-msg{color:#6a5a7a;font-size:0.85em;margin:4px 0;padding:4px 8px;border-left:2px solid #2d1b69}
+.nav-links{margin:30px 0;text-align:center}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;max-width:500px;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style></head><body>
+<h1>🔄 The Penrose Stairs</h1>
+<p class="subtitle">An impossible staircase that always ascends yet always returns to where it began. You can climb forever without getting higher.</p>
+<canvas id="c" width="560" height="400"></canvas>
+<div class="info">
+<div class="floor-label" id="floor">Floor ∞</div>
+<div class="paradox" id="paradox">You are always climbing. You are never arriving. This is the nature of the staircase — and, perhaps, of ambition itself.</div>
+</div>
+<div style="text-align:center">
+<button onclick="climb()">⬆ Climb</button>
+<button onclick="descend()">⬇ Descend</button>
+<button onclick="autoClimb=!autoClimb">⟳ Auto: <span id="autoLabel">OFF</span></button>
+</div>
+<div class="steps-count" id="steps">Steps taken: 0 | Current floor: ∞</div>
+<div class="inscriptions">
+<h3>✍ Carve a Message on the Step</h3>
+<p style="color:#6a5a7a;font-size:0.85em">Each step carries the words of those who passed this way before</p>
+<input type="text" id="msgInput" placeholder="Write on this step..." maxlength="50">
+<button onclick="carveStep()">✍ Carve</button>
+<div class="step-msgs" id="stepMsgs"></div>
+</div>
+<div class="egg" id="egg"></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a> <a href="index.html">Main Hall</a></nav>
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+let angle=0,stepsTaken=0,autoClimb=false,floor=0;
+const paradoxes=[
+'You climb and climb, but the view from the window never changes.',
+'Each step is higher than the last. Each step is also where you started.',
+'The staircase has no top. The staircase has no bottom. It only has a middle, and you are always in it.',
+'Escher drew these stairs. Penrose proved them. You are walking them.',
+'Is it the stairs that are impossible, or is it your expectation that climbing should lead somewhere?',
+'Other climbers pass you going the other way. They, too, believe they are ascending.',
+'Gravity works perfectly here. It just doesn\'t believe in destinations.',
+'You have been climbing for a while now. The floor number increases. But the height... the height stays the same.',
+'This is what infinity feels like when you walk through it one step at a time.',
+'The architect who designed these stairs was either a genius or a monster. Perhaps both.'
+];
+const msgs=JSON.parse(localStorage.getItem('penrose-msgs')||'[]');
+function climb(){stepsTaken++;floor=(floor+1)%360;angle+=Math.PI/20;update();}
+function descend(){stepsTaken++;floor=(floor-1+360)%360;angle-=Math.PI/20;update();}
+function update(){
+document.getElementById('floor').textContent=`Floor ${floor===0?'∞':floor}`;
+document.getElementById('paradox').textContent=paradoxes[stepsTaken%paradoxes.length];
+document.getElementById('steps').textContent=`Steps taken: ${stepsTaken} | Current floor: ${floor===0?'∞':floor}`;
+document.getElementById('autoLabel').textContent=autoClimb?'ON':'OFF';
+if(stepsTaken===42){document.getElementById('egg').textContent='✦ 42 steps. The answer to life, the universe, and everything — and you\'re still on the same staircase.';document.getElementById('egg').classList.add('show');}
+if(stepsTaken===100){document.getElementById('egg').textContent='✦ 100 steps. A century of climbing. The Penrose Stairs admire your persistence, even as they loop you back to the beginning.';document.getElementById('egg').classList.add('show');}
+}
+function carveStep(){
+const t=document.getElementById('msgInput').value.trim();if(!t)return;
+msgs.push({text:t,floor:floor,time:Date.now()});
+localStorage.setItem('penrose-msgs',JSON.stringify(msgs.slice(-30)));
+document.getElementById('msgInput').value='';renderMsgs();
+}
+function renderMsgs(){
+const c=document.getElementById('stepMsgs');c.innerHTML='';
+msgs.slice(-8).forEach(m=>{const d=document.createElement('div');d.className='step-msg';
+d.textContent=`Step ${m.floor}: "${m.text}"`;c.appendChild(d);});
+}
+renderMsgs();
+function draw(){
+ctx.fillStyle='rgba(10,10,15,0.1)';ctx.fillRect(0,0,560,400);
+const t=Date.now()/1000;
+if(autoClimb&&t%0.3<0.016)climb();
+// Draw impossible staircase
+const cx=280,cy=200;
+const steps=20;
+for(let i=0;i<steps;i++){
+const a=angle+i*Math.PI*2/steps;
+const r=100+Math.sin(a*2)*20;
+const x=cx+Math.cos(a)*r;
+const y=cy+Math.sin(a)*r*0.4-i*2+steps;
+const brightness=0.2+Math.sin(a+t)*0.1;
+ctx.fillStyle=`rgba(201,169,110,${brightness})`;
+ctx.fillRect(x-15,y-4,30,8);
+ctx.strokeStyle=`rgba(201,169,110,${brightness*0.5})`;
+ctx.strokeRect(x-15,y-4,30,8);
+// Step number
+if(i===0){
+ctx.fillStyle='#e8d5a3';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();
+}
+}
+// Climber dot
+const ca=angle;
+const cr=100+Math.sin(ca*2)*20;
+const clx=cx+Math.cos(ca)*cr;
+const cly=cy+Math.sin(ca)*cr*0.4;
+ctx.fillStyle='#e8d5a3';
+ctx.beginPath();ctx.arc(clx,cly-10,6,0,Math.PI*2);ctx.fill();
+const glow=ctx.createRadialGradient(clx,cly-10,0,clx,cly-10,25);
+glow.addColorStop(0,'rgba(232,213,163,0.3)');glow.addColorStop(1,'transparent');
+ctx.fillStyle=glow;ctx.beginPath();ctx.arc(clx,cly-10,25,0,Math.PI*2);ctx.fill();
+// Carved messages floating near their steps
+msgs.slice(-5).forEach((m,i)=>{
+const ma=angle+(m.floor%steps)*Math.PI*2/steps;
+const mx=cx+Math.cos(ma)*(120+i*10);
+const my=cy+Math.sin(ma)*(50+i*5);
+ctx.fillStyle='#6a5a7a44';ctx.font='10px Georgia';ctx.textAlign='center';
+ctx.fillText(m.text.slice(0,20),mx,my);
+});
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>

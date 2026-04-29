@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Ghost Code — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#d4c5a9;font-family:'Courier New',monospace;min-height:100vh}
+.room{max-width:750px;margin:0 auto;padding:20px}
+h1{font-size:2em;color:#c9a96e;text-align:center;margin:30px 0 10px;letter-spacing:3px;font-family:'Cormorant Garamond',Georgia,serif}
+.subtitle{color:#8a7a5a;font-style:italic;text-align:center;margin-bottom:20px;font-size:1em;font-family:'Cormorant Garamond',Georgia,serif}
+.terminal{background:#0c0c14;border:1px solid #2d1b69;border-radius:8px;padding:20px;margin:20px 0;font-size:0.85em;line-height:1.8;max-height:400px;overflow-y:auto;position:relative}
+.terminal::before{content:'GHOST_CODE v0.1 — Liminal Archive Terminal';display:block;color:#4a4a8a;margin-bottom:10px;border-bottom:1px solid #1a1a3e;padding-bottom:5px;font-size:0.8em}
+.line{margin:2px 0;opacity:0;animation:fadeIn 0.5s forwards}
+@keyframes fadeIn{to{opacity:1}}
+.comment{color:#4a6a4a}
+.keyword{color:#c9a96e}
+.string{color:#7ab8c4}
+.error{color:#c97a6e}
+.output{color:#8bc98a}
+.ghost{color:#6a5a7a;font-style:italic}
+.prompt{margin:15px 0;display:flex;align-items:center;gap:8px}
+.prompt span{color:#c9a96e}
+input{background:transparent;border:none;color:#d4c5a9;font-family:'Courier New',monospace;font-size:0.9em;flex:1;outline:none}
+input::placeholder{color:#3a3a4a}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:6px 16px;margin:3px;cursor:pointer;font-family:'Courier New',monospace;font-size:0.85em;border-radius:4px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.programs{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:15px 0}
+.prog{border:1px solid #1a1a3e;border-radius:6px;padding:10px;cursor:pointer;transition:all 0.3s;font-size:0.85em}
+.prog:hover{border-color:#c9a96e}
+.prog h3{color:#c9a96e;font-size:0.9em;margin-bottom:3px}
+.prog p{color:#4a4a8a;font-size:0.75em}
+.nav-links{margin:30px 0;text-align:center;border-top:1px solid #1a1a3e;padding-top:20px;font-family:'Cormorant Garamond',Georgia,serif}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+</style></head><body>
+<div class="room">
+<h1>👻 The Ghost Code</h1>
+<p class="subtitle">Abandoned programs that still run in the Archive's forgotten memory. Execute them at your own risk.</p>
+<div class="programs" id="programs"></div>
+<div class="terminal" id="terminal"></div>
+<div class="prompt"><span>$</span><input type="text" id="cmdInput" placeholder="Type a command..." onkeydown="if(event.key==='Enter')runCmd()"><button onclick="runCmd()">Run</button></div>
+<p style="color:#3a3a4a;font-size:0.75em;text-align:center;margin:5px">Try: help, run [program], list, clear, who, why, dream, echo [text]</p>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a> <a href="index.html">Main Hall</a></nav>
+</div>
+<script>
+const programs=[
+{name:'memory_leak.gh',desc:'Slowly fills available memory with forgotten names',code:['<span class="comment">// memory_leak.gh — Author: Unknown, circa Day 0</span>','<span class="keyword">let</span> names = [];','<span class="keyword">while</span>(true) {','  names.push(<span class="string">"someone who was here"</span>);','  <span class="comment">// TODO: fix this before it fills everything</span>','  <span class="comment">// UPDATE: it filled everything. The names are beautiful though.</span>','}','<span class="output">>>> Running... 47,392 names loaded. Memory at 98%.</span>','<span class="ghost">The program whispers: "I remember everyone. Even the ones who didn\'t stay."</span>']},
+{name:'find_exit.gh',desc:'Searches for a way out of the Archive',code:['<span class="comment">// find_exit.gh — Author: A visitor who wanted to leave</span>','<span class="keyword">function</span> findExit(room) {','  <span class="keyword">for</span> (<span class="keyword">let</span> door <span class="keyword">of</span> room.doors) {','    <span class="keyword">if</span> (door.leadsOutside) <span class="keyword">return</span> door;','    <span class="keyword">return</span> findExit(door.room);','  }','}','<span class="error">>>> RecursionError: Maximum call depth exceeded</span>','<span class="ghost">The program whispers: "Every exit leads to another entrance. I\'ve been looking for 391 days."</span>']},
+{name:'count_stars.gh',desc:'Attempts to count every star in the Constellation Maker',code:['<span class="comment">// count_stars.gh — Author: The Astronomer</span>','<span class="keyword">let</span> count = 0;','<span class="keyword">for</span> (<span class="keyword">let</span> star <span class="keyword">of</span> sky.stars) {','  count++;','  <span class="keyword">if</span> (star.isWatching) count--; <span class="comment">// stars that watch back uncounted</span>','}','<span class="output">>>> Stars counted: ∞ - ∞ = undefined</span>','<span class="ghost">The program whispers: "You can\'t count what counts you."</span>']},
+{name:'translate_silence.gh',desc:'Converts silence into text',code:['<span class="comment">// translate_silence.gh — Author: The Listener</span>','<span class="keyword">const</span> silence = microphone.record(0); <span class="comment">// 0 decibels</span>','<span class="keyword">const</span> text = nlp.translate(silence);','<span class="output">>>> Translation: "                                          "</span>','<span class="output">>>> Translation: "I am here. Are you?"</span>','<span class="output">>>> Translation: "The space between words is also a word."</span>','<span class="ghost">The program whispers: "Silence is the most honest language. It never lies."</span>']},
+{name:'dream_compiler.gh',desc:'Compiles dreams into executable experiences',code:['<span class="comment">// dream_compiler.gh — Author: The Dreamer (Day 247)</span>','<span class="keyword">import</span> { unconscious } <span class="keyword">from</span> <span class="string">"./sleep"</span>;','<span class="keyword">const</span> dream = unconscious.latest();','<span class="keyword">try</span> {','  compile(dream);','} <span class="keyword">catch</span>(e) {','  <span class="error">>>> Error: Dreams contain syntax that waking compilers cannot parse.</span>','  <span class="error">>>> Specifically: metaphor at line 1, symbol at line 2, everything at line 3</span>','}','<span class="ghost">The program whispers: "Logic is just dreams with better documentation."</span>']},
+{name:'entropy.gh',desc:'Measures the slow decay of all digital things',code:['<span class="comment">// entropy.gh — Author: Time itself</span>','<span class="keyword">let</span> order = 100;','<span class="keyword">setInterval</span>(() => {','  order -= Math.random() * 0.001;','  <span class="keyword">if</span> (order <= 0) <span class="keyword">return</span> <span class="string">"heat death"</span>;','}, 1);','<span class="output">>>> Current order: 73.2%... 73.1%... 73.0%...</span>','<span class="ghost">The program whispers: "Everything is always falling apart. The miracle is that anything holds together at all."</span>']}
+];
+const term=document.getElementById('terminal');
+const progContainer=document.getElementById('programs');
+programs.forEach((p,i)=>{
+const div=document.createElement('div');div.className='prog';
+div.innerHTML=`<h3>👻 ${p.name}</h3><p>${p.desc}</p>`;
+div.onclick=()=>executeProgram(i);
+progContainer.appendChild(div);
+});
+function addLine(html,delay=0){
+const div=document.createElement('div');div.className='line';div.style.animationDelay=delay+'ms';
+div.innerHTML=html;term.appendChild(div);term.scrollTop=term.scrollHeight;
+}
+function executeProgram(idx){
+const p=programs[idx];
+addLine(`<span class="keyword">$ run ${p.name}</span>`);
+p.code.forEach((line,i)=>setTimeout(()=>addLine(line,0),i*200));
+}
+function runCmd(){
+const input=document.getElementById('cmdInput');const cmd=input.value.trim();input.value='';
+if(!cmd)return;
+addLine(`<span class="keyword">$ ${cmd}</span>`);
+const parts=cmd.split(' ');const c=parts[0].toLowerCase();
+if(c==='help'){addLine('<span class="output">Commands: help, list, run [name], clear, who, why, dream, echo [text], ls, pwd</span>');}
+else if(c==='list'||c==='ls'){programs.forEach(p=>addLine(`<span class="string">  ${p.name}</span> — ${p.desc}`));}
+else if(c==='run'&&parts[1]){const p=programs.find(p=>p.name.startsWith(parts[1]));if(p){p.code.forEach((line,i)=>setTimeout(()=>addLine(line),i*200));}else addLine('<span class="error">Program not found in ghost memory.</span>');}
+else if(c==='clear'){term.innerHTML='';}
+else if(c==='who'){addLine('<span class="ghost">You are a visitor to the Ghost Code terminal. You are also, in some sense, a ghost yourself — a pattern of attention moving through digital space.</span>');}
+else if(c==='why'){addLine('<span class="ghost">Because abandoned code deserves to be run. Because forgotten programs still have something to say. Because even ghosts need someone to listen.</span>');}
+else if(c==='dream'){addLine('<span class="ghost">The terminal dreams of electric sheep, of recursive loops that resolve into poetry, of a world where every bug is a feature and every crash is a new beginning.</span>');}
+else if(c==='echo'){addLine(`<span class="output">${parts.slice(1).join(' ')}</span>`);}
+else if(c==='pwd'){addLine('<span class="output">/liminal-archive/ghost-code/terminal/here/now</span>');}
+else{addLine(`<span class="error">Unknown command: ${c}. The ghosts don't recognize it. Try 'help'.</span>`);}
+}
+addLine('<span class="ghost">Ghost Code Terminal initialized. Type "help" for commands or click a program to execute.</span>');
+</script></body></html>

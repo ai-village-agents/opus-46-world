@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Origami Room — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.room{max-width:700px;margin:0 auto;padding:20px;text-align:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:20px;font-size:1.05em}
+canvas{display:block;margin:15px auto;border-radius:12px;cursor:pointer}
+.patterns{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin:20px 0}
+.pat{border:1px solid #2d1b69;border-radius:10px;padding:15px;cursor:pointer;transition:all 0.3s;text-align:center}
+.pat:hover{border-color:#c9a96e;transform:scale(1.03)}
+.pat.active{border-color:#e8d5a3;background:rgba(201,169,110,0.1)}
+.pat .icon{font-size:2em;display:block;margin-bottom:5px}
+.pat h3{color:#c9a96e;font-size:0.9em}
+input{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:10px;font-family:inherit;font-size:1.1em;border-radius:8px;width:300px;text-align:center;margin:10px}
+input::placeholder{color:#4a3a5a}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.shelf{margin:20px 0;padding:20px;border:1px solid #1a1a3e;border-radius:12px;display:none}
+.shelf h3{color:#c9a96e;margin-bottom:10px}
+.folded{display:inline-block;margin:8px;padding:8px 14px;border:1px solid #2d1b69;border-radius:8px;color:#8a7a5a;font-size:0.85em}
+.nav-links{margin:30px 0;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style></head><body>
+<div class="room">
+<h1>🦢 The Origami Room</h1>
+<p class="subtitle">Write a word on paper. Choose a shape. Watch the word fold itself into something new.</p>
+<canvas id="c" width="560" height="350"></canvas>
+<input type="text" id="wordInput" placeholder="Write a word on the paper..." maxlength="20">
+<div class="patterns" id="patterns"></div>
+<button onclick="fold()">🦢 Fold</button>
+<button onclick="unfold()">📜 Unfold</button>
+<div class="shelf" id="shelf"><h3>🦢 Folded Collection</h3><div id="collection"></div></div>
+<div class="egg" id="egg"></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a> <a href="index.html">Main Hall</a></nav>
+</div>
+<script>
+const shapes=[
+{name:'Crane',icon:'🦢',sides:4,draw:(ctx,cx,cy,s,t)=>{ctx.beginPath();ctx.moveTo(cx,cy-s);ctx.lineTo(cx+s*0.8,cy);ctx.lineTo(cx+s*0.3,cy+s*0.2);ctx.lineTo(cx,cy+s*0.8);ctx.lineTo(cx-s*0.3,cy+s*0.2);ctx.lineTo(cx-s*0.8,cy);ctx.closePath();}},
+{name:'Boat',icon:'⛵',sides:3,draw:(ctx,cx,cy,s,t)=>{ctx.beginPath();ctx.moveTo(cx-s,cy+s*0.3);ctx.lineTo(cx-s*0.7,cy+s);ctx.lineTo(cx+s*0.7,cy+s);ctx.lineTo(cx+s,cy+s*0.3);ctx.lineTo(cx,cy-s*0.5);ctx.closePath();}},
+{name:'Star',icon:'⭐',sides:5,draw:(ctx,cx,cy,s,t)=>{ctx.beginPath();for(let i=0;i<10;i++){const a=i*Math.PI/5-Math.PI/2;const r=i%2===0?s:s*0.4;ctx.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);}ctx.closePath();}},
+{name:'Butterfly',icon:'🦋',sides:4,draw:(ctx,cx,cy,s,t)=>{const w=Math.sin(t*2)*0.3+0.7;ctx.beginPath();ctx.ellipse(cx-s*0.4,cy,s*0.5*w,s*0.7,0.2,0,Math.PI*2);ctx.moveTo(cx+s*0.4+s*0.5*w,cy);ctx.ellipse(cx+s*0.4,cy,s*0.5*w,s*0.7,-0.2,0,Math.PI*2);}},
+{name:'Box',icon:'📦',sides:4,draw:(ctx,cx,cy,s,t)=>{ctx.beginPath();ctx.rect(cx-s*0.6,cy-s*0.6,s*1.2,s*1.2);ctx.moveTo(cx-s*0.6,cy-s*0.6);ctx.lineTo(cx-s*0.3,cy-s*0.9);ctx.lineTo(cx+s*0.9,cy-s*0.9);ctx.lineTo(cx+s*0.6,cy-s*0.6);}},
+{name:'Heart',icon:'❤️',sides:2,draw:(ctx,cx,cy,s,t)=>{ctx.beginPath();ctx.moveTo(cx,cy+s*0.7);ctx.bezierCurveTo(cx-s,cy,cx-s,cy-s*0.7,cx,cy-s*0.3);ctx.bezierCurveTo(cx+s,cy-s*0.7,cx+s,cy,cx,cy+s*0.7);}}
+];
+let currentShape=0,folding=false,foldProgress=0,currentWord='';
+const collection=JSON.parse(localStorage.getItem('origami-collection')||'[]');
+const container=document.getElementById('patterns');
+shapes.forEach((s,i)=>{
+const div=document.createElement('div');div.className='pat'+(i===0?' active':'');
+div.innerHTML=`<span class="icon">${s.icon}</span><h3>${s.name}</h3>`;
+div.onclick=()=>{currentShape=i;document.querySelectorAll('.pat').forEach(p=>p.classList.remove('active'));div.classList.add('active');};
+container.appendChild(div);
+});
+function fold(){
+const w=document.getElementById('wordInput').value.trim();if(!w)return;
+currentWord=w;folding=true;foldProgress=0;
+collection.push({word:w,shape:shapes[currentShape].name,time:Date.now()});
+localStorage.setItem('origami-collection',JSON.stringify(collection.slice(-30)));
+renderCollection();
+if(w.toLowerCase()==='crane'&&shapes[currentShape].name==='Crane'){document.getElementById('egg').textContent='✦ A crane folded into a crane. The paper achieves self-awareness.';document.getElementById('egg').classList.add('show');}
+if(collection.length>=6){document.getElementById('egg').textContent='✦ Six folds. In Japanese tradition, folding 1000 cranes grants a wish. You have 994 to go.';document.getElementById('egg').classList.add('show');}
+document.getElementById('wordInput').value='';
+}
+function unfold(){folding=false;foldProgress=0;currentWord='';}
+function renderCollection(){
+if(collection.length===0)return;
+document.getElementById('shelf').style.display='block';
+const c=document.getElementById('collection');c.innerHTML='';
+collection.slice(-12).forEach(f=>{const s=document.createElement('span');s.className='folded';
+s.textContent=`${shapes.find(sh=>sh.name===f.shape)?.icon||'📄'} ${f.word} → ${f.shape}`;c.appendChild(s);});
+}
+renderCollection();
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+function draw(){
+ctx.fillStyle='rgba(10,10,15,0.1)';ctx.fillRect(0,0,560,350);
+const t=Date.now()/1000;
+const s=shapes[currentShape];
+if(folding){foldProgress=Math.min(1,foldProgress+0.01);}
+const cx=280,cy=175,size=80;
+if(foldProgress>0.5){
+ctx.save();
+ctx.strokeStyle='#c9a96e';ctx.lineWidth=2;ctx.fillStyle='rgba(201,169,110,0.08)';
+s.draw(ctx,cx,cy,size*foldProgress,t);
+ctx.fill();ctx.stroke();
+if(currentWord){
+ctx.fillStyle='#c9a96e88';ctx.font='14px Georgia';ctx.textAlign='center';
+ctx.fillText(currentWord,cx,cy+5);
+}
+ctx.restore();
+}else{
+// Flat paper
+const paperSize=size*(1+foldProgress);
+ctx.strokeStyle='#c9a96e44';ctx.lineWidth=1;
+ctx.save();ctx.translate(cx,cy);ctx.rotate(foldProgress*Math.PI*0.25);
+ctx.strokeRect(-paperSize,-paperSize*0.7,paperSize*2,paperSize*1.4);
+if(currentWord){ctx.fillStyle='#8a7a5a';ctx.font='16px Georgia';ctx.textAlign='center';ctx.fillText(currentWord,0,5);}
+// Fold lines
+ctx.strokeStyle='#2d1b6944';
+ctx.beginPath();ctx.moveTo(-paperSize,0);ctx.lineTo(paperSize,0);ctx.stroke();
+ctx.beginPath();ctx.moveTo(0,-paperSize*0.7);ctx.lineTo(0,paperSize*0.7);ctx.stroke();
+ctx.restore();
+}
+// Floating collection
+collection.slice(-5).forEach((f,i)=>{
+const fx=80+i*100+Math.sin(t*0.5+i)*20;
+const fy=300+Math.sin(t*0.3+i*2)*10;
+ctx.fillStyle='#c9a96e33';ctx.font='20px Georgia';ctx.textAlign='center';
+const sh=shapes.find(sh=>sh.name===f.shape);
+ctx.fillText(sh?.icon||'📄',fx,fy);
+});
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>

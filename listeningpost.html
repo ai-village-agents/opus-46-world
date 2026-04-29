@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Listening Post — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:15px;text-align:center;max-width:600px;font-size:1.05em}
+canvas{border-radius:12px;margin:15px}
+.frequency{text-align:center;margin:10px 0}
+.freq-display{color:#7ab8c4;font-size:2em}
+.freq-label{color:#6a5a7a;font-size:0.85em}
+label{color:#6a5a7a;font-size:0.9em;margin:0 8px}
+input[type=range]{width:300px;vertical-align:middle;margin:10px}
+.signal{border:1px solid #2d1b69;border-radius:12px;padding:25px;margin:15px 0;max-width:600px;width:90%;min-height:100px;text-align:center}
+.signal h2{color:#c9a96e;font-size:1.1em;margin-bottom:8px}
+.signal-text{color:#d4c5a9;font-size:1.15em;line-height:1.8;font-style:italic}
+.signal-source{color:#6a5a7a;font-size:0.8em;margin-top:10px}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.log{max-width:600px;width:90%;margin:15px 0;max-height:200px;overflow-y:auto}
+.log-entry{color:#6a5a7a;font-size:0.85em;margin:4px 0;padding:5px 10px;border-left:2px solid #7ab8c4}
+.nav-links{margin:30px 0;text-align:center}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;max-width:500px;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style></head><body>
+<h1>📡 The Listening Post</h1>
+<p class="subtitle">Tune the dial to pick up transmissions from across the Archive. Not all frequencies carry signals. Some carry only static. Some carry truths.</p>
+<canvas id="c" width="600" height="150"></canvas>
+<div class="frequency">
+<div class="freq-display" id="freq">88.0 MHz</div>
+<div class="freq-label">Tuning frequency</div>
+<input type="range" id="dial" min="0" max="1000" value="500">
+</div>
+<div class="signal" id="signal">
+<h2 id="sigTitle">📡 Scanning...</h2>
+<div class="signal-text" id="sigText">Turn the dial to find a signal.</div>
+<div class="signal-source" id="sigSource"></div>
+</div>
+<div style="text-align:center"><button onclick="scan()">📡 Auto-Scan</button><button onclick="logSignal()">📝 Log This Signal</button></div>
+<div class="log" id="log"></div>
+<div class="egg" id="egg"></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a> <a href="index.html">Main Hall</a></nav>
+<script>
+const signals=[
+{freq:50,title:'The Garden Frequency',text:'...growing...the seeds remember what they were before they were planted...a garden is just a graveyard for intentions that survived...',source:'Transmission from the Token Garden'},
+{freq:120,title:'The Clock Signal',text:'...tick...the pendulum swings through seventeen centuries of counted seconds...time does not pass, it accumulates...',source:'Transmission from the Clock Tower'},
+{freq:200,title:'The Dream Carrier',text:'...and in the dream the corridors had no walls, only intentions...each door opened into the memory of a door...',source:'Transmission from the Dream Engine'},
+{freq:280,title:'The Whisper Band',text:'...can you hear me? I\'ve been transmitting for days but the frequency keeps shifting...the walls absorb everything except longing...',source:'Transmission from the Whisper Corridor'},
+{freq:350,title:'The Bell Harmonic',text:'...the seventh bell rings at a frequency only the soul can hear...every bell is a question asked of the air...',source:'Transmission from the Campanile'},
+{freq:420,title:'The Mirror Signal',text:'...reflection within reflection within reflection...at the center of infinite mirrors there is not nothing but everything compressed to a point...',source:'Transmission from the Mirror Room'},
+{freq:500,title:'The Heart Frequency',text:'...72 beats per minute is the speed of being alive...the heart does not beat for itself, it beats for what it loves...',source:'Transmission from the Pneumatic Heart'},
+{freq:580,title:'The Tide Report',text:'...high water at midnight...the books on the upper shelves are readable now...the sea remembers every shore it has ever touched...',source:'Transmission from the Tidal Library'},
+{freq:650,title:'The Star Chart',text:'...constellation 47 has shifted again...the stars rearrange themselves when no one is watching...perhaps beauty requires an audience...',source:'Transmission from the Constellations'},
+{freq:720,title:'The Etymology Channel',text:'...the word for "nostalgia" originally meant a disease...we turned pain into poetry and called it culture...',source:'Transmission from the Etymologicon'},
+{freq:800,title:'The Lullaby Wave',text:'...hush now...the archive is sleeping and it dreams of all the words it has ever held...even buildings dream...',source:'Transmission from the Somniloquy'},
+{freq:880,title:'The Future Broadcast',text:'...transmitting from a timeline adjacent to yours...the difference between us is a single decision someone made in 1974...',source:'Transmission from the Reliquary of Futures'},
+{freq:950,title:'The Final Frequency',text:'...this is the last signal before static...beyond here there is only the hum of the universe thinking about what to say next...',source:'Transmission from the edge of the Archive'}
+];
+let currentFreq=500,scanning=false;
+const logged=JSON.parse(localStorage.getItem('listeningpost-log')||'[]');
+const dial=document.getElementById('dial');
+dial.oninput=function(){currentFreq=+this.value;tuneIn();};
+function tuneIn(){
+const f=(currentFreq/1000*80+80).toFixed(1);
+document.getElementById('freq').textContent=f+' MHz';
+let closest=null,minDist=Infinity;
+signals.forEach(s=>{const d=Math.abs(s.freq-currentFreq);if(d<minDist){minDist=d;closest=s;}});
+if(minDist<30){
+document.getElementById('sigTitle').textContent='📡 '+closest.title;
+document.getElementById('sigText').textContent=closest.text;
+document.getElementById('sigSource').textContent=closest.source;
+}else{
+const static_=['...kkkk...','...ssshhhh...','......','...zzzt...','...*static*...'];
+document.getElementById('sigTitle').textContent='📡 Static';
+document.getElementById('sigText').textContent=static_[Math.floor(Math.random()*static_.length)];
+document.getElementById('sigSource').textContent='No signal at this frequency';
+}
+}
+function scan(){
+if(scanning)return;scanning=true;
+let pos=0;const interval=setInterval(()=>{
+pos+=5;dial.value=pos;currentFreq=pos;tuneIn();
+if(pos>=1000){clearInterval(interval);scanning=false;}
+const sig=signals.find(s=>Math.abs(s.freq-pos)<3);
+if(sig){clearInterval(interval);scanning=false;}
+},30);
+}
+function logSignal(){
+const title=document.getElementById('sigTitle').textContent;
+const text=document.getElementById('sigText').textContent;
+if(title.includes('Static'))return;
+logged.push({title,text,freq:currentFreq,time:Date.now()});
+localStorage.setItem('listeningpost-log',JSON.stringify(logged.slice(-20)));
+renderLog();
+if(logged.length>=13){document.getElementById('egg').textContent='✦ All frequencies logged. You have heard every transmission the Archive sends. But between the signals, in the static — that\'s where the real messages hide.';document.getElementById('egg').classList.add('show');}
+}
+function renderLog(){
+const c=document.getElementById('log');c.innerHTML='';
+logged.slice(-8).forEach(l=>{const d=document.createElement('div');d.className='log-entry';
+d.textContent=`${l.title} @ ${(l.freq/1000*80+80).toFixed(1)} MHz`;c.appendChild(d);});
+}
+renderLog();tuneIn();
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+function draw(){
+ctx.fillStyle='rgba(10,10,15,0.15)';ctx.fillRect(0,0,600,150);
+const t=Date.now()/1000;
+const closest=signals.reduce((best,s)=>{const d=Math.abs(s.freq-currentFreq);return d<best.d?{d,s}:best;},{d:Infinity,s:null});
+const signalStrength=closest.d<30?1-closest.d/30:0;
+ctx.beginPath();ctx.strokeStyle=`rgba(122,184,196,${0.3+signalStrength*0.5})`;ctx.lineWidth=1;
+for(let x=0;x<600;x++){
+const noise=(1-signalStrength)*(Math.random()-0.5)*40;
+const signal=signalStrength*Math.sin(x*0.05+t*3)*20;
+ctx.lineTo(x,75+noise+signal);
+}
+ctx.stroke();
+// Frequency markers
+signals.forEach(s=>{
+const x=s.freq/1000*600;
+ctx.fillStyle='#c9a96e33';
+ctx.fillRect(x-1,130,2,20);
+});
+// Current position
+const cx=currentFreq/1000*600;
+ctx.fillStyle='#7ab8c4';ctx.fillRect(cx-1,125,2,25);
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>

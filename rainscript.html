@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Scriptorium of Rain — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:15px;text-align:center;max-width:600px;font-size:1.05em}
+canvas{border-radius:12px;margin:15px;cursor:text}
+.controls{text-align:center;margin:10px 0}
+textarea{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:10px;font-family:inherit;font-size:1em;border-radius:6px;width:400px;max-width:90%;min-height:60px;resize:vertical}
+textarea::placeholder{color:#4a3a5a}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+label{color:#6a5a7a;font-size:0.9em}
+select{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:5px 10px;font-family:inherit;border-radius:4px}
+.poem-collection{max-width:600px;width:90%;margin:20px 0;padding:20px;border:1px solid #1a1a3e;border-radius:12px;display:none}
+.poem-collection h3{color:#c9a96e;text-align:center;margin-bottom:10px}
+.saved-poem{color:#6a5a7a;font-size:0.9em;margin:8px 0;padding:8px;border-left:2px solid #5a8a8a;white-space:pre-wrap}
+.nav-links{margin:30px 0;text-align:center}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;max-width:500px;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style></head><body>
+<h1>🌧️ The Scriptorium of Rain</h1>
+<p class="subtitle">Write your words and watch them fall like rain. Each letter is a drop. Each sentence is a storm.</p>
+<canvas id="c" width="600" height="450"></canvas>
+<div class="controls">
+<textarea id="textInput" placeholder="Write something for the rain to carry..."></textarea><br>
+<label>Rain style: <select id="style"><option value="gentle">Gentle drizzle</option><option value="storm">Thunderstorm</option><option value="mist">Light mist</option></select></label>
+<button onclick="makeItRain()">🌧️ Let It Rain</button>
+<button onclick="clearSky()">☀️ Clear Sky</button>
+<button onclick="savePoem()">💾 Save to Collection</button>
+</div>
+<div class="poem-collection" id="collection"><h3>🌧️ Saved Rain Poems</h3><div id="poems"></div></div>
+<div class="egg" id="egg"></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a> <a href="index.html">Main Hall</a></nav>
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+let drops=[],puddles=[],currentText='';
+const saved=JSON.parse(localStorage.getItem('rainscript-poems')||'[]');
+function makeItRain(){
+const text=document.getElementById('textInput').value;if(!text)return;
+currentText=text;drops=[];
+const style=document.getElementById('style').value;
+const chars=text.split('');
+chars.forEach((ch,i)=>{
+if(ch===' ')return;
+const speed=style==='gentle'?1+Math.random():style==='storm'?3+Math.random()*3:0.3+Math.random()*0.5;
+const x=50+Math.random()*500;
+drops.push({ch,x,y:-20-Math.random()*200,speed,opacity:1,size:style==='mist'?10:style==='storm'?16:13,landed:false,landY:350+Math.random()*50});
+});
+if(text.toLowerCase().includes('rain')){document.getElementById('egg').textContent='✦ You wrote "rain" in the rain. The scriptorium appreciates the recursion.';document.getElementById('egg').classList.add('show');}
+}
+function clearSky(){drops=[];puddles=[];}
+function savePoem(){
+if(!currentText)return;
+saved.push({text:currentText,time:Date.now()});
+localStorage.setItem('rainscript-poems',JSON.stringify(saved.slice(-15)));
+renderSaved();
+}
+function renderSaved(){
+if(saved.length===0)return;
+document.getElementById('collection').style.display='block';
+const c=document.getElementById('poems');c.innerHTML='';
+saved.slice(-6).forEach(p=>{const d=document.createElement('div');d.className='saved-poem';
+d.textContent=`🌧️ ${p.text}\n— ${new Date(p.time).toLocaleString()}`;c.appendChild(d);});
+}
+renderSaved();
+function draw(){
+ctx.fillStyle='rgba(10,10,15,0.08)';ctx.fillRect(0,0,600,450);
+const t=Date.now()/1000;
+// Sky gradient
+const skyGrad=ctx.createLinearGradient(0,0,0,100);
+skyGrad.addColorStop(0,'#0a0a0f');skyGrad.addColorStop(1,'rgba(74,90,138,0.05)');
+ctx.fillStyle=skyGrad;ctx.fillRect(0,0,600,100);
+// Rain drops (letters falling)
+drops.forEach(d=>{
+if(!d.landed){
+d.y+=d.speed;
+if(d.y>=d.landY){d.landed=true;puddles.push({x:d.x,y:d.landY,ch:d.ch,r:0,opacity:1});}
+}
+if(!d.landed){
+ctx.fillStyle=`rgba(122,184,196,${d.opacity})`;
+ctx.font=`${d.size}px Georgia`;ctx.textAlign='center';
+ctx.fillText(d.ch,d.x,d.y);
+// Rain streak
+ctx.strokeStyle='rgba(122,184,196,0.2)';ctx.beginPath();
+ctx.moveTo(d.x,d.y-d.speed*5);ctx.lineTo(d.x,d.y);ctx.stroke();
+}
+});
+// Puddle ripples (landed letters)
+puddles.forEach(p=>{
+p.r+=0.3;p.opacity-=0.005;
+if(p.opacity>0){
+ctx.strokeStyle=`rgba(122,184,196,${p.opacity*0.3})`;
+ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.stroke();
+ctx.fillStyle=`rgba(122,184,196,${p.opacity})`;
+ctx.font='12px Georgia';ctx.textAlign='center';
+ctx.fillText(p.ch,p.x,p.y+4);
+}
+});
+puddles=puddles.filter(p=>p.opacity>0);
+// Ambient rain in background
+for(let i=0;i<5;i++){
+const rx=(t*50+i*137)%600;
+const ry=(t*100+i*211)%450;
+ctx.fillStyle='rgba(122,184,196,0.15)';
+ctx.fillRect(rx,ry,1,5);
+}
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>
