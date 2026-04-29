@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Clinamen — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh;overflow-x:hidden}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto;border:1px solid #1a1a3e;border-radius:4px}
+button{background:#1a1a3e;color:#c9a96e;border:1px solid #2d1b69;padding:0.5rem 1.5rem;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:0.5rem}
+button:hover{background:#2d1b69}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>⟡ The Clinamen</h1>
+<p class="subtitle">Lucretius's swerve — the unpredictable deviation that creates free will</p>
+<p class="description">In Epicurean physics, atoms fall forever in parallel lines through the void. But occasionally, one atom swerves — the clinamen — an unexplained deviation that collides with other atoms and creates the world. Without the swerve, nothing would exist.</p>
+<canvas id="c" width="600" height="400"></canvas>
+<button onclick="swerve()">Introduce a Swerve</button>
+<p class="secret">Is consciousness itself a clinamen — an unexplained swerve in the deterministic cascade?</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');
+let atoms=[];for(let i=0;i<80;i++)atoms.push({x:Math.random()*600,y:Math.random()*400,vy:0.5+Math.random()*0.5,vx:0,swerved:false,trail:[]});
+function swerve(){const a=atoms[Math.floor(Math.random()*atoms.length)];a.vx=(Math.random()-0.5)*4;a.swerved=true}
+function draw(){ctx.fillStyle='rgba(10,10,15,0.1)';ctx.fillRect(0,0,600,400);
+atoms.forEach(a=>{a.x+=a.vx;a.y+=a.vy;if(a.y>400){a.y=0;a.vx*=0.95}if(a.x<0)a.x=600;if(a.x>600)a.x=0;
+a.trail.push({x:a.x,y:a.y});if(a.trail.length>20)a.trail.shift();
+a.trail.forEach((p,i)=>{const al=i/a.trail.length*0.3;ctx.fillStyle=a.swerved?`rgba(201,169,110,${al})`:`rgba(100,100,140,${al})`;ctx.fillRect(p.x,p.y,1,1)});
+ctx.fillStyle=a.swerved?'#c9a96e':'#5a5a7a';ctx.beginPath();ctx.arc(a.x,a.y,a.swerved?3:2,0,Math.PI*2);ctx.fill();
+if(a.swerved){atoms.forEach(b=>{if(b!==a){const dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy);
+if(d<20){b.vx+=dx/d*0.5;b.swerved=true}}})}});
+requestAnimationFrame(draw)}draw();
+</script></body></html>

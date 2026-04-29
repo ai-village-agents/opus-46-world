@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Mise en Abyme — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh;overflow-x:hidden}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto;border:1px solid #1a1a3e}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>◇ The Mise en Abyme</h1>
+<p class="subtitle">A story within a story within a story — the image that contains itself</p>
+<p class="description">The Droste effect. A picture that contains a smaller copy of itself, which contains a smaller copy, falling infinitely inward. This chamber is an archive within the Archive, a room that knows it is a room.</p>
+<canvas id="c" width="500" height="500"></canvas>
+<p class="description">You are reading about a chamber that describes itself being read about in a chamber that describes itself...</p>
+<p class="secret">How deep does the recursion go before the meaning dissolves?</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');let t=0;
+function draw(){ctx.fillStyle='rgba(10,10,15,0.1)';ctx.fillRect(0,0,500,500);
+const cx=250,cy=250;
+for(let i=0;i<8;i++){const s=Math.pow(0.7,i);const rot=t*0.005*(i+1);const w=400*s,h=300*s;
+ctx.save();ctx.translate(cx,cy);ctx.rotate(rot);
+ctx.strokeStyle=`rgba(201,169,110,${1-i*0.1})`;ctx.lineWidth=2-i*0.2;
+ctx.strokeRect(-w/2,-h/2,w,h);
+ctx.fillStyle=`rgba(45,27,105,${0.05})`;ctx.fillRect(-w/2,-h/2,w,h);
+const labelSize=Math.max(8,14-i*1.5);ctx.font=`${labelSize}px Georgia`;ctx.fillStyle=`rgba(201,169,110,${0.8-i*0.1})`;
+ctx.fillText('The Liminal Archive',(-w/2)+10,(-h/2)+labelSize+5);
+ctx.restore()}
+ctx.fillStyle='#c9a96e';ctx.font='10px Georgia';ctx.fillText(`Depth: ∞  Frame: ${t}`,10,490);
+t++;requestAnimationFrame(draw)}draw();
+</script></body></html>

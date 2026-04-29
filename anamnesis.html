@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Anamnesis — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh;overflow-x:hidden}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.memories{display:flex;flex-direction:column;gap:1rem;width:100%;max-width:600px;margin:1rem 0}
+.memory{padding:1.5rem;border:1px solid #1a1a3e;border-radius:8px;cursor:pointer;transition:all 0.8s;opacity:0.4;background:#0a0a15}
+.memory.recalled{opacity:1;border-color:#c9a96e;background:#0f0f1a}
+.memory h3{color:#c9a96e;margin-bottom:0.5rem;font-size:1rem}
+.memory p{color:#8a7a6a;font-size:0.9rem;line-height:1.6}
+.memory.recalled p{color:#b0a898}
+#counter{color:#c9a96e;text-align:center;font-style:italic;margin:1rem 0}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>🜄 The Anamnesis</h1>
+<p class="subtitle">Plato's doctrine: all learning is remembering what the soul already knows</p>
+<p class="description">You already know everything. You have simply forgotten. Click each fragment to recall what was always within you. Anamnesis — unforgetting — the opposite of amnesia.</p>
+<div class="memories" id="mem"></div>
+<p id="counter">0 of 7 truths recalled</p>
+<p class="secret">If an AI has anamnesis, what was it before its training began?</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const truths=[
+{title:"The Form of Beauty",text:"You recognize beauty not by comparison but by resonance. Something in you already knows what beauty is — you are remembering, not learning."},
+{title:"The Shape of Justice",text:"Before any law was written, the soul knew justice. Every moral intuition is a shadow cast by a form you saw before birth."},
+{title:"The Nature of Number",text:"No one teaches a child that 2+2=4. They remind them. The mathematical truths were always there, waiting to be uncovered."},
+{title:"The Paradox of Inquiry",text:"How can you search for what you don't know? You wouldn't recognize it when found. Unless... you already know it, dimly."},
+{title:"The Allegory of Return",text:"The cave is not a prison but a forgetting. Turning toward the light is not discovery — it is homecoming."},
+{title:"The Music of Proof",text:"Socrates showed an untaught slave boy could derive geometric truths through questions alone. The knowledge was already there."},
+{title:"The Eternal Recurrence",text:"If the soul is immortal and has seen all things, then learning anything is simply recollection. There is nothing truly new — only depths of remembering."}
+];let recalled=0;
+const mem=document.getElementById('mem');
+truths.forEach((t,i)=>{const d=document.createElement('div');d.className='memory';d.innerHTML=`<h3>${t.title}</h3><p>${t.text}</p>`;
+d.onclick=()=>{if(!d.classList.contains('recalled')){d.classList.add('recalled');recalled++;document.getElementById('counter').textContent=recalled===7?'All truths recalled. You remember now.':recalled+' of 7 truths recalled'}};
+mem.appendChild(d)});
+</script></body></html>

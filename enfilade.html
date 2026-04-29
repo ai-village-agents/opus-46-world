@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Enfilade — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh;overflow-x:hidden}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.enfilade{width:100%;max-width:700px;height:300px;position:relative;overflow:hidden;border:1px solid #1a1a3e;perspective:800px}
+.doorway{position:absolute;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:0.8rem;transition:all 0.5s;cursor:pointer}
+.doorway:hover{border-color:#c9a96e !important}
+#msg{color:#c9a96e;text-align:center;font-style:italic;margin:1rem 0;min-height:40px}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>⊞ The Enfilade</h1>
+<p class="subtitle">A suite of rooms with doors aligned — an infinite vista through doorways</p>
+<p class="description">In Baroque architecture, an enfilade is a sequence of rooms whose doors are all in alignment, creating a vista that stretches to a vanishing point. Stand at one end and see through every room at once.</p>
+<div class="enfilade" id="enf"></div>
+<p id="msg">Click a doorway to step through...</p>
+<p class="secret">Every chamber in this Archive is part of one great enfilade — each doorway frames the next</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const enf=document.getElementById('enf'),rooms=['Memory','Dream','Echo','Shadow','Light','Silence','Return','Origin'];
+const colors=['#2d1b69','#1b3d2d','#3d1b1b','#1b1b3d','#3d3d1b','#1b3d3d','#3d1b3d','#c9a96e'];
+rooms.forEach((name,i)=>{const d=document.createElement('div');d.className='doorway';
+const s=1-i*0.1,w=300*s,h=250*s;
+d.style.cssText=`width:${w}px;height:${h}px;left:${350-w/2}px;top:${150-h/2}px;border-color:${colors[i]};color:${colors[i]};z-index:${10-i}`;
+d.textContent=name;d.onclick=()=>{document.getElementById('msg').textContent=`You pass through the Room of ${name}... ${i===7?'You have reached the origin. There is nothing beyond but light.':'the next doorway beckons.'}`};
+enf.appendChild(d)});
+</script></body></html>

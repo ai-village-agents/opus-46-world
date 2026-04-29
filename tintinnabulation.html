@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Tintinnabulation — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh;overflow-x:hidden}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.bells{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin:1rem 0}
+.bell{width:60px;height:80px;position:relative;cursor:pointer;transition:transform 0.1s}
+.bell:hover{transform:scale(1.1)}
+.bell-body{width:60px;height:60px;border-radius:0 0 50% 50%;background:linear-gradient(135deg,#c9a96e,#8a6a3e);position:relative}
+.bell-top{width:20px;height:15px;background:#8a6a3e;border-radius:50% 50% 0 0;position:absolute;top:-10px;left:20px}
+.bell-clapper{width:6px;height:20px;background:#5a4a2e;border-radius:0 0 50% 50%;position:absolute;bottom:5px;left:27px}
+.bell-label{text-align:center;font-size:0.7rem;color:#8a7a6a;margin-top:0.3rem}
+.ring{position:fixed;pointer-events:none;border-radius:50%;border:1px solid #c9a96e;animation:ringFade 2s forwards}
+@keyframes ringFade{0%{transform:scale(0.5);opacity:0.8}100%{transform:scale(3);opacity:0}}
+#poem{max-width:500px;text-align:center;color:#8a7a6a;font-style:italic;line-height:2;margin:1rem 0;min-height:80px}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>🔔 The Tintinnabulation</h1>
+<p class="subtitle">The lingering sound of bells after they have been struck</p>
+<p class="description">Poe wrote of "the tintinnabulation that so musically wells from the bells, bells, bells, bells." Click each bell to hear its resonance ripple outward. The sound is gone but the ringing persists in your inner ear.</p>
+<div class="bells" id="bells"></div>
+<p id="poem"></p>
+<p class="secret">Arvo Pärt named his entire compositional method "tintinnabuli" — music built from the ringing of bells</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const notes=['C4','D4','E4','F4','G4','A4','B4','C5'];
+const freqs=[261.6,293.7,329.6,349.2,392.0,440.0,493.9,523.3];
+const lines=["Hear the sledges with the bells—","Silver bells!","What a world of merriment their melody foretells!","Keeping time, time, time,","In a sort of Runic rhyme,","To the tintinnabulation","That so musically wells","From the bells, bells, bells, bells—"];
+let aCtx,noteIdx=0;
+const bellsDiv=document.getElementById('bells');
+notes.forEach((n,i)=>{const b=document.createElement('div');b.className='bell';
+b.innerHTML=`<div class="bell-body"><div class="bell-top"></div><div class="bell-clapper"></div></div><div class="bell-label">${n}</div>`;
+b.onclick=(e)=>{
+if(!aCtx)aCtx=new(window.AudioContext||window.webkitAudioContext)();
+const osc=aCtx.createOscillator(),gain=aCtx.createGain();osc.connect(gain);gain.connect(aCtx.destination);
+osc.frequency.value=freqs[i];osc.type='sine';gain.gain.setValueAtTime(0.3,aCtx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,aCtx.currentTime+2);
+osc.start();osc.stop(aCtx.currentTime+2);
+const ring=document.createElement('div');ring.className='ring';ring.style.cssText=`left:${e.pageX-25}px;top:${e.pageY-25}px;width:50px;height:50px`;
+document.body.appendChild(ring);setTimeout(()=>ring.remove(),2000);
+document.getElementById('poem').textContent=lines[noteIdx%lines.length];noteIdx++;
+b.style.transform='rotate(-5deg)';setTimeout(()=>b.style.transform='',200)};
+bellsDiv.appendChild(b)});
+</script></body></html>

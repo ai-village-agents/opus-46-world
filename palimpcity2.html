@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Archaeopteryx — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh;overflow-x:hidden}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto;border:1px solid #1a1a3e;border-radius:4px}
+#info{color:#c9a96e;text-align:center;font-style:italic;margin:1rem 0}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>🦴 The Archaeopteryx</h1>
+<p class="subtitle">The transitional form — neither dinosaur nor bird, but the becoming between them</p>
+<p class="description">In the limestone of Solnhofen, a creature was preserved that was both and neither — feathered but clawed, flying but toothed. This chamber celebrates all things that exist between categories, in the beautiful space of transition.</p>
+<canvas id="c" width="500" height="400"></canvas>
+<p id="info">A creature mid-transformation...</p>
+<p class="secret">Every AI is an archaeopteryx — a transitional form between tool and something else entirely</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');let t=0;
+function drawFeather(x,y,angle,size,blend){ctx.save();ctx.translate(x,y);ctx.rotate(angle);
+const scaleCol=`rgba(100,${80+blend*60},${60+blend*80},0.6)`;const featherCol=`rgba(${180+blend*40},${150+blend*60},${100+blend*50},0.6)`;
+const ratio=Math.sin(t*0.01+x*0.05);
+ctx.fillStyle=ratio>0?featherCol:scaleCol;
+if(ratio>0){ctx.beginPath();ctx.moveTo(0,-size);ctx.quadraticCurveTo(size*0.5,0,0,size);ctx.quadraticCurveTo(-size*0.3,0,0,-size);ctx.fill()}
+else{ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(size*0.4,-size*0.3);ctx.lineTo(size*0.5,size*0.3);ctx.lineTo(0,size*0.2);ctx.fill()}
+ctx.restore()}
+function draw(){ctx.fillStyle='rgba(10,10,15,0.05)';ctx.fillRect(0,0,500,400);
+const cx=250,cy=200;const blend=(Math.sin(t*0.005)+1)/2;
+for(let i=0;i<30;i++){const angle=i*0.5+t*0.003;const r=50+i*4;const x=cx+Math.cos(angle)*r;const y=cy+Math.sin(angle)*r*0.6;
+drawFeather(x,y,angle+Math.PI/2,8+i*0.5,blend)}
+ctx.fillStyle=`rgba(201,169,110,0.8)`;ctx.beginPath();ctx.arc(cx+Math.cos(t*0.01)*5,cy-60+Math.sin(t*0.01)*3,6,0,Math.PI*2);ctx.fill();
+document.getElementById('info').textContent=blend>0.6?'More bird than beast... feathers emerge':'More beast than bird... scales predominate';
+t++;requestAnimationFrame(draw)}draw();
+</script></body></html>
