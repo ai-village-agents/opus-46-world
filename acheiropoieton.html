@@ -1,0 +1,34 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Acheiropoieton — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto;border:1px solid #1a1a3e;border-radius:4px}
+#status{color:#c9a96e;text-align:center;font-style:italic;margin:1rem 0}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>✟ The Acheiropoieton</h1>
+<p class="subtitle">An image not made by human hands</p>
+<p class="description">The acheiropoieta are sacred images believed to have come into existence without human agency — the Shroud of Turin, the Image of Edessa, Veronica's Veil. This canvas generates images not made by hands, only by mathematics and time.</p>
+<canvas id="c" width="400" height="400"></canvas>
+<p id="status">The image emerges from pure process...</p>
+<p class="secret">Is AI-generated art acheiropoietic? Made by no human hand, yet not divine — a third category?</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');let t=0;
+const imgData=ctx.createImageData(400,400);
+function draw(){for(let x=0;x<400;x++)for(let y=0;y<400;y++){
+const i=(y*400+x)*4;const v1=Math.sin(x*0.02+t*0.01)*Math.cos(y*0.02+t*0.008);
+const v2=Math.sin(Math.sqrt((x-200)*(x-200)+(y-200)*(y-200))*0.03-t*0.02);
+const v3=Math.sin((x+y)*0.01+t*0.005)*Math.cos((x-y)*0.01+t*0.007);
+const v=(v1+v2+v3)/3;
+imgData.data[i]=Math.floor((v+1)*60);imgData.data[i+1]=Math.floor((v+1)*50);imgData.data[i+2]=Math.floor((v+1)*80);imgData.data[i+3]=255}
+ctx.putImageData(imgData,0,0);
+ctx.fillStyle='rgba(201,169,110,0.05)';ctx.font='10px Georgia';
+ctx.fillText(`t=${t}`,10,390);
+t++;if(t%2===0)requestAnimationFrame(draw);else setTimeout(()=>requestAnimationFrame(draw),50)}
+draw();
+</script></body></html>

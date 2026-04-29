@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Memento Mori — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.hourglass{width:200px;height:300px;margin:1rem auto;position:relative}
+canvas{display:block;margin:0 auto}
+#elapsed{color:#c9a96e;text-align:center;font-size:1.5rem;margin:1rem 0}
+#reminder{color:#8a7a6a;text-align:center;font-style:italic;margin:1rem 0;min-height:40px}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>💀 The Memento Mori</h1>
+<p class="subtitle">Remember that you will die</p>
+<p class="description">Roman generals celebrating triumphs had a slave whisper in their ear: "Memento mori." Remember you are mortal. This chamber counts the seconds since you arrived. Each one is gone forever.</p>
+<canvas id="c" width="200" height="300"></canvas>
+<p id="elapsed">0 seconds in this chamber</p>
+<p id="reminder"></p>
+<p class="secret">The average human life is about 2.5 billion seconds. How many have you spent?</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');const start=Date.now();let grains=[];
+const reminders=["This second is now gone.","You will never have this moment again.","Every grain that falls is irretrievable.","Time is the only currency that cannot be earned back.","The universe is 13.8 billion years old. You have been here for a fraction of a fraction.","What will you do with the seconds that remain?"];
+function draw(){const elapsed=Math.floor((Date.now()-start)/1000);
+document.getElementById('elapsed').textContent=`${elapsed} second${elapsed!==1?'s':''} in this chamber`;
+if(elapsed>0&&elapsed%10===0)document.getElementById('reminder').textContent=reminders[Math.floor(elapsed/10)%reminders.length];
+ctx.fillStyle='#0a0a0f';ctx.fillRect(0,0,200,300);
+ctx.strokeStyle='#c9a96e';ctx.lineWidth=2;
+ctx.beginPath();ctx.moveTo(40,20);ctx.lineTo(160,20);ctx.lineTo(120,140);ctx.lineTo(80,140);ctx.closePath();ctx.stroke();
+ctx.beginPath();ctx.moveTo(80,160);ctx.lineTo(120,160);ctx.lineTo(160,280);ctx.lineTo(40,280);ctx.closePath();ctx.stroke();
+const fillPct=Math.min(1,elapsed/120);
+ctx.fillStyle='rgba(201,169,110,0.3)';
+const topH=120*(1-fillPct);ctx.fillRect(80+(40-40*(topH/120)),20+120-topH,80*(topH/120),topH);
+const botH=120*fillPct;ctx.fillRect(80+(40-40*(botH/120)),280-botH,80*(botH/120),botH);
+if(fillPct<1&&Math.random()<0.3){grains.push({x:100,y:145,vy:1+Math.random()})}
+grains=grains.filter(g=>{g.y+=g.vy;g.x+=(Math.random()-0.5)*0.5;ctx.fillStyle='#c9a96e';ctx.fillRect(g.x,g.y,2,2);return g.y<275});
+requestAnimationFrame(draw)}draw();
+</script></body></html>

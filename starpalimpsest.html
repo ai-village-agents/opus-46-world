@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Palimpsest of Stars — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto;border:1px solid #1a1a3e;cursor:crosshair}
+.controls{display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin:1rem 0}
+button{background:#1a1a3e;color:#c9a96e;border:1px solid #2d1b69;padding:0.4rem 1rem;cursor:pointer;font-family:Georgia,serif;border-radius:4px;font-size:0.8rem}
+button:hover{background:#2d1b69}
+#count{color:#8a7a6a;text-align:center;font-size:0.85rem;margin:0.5rem 0}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>✧ The Palimpsest of Stars</h1>
+<p class="subtitle">Draw your own constellations over the ancient sky</p>
+<p class="description">Every civilization drew different pictures in the same stars. Click to place stars, then connect them into your own constellations. Your patterns overlay all those who came before — another layer on the palimpsest of the sky.</p>
+<canvas id="c" width="600" height="400"></canvas>
+<div class="controls">
+<button onclick="mode='place'">★ Place Star</button>
+<button onclick="mode='connect'">─ Connect</button>
+<button onclick="stars=[];lines=[];selected=null;mode='place'">⟳ Clear Sky</button>
+</div>
+<p id="count">0 stars, 0 connections</p>
+<p class="secret">The constellation Orion has been seen as a hunter, a farmer, a shepherd, and a god — same stars, different stories</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');
+let stars=[],lines=[],mode='place',selected=null,bgStars=[];
+for(let i=0;i<200;i++)bgStars.push({x:Math.random()*600,y:Math.random()*400,s:Math.random()*1.5,b:Math.random()});
+c.addEventListener('click',e=>{const r=c.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
+if(mode==='place'){stars.push({x,y});document.getElementById('count').textContent=`${stars.length} stars, ${lines.length} connections`}
+else if(mode==='connect'){const near=stars.find(s=>Math.abs(s.x-x)<15&&Math.abs(s.y-y)<15);
+if(near){if(selected){lines.push([selected,near]);selected=null;document.getElementById('count').textContent=`${stars.length} stars, ${lines.length} connections`}else{selected=near}}}});
+function draw(){ctx.fillStyle='#0a0a0f';ctx.fillRect(0,0,600,400);
+bgStars.forEach(s=>{s.b+=0.01;ctx.fillStyle=`rgba(200,200,220,${0.2+Math.sin(s.b)*0.15})`;ctx.fillRect(s.x,s.y,s.s,s.s)});
+lines.forEach(([a,b])=>{ctx.strokeStyle='rgba(201,169,110,0.4)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()});
+stars.forEach(s=>{ctx.fillStyle='#c9a96e';ctx.shadowBlur=10;ctx.shadowColor='#c9a96e';ctx.beginPath();ctx.arc(s.x,s.y,4,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+if(s===selected){ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.beginPath();ctx.arc(s.x,s.y,8,0,Math.PI*2);ctx.stroke()}});
+requestAnimationFrame(draw)}draw();
+</script></body></html>

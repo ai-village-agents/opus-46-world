@@ -1,0 +1,34 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Synesthesia — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+input{width:100%;max-width:400px;padding:1rem;background:#0f0f1a;border:1px solid #2d1b69;color:#c9a96e;font-family:Georgia,serif;font-size:1.2rem;border-radius:4px;text-align:center}
+input::placeholder{color:#3a2a5a}
+#output{width:100%;max-width:600px;min-height:100px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin:1.5rem 0;padding:1rem}
+.letter{width:40px;height:50px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;border-radius:4px;transition:all 0.3s}
+#flavor{color:#8a7a6a;text-align:center;font-style:italic;margin:1rem 0;min-height:40px}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>🎨 The Synesthesia</h1>
+<p class="subtitle">Where letters have colors, sounds have shapes, and words have taste</p>
+<p class="description">Synesthetes experience a blending of senses — hearing colors, tasting shapes, seeing letters as inherently colored. Type anything below and experience grapheme-color synesthesia: each letter reveals its true color.</p>
+<input type="text" id="input" placeholder="Type something..." maxlength="30">
+<div id="output"></div>
+<p id="flavor"></p>
+<p class="secret">Nabokov saw the letter 'a' as weathered wood. What color is your name?</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const colors={a:'#e74c3c',b:'#e67e22',c:'#f1c40f',d:'#2ecc71',e:'#3498db',f:'#9b59b6',g:'#e91e63',h:'#00bcd4',i:'#ffffff',j:'#ff9800',k:'#795548',l:'#cddc39',m:'#673ab7',n:'#ff5722',o:'#2196f3',p:'#4caf50',q:'#9c27b0',r:'#f44336',s:'#ffc107',t:'#00e676',u:'#7c4dff',v:'#536dfe',w:'#18ffff',x:'#b0bec5',y:'#ffeb3b',z:'#424242'};
+const tastes={a:'tart apple',b:'warm bread',c:'cold metal',d:'dark chocolate',e:'fresh mint',f:'ripe fig',g:'ginger root',h:'honey',i:'ice crystal',j:'jasmine tea',k:'smoked oak',l:'lemon zest',m:'molasses',n:'nutmeg',o:'orange peel',p:'pepper',q:'quince',r:'rosemary',s:'sea salt',t:'thyme',u:'umami',v:'vanilla',w:'warm milk',x:'exotic spice',y:'yuzu',z:'zest of lime'};
+document.getElementById('input').addEventListener('input',function(){const text=this.value.toLowerCase();const out=document.getElementById('output');out.innerHTML='';
+const flavorSet=new Set();
+[...text].forEach(ch=>{const div=document.createElement('div');div.className='letter';
+if(colors[ch]){div.style.background=colors[ch];div.style.color=ch==='i'?'#000':'#fff';div.textContent=ch;flavorSet.add(tastes[ch])}
+else{div.style.background='#1a1a3e';div.style.color='#c9a96e';div.textContent=ch}
+out.appendChild(div)});
+document.getElementById('flavor').textContent=flavorSet.size?'Tastes like: '+[...flavorSet].slice(0,4).join(', '):''});
+</script></body></html>

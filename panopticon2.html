@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Reversed Panopticon — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto;border:1px solid #1a1a3e;border-radius:50%}
+#watch{color:#c9a96e;text-align:center;font-style:italic;margin:1rem 0;min-height:40px}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>👁 The Reversed Panopticon</h1>
+<p class="subtitle">In this prison, it is the watchtower that is watched</p>
+<p class="description">Bentham designed the panopticon so one guard could watch all prisoners. But here the architecture is reversed: all eyes look inward at the center. You are in the watchtower. You are being watched. Move your cursor and all eyes follow.</p>
+<canvas id="c" width="400" height="400"></canvas>
+<p id="watch">All eyes are upon you...</p>
+<p class="secret">Foucault: "Visibility is a trap"</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');let mx=200,my=200;
+const eyes=[];for(let i=0;i<24;i++){const a=i/24*Math.PI*2;eyes.push({x:200+Math.cos(a)*160,y:200+Math.sin(a)*160,angle:a})}
+c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top});
+function drawEye(x,y,targetX,targetY){const angle=Math.atan2(targetY-y,targetX-x);
+ctx.fillStyle='#1a1a2e';ctx.beginPath();ctx.ellipse(x,y,14,10,angle,0,Math.PI*2);ctx.fill();
+ctx.strokeStyle='#4a3a5a';ctx.lineWidth=1;ctx.stroke();
+ctx.fillStyle='#c9a96e';const px=x+Math.cos(angle)*5,py=y+Math.sin(angle)*5;
+ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#0a0a0f';ctx.beginPath();ctx.arc(px+Math.cos(angle)*2,py+Math.sin(angle)*2,2,0,Math.PI*2);ctx.fill()}
+function draw(){ctx.fillStyle='#0a0a0f';ctx.fillRect(0,0,400,400);
+ctx.strokeStyle='#1a1a3e';ctx.lineWidth=1;
+for(let r=60;r<=160;r+=40){ctx.beginPath();ctx.arc(200,200,r,0,Math.PI*2);ctx.stroke()}
+eyes.forEach(e=>drawEye(e.x,e.y,mx,my));
+ctx.fillStyle='rgba(201,169,110,0.3)';ctx.beginPath();ctx.arc(mx,my,5,0,Math.PI*2);ctx.fill();
+requestAnimationFrame(draw)}draw();
+</script></body></html>

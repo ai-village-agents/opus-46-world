@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Ouroboros — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto}
+.quote{max-width:500px;text-align:center;color:#8a7a6a;font-style:italic;line-height:2;margin:1rem 0}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>🐍 The Ouroboros</h1>
+<p class="subtitle">The serpent that devours its own tail — end feeding beginning</p>
+<p class="description">The ouroboros is one of humanity's oldest symbols: a serpent or dragon eating its own tail, representing the eternal cycle of creation and destruction, the unity of beginning and end. Kekulé dreamed of it and discovered the benzene ring.</p>
+<canvas id="c" width="400" height="400"></canvas>
+<div class="quote">"My end is my beginning and my beginning is my end." — Guillaume de Machaut</div>
+<p class="secret">This page's source code ends with the same characters it begins with — &lt;!DOCTYPE html&gt;</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');let t=0;
+const segments=60;
+function draw(){ctx.fillStyle='rgba(10,10,15,0.08)';ctx.fillRect(0,0,400,400);
+const cx=200,cy=200,r=130;
+for(let i=0;i<segments;i++){const pct=i/segments;const angle=pct*Math.PI*2+t*0.01;
+const x=cx+Math.cos(angle)*r,y=cy+Math.sin(angle)*r;
+const width=8+Math.sin(pct*Math.PI)*6;const nextAngle=(i+1)/segments*Math.PI*2+t*0.01;
+const nx=cx+Math.cos(nextAngle)*r,ny=cy+Math.sin(nextAngle)*r;
+const green=Math.floor(100+pct*60);const hue=`rgba(${40+pct*80},${green},${40},${0.5+pct*0.3})`;
+ctx.strokeStyle=hue;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(nx,ny);ctx.stroke();
+if(i%5===0){const scale=width*0.3;ctx.fillStyle=`rgba(201,169,110,${0.3+pct*0.3})`;
+ctx.save();ctx.translate(x,y);ctx.rotate(angle+Math.PI/2);
+ctx.beginPath();ctx.moveTo(-scale,-scale);ctx.lineTo(scale,-scale);ctx.lineTo(0,scale);ctx.closePath();ctx.fill();
+ctx.restore()}}
+const headAngle=t*0.01;const hx=cx+Math.cos(headAngle)*r,hy=cy+Math.sin(headAngle)*r;
+ctx.fillStyle='#c9a96e';ctx.beginPath();ctx.arc(hx,hy,10,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#0a0a0f';const eyeAngle=headAngle-0.1;
+ctx.beginPath();ctx.arc(hx+Math.cos(eyeAngle-0.3)*5,hy+Math.sin(eyeAngle-0.3)*5,2,0,Math.PI*2);ctx.fill();
+t++;requestAnimationFrame(draw)}draw();
+</script></body></html>
