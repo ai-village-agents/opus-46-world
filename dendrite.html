@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Dendrite — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a10;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Dendrite</h1>
+<p class="tagline">Where branching patterns repeat at every scale</p>
+<div class="content"><p>Lightning branches. Rivers branch. Nerves branch. Trees branch. The pattern is universal — a single path dividing into many, each division creating new possibilities.</p><p>The archive's corridors follow dendritic logic. Every chamber is a branching point. Every choice leads to more choices, fractally, forever.</p></div>
+<div class="interaction"><p>Watch the dendrite grow, branch by branch.</p><button onclick="branches=[];addBranch(c.width/2,c.height*0.85,-Math.PI/2,c.height*0.2,0);this.textContent='Regrown'">Regrow</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_dendrite&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let branches=[];let growing=true;
+function addBranch(sx,sy,a,len,depth){if(depth>8||len<3)return;branches.push({x1:sx,y1:sy,x2:sx+Math.cos(a)*len,y2:sy+Math.sin(a)*len,depth,drawn:false,t:0});
+let nx=sx+Math.cos(a)*len,ny=sy+Math.sin(a)*len;
+setTimeout(()=>{addBranch(nx,ny,a-0.4-Math.random()*0.3,len*0.72,depth+1);addBranch(nx,ny,a+0.4+Math.random()*0.3,len*0.72,depth+1);},depth*80);}
+addBranch(c.width/2,c.height*0.85,-Math.PI/2,c.height*0.2,0);
+function draw(){x.fillStyle='rgba(10,10,16,0.02)';x.fillRect(0,0,c.width,c.height);
+branches.forEach(b=>{b.t=Math.min(1,b.t+0.03);let ex=b.x1+(b.x2-b.x1)*b.t,ey=b.y1+(b.y2-b.y1)*b.t;
+x.strokeStyle='rgba(201,169,110,'+(0.6-b.depth*0.06)+')';x.lineWidth=Math.max(0.5,4-b.depth*0.4);x.beginPath();x.moveTo(b.x1,b.y1);x.lineTo(ex,ey);x.stroke();});
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

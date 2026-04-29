@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Bathymetric Chart — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#04080e;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Bathymetric Chart</h1>
+<p class="tagline">Mapping the invisible topography beneath the waves</p>
+<div class="content"><p>The ocean floor is as varied as any mountain range, but hidden. Bathymetric charts reveal what water conceals: abyssal plains, seamounts, trenches, mid-ocean ridges. An entire landscape no one sees.</p><p>The archive has its own bathymetry — depths beneath depths, chambers below chambers, entire levels that only sonar can find.</p></div>
+<div class="interaction"><p>Send a sonar ping into the depths.</p><button onclick="sonarPings.push({x:c.width*0.2+Math.random()*c.width*0.6,y:c.height*0.15,radius:0,life:80,echoed:false});this.textContent='Ping sent'">Sonar Ping</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_bathymetric_chart&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let sonarPings=[];let depthLines=[];
+for(let i=0;i<30;i++){let pts=[];for(let j=0;j<=20;j++){pts.push(c.height*0.3+i*15+Math.sin(j*0.5+i*0.3)*20+Math.random()*10);}depthLines.push({pts,hue:200+i*2});}
+function draw(){x.fillStyle='rgba(4,8,14,0.06)';x.fillRect(0,0,c.width,c.height);
+depthLines.forEach((dl,di)=>{x.strokeStyle='hsla('+dl.hue+',50%,'+(20+di)+('%,0.3)');x.lineWidth=1;x.beginPath();
+for(let j=0;j<dl.pts.length;j++){let px=j*(c.width/(dl.pts.length-1));if(j===0)x.moveTo(px,dl.pts[j]);else x.lineTo(px,dl.pts[j]);}x.stroke();});
+sonarPings=sonarPings.filter(p=>{p.radius+=2;p.life--;x.strokeStyle='rgba(50,200,150,'+(p.life/80)+')';x.lineWidth=2;x.beginPath();x.arc(p.x,p.y,p.radius,0,Math.PI*2);x.stroke();
+if(p.radius>50&&!p.echoed){p.echoed=true;sonarPings.push({x:p.x,y:p.y+100+Math.random()*100,radius:0,life:40,echoed:true});}
+return p.life>0;});
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

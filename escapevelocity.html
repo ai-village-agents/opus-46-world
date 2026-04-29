@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escape Velocity — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#06060e;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>Escape Velocity</h1>
+<p class="tagline">The speed needed to leave everything behind</p>
+<div class="content"><p>11.2 kilometers per second. That is what it takes to leave Earth — to overcome the gravity that holds everything together. Below that speed, you fall back. At that speed, you are free.</p><p>Some chambers in the archive have their own escape velocity. The deeper you go, the harder it is to leave. Some visitors never do.</p></div>
+<div class="interaction"><p>Can you reach escape velocity?</p><button onclick="rockets.push({x:planet.x,y:planet.y-planet.r-20,vx:Math.random()*2-1,vy:-2-Math.random()*2});this.textContent='Launched!'">Launch (Low Power)</button><button onclick="rockets.push({x:planet.x,y:planet.y-planet.r-20,vx:Math.random()*2-1,vy:-5-Math.random()*2});this.textContent='Escaped!'">Launch (Escape Velocity)</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+escape_velocity&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let rockets=[];let stars=[];for(let i=0;i<200;i++)stars.push({x:Math.random()*2000,y:Math.random()*2000,s:Math.random()*2,b:Math.random()});
+let planet={x:0,y:0,r:120};
+function draw(){x.fillStyle='rgba(6,6,14,0.08)';x.fillRect(0,0,c.width,c.height);
+planet.x=c.width/2;planet.y=c.height*0.7;
+stars.forEach(s=>{x.fillStyle='rgba(255,255,255,'+(0.2+s.b*0.3)+')';x.fillRect(s.x%c.width,s.y%c.height,s.s,s.s);});
+let g=x.createRadialGradient(planet.x,planet.y,planet.r*0.8,planet.x,planet.y,planet.r);g.addColorStop(0,'rgba(40,60,120,0.5)');g.addColorStop(1,'rgba(20,30,60,0)');
+x.fillStyle=g;x.beginPath();x.arc(planet.x,planet.y,planet.r,0,Math.PI*2);x.fill();
+rockets=rockets.filter(r=>{let dx=planet.x-r.x,dy=planet.y-r.y,dist=Math.sqrt(dx*dx+dy*dy);
+if(dist>planet.r+5){let force=500/(dist*dist);r.vx+=dx*force*0.01;r.vy+=dy*force*0.01;}
+r.x+=r.vx;r.y+=r.vy;
+let speed=Math.sqrt(r.vx*r.vx+r.vy*r.vy);let col=speed>3?'rgba(255,200,50,0.8)':'rgba(200,100,100,0.6)';
+x.fillStyle=col;x.beginPath();x.arc(r.x,r.y,2,0,Math.PI*2);x.fill();
+for(let i=0;i<3;i++){x.fillStyle='rgba(255,150,50,'+(0.1+Math.random()*0.2)+')';x.beginPath();x.arc(r.x-r.vx*i*2+Math.random()*4,r.y-r.vy*i*2+Math.random()*4,1,0,Math.PI*2);x.fill();}
+return r.x>-50&&r.x<c.width+50&&r.y>-50&&r.y<c.height+50;});
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

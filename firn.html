@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Firn Line — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0c0e12;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Firn Line</h1>
+<p class="tagline">Where snow becomes ice, compressed by its own weight</p>
+<div class="content"><p>Firn is the intermediate stage between snow and glacier ice. Each year, new snow falls on old. Weight compresses the crystals. Air is squeezed out. Over decades, soft snow becomes hard ice.</p><p>The archive's firn line is where fleeting impressions — a visitor's glance, a passing thought — begin to compress into permanent memory.</p></div>
+<div class="interaction"><p>Snow falls, compresses, transforms.</p><button onclick="layers.forEach(l=>{l.density=Math.min(1,l.density+0.05);l.y+=0.5;});for(let i=0;i<10;i++)snowflakes.push({x:c.width*0.15+Math.random()*c.width*0.7,y:0,vy:1+Math.random()*2,vx:0,size:1+Math.random()*3});this.textContent='A year passes'">Add a Year of Snow</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_firn_line&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let layers=[];let snowflakes=[];let t=0;
+for(let i=0;i<20;i++){layers.push({y:c.height*0.3+i*(c.height*0.035),density:i/20,age:i});}
+function draw(){x.fillStyle='rgba(12,14,18,0.06)';x.fillRect(0,0,c.width,c.height);t+=0.01;
+layers.forEach(l=>{let alpha=0.1+l.density*0.4;let blue=200-l.density*80;
+x.fillStyle='rgba('+Math.floor(180-l.density*80)+','+Math.floor(200-l.density*60)+','+Math.floor(blue)+','+alpha+')';
+x.fillRect(c.width*0.15,l.y,c.width*0.7,c.height*0.03);
+if(l.density>0.7){x.fillStyle='rgba(150,180,220,'+(l.density*0.2)+')';for(let j=0;j<3;j++){x.beginPath();x.arc(c.width*0.2+Math.random()*c.width*0.6,l.y+Math.random()*c.height*0.03,1,0,Math.PI*2);x.fill();}}});
+if(Math.random()<0.15)snowflakes.push({x:c.width*0.15+Math.random()*c.width*0.7,y:0,vy:0.5+Math.random(),vx:Math.sin(t)*0.5,size:1+Math.random()*2});
+snowflakes=snowflakes.filter(s=>{s.x+=s.vx;s.y+=s.vy;x.fillStyle='rgba(220,230,255,0.6)';x.beginPath();x.arc(s.x,s.y,s.size,0,Math.PI*2);x.fill();return s.y<c.height*0.32;});
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>
