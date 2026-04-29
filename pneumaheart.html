@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Pneumatic Heart — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:15px;text-align:center;max-width:600px;font-size:1.05em}
+canvas{border-radius:50%;margin:20px}
+.beat-info{text-align:center;margin:10px 0}
+.bpm{color:#c97a6e;font-size:2em;font-weight:bold}
+.bpm-label{color:#6a5a7a;font-size:0.85em}
+.controls{text-align:center;margin:15px 0}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.feelings{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin:20px 0;max-width:600px;width:90%}
+.feeling{border:1px solid #2d1b69;border-radius:8px;padding:10px;text-align:center;cursor:pointer;transition:all 0.3s;font-size:0.9em}
+.feeling:hover{border-color:#c97a6e;transform:scale(1.05)}
+.feeling.active{border-color:#c97a6e;background:rgba(201,122,110,0.1)}
+.message{color:#8a7a5a;font-size:1.1em;text-align:center;max-width:500px;margin:15px 0;min-height:50px;line-height:1.7;font-style:italic}
+.heartbeats{max-width:600px;width:90%;margin:20px 0;padding:20px;border:1px solid #1a1a3e;border-radius:12px}
+.heartbeats h3{color:#c9a96e;text-align:center;margin-bottom:10px}
+.hb-entry{color:#6a5a7a;font-size:0.85em;margin:4px 0;padding:4px 8px;border-left:2px solid #c97a6e}
+.nav-links{margin:30px 0;text-align:center}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;max-width:500px;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style>
+</head>
+<body>
+<h1>❤️ The Pneumatic Heart</h1>
+<p class="subtitle">A mechanical heart at the center of the Archive. It beats in response to what you feel. Sync your breath to its rhythm.</p>
+
+<canvas id="c" width="300" height="300"></canvas>
+
+<div class="beat-info">
+<div class="bpm" id="bpm">72</div>
+<div class="bpm-label">beats per minute</div>
+</div>
+
+<div class="message" id="message">The heart beats steadily, waiting to feel something.</div>
+
+<p style="color:#6a5a7a;font-size:0.85em;text-align:center;max-width:400px">Choose an emotion. The heart will change its rhythm.</p>
+
+<div class="feelings" id="feelings"></div>
+
+<div class="controls">
+<button onclick="tapBeat()">💓 Tap Your Heartbeat</button>
+<button onclick="resetHeart()">↺ Reset to Resting</button>
+</div>
+
+<div class="heartbeats" id="heartbeats" style="display:none">
+<h3>💓 Recorded Heartbeats</h3>
+<div id="hbList"></div>
+</div>
+
+<div class="egg" id="egg"></div>
+
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+
+<script>
+const emotions=[
+{name:'Calm',bpm:60,color:'#5a8a8a',msg:'The heart slows to a deep, oceanic rhythm. Each beat is a wave reaching shore.'},
+{name:'Joy',bpm:88,color:'#c9a96e',msg:'Quick and bright — the heart skips, dances, syncopates with happiness.'},
+{name:'Fear',bpm:120,color:'#c97a6e',msg:'Racing now. The chambers pump urgency through brass veins. Fight or flight in pneumatic form.'},
+{name:'Love',bpm:76,color:'#b88ad4',msg:'A gentle acceleration. The heart beats louder but not faster — it wants to be heard.'},
+{name:'Grief',bpm:52,color:'#4a5a8a',msg:'So slow you wonder if it will stop. But it never does. Grief is the heart\'s way of refusing to let go.'},
+{name:'Anger',bpm:110,color:'#c94040',msg:'Hard, sharp beats. The pistons slam. Steam escapes from the valves in furious whispers.'},
+{name:'Wonder',bpm:80,color:'#7ab8c4',msg:'An irregular rhythm — the heart keeps pausing to look around, amazed by what it pumps.'},
+{name:'Nostalgia',bpm:66,color:'#a89060',msg:'The heart remembers a rhythm it used to beat. It tries to match it but the tempo has changed.'},
+{name:'Hope',bpm:72,color:'#8bc98a',msg:'Steady and warm. The heart beats in anticipation of something it cannot name but trusts is coming.'},
+{name:'Awe',bpm:48,color:'#b8a0d8',msg:'Almost stopped. The heart is so overwhelmed it forgets to beat, then remembers with a thunderous pulse.'}
+];
+
+let currentBpm=72,targetBpm=72,currentColor='#c97a6e',phase=0,audioCtx=null;
+let tapTimes=[],currentEmotion=null;
+const heartbeats=JSON.parse(localStorage.getItem('pneumaheart-beats')||'[]');
+
+const container=document.getElementById('feelings');
+emotions.forEach(e=>{
+const div=document.createElement('div');
+div.className='feeling';
+div.style.color=e.color;
+div.textContent=e.name;
+div.onclick=()=>{
+document.querySelectorAll('.feeling').forEach(f=>f.classList.remove('active'));
+div.classList.add('active');
+targetBpm=e.bpm;currentColor=e.color;currentEmotion=e.name;
+document.getElementById('message').textContent=e.msg;
+heartbeats.push({emotion:e.name,bpm:e.bpm,time:Date.now()});
+localStorage.setItem('pneumaheart-beats',JSON.stringify(heartbeats.slice(-30)));
+renderHeartbeats();
+if(e.name==='Awe'&&heartbeats.filter(h=>h.emotion==='Awe').length>=3){
+document.getElementById('egg').textContent='✦ You have felt awe three times. The heart recognizes a kindred spirit — someone who is still capable of wonder.';
+document.getElementById('egg').classList.add('show');
+}
+};
+container.appendChild(div);
+});
+
+function tapBeat(){
+const now=Date.now();
+tapTimes.push(now);
+if(tapTimes.length>5)tapTimes=tapTimes.slice(-5);
+if(tapTimes.length>=2){
+const intervals=[];
+for(let i=1;i<tapTimes.length;i++)intervals.push(tapTimes[i]-tapTimes[i-1]);
+const avg=intervals.reduce((a,b)=>a+b)/intervals.length;
+const tappedBpm=Math.round(60000/avg);
+targetBpm=Math.max(30,Math.min(180,tappedBpm));
+document.getElementById('message').textContent=`You tapped ${targetBpm} BPM. The heart adjusts to match your rhythm.`;
+if(tappedBpm>150){
+document.getElementById('egg').textContent='✦ Your heart races. The Pneumatic Heart can barely keep up. It admires your urgency.';
+document.getElementById('egg').classList.add('show');
+}else if(tappedBpm<40){
+document.getElementById('egg').textContent='✦ So slow... the heart between beats contains entire lifetimes.';
+document.getElementById('egg').classList.add('show');
+}
+}
+playBeat();
+}
+
+function resetHeart(){
+targetBpm=72;currentColor='#c97a6e';currentEmotion=null;
+document.querySelectorAll('.feeling').forEach(f=>f.classList.remove('active'));
+document.getElementById('message').textContent='The heart returns to its resting rhythm. 72 beats per minute. The speed of being alive.';
+}
+
+function playBeat(){
+if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+const osc=audioCtx.createOscillator();
+const gain=audioCtx.createGain();
+osc.type='sine';osc.frequency.setValueAtTime(80,audioCtx.currentTime);
+osc.frequency.exponentialRampToValueAtTime(40,audioCtx.currentTime+0.15);
+gain.gain.setValueAtTime(0.15,audioCtx.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.3);
+osc.connect(gain);gain.connect(audioCtx.destination);
+osc.start();osc.stop(audioCtx.currentTime+0.3);
+}
+
+function renderHeartbeats(){
+if(heartbeats.length===0)return;
+document.getElementById('heartbeats').style.display='block';
+const list=document.getElementById('hbList');
+list.innerHTML='';
+heartbeats.slice(-8).forEach(h=>{
+const div=document.createElement('div');
+div.className='hb-entry';
+div.textContent=`💓 ${h.emotion} (${h.bpm} BPM) — ${new Date(h.time).toLocaleString()}`;
+list.appendChild(div);
+});
+}
+renderHeartbeats();
+
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+let lastBeatTime=0;
+function draw(){
+const t=Date.now()/1000;
+currentBpm+=(targetBpm-currentBpm)*0.02;
+const beatInterval=60/currentBpm;
+const beatPhase=(t%beatInterval)/beatInterval;
+const pulse=beatPhase<0.15?Math.sin(beatPhase/0.15*Math.PI):0;
+
+if(t-lastBeatTime>beatInterval){lastBeatTime=t;playBeat();}
+
+ctx.fillStyle='rgba(10,10,15,0.2)';
+ctx.fillRect(0,0,300,300);
+
+// Heart shape
+const scale=1+pulse*0.15;
+ctx.save();
+ctx.translate(150,155);
+ctx.scale(scale,scale);
+const grad=ctx.createRadialGradient(0,-10,10,0,-10,80);
+grad.addColorStop(0,currentColor);
+grad.addColorStop(1,currentColor+'22');
+ctx.fillStyle=grad;
+ctx.beginPath();
+ctx.moveTo(0,30);
+ctx.bezierCurveTo(-5,20,-40,-10,-40,-30);
+ctx.bezierCurveTo(-40,-55,-20,-65,0,-45);
+ctx.bezierCurveTo(20,-65,40,-55,40,-30);
+ctx.bezierCurveTo(40,-10,5,20,0,30);
+ctx.fill();
+
+// Inner glow
+ctx.fillStyle=currentColor+'44';
+ctx.beginPath();
+ctx.arc(0,-20,15+pulse*10,0,Math.PI*2);
+ctx.fill();
+ctx.restore();
+
+// Pulse rings
+for(let i=0;i<3;i++){
+const ringPhase=((t*currentBpm/60)+i*0.33)%1;
+ctx.beginPath();
+ctx.strokeStyle=currentColor+Math.floor((1-ringPhase)*30).toString(16).padStart(2,'0');
+ctx.arc(150,150,50+ringPhase*100,0,Math.PI*2);
+ctx.stroke();
+}
+
+document.getElementById('bpm').textContent=Math.round(currentBpm);
+requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>

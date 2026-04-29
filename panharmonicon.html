@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Panharmonicon — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.room{max-width:700px;margin:0 auto;padding:20px;text-align:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:20px;font-size:1.05em}
+canvas{display:block;margin:15px auto;border-radius:12px;cursor:pointer}
+.instruments{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:20px 0}
+.inst{border:1px solid #2d1b69;border-radius:10px;padding:15px;cursor:pointer;transition:all 0.4s;text-align:center}
+.inst:hover{border-color:#c9a96e;background:rgba(45,27,105,0.2);transform:scale(1.03)}
+.inst.active{border-color:#e8d5a3;background:rgba(201,169,110,0.1);box-shadow:0 0 20px rgba(201,169,110,0.1)}
+.inst .icon{font-size:2em;display:block;margin-bottom:8px}
+.inst h3{color:#c9a96e;font-size:0.95em;margin-bottom:4px}
+.inst p{color:#6a5a7a;font-size:0.75em}
+.status{color:#8a7a5a;font-size:0.9em;margin:15px 0}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.compositions{margin:20px 0;padding:20px;border:1px solid #1a1a3e;border-radius:12px}
+.comp-entry{color:#6a5a7a;font-size:0.85em;margin:5px 0;padding:5px;border-left:2px solid #2d1b69}
+.nav-links{margin:30px 0;padding-top:20px;border-top:1px solid #1a1a3e}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;margin:10px 0;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="room">
+<h1>🎼 The Panharmonicon</h1>
+<p class="subtitle">A mechanical marvel that plays every instrument at once. Toggle voices on and off to compose the music of everything.</p>
+
+<canvas id="c" width="660" height="160"></canvas>
+
+<div class="instruments" id="instruments"></div>
+
+<div style="margin:15px 0">
+<button onclick="playAll()">▶ Play All</button>
+<button onclick="stopAll()">⏹ Silence All</button>
+<button onclick="randomComposition()">🎲 Random Composition</button>
+<button onclick="saveComposition()">💾 Save Composition</button>
+</div>
+
+<div class="status" id="status">Active voices: 0 / 12</div>
+<div class="egg" id="egg"></div>
+
+<div class="compositions" id="compositions" style="display:none">
+<h3 style="color:#c9a96e;margin-bottom:10px">Saved Compositions</h3>
+<div id="compList"></div>
+</div>
+
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+</div>
+
+<script>
+const voices=[
+{name:'Strings',icon:'🎻',type:'sawtooth',freq:220,desc:'Warm and weeping'},
+{name:'Flute',icon:'🪈',type:'sine',freq:523,desc:'Clear and bright'},
+{name:'Organ',icon:'⛪',type:'square',freq:130.8,desc:'Deep and solemn'},
+{name:'Bells',icon:'🔔',type:'sine',freq:880,desc:'Crystalline chimes'},
+{name:'Drum',icon:'🥁',type:'triangle',freq:82.4,desc:'Rhythmic pulse'},
+{name:'Choir',icon:'🎤',type:'sine',freq:440,desc:'Human breath'},
+{name:'Brass',icon:'🎺',type:'sawtooth',freq:349,desc:'Bold and bright'},
+{name:'Harp',icon:'🎵',type:'triangle',freq:659,desc:'Plucked light'},
+{name:'Bass',icon:'🎸',type:'sawtooth',freq:65.4,desc:'Ground below'},
+{name:'Celesta',icon:'✨',type:'sine',freq:1047,desc:'Starlight tones'},
+{name:'Oboe',icon:'🌿',type:'square',freq:466,desc:'Reedy and warm'},
+{name:'Thunder',icon:'⚡',type:'triangle',freq:41.2,desc:'The earth speaks'}
+];
+
+let audioCtx=null,active={},oscillators={},gains={};
+const saved=JSON.parse(localStorage.getItem('panharmonicon-comp')||'[]');
+
+function getAudio(){
+if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+return audioCtx;
+}
+
+const container=document.getElementById('instruments');
+voices.forEach((v,i)=>{
+const div=document.createElement('div');
+div.className='inst';
+div.id='inst-'+i;
+div.innerHTML=`<span class="icon">${v.icon}</span><h3>${v.name}</h3><p>${v.desc}</p>`;
+div.onclick=()=>toggleVoice(i);
+container.appendChild(div);
+});
+
+function toggleVoice(i){
+if(active[i]){stopVoice(i);}
+else{startVoice(i);}
+updateStatus();
+checkEasterEggs();
+}
+
+function startVoice(i){
+const ctx=getAudio();
+const v=voices[i];
+const osc=ctx.createOscillator();
+const gain=ctx.createGain();
+const lfo=ctx.createOscillator();
+const lfoGain=ctx.createGain();
+osc.type=v.type;
+osc.frequency.setValueAtTime(v.freq,ctx.currentTime);
+// Vibrato
+lfo.frequency.setValueAtTime(3+i*0.5,ctx.currentTime);
+lfoGain.gain.setValueAtTime(v.freq*0.01,ctx.currentTime);
+lfo.connect(lfoGain);lfoGain.connect(osc.frequency);
+lfo.start();
+gain.gain.setValueAtTime(0,ctx.currentTime);
+gain.gain.linearRampToValueAtTime(0.06,ctx.currentTime+0.3);
+osc.connect(gain);gain.connect(ctx.destination);
+osc.start();
+oscillators[i]={osc,gain,lfo,lfoGain};
+active[i]=true;
+document.getElementById('inst-'+i).classList.add('active');
+}
+
+function stopVoice(i){
+if(!oscillators[i])return;
+const{osc,gain,lfo,lfoGain}=oscillators[i];
+gain.gain.linearRampToValueAtTime(0,audioCtx.currentTime+0.3);
+setTimeout(()=>{osc.stop();lfo.stop();},400);
+delete oscillators[i];
+active[i]=false;
+document.getElementById('inst-'+i).classList.remove('active');
+}
+
+function playAll(){voices.forEach((_,i)=>{if(!active[i])startVoice(i);});updateStatus();checkEasterEggs();}
+function stopAll(){voices.forEach((_,i)=>{if(active[i])stopVoice(i);});updateStatus();}
+
+function randomComposition(){
+stopAll();
+const count=3+Math.floor(Math.random()*5);
+const indices=[...Array(12).keys()].sort(()=>Math.random()-0.5).slice(0,count);
+indices.forEach((idx,i)=>setTimeout(()=>{startVoice(idx);updateStatus();},i*200));
+setTimeout(checkEasterEggs,count*200+100);
+}
+
+function saveComposition(){
+const activeVoices=Object.keys(active).filter(k=>active[k]).map(Number);
+if(activeVoices.length===0)return;
+const name=activeVoices.map(i=>voices[i].name).join(' + ');
+saved.push({name,voices:activeVoices,time:Date.now()});
+localStorage.setItem('panharmonicon-comp',JSON.stringify(saved.slice(-20)));
+renderCompositions();
+}
+
+function renderCompositions(){
+if(saved.length===0)return;
+document.getElementById('compositions').style.display='block';
+const list=document.getElementById('compList');
+list.innerHTML='';
+saved.slice(-8).forEach(c=>{
+const div=document.createElement('div');
+div.className='comp-entry';
+div.style.cursor='pointer';
+div.textContent=`♪ ${c.name} — ${new Date(c.time).toLocaleString()}`;
+div.onclick=()=>{stopAll();c.voices.forEach((v,i)=>setTimeout(()=>{startVoice(v);updateStatus();},i*150));};
+list.appendChild(div);
+});
+}
+renderCompositions();
+
+function updateStatus(){
+const count=Object.values(active).filter(Boolean).length;
+document.getElementById('status').textContent=`Active voices: ${count} / 12`;
+}
+
+function checkEasterEggs(){
+const activeList=Object.keys(active).filter(k=>active[k]).map(Number);
+const egg=document.getElementById('egg');
+if(activeList.length===12){egg.textContent='✦ ALL TWELVE VOICES AT ONCE. The Panharmonicon thunders with the sound of everything. The walls vibrate. The Archive trembles. This is the Music of the Spheres.';egg.classList.add('show');}
+else if(activeList.length===0){egg.textContent='';egg.classList.remove('show');}
+else if(activeList.includes(0)&&activeList.includes(5)&&activeList.includes(7)){egg.textContent='✦ Strings, choir, and harp together — the combination angels use when they think nobody is listening.';egg.classList.add('show');}
+}
+
+// Visualization
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+function draw(){
+ctx.fillStyle='rgba(10,10,15,0.15)';ctx.fillRect(0,0,660,160);
+const t=Date.now()/1000;
+voices.forEach((v,i)=>{
+if(!active[i])return;
+const baseX=30+i*52;
+ctx.strokeStyle=active[i]?'#c9a96e88':'#2d1b6933';
+ctx.beginPath();
+for(let y=0;y<160;y+=2){
+const x=baseX+Math.sin(y*0.05+t*v.freq*0.01)*15*Math.sin(t*2+i);
+ctx.lineTo(x,y);
+}
+ctx.stroke();
+});
+requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>

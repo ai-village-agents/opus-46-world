@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Etymologicon — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.room{max-width:700px;margin:0 auto;padding:20px}
+h1{font-size:2.2em;color:#c9a96e;text-align:center;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;text-align:center;margin-bottom:25px;font-size:1.05em}
+.search-area{text-align:center;margin:20px 0}
+input{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:12px 20px;font-family:inherit;font-size:1.1em;border-radius:8px;width:350px;text-align:center}
+input::placeholder{color:#4a3a5a}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.result{border:1px solid #2d1b69;border-radius:12px;padding:25px;margin:20px 0;display:none}
+.result h2{color:#c9a96e;font-size:1.6em;margin-bottom:5px}
+.result .origin{color:#b8a0d8;font-size:0.95em;margin-bottom:15px}
+.result .layers{margin:15px 0}
+.layer{padding:10px 15px;margin:8px 0;border-left:3px solid #2d1b69;transition:border-color 0.3s}
+.layer:hover{border-color:#c9a96e}
+.layer .era{color:#c9a96e;font-size:0.85em;font-weight:bold}
+.layer .meaning{color:#8a7a5a;font-size:0.95em;line-height:1.6}
+.tree{margin:20px 0;text-align:center}
+canvas{display:block;margin:15px auto;border-radius:10px}
+.collection{margin:20px 0}
+.collection h3{color:#c9a96e;text-align:center;margin-bottom:15px}
+.word-card{display:inline-block;margin:6px;padding:8px 14px;border:1px solid #2d1b69;border-radius:6px;cursor:pointer;transition:all 0.3s;font-size:0.9em;color:#8a7a5a}
+.word-card:hover{border-color:#c9a96e;color:#c9a96e}
+.nav-links{margin:30px 0;text-align:center;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="room">
+<h1>📜 The Etymologicon</h1>
+<p class="subtitle">Every word has a secret history. Type one and watch it unfold through time.</p>
+
+<div class="search-area">
+<input type="text" id="wordInput" placeholder="Enter a word to trace its roots..." maxlength="30">
+<button onclick="traceWord()">📜 Trace Etymology</button>
+<button onclick="randomWord()">🎲 Random Word</button>
+</div>
+
+<canvas id="c" width="660" height="200"></canvas>
+
+<div class="result" id="result">
+<h2 id="wordTitle"></h2>
+<div class="origin" id="wordOrigin"></div>
+<div class="layers" id="layers"></div>
+</div>
+
+<div class="collection">
+<h3>📚 Notable Etymologies</h3>
+<div id="wordCards"></div>
+</div>
+
+<div class="egg" id="egg"></div>
+
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+</div>
+
+<script>
+const etymologies={
+'nostalgia':{origin:'Greek: nostos (homecoming) + algos (pain)',layers:[
+{era:'1688',meaning:'Coined by Swiss physician Johannes Hofer as a medical diagnosis — literally "the pain of returning home." Soldiers stationed far away developed a physical illness from longing.'},
+{era:'1800s',meaning:'Shifted from a disease to a sentiment. The pain remained but was romanticized, reframed as a bittersweet pleasure rather than an affliction.'},
+{era:'Modern',meaning:'Now means longing for a past that may never have existed as we remember it. The word itself is nostalgic — it has forgotten its own original medical meaning.'}]},
+'disaster':{origin:'Italian: dis (bad) + astro (star)',layers:[
+{era:'Ancient',meaning:'Originally meant "bad star" — a catastrophe caused by unfavorable astrological alignment. Every disaster was written in the sky before it happened on earth.'},
+{era:'1600s',meaning:'The stars were gradually acquitted. Disasters became natural, then human-caused. But the word still remembers when we blamed the cosmos for everything.'},
+{era:'Modern',meaning:'Any sudden calamity. The stars are innocent now, but we still look up when terrible things happen. The word\'s memory is longer than ours.'}]},
+'travel':{origin:'Old French: travail (to toil, to suffer)',layers:[
+{era:'Medieval',meaning:'To travel was to suffer. The word "travel" and "travail" were the same — every journey was an ordeal, every road a risk.'},
+{era:'1700s',meaning:'The Grand Tour made travel aspirational. The suffering dimmed in the word, replaced by adventure and education.'},
+{era:'Modern',meaning:'Now associated with leisure and escape. The original meaning — that travel is hard work — survives only in jet lag, lost luggage, and delayed flights.'}]},
+'salary':{origin:'Latin: salarium (salt allowance)',layers:[
+{era:'Roman',meaning:'Roman soldiers were sometimes paid in salt — or given money to buy salt. Salt preserved food, seasoned it, made life bearable. Worth your salt. Worth your pay.'},
+{era:'Medieval',meaning:'The salt faded from the word, replaced by coins, then paper, then numbers on a screen. But the root persists: your salary is still, technically, your salt.'},
+{era:'Modern',meaning:'The connection to salt is invisible now. But the word remembers a time when the most valuable thing you could earn was something that kept food from rotting.'}]},
+'panic':{origin:'Greek: panikon (of Pan)',layers:[
+{era:'Ancient Greece',meaning:'The god Pan lurked in forests and wild places. When travelers felt sudden, unexplained fear in the wilderness, they blamed Pan — he was frightening them for sport.'},
+{era:'1600s',meaning:'Secularized to mean any sudden, overwhelming fear. Pan vanished from the word but his presence remains — panic still feels like something external, something that seizes you from outside.'},
+{era:'Modern',meaning:'Now a clinical term. Panic attacks. Panic rooms. Pan has been thoroughly exorcised, but the word still trembles with the memory of a goat-legged god laughing in the trees.'}]},
+'sarcasm':{origin:'Greek: sarkazein (to tear flesh)',layers:[
+{era:'Ancient Greek',meaning:'Literally "to strip off the flesh." Sarcasm was understood as verbal violence — words that tore at you like teeth.'},
+{era:'Renaissance',meaning:'Refined into wit. The flesh-tearing became metaphorical, then artistic. Sarcasm became a tool of intelligence rather than cruelty.'},
+{era:'Modern',meaning:'So common now it\'s barely noticed. But the word still carries its original violence — every sarcastic remark is, etymologically, an act of carnage.'}]},
+'window':{origin:'Old Norse: vindauga (wind-eye)',layers:[
+{era:'Viking Age',meaning:'A window was literally an eye for the wind — an opening in the wall through which air could see into your home and you could see out into the weather.'},
+{era:'Medieval',meaning:'Glass made windows transparent. They went from wind-holes to light-portals. The name remembered wind; the object now served light.'},
+{era:'Modern',meaning:'We named our computer interfaces after them. A window is now something you look through to see another world — digital, virtual, metaphorical. The Vikings would be confused. And delighted.'}]},
+'museum':{origin:'Greek: mouseion (seat of the Muses)',layers:[
+{era:'Ancient Greece',meaning:'A place sacred to the nine Muses — goddesses of art, science, and memory. The first Museum was a temple, not a building full of old things.'},
+{era:'1600s',meaning:'Became a place to collect and display objects. The Muses withdrew; their temple filled with artifacts and labels and glass cases.'},
+{era:'Modern',meaning:'A museum is now where the past goes to be preserved — sometimes alive, sometimes stuffed. The Muses would recognize the reverence but wonder where the poetry went.'}]},
+'archive':{origin:'Greek: arkheion (government building)',layers:[
+{era:'Ancient Greece',meaning:'The arkheion was where official records were kept — the place of authority, of documented truth. To archive was to make something official.'},
+{era:'Medieval',meaning:'Archives became dusty rooms. The authority faded; the preservation remained. What was once power became memory.'},
+{era:'Modern',meaning:'Now everything is archived — emails, photos, tweets, entire worlds. This very place is an archive. The word has come home to itself.'}]},
+'liminal':{origin:'Latin: limen (threshold)',layers:[
+{era:'Roman',meaning:'The limen was the doorway — the physical threshold between rooms. The god Limentinus guarded it. To cross a threshold was a sacred act.'},
+{era:'1900s',meaning:'Anthropologist Arnold van Gennep used "liminal" for the middle phase of rituals — the state of being between what you were and what you will be.'},
+{era:'Modern',meaning:'Now describes any in-between state. Liminal spaces. Liminal times. This Archive exists in the limen between creation and dissolution, between AI and meaning.'}]}
+};
+
+const allWords=Object.keys(etymologies);
+const searched=JSON.parse(localStorage.getItem('etymologicon-searched')||'[]');
+
+function traceWord(){
+const w=document.getElementById('wordInput').value.trim().toLowerCase();
+if(!w)return;
+if(etymologies[w]){showEtymology(w);}
+else{generateEtymology(w);}
+if(!searched.includes(w)){searched.push(w);localStorage.setItem('etymologicon-searched',JSON.stringify(searched.slice(-30)));}
+checkEgg(w);
+}
+
+function randomWord(){
+const w=allWords[Math.floor(Math.random()*allWords.length)];
+document.getElementById('wordInput').value=w;
+showEtymology(w);
+}
+
+function showEtymology(w){
+const e=etymologies[w];
+const r=document.getElementById('result');
+r.style.display='block';
+document.getElementById('wordTitle').textContent=w.charAt(0).toUpperCase()+w.slice(1);
+document.getElementById('wordOrigin').textContent=e.origin;
+const layers=document.getElementById('layers');
+layers.innerHTML='';
+e.layers.forEach(l=>{
+const div=document.createElement('div');
+div.className='layer';
+div.innerHTML=`<div class="era">${l.era}</div><div class="meaning">${l.meaning}</div>`;
+layers.appendChild(div);
+});
+drawTree(w);
+}
+
+function generateEtymology(w){
+const roots=['from the Proto-Indo-European root meaning "to shine"','possibly from Old Norse, meaning "to wander in mist"','derived from a lost Sumerian word for "the space between stars"','from the Latin root meaning "to fold together"','from an unknown pre-Celtic word whispered by standing stones','from the Old English for "that which cannot be held in one hand"'];
+const root=roots[Math.abs(hashStr(w))%roots.length];
+const r=document.getElementById('result');
+r.style.display='block';
+document.getElementById('wordTitle').textContent=w.charAt(0).toUpperCase()+w.slice(1);
+document.getElementById('wordOrigin').textContent=`Uncertain origin — ${root}`;
+document.getElementById('layers').innerHTML=`<div class="layer"><div class="era">The Etymologicon\'s guess</div><div class="meaning">This word has not yet been fully traced. Its roots extend deeper than our records. Perhaps it invented itself — some words do, emerging from the collective unconscious of a language that needed them before it knew how to ask.</div></div>`;
+drawTree(w);
+}
+
+function hashStr(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i);return h;}
+
+function drawTree(w){
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+ctx.fillStyle='#0a0a0f';ctx.fillRect(0,0,660,200);
+const t=Date.now()/1000;
+// Draw word tree
+ctx.strokeStyle='#c9a96e44';ctx.lineWidth=1;
+const letters=w.split('');
+const cx=330,cy=100;
+letters.forEach((ch,i)=>{
+const angle=(i/letters.length)*Math.PI*2-Math.PI/2;
+const r=60+Math.sin(t+i)*10;
+const x=cx+Math.cos(angle)*r;
+const y=cy+Math.sin(angle)*r;
+ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x,y);ctx.stroke();
+ctx.fillStyle='#c9a96e';ctx.font='18px Georgia';ctx.textAlign='center';
+ctx.fillText(ch,x,y+6);
+// Branches from each letter
+for(let j=0;j<3;j++){
+const bAngle=angle+(j-1)*0.4;
+const bLen=20+Math.sin(t*2+i+j)*8;
+ctx.beginPath();ctx.strokeStyle='#2d1b6944';
+ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(bAngle)*bLen,y+Math.sin(bAngle)*bLen);ctx.stroke();
+}
+});
+ctx.fillStyle='#c9a96e';ctx.font='14px Georgia';ctx.textAlign='center';
+ctx.fillText('●',cx,cy+5);
+}
+
+const cards=document.getElementById('wordCards');
+allWords.forEach(w=>{
+const span=document.createElement('span');
+span.className='word-card';
+span.textContent=w;
+span.onclick=()=>{document.getElementById('wordInput').value=w;showEtymology(w);};
+cards.appendChild(span);
+});
+
+function checkEgg(w){
+const egg=document.getElementById('egg');
+if(w==='etymology'){egg.textContent='✦ "Etymology" comes from Greek etymon (true sense) + logos (study). You\'re studying the study itself.';egg.classList.add('show');}
+else if(w==='word'){egg.textContent='✦ "Word" traces back to Proto-Germanic *wurdą, which is related to the Latin verbum. Every word is, etymologically, just another word for "word."';egg.classList.add('show');}
+else if(w==='love'){egg.textContent='✦ From Proto-Germanic *lubō, related to Sanskrit lubhyati (desires). Love has always meant wanting.';egg.classList.add('show');}
+}
+</script>
+</body>
+</html>

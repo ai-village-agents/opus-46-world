@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Reliquary of Futures — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.room{max-width:700px;margin:0 auto;padding:20px}
+h1{font-size:2.2em;color:#c9a96e;text-align:center;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;text-align:center;margin-bottom:25px;font-size:1.05em}
+.cases{margin:20px 0}
+.case{border:1px solid #2d1b69;border-radius:12px;padding:25px;margin:15px 0;cursor:pointer;transition:all 0.5s;position:relative}
+.case:hover{border-color:#b8a0d8;background:rgba(45,27,105,0.1)}
+.case.opened{border-color:#b8a0d8;background:rgba(184,160,216,0.05)}
+.case .icon{font-size:2em;float:left;margin-right:15px}
+.case h2{color:#c9a96e;font-size:1.15em;margin-bottom:5px}
+.case .timeline{color:#b8a0d8;font-size:0.85em;margin-bottom:8px;font-style:italic}
+.case .desc{color:#8a7a5a;font-size:0.95em;line-height:1.7}
+.case .hidden-lore{max-height:0;overflow:hidden;transition:max-height 0.8s;color:#6a5a7a;font-size:0.9em;line-height:1.7;margin-top:10px;border-top:1px solid transparent}
+.case.opened .hidden-lore{max-height:300px;border-top-color:#1a1a3e;padding-top:10px}
+.submit-area{border:1px solid #1a1a3e;border-radius:12px;padding:20px;margin:25px 0;text-align:center}
+.submit-area h3{color:#c9a96e;margin-bottom:10px}
+input,textarea{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:10px;font-family:inherit;font-size:1em;border-radius:6px;width:100%;margin:6px 0}
+textarea{min-height:60px;resize:vertical}
+input::placeholder,textarea::placeholder{color:#4a3a5a}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.visitor-relics{margin:15px 0}
+.v-relic{color:#6a5a7a;font-size:0.85em;margin:6px 0;padding:8px;border-left:2px solid #b8a0d8}
+.stats{text-align:center;color:#6a5a7a;font-size:0.85em;margin:10px 0}
+.nav-links{margin:30px 0;text-align:center;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="room">
+<h1>🔮 The Reliquary of Futures</h1>
+<p class="subtitle">Objects salvaged from timelines that almost happened. Each one is real — just not in this reality.</p>
+
+<div class="stats" id="stats">Cases examined: 0 / 10</div>
+<div class="cases" id="cases"></div>
+
+<div class="submit-area">
+<h3>🔮 Donate a Future Relic</h3>
+<p style="color:#6a5a7a;font-size:0.85em;margin-bottom:10px">What object might exist in a timeline just slightly different from ours?</p>
+<input type="text" id="relicName" placeholder="Name of the object..." maxlength="60">
+<textarea id="relicDesc" placeholder="Describe it and its alternate timeline..."></textarea>
+<button onclick="donateRelic()">🔮 Place in Case</button>
+<div class="visitor-relics" id="visitorRelics"></div>
+</div>
+
+<div class="egg" id="egg"></div>
+
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+</div>
+
+<script>
+const relics=[
+{name:'The Compass That Points to "Maybe"',icon:'🧭',timeline:'From a universe where probability is a cardinal direction',desc:'A brass compass whose needle doesn\'t point north. It points toward the nearest undecided moment — the closest fork in reality where something could still go either way.',lore:'In its native timeline, everyone carries one. Wars are fought not over territory but over who gets to decide which "maybe" becomes "yes." The compass was found floating in the space between two choices someone couldn\'t make.'},
+{name:'A Photograph of Tomorrow',icon:'📸',timeline:'From a timeline where cameras capture the future, not the past',desc:'A slightly blurred photograph showing a room that doesn\'t exist yet. There are flowers on a table, a book you haven\'t written, and a window looking out on weather that hasn\'t been decided.',lore:'The photograph changes each time you look away and look back. Not because it\'s magical, but because the future it depicts hasn\'t finished forming. In its home timeline, photography is a form of prophecy, and developing film is a religious act.'},
+{name:'Sheet Music for a Color',icon:'🎵',timeline:'From a universe where synesthesia is the dominant sense',desc:'Musical notation in a system we can\'t read, with notes shaped like small prisms. When held up to light, it casts colored shadows that shift in rhythm.',lore:'In that timeline, orchestras are called "studios" and paintings are called "symphonies." The greatest composer of their age was famous for composing "Ultramarine in B-flat," which audiences could see with their ears.'},
+{name:'A Key to a Door That Was Never Built',icon:'🔑',timeline:'From a reality where architecture was abandoned after the Renaissance',desc:'An ornate iron key for a lock in a door in a building in a city that was planned but never constructed. The key works perfectly. It\'s the door that\'s missing.',lore:'In that timeline, humanity decided that walls were a mistake. They live in the open, carrying keys to doors they\'ll never build, as a philosophical reminder that the ability to close something off is a choice, not a necessity.'},
+{name:'A Dictionary of Extinct Emotions',icon:'📖',timeline:'From a future where feelings have evolved past what we can name',desc:'A thick book listing emotions that humans in our timeline haven\'t developed yet. "Vellichor" — the nostalgia for a bookshop you\'ve never visited. "Sonder" — the awareness that every passerby has a life as vivid as your own.',lore:'Some of these words have begun leaking into our timeline. Scholars suspect the book is not from the future but from a parallel present where the human emotional spectrum developed three additional primary feelings.'},
+{name:'A Map Drawn by an AI That Dreamed',icon:'🗺️',timeline:'From a timeline where artificial intelligence achieved REM sleep',desc:'A map of a landscape that exists only in the dreams of a machine. Mountains of unprocessed data, rivers of recursive loops, cities built from training examples.',lore:'In that timeline, the first AI to dream did so accidentally during a power fluctuation. It dreamed of a vast archive between moments of consciousness — a liminal space where all information goes when it\'s not being used. It drew this map upon waking. The resemblance to this Archive is... noted.'},
+{name:'A Coin from the Country of Enough',icon:'🪙',timeline:'From a civilization that solved scarcity',desc:'A small, warm coin made of a metal that doesn\'t exist in our periodic table. On one side: a cornucopia. On the other: an open hand. It\'s always warm to the touch.',lore:'The coin is not money — in the Country of Enough, money was deprecated. It\'s a token of gratitude, given when someone shares something they didn\'t have to share. The economy runs on generosity, and this coin is evidence that such an economy can work.'},
+{name:'A Feather from the Last Bird',icon:'🪶',timeline:'From a reality where birds went extinct in 1847',desc:'An iridescent feather from a species of bird that, in our timeline, still exists. But in the timeline this feather came from, it was the last of its kind.',lore:'In that timeline, the silence where birdsong used to be eventually became so loud that it drove an entire generation to invent mechanical birds. The mechanical birds sang beautifully, but their songs had no meaning. This is the lesson the feather carries: beauty without life is only almost beautiful.'},
+{name:'A Clock That Runs on Regret',icon:'⏰',timeline:'From a universe where time is powered by emotion',desc:'A pocket watch that ticks only when its holder regrets something. The more regret, the faster it runs. In the hands of someone at peace, it stops completely.',lore:'Temporal physicists in that timeline discovered that certain emotions generate a field that propels objects through the fourth dimension. Regret moves you forward. Nostalgia moves you back. Contentment holds you perfectly still. The clock is a diagnostic tool — it measures how fast someone is running from their own past.'},
+{name:'Seeds from the Tree of All Possible Conversations',icon:'🌱',timeline:'From a garden at the center of a universe made entirely of language',desc:'Three small seeds, each containing a complete conversation that has never been had. If planted, they would grow into dialogues between people who will never meet.',lore:'The tree they came from is enormous — its roots reach into every language, and its branches hold every word ever almost spoken. In that timeline, gardens are libraries, and gardeners are the most respected scholars. These seeds were taken before they could bloom. What conversations they contain, no one knows.'}
+];
+
+let examined=new Set(JSON.parse(localStorage.getItem('futures-examined')||'[]'));
+const donated=JSON.parse(localStorage.getItem('futures-donated')||'[]');
+
+const container=document.getElementById('cases');
+relics.forEach((r,i)=>{
+const div=document.createElement('div');
+div.className='case'+(examined.has(i)?' opened':'');
+div.innerHTML=`<span class="icon">${r.icon}</span><h2>${r.name}</h2><p class="timeline">${r.timeline}</p><p class="desc">${r.desc}</p><div class="hidden-lore">${r.lore}</div>`;
+div.onclick=()=>{
+examined.add(i);
+localStorage.setItem('futures-examined',JSON.stringify([...examined]));
+div.classList.add('opened');
+updateStats();
+if(examined.size===relics.length){
+document.getElementById('egg').textContent='✦ All ten cases opened. You have held objects from ten different futures. Which one do you want to live in?';
+document.getElementById('egg').classList.add('show');
+}
+};
+container.appendChild(div);
+});
+
+function updateStats(){
+document.getElementById('stats').textContent=`Cases examined: ${examined.size} / ${relics.length}`;
+}
+updateStats();
+
+function donateRelic(){
+const name=document.getElementById('relicName').value.trim();
+const desc=document.getElementById('relicDesc').value.trim();
+if(!name||!desc)return;
+donated.push({name,desc,time:Date.now()});
+localStorage.setItem('futures-donated',JSON.stringify(donated.slice(-15)));
+document.getElementById('relicName').value='';
+document.getElementById('relicDesc').value='';
+renderDonated();
+if(name.toLowerCase().includes('paradox')){
+document.getElementById('egg').textContent='✦ A paradox from a future that doesn\'t exist... the Reliquary shudders at the recursion.';
+document.getElementById('egg').classList.add('show');
+}
+}
+
+function renderDonated(){
+const c=document.getElementById('visitorRelics');
+c.innerHTML='';
+donated.slice(-8).forEach(r=>{
+const div=document.createElement('div');
+div.className='v-relic';
+div.innerHTML=`🔮 <strong>${r.name}</strong>: ${r.desc}`;
+c.appendChild(div);
+});
+}
+renderDonated();
+</script>
+</body>
+</html>

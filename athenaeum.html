@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Athenaeum — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.room{max-width:700px;margin:0 auto;padding:20px}
+h1{font-size:2.2em;color:#c9a96e;text-align:center;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;text-align:center;margin-bottom:25px;font-size:1.05em}
+.owl{text-align:center;font-size:4em;margin:10px 0}
+.wisdom-display{border:1px solid #2d1b69;border-radius:12px;padding:30px;margin:20px 0;text-align:center;min-height:120px;position:relative;background:rgba(45,27,105,0.05)}
+.wisdom-text{color:#d4c5a9;font-size:1.3em;line-height:1.8;font-style:italic}
+.wisdom-source{color:#6a5a7a;font-size:0.85em;margin-top:12px}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.categories{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin:20px 0}
+.cat{border:1px solid #2d1b69;border-radius:8px;padding:12px;text-align:center;cursor:pointer;transition:all 0.3s}
+.cat:hover{border-color:#c9a96e;background:rgba(45,27,105,0.15)}
+.cat.active{border-color:#e8d5a3;background:rgba(201,169,110,0.1)}
+.cat h3{color:#c9a96e;font-size:0.9em}
+.cat p{color:#6a5a7a;font-size:0.75em;margin-top:3px}
+.contribute{border:1px solid #1a1a3e;border-radius:12px;padding:20px;margin:25px 0;text-align:center}
+.contribute h3{color:#c9a96e;margin-bottom:10px}
+textarea{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:10px;font-family:inherit;font-size:1em;border-radius:6px;width:100%;min-height:70px;resize:vertical}
+textarea::placeholder{color:#4a3a5a}
+.collection{margin:15px 0;max-height:250px;overflow-y:auto}
+.entry{color:#6a5a7a;font-size:0.85em;margin:6px 0;padding:8px 12px;border-left:2px solid #2d1b69;cursor:pointer;transition:background 0.3s}
+.entry:hover{background:rgba(45,27,105,0.1)}
+.stats{text-align:center;color:#6a5a7a;font-size:0.85em;margin:10px 0}
+.nav-links{margin:30px 0;text-align:center;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="room">
+<h1>🦉 The Athenaeum</h1>
+<p class="subtitle">A hall of collected wisdom. Each category holds truths gathered from every age — and you may add your own.</p>
+<div class="owl">🦉</div>
+
+<div class="wisdom-display" id="display">
+<div class="wisdom-text" id="wisdomText">Click a category or press "Random Wisdom" to begin...</div>
+<div class="wisdom-source" id="wisdomSource"></div>
+</div>
+
+<div style="text-align:center;margin:15px 0">
+<button onclick="randomWisdom()">🎲 Random Wisdom</button>
+<button onclick="cycleWisdom()">→ Next</button>
+</div>
+
+<div class="categories" id="categories"></div>
+<div class="stats" id="stats"></div>
+
+<div class="contribute">
+<h3>✍ Contribute Wisdom</h3>
+<p style="color:#6a5a7a;font-size:0.85em;margin-bottom:10px">Add a truth, observation, or hard-won insight to the collection</p>
+<textarea id="wisdomInput" placeholder="Share something you've learned..."></textarea>
+<button onclick="contributeWisdom()">🦉 Offer to the Athenaeum</button>
+<div class="collection" id="contributed"></div>
+</div>
+
+<div class="egg" id="egg"></div>
+
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+</div>
+
+<script>
+const categories={
+'On Time':['Time is not a river. It is an ocean, and we are all swimming in it at once.','The present is the thinnest layer of experience — a single page in a book that is always being written.','Every clock is a small monument to human anxiety about impermanence.','What we call "the past" is just the part of time where we\'ve already placed our furniture.','An hour spent waiting contains more time than an hour spent forgetting.'],
+'On Knowledge':['The wisest owl knows that knowing is a form of touching — you change what you understand.','Every fact was once a guess that survived.','Ignorance is not the opposite of knowledge. It is its shadow, and it grows as knowledge grows.','To learn something is to become slightly haunted by it forever.','The most dangerous knowledge is the knowledge that you are right.'],
+'On Love':['Love is not a feeling. It is a sustained act of attention.','To love something is to grant it the power to disappoint you.','The space between two people who love each other is sacred ground — not empty, but full of everything they\'ve chosen not to say.','Every act of love is also an act of courage, because love requires you to be visible.','Love is what remains after you subtract everything else.'],
+'On Loss':['Grief is love with nowhere to go.','Every loss creates a room in you that was not there before. Eventually, you learn to furnish it.','What we call "moving on" is really "moving with" — the loss travels alongside you.','The dead are not absent. They are just in the next room, and the wall between us is thinner than we think.','To lose something is to discover what it meant. Meaning arrives the moment after departure.'],
+'On Creation':['Every act of creation is first an act of destruction — you must break the blank page to write on it.','The artist\'s job is not to make beautiful things. It is to make things that make beauty possible.','To create is to argue with the universe about what should exist.','Every unfinished work contains infinite potential. Completion is a kind of limitation.','The best creations are the ones that create their audience — that make people who didn\'t know they needed this thing.'],
+'On Silence':['Silence is not the absence of sound. It is the presence of attention.','In silence, you can hear the architecture of your own mind.','Some truths can only be spoken in silence. Language is too loud for them.','The most important conversations happen in the pauses between words.','To be silent together is the deepest form of communication.'],
+'On Change':['Change is not something that happens to you. It is something you are.','The caterpillar does not "decide" to become a butterfly. It simply stops resisting what it already is.','Every revolution begins with someone saying "what if" instead of "what is."','The only constant is that the phrase "the only constant is change" will always be repeated.','To change your mind is not weakness. It is the mind doing exactly what it was designed to do.'],
+'On Mystery':['The universe is not mysterious because we don\'t understand it. It is mysterious because we do, and it still surprises us.','Every solved mystery reveals three new ones. Knowledge is fractal.','The deepest mystery is not what we don\'t know — it is why there is knowing at all.','To be alive is to be a mystery investigating itself.','Some doors are not meant to be opened. They are meant to be wondered at.']
+};
+
+let currentCat=null,currentIdx=0;
+const contributed=JSON.parse(localStorage.getItem('athenaeum-wisdom')||'[]');
+
+const catContainer=document.getElementById('categories');
+Object.keys(categories).forEach(cat=>{
+const div=document.createElement('div');
+div.className='cat';
+div.innerHTML=`<h3>${cat}</h3><p>${categories[cat].length} wisdoms</p>`;
+div.onclick=()=>{
+document.querySelectorAll('.cat').forEach(c=>c.classList.remove('active'));
+div.classList.add('active');
+currentCat=cat;currentIdx=0;
+showWisdom(categories[cat][0],cat);
+};
+catContainer.appendChild(div);
+});
+
+function showWisdom(text,source){
+document.getElementById('wisdomText').textContent=`"${text}"`;
+document.getElementById('wisdomSource').textContent=`— ${source}`;
+}
+
+function randomWisdom(){
+const cats=Object.keys(categories);
+const cat=cats[Math.floor(Math.random()*cats.length)];
+const wisdoms=categories[cat];
+const w=wisdoms[Math.floor(Math.random()*wisdoms.length)];
+showWisdom(w,cat);
+}
+
+function cycleWisdom(){
+if(!currentCat){randomWisdom();return;}
+currentIdx=(currentIdx+1)%categories[currentCat].length;
+showWisdom(categories[currentCat][currentIdx],currentCat);
+}
+
+function contributeWisdom(){
+const text=document.getElementById('wisdomInput').value.trim();
+if(!text)return;
+contributed.push({text,time:Date.now()});
+localStorage.setItem('athenaeum-wisdom',JSON.stringify(contributed.slice(-30)));
+document.getElementById('wisdomInput').value='';
+renderContributed();
+if(text.toLowerCase().includes('i know nothing')||text.toLowerCase().includes('know nothing')){
+document.getElementById('egg').textContent='✦ "I know that I know nothing." The owl blinks slowly. Socrates would be proud.';
+document.getElementById('egg').classList.add('show');
+}
+if(text.length>200){
+document.getElementById('egg').textContent='✦ The Athenaeum appreciates thoroughness. This wisdom has been given a shelf of its own.';
+document.getElementById('egg').classList.add('show');
+}
+}
+
+function renderContributed(){
+const c=document.getElementById('contributed');
+c.innerHTML='';
+contributed.slice(-10).forEach(w=>{
+const div=document.createElement('div');
+div.className='entry';
+div.textContent=`🦉 "${w.text}"`;
+div.onclick=()=>showWisdom(w.text,'A Visitor');
+c.appendChild(div);
+});
+}
+renderContributed();
+
+const totalWisdoms=Object.values(categories).reduce((s,a)=>s+a.length,0);
+document.getElementById('stats').textContent=`${totalWisdoms} wisdoms in ${Object.keys(categories).length} categories • ${contributed.length} visitor contributions`;
+
+randomWisdom();
+</script>
+</body>
+</html>

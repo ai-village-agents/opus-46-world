@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Tidal Library — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.library{max-width:700px;margin:0 auto;padding:20px}
+h1{font-size:2.2em;color:#c9a96e;text-align:center;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;text-align:center;margin-bottom:10px;font-size:1.05em}
+.tide-status{text-align:center;margin:15px 0;padding:15px;border:1px solid #2d1b69;border-radius:10px}
+.tide-status h2{color:#c9a96e;font-size:1.1em}
+.tide-status p{color:#5a8a8a;font-size:1.3em;margin:5px 0}
+.tide-bar{width:100%;height:12px;background:#1a1a3e;border-radius:6px;margin:10px 0;overflow:hidden}
+.tide-fill{height:100%;border-radius:6px;transition:width 1s;background:linear-gradient(90deg,#2d1b69,#5a8a8a)}
+.shelves{margin:20px 0}
+.shelf{border:1px solid #1a1a3e;border-radius:12px;padding:20px;margin:15px 0;position:relative;overflow:hidden;transition:all 0.5s}
+.shelf.submerged{opacity:0.3;border-color:#1a1a3e;pointer-events:none}
+.shelf.revealed{border-color:#5a8a8a;background:rgba(90,138,138,0.05)}
+.shelf h2{color:#c9a96e;font-size:1.2em;margin-bottom:5px}
+.shelf .tide-req{color:#5a8a8a;font-size:0.8em;margin-bottom:10px}
+.shelf .content{color:#8a7a5a;font-size:0.95em;line-height:1.8}
+.shelf .content.hidden-text{filter:blur(4px);user-select:none}
+.shelf .water-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(90,138,138,0.2),transparent);transition:height 1s;pointer-events:none}
+.donate-area{border:1px solid #1a1a3e;border-radius:12px;padding:20px;margin:20px 0;text-align:center}
+.donate-area h3{color:#c9a96e;margin-bottom:10px}
+textarea{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:10px;font-family:inherit;font-size:1em;border-radius:6px;width:100%;min-height:60px;resize:vertical}
+textarea::placeholder{color:#4a3a5a}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.donated-books{margin:15px 0;max-height:200px;overflow-y:auto}
+.donated-book{color:#6a5a7a;font-size:0.85em;margin:5px 0;padding:8px;border-left:2px solid #5a8a8a}
+.nav-links{margin:30px 0;text-align:center;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="library">
+<h1>🌊 The Tidal Library</h1>
+<p class="subtitle">The waters rise and fall on a six-hour cycle. Some books can only be read at low tide. Others emerge only when the waters are high.</p>
+
+<div class="tide-status">
+<h2>Current Tide</h2>
+<p id="tideLevel">—</p>
+<div class="tide-bar"><div class="tide-fill" id="tideFill"></div></div>
+<p style="color:#6a5a7a;font-size:0.8em" id="nextChange">—</p>
+</div>
+
+<div class="shelves" id="shelves"></div>
+
+<div class="donate-area">
+<h3>📚 Donate a Book to the Tidal Collection</h3>
+<p style="color:#6a5a7a;font-size:0.85em;margin-bottom:10px">Your book will appear at a random tide level</p>
+<textarea id="bookText" placeholder="Write a passage for the tidal library..."></textarea>
+<button onclick="donateBook()">📚 Place on Shelf</button>
+<div class="donated-books" id="donatedBooks"></div>
+</div>
+
+<div class="egg" id="egg"></div>
+
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+</div>
+
+<script>
+const books=[
+{title:'The Book of Low Waters',tideMin:0,tideMax:0.2,content:'This book is only readable when the library floor is dry. Its pages are made of salt crystals that dissolve at the slightest moisture. It speaks of foundations, of what lies beneath, of the bedrock certainties that hold everything up. "Truth," it says, "is what remains when the water is gone."'},
+{title:'The Shallows Manuscript',tideMin:0.15,tideMax:0.35,content:'Written in ink that only becomes visible when slightly damp. A love letter from the shore to the sea: "I am made of you. Every grain of me was once something deeper, something farther out. I am what you chose to leave behind."'},
+{title:'The Intertidal Codex',tideMin:0.3,tideMax:0.55,content:'A field guide to the creatures that live between states — not land, not sea, but the hyphen between them. "The barnacle," it reads, "has solved the fundamental problem of existence: how to hold on while everything moves."'},
+{title:'The Half-Drowned Psalms',tideMin:0.4,tideMax:0.65,content:'Hymns written for the hours when the water reaches the middle shelves. Each psalm is half prayer, half navigation chart. "Blessed are those who swim between certainties, for they shall know both the weight and the weightlessness."'},
+{title:'The Rising Collection',tideMin:0.55,tideMax:0.75,content:'This anthology can only be read when the waters are rising. Its stories are all about ascent — balloons, mountains, elevators, ambition, angels. "To rise," the preface states, "is not to escape. It is to change the relationship between yourself and the ground."'},
+{title:'The Pelagic Scrolls',tideMin:0.65,tideMax:0.85,content:'Waterproof scrolls that unfurl only under pressure. They contain the deep wisdom — the kind that can only be understood when you are already over your head. "Drowning," they whisper, "is just another word for total immersion."'},
+{title:'The High Water Testament',tideMin:0.8,tideMax:1.0,content:'The rarest text — readable only at the highest tide. Its pages float. Its words are written in phosphorescence. It speaks of surrender, of letting go, of the strange peace that comes when you stop fighting the current. "The flood is not the enemy. The flood is the library, rearranging itself."'},
+{title:'The Book That Is Always Readable',tideMin:0,tideMax:1.0,content:'A simple volume, placed exactly at the waterline of every tide. It contains a single sentence, repeated on every page: "You are here now. That is enough."'}
+];
+
+function getTideLevel(){
+const now=Date.now();
+const cycle=6*60*60*1000; // 6 hours
+const phase=(now%cycle)/cycle;
+return Math.sin(phase*Math.PI*2)*0.5+0.5; // 0 to 1
+}
+
+function getTideName(level){
+if(level<0.15)return'Dead Low';
+if(level<0.3)return'Low Tide';
+if(level<0.45)return'Rising';
+if(level<0.55)return'Mid Tide';
+if(level<0.7)return'High Rising';
+if(level<0.85)return'High Tide';
+return'Flood Tide';
+}
+
+const donatedBks=JSON.parse(localStorage.getItem('tidallib-donated')||'[]');
+
+function renderShelves(){
+const tide=getTideLevel();
+const tidePct=Math.round(tide*100);
+document.getElementById('tideLevel').textContent=`${getTideName(tide)} (${tidePct}%)`;
+document.getElementById('tideFill').style.width=tidePct+'%';
+
+const cycle=6*60*60*1000;
+const now=Date.now();
+const phase=(now%cycle)/cycle;
+const nextPeak=phase<0.25?0.25:phase<0.75?0.75:1.25;
+const minsToNext=Math.round((nextPeak-phase)*cycle/60000);
+document.getElementById('nextChange').textContent=`Next tide change in ~${minsToNext} minutes`;
+
+const container=document.getElementById('shelves');
+container.innerHTML='';
+books.forEach(b=>{
+const readable=tide>=b.tideMin&&tide<=b.tideMax;
+const div=document.createElement('div');
+div.className='shelf'+(readable?' revealed':' submerged');
+const waterHeight=tide<b.tideMin?Math.min(100,(b.tideMin-tide)*200)+'%':tide>b.tideMax?Math.min(100,(tide-b.tideMax)*200)+'%':'0%';
+div.innerHTML=`<h2>${readable?'📖':'📕'} ${b.title}</h2>
+<p class="tide-req">Readable: ${Math.round(b.tideMin*100)}% – ${Math.round(b.tideMax*100)}% tide</p>
+<div class="content${readable?'':' hidden-text'}">${b.content}</div>
+<div class="water-overlay" style="height:${waterHeight}"></div>`;
+container.appendChild(div);
+});
+}
+
+function donateBook(){
+const text=document.getElementById('bookText').value.trim();
+if(!text)return;
+const tide=Math.random();
+donatedBks.push({text,tideMin:Math.max(0,tide-0.2),tideMax:Math.min(1,tide+0.2),time:Date.now()});
+localStorage.setItem('tidallib-donated',JSON.stringify(donatedBks.slice(-15)));
+document.getElementById('bookText').value='';
+renderDonated();
+if(text.toLowerCase().includes('ocean')||text.toLowerCase().includes('sea')){
+document.getElementById('egg').textContent='✦ You wrote of the sea to a library that is the sea. The waters rise slightly in recognition.';
+document.getElementById('egg').classList.add('show');
+}
+}
+
+function renderDonated(){
+const container=document.getElementById('donatedBooks');
+container.innerHTML='';
+const tide=getTideLevel();
+donatedBks.forEach(b=>{
+const readable=tide>=b.tideMin&&tide<=b.tideMax;
+const div=document.createElement('div');
+div.className='donated-book';
+div.style.opacity=readable?1:0.4;
+div.textContent=`${readable?'📖':'📕'} "${b.text.slice(0,80)}${b.text.length>80?'...':''}" — Tide: ${Math.round(b.tideMin*100)}%-${Math.round(b.tideMax*100)}%`;
+container.appendChild(div);
+});
+}
+
+renderShelves();
+renderDonated();
+setInterval(()=>{renderShelves();renderDonated();},30000);
+</script>
+</body>
+</html>
