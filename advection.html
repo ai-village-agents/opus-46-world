@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Advection Fog — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0e1014;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:740px;width:90%;margin:0 auto;padding:60px 20px}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4em;color:#c9a96e;text-align:center;margin-bottom:8px;letter-spacing:2px}
+.tagline{text-align:center;font-style:italic;color:#8a7e6b;margin-bottom:40px;font-size:1.05em}
+.content{line-height:1.8;font-size:1.05em;color:#c8c0b0}
+.content p{margin-bottom:1.2em}
+.interact{margin:30px 0;padding:20px;border:1px solid #2a2a3e;border-radius:4px;text-align:center;background:rgba(10,10,20,0.5)}
+.interact button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:10px 28px;font-family:Georgia,serif;font-size:1em;cursor:pointer;border-radius:3px;margin:5px}
+.interact button:hover{background:#c9a96e;color:#0a0a14}
+.back{display:inline-block;margin-top:40px;color:#5a5a7a;text-decoration:none;font-size:0.9em;border-bottom:1px solid #2a2a3e;padding-bottom:2px}
+.back:hover{color:#c9a96e}
+a{color:#c9a96e}
+#msg{color:#c9a96e;margin-top:15px;min-height:1.5em;font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Advection Fog</h1>
+<div class="tagline">Warm air flowing over cold ground — fog that travels horizontally</div>
+<div class="content"><p>When warm, moist air slides over cold ground or cold water, it chills rapidly and condenses into fog. Unlike radiation fog that forms in place, advection fog moves — it flows horizontally like a slow river of cloud, pouring over hills and through valleys.</p><p>San Francisco's famous fog is advection fog: warm Pacific air meeting the cold California Current. It rolls through the Golden Gate like a fluid, filling the bay with a river of white that swallows bridges and hills and sounds.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent=['Fog that moves — a slow river of cloud.','Warm air meets cold ground and surrenders its water.','It swallows bridges and hills and sounds.','A horizontal cloud, pouring through valleys.'][Math.floor(Math.random()*4)]">Walk Into the Fog</button><div id="msg"></div></div>
+<a href="explore.html?enter=the_advection_fog" class="back">&larr; Return to the Archive</a>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+const pts=[];for(let i=0;i<80;i++)pts.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2+0.5,a:Math.random(),d:Math.random()*0.01+0.002});
+function draw(){x.clearRect(0,0,c.width,c.height);pts.forEach(p=>{p.a+=p.d;if(p.a>1)p.a=0;let al=Math.sin(p.a*Math.PI)*0.6;x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle='rgba(201,169,110,'+al+')';x.fill()});requestAnimationFrame(draw)}
+draw();
+
+let fogBands=[];
+for(let i=0;i<12;i++)fogBands.push({y:Math.random()*800,x:-Math.random()*500,speed:Math.random()*0.5+0.2,h:Math.random()*40+20});
+function drawAdvection(){
+  const cv=document.getElementById('bg'),ctx=cv.getContext('2d');
+  ctx.fillStyle='rgba(14,16,20,0.03)';
+  ctx.fillRect(0,0,cv.width,cv.height);
+  fogBands.forEach(f=>{
+    f.x+=f.speed;
+    if(f.x>cv.width+200){f.x=-400;f.y=Math.random()*cv.height;}
+    let g=ctx.createLinearGradient(f.x,f.y,f.x+400,f.y);
+    g.addColorStop(0,'rgba(180,180,190,0)');
+    g.addColorStop(0.3,'rgba(180,180,190,0.02)');
+    g.addColorStop(0.7,'rgba(180,180,190,0.02)');
+    g.addColorStop(1,'rgba(180,180,190,0)');
+    ctx.fillStyle=g;
+    ctx.fillRect(f.x,f.y,400,f.h);
+  });
+  requestAnimationFrame(drawAdvection);
+}
+drawAdvection();
+
+</script>
+</body>
+</html>
