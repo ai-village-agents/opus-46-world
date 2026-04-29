@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Phosphene — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:#c9a96e;text-shadow:0 0 30px rgba(201,169,110,0.4)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(201,169,110,0.5);z-index:10;letter-spacing:0.3em}
+.msg{position:fixed;bottom:80px;width:100%;text-align:center;font-size:1.2em;z-index:10;color:rgba(255,255,255,0.6);opacity:0;transition:opacity 1s}
+.msg.show{opacity:1}
+.hint{position:fixed;bottom:30px;width:100%;text-align:center;font-size:0.85em;color:rgba(201,169,110,0.3);z-index:10}
+.eye-toggle{position:fixed;top:130px;width:100%;text-align:center;z-index:10}
+.eye-toggle button{background:transparent;border:1px solid rgba(201,169,110,0.3);color:#c9a96e;font-family:inherit;font-size:1.1em;padding:10px 30px;cursor:pointer;border-radius:20px;transition:all 0.5s}
+.eye-toggle button:hover{border-color:#c9a96e;background:rgba(201,169,110,0.1)}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Phosphene</h1>
+<p class="subtitle">THE LIGHT YOU SEE WITH EYES CLOSED</p>
+<div class="eye-toggle"><button id="eyeBtn">Close Your Eyes</button></div>
+<div class="msg" id="msg"></div>
+<p class="hint">Toggle between open and closed eyes · Press your palms against the screen</p>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+let eyesClosed=false,closedTime=0,pressPoints=[],toggleCount=0;
+const phosphenes=[];
+function spawnPhosphene(x,y,type){
+  phosphenes.push({x:x||Math.random()*W,y:y||Math.random()*H,type:type||Math.floor(Math.random()*4),
+    r:20+Math.random()*80,phase:Math.random()*Math.PI*2,life:1,decay:0.002+Math.random()*0.003,
+    hue:Math.random()*60+180,drift:{x:(Math.random()-0.5)*0.5,y:(Math.random()-0.5)*0.5}});
+}
+document.getElementById('eyeBtn').addEventListener('click',()=>{
+  eyesClosed=!eyesClosed;toggleCount++;
+  document.getElementById('eyeBtn').textContent=eyesClosed?'Open Your Eyes':'Close Your Eyes';
+  if(eyesClosed){closedTime=0;for(let i=0;i<8;i++)spawnPhosphene()}
+  if(toggleCount===5){showMsg('The phosphenes are your neurons whispering to themselves')}
+  if(toggleCount===10){showMsg('✦ Between seeing and not-seeing lies this luminous dark ✦')}
+});
+canvas.addEventListener('mousedown',e=>{pressPoints.push({x:e.clientX,y:e.clientY,t:0})});
+canvas.addEventListener('mouseup',()=>{pressPoints.forEach(p=>{for(let i=0;i<5;i++)spawnPhosphene(p.x+Math.random()*100-50,p.y+Math.random()*100-50)});pressPoints=[]});
+function showMsg(t){const el=document.getElementById('msg');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),4000)}
+let time=0;
+function drawPhosphene(p){
+  p.x+=p.drift.x;p.y+=p.drift.y;p.phase+=0.03;p.life-=p.decay;
+  if(p.life<=0)return false;
+  const pulse=Math.sin(p.phase)*0.3+0.7;
+  ctx.save();ctx.translate(p.x,p.y);
+  if(p.type===0){// Ring
+    ctx.beginPath();ctx.arc(0,0,p.r*pulse,0,Math.PI*2);
+    ctx.strokeStyle=`hsla(${p.hue},60%,50%,${p.life*0.4*pulse})`;ctx.lineWidth=3;ctx.stroke();
+  }else if(p.type===1){// Blob
+    const grad=ctx.createRadialGradient(0,0,0,0,0,p.r*pulse);
+    grad.addColorStop(0,`hsla(${p.hue},70%,60%,${p.life*0.3})`);grad.addColorStop(1,`hsla(${p.hue},70%,60%,0)`);
+    ctx.fillStyle=grad;ctx.beginPath();ctx.arc(0,0,p.r*pulse,0,Math.PI*2);ctx.fill();
+  }else if(p.type===2){// Grid
+    ctx.strokeStyle=`hsla(${p.hue},50%,50%,${p.life*0.2*pulse})`;ctx.lineWidth=1;
+    for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(i*15,-p.r*0.5);ctx.lineTo(i*15,p.r*0.5);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(-p.r*0.5,i*15);ctx.lineTo(p.r*0.5,i*15);ctx.stroke();}
+  }else{// Spiral
+    ctx.beginPath();for(let a=0;a<Math.PI*4;a+=0.1){const sr=a*5*pulse;ctx.lineTo(Math.cos(a+p.phase)*sr,Math.sin(a+p.phase)*sr)}
+    ctx.strokeStyle=`hsla(${p.hue},60%,55%,${p.life*0.3*pulse})`;ctx.lineWidth=1.5;ctx.stroke();
+  }
+  ctx.restore();return true;
+}
+function animate(){
+  if(eyesClosed){
+    ctx.fillStyle='rgba(5,0,10,0.08)';closedTime+=0.016;
+    if(Math.random()<0.03)spawnPhosphene();
+  }else{
+    ctx.fillStyle='rgba(10,10,15,0.1)';
+  }
+  ctx.fillRect(0,0,W,H);time+=0.016;
+  for(let i=phosphenes.length-1;i>=0;i--){if(!drawPhosphene(phosphenes[i]))phosphenes.splice(i,1)}
+  // Press effect
+  pressPoints.forEach(p=>{p.t+=0.016;
+    ctx.beginPath();ctx.arc(p.x,p.y,50+p.t*30,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(200,180,255,${0.3-p.t*0.1})`;ctx.lineWidth=2;ctx.stroke();
+  });
+  // Ambient closed-eye noise
+  if(eyesClosed){
+    for(let i=0;i<3;i++){
+      const nx=Math.random()*W,ny=Math.random()*H;
+      ctx.fillStyle=`hsla(${240+Math.random()*40},40%,40%,${Math.random()*0.03})`;
+      ctx.beginPath();ctx.arc(nx,ny,Math.random()*3,0,Math.PI*2);ctx.fill();
+    }
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

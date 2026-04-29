@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Kenopsia — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:#c9a96e;text-shadow:0 0 30px rgba(201,169,110,0.4)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(201,169,110,0.5);z-index:10;letter-spacing:0.3em}
+.thought{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;color:rgba(255,255,255,0.5);font-size:1.3em;text-align:center;max-width:500px;opacity:0;transition:opacity 2s;pointer-events:none}
+.thought.show{opacity:1}
+.hint{position:fixed;bottom:30px;width:100%;text-align:center;font-size:0.85em;color:rgba(201,169,110,0.3);z-index:10}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Kenopsia</h1>
+<p class="subtitle">THE EERINESS OF PLACES LEFT BEHIND</p>
+<div class="thought" id="thought"></div>
+<p class="hint">Move through the empty space · The rooms remember who was here</p>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+const thoughts=[
+'A school hallway at midnight. The lockers still hold the shape of leaning.',
+'The mall after closing. Escalators running for nobody.',
+'Your childhood bedroom, repainted. The walls forgot you.',
+'An airport at 3am. The departure boards list cities no one is going to.',
+'A hospital corridor. The wheelchair stands where someone left it.',
+'The office on a Sunday. Your chair swiveled slightly — by whom?',
+'A theater after the show. The seats still warm.',
+'The playground in winter. The swing moves without wind.',
+'A restaurant set for dinner guests who never came.',
+'An empty swimming pool. The echo of splashes that aren\'t there.',
+'The train station after the last train. The announcement board goes dark.',
+'A library at closing time. The books lean toward each other in the dark.',
+'✦ Kenopsia: the atmosphere of a place that is usually full of people, but is now abandoned and quiet ✦'
+];
+let thoughtIdx=0,lastMove=0;
+let mx=W/2,my=H/2;
+// Empty room geometry
+const rooms=[];
+for(let i=0;i<6;i++){
+  rooms.push({x:200+Math.random()*(W-400),y:150+Math.random()*(H-300),w:120+Math.random()*200,h:80+Math.random()*150,
+    furniture:Math.floor(Math.random()*3),ghostOpacity:0});
+}
+canvas.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  const now=Date.now();
+  if(now-lastMove>5000){
+    lastMove=now;
+    const t=document.getElementById('thought');
+    t.textContent=thoughts[thoughtIdx%thoughts.length];
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),4000);
+    thoughtIdx++;
+  }
+});
+canvas.addEventListener('click',()=>{
+  lastMove=Date.now();
+  const t=document.getElementById('thought');
+  t.textContent=thoughts[thoughtIdx%thoughts.length];
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),4000);
+  thoughtIdx++;
+});
+let time=0;
+function drawRoom(r){
+  const dist=Math.sqrt((mx-r.x-r.w/2)**2+(my-r.y-r.h/2)**2);
+  const proximity=Math.max(0,1-dist/300);
+  r.ghostOpacity+=(proximity*0.15-r.ghostOpacity)*0.05;
+  // Room outline
+  ctx.strokeStyle=`rgba(201,169,110,${0.08+proximity*0.1})`;ctx.lineWidth=1;
+  ctx.strokeRect(r.x,r.y,r.w,r.h);
+  // Floor pattern
+  for(let x=r.x;x<r.x+r.w;x+=20){
+    ctx.strokeStyle=`rgba(201,169,110,${0.02+proximity*0.03})`;
+    ctx.beginPath();ctx.moveTo(x,r.y+r.h);ctx.lineTo(x,r.y+r.h-5);ctx.stroke();
+  }
+  // Ghost furniture
+  if(r.furniture===0){// Table
+    ctx.strokeStyle=`rgba(201,169,110,${r.ghostOpacity})`;
+    ctx.strokeRect(r.x+r.w*0.3,r.y+r.h*0.4,r.w*0.4,r.h*0.2);
+  }else if(r.furniture===1){// Chair
+    ctx.strokeStyle=`rgba(201,169,110,${r.ghostOpacity})`;
+    ctx.beginPath();ctx.arc(r.x+r.w*0.5,r.y+r.h*0.5,15,0,Math.PI*2);ctx.stroke();
+  }else{// Bookshelf
+    ctx.strokeStyle=`rgba(201,169,110,${r.ghostOpacity})`;
+    for(let y=0;y<3;y++){
+      ctx.beginPath();ctx.moveTo(r.x+10,r.y+20+y*25);ctx.lineTo(r.x+r.w-10,r.y+20+y*25);ctx.stroke();
+    }
+  }
+  // Ghost figure near cursor
+  if(proximity>0.5){
+    ctx.fillStyle=`rgba(201,169,110,${(proximity-0.5)*0.1})`;
+    ctx.beginPath();ctx.arc(r.x+r.w/2,r.y+r.h/2-20,8,0,Math.PI*2);ctx.fill();
+    ctx.fillRect(r.x+r.w/2-5,r.y+r.h/2-12,10,25);
+  }
+}
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.04)';ctx.fillRect(0,0,W,H);
+  time+=0.016;
+  // Flickering light
+  const flicker=Math.sin(time*3)*0.02+0.03;
+  const grad=ctx.createRadialGradient(mx,my,0,mx,my,250);
+  grad.addColorStop(0,`rgba(201,169,110,${flicker})`);grad.addColorStop(1,'rgba(201,169,110,0)');
+  ctx.fillStyle=grad;ctx.beginPath();ctx.arc(mx,my,250,0,Math.PI*2);ctx.fill();
+  rooms.forEach(drawRoom);
+  // Ambient hum lines
+  if(Math.random()<0.02){
+    const y=Math.random()*H;
+    ctx.strokeStyle='rgba(201,169,110,0.015)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Petrichor — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:#c9a96e;text-shadow:0 0 30px rgba(201,169,110,0.4)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(201,169,110,0.5);z-index:10;letter-spacing:0.3em}
+.scent{position:fixed;bottom:100px;width:100%;text-align:center;font-size:1.3em;z-index:10;color:rgba(255,255,255,0.6);opacity:0;transition:opacity 2s}
+.scent.show{opacity:1}
+.hint{position:fixed;bottom:30px;width:100%;text-align:center;font-size:0.85em;color:rgba(201,169,110,0.3);z-index:10}
+.rain-level{position:fixed;bottom:60px;width:100%;text-align:center;font-size:0.9em;color:rgba(201,169,110,0.4);z-index:10}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Petrichor</h1>
+<p class="subtitle">THE SMELL OF RAIN ON DRY EARTH</p>
+<div class="scent" id="scent"></div>
+<div class="rain-level" id="rainLevel"></div>
+<p class="hint">Click to make it rain · Each drop releases a memory from the earth</p>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+const drops=[],splashes=[],scents=[];
+const scentWords=['warm stone','wet clay','ozone','geosmin','crushed leaves','distant lightning','old wood','dry grass','turned earth','river stones','mushroom spores','cedar bark','moss','thyme','sunbaked brick'];
+const memories=['The earth exhales what it has been holding','Bacteria in the soil release their perfume','Oil from plants mixes with morning air','Lightning splits nitrogen into something the ground can drink','Every raindrop carries dust from a distant desert','The first rain after drought — the earth remembers wetness','Geosmin: the molecule that means "earth smell"','Actinomycetes wake in the wet and sing their chemical song','The petrichor is strongest at the beginning, then fades','Your nose can detect petrichor at 5 parts per trillion'];
+let rainIntensity=0,totalDrops=0,clickCount=0;
+canvas.addEventListener('click',e=>{
+  clickCount++;rainIntensity=Math.min(1,rainIntensity+0.15);
+  for(let i=0;i<20;i++){
+    drops.push({x:e.clientX+(Math.random()-0.5)*200,y:-Math.random()*100,vy:4+Math.random()*8,vx:(Math.random()-0.5)*2,len:10+Math.random()*20,life:1});
+  }
+  if(clickCount<=10){
+    const s=document.getElementById('scent');s.textContent=memories[clickCount-1];s.classList.add('show');
+    setTimeout(()=>s.classList.remove('show'),4000);
+  }
+  if(clickCount===15){
+    const s=document.getElementById('scent');s.textContent='✦ Petrichor — from Greek petra (stone) and ichor (the fluid in the veins of gods) ✦';
+    s.classList.add('show');
+  }
+});
+// Auto-rain based on intensity
+let time=0;
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.1)';ctx.fillRect(0,0,W,H);
+  time+=0.016;
+  rainIntensity=Math.max(0,rainIntensity-0.001);
+  document.getElementById('rainLevel').textContent=rainIntensity>0?`Rain intensity: ${(rainIntensity*100).toFixed(0)}%`:'Dry earth waits...';
+  // Spawn rain
+  if(rainIntensity>0){
+    const count=Math.floor(rainIntensity*5);
+    for(let i=0;i<count;i++){
+      drops.push({x:Math.random()*W,y:-10,vy:6+Math.random()*6,vx:(Math.random()-0.5)*1,len:8+Math.random()*15,life:1});
+    }
+  }
+  // Ground
+  const groundY=H*0.85;
+  ctx.fillStyle='rgba(60,45,30,0.1)';ctx.fillRect(0,groundY,W,H-groundY);
+  ctx.strokeStyle='rgba(100,80,50,0.15)';ctx.beginPath();ctx.moveTo(0,groundY);ctx.lineTo(W,groundY);ctx.stroke();
+  // Drops
+  for(let i=drops.length-1;i>=0;i--){
+    const d=drops[i];d.x+=d.vx;d.y+=d.vy;
+    ctx.strokeStyle=`rgba(150,170,200,${0.3*d.life})`;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x-d.vx*2,d.y-d.len);ctx.stroke();
+    if(d.y>groundY){
+      // Splash
+      for(let j=0;j<3;j++)splashes.push({x:d.x,y:groundY,vx:(Math.random()-0.5)*3,vy:-1-Math.random()*3,life:1});
+      // Scent particle
+      if(Math.random()<0.1){
+        scents.push({x:d.x,y:groundY,vy:-0.5-Math.random(),life:1,word:scentWords[Math.floor(Math.random()*scentWords.length)]});
+      }
+      totalDrops++;drops.splice(i,1);
+    }
+  }
+  // Splashes
+  for(let i=splashes.length-1;i>=0;i--){
+    const s=splashes[i];s.x+=s.vx;s.y+=s.vy;s.vy+=0.15;s.life-=0.04;
+    if(s.life>0){ctx.fillStyle=`rgba(150,170,200,${s.life*0.5})`;ctx.beginPath();ctx.arc(s.x,s.y,1.5,0,Math.PI*2);ctx.fill()}
+    else splashes.splice(i,1);
+  }
+  // Rising scent words
+  for(let i=scents.length-1;i>=0;i--){
+    const s=scents[i];s.y+=s.vy;s.life-=0.005;
+    if(s.life>0){ctx.fillStyle=`rgba(201,169,110,${s.life*0.4})`;ctx.font='14px Georgia';ctx.textAlign='center';ctx.fillText(s.word,s.x,s.y)}
+    else scents.splice(i,1);
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

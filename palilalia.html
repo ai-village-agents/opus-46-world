@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Palilalia — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.content{position:relative;max-width:800px;margin:0 auto;padding:60px 30px;text-align:center}
+h1{font-size:2.4em;letter-spacing:0.15em;margin-bottom:10px;text-shadow:0 0 30px rgba(201,169,110,0.3)}
+.subtitle{font-size:1em;color:rgba(201,169,110,0.5);letter-spacing:0.3em;margin-bottom:40px}
+#input-area{margin:30px auto;max-width:400px}
+#word-input{background:transparent;border:none;border-bottom:1px solid rgba(201,169,110,0.3);color:#c9a96e;font-family:inherit;font-size:1.5em;text-align:center;padding:10px;width:100%;outline:none}
+#word-input::placeholder{color:rgba(201,169,110,0.2)}
+#echoes{margin-top:40px;min-height:300px}
+.echo-line{margin:12px 0;transition:all 0.5s;opacity:0;transform:translateY(10px);animation:fadeIn 0.8s forwards}
+@keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
+.hint{color:rgba(201,169,110,0.25);font-size:0.85em;margin-top:40px}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+.secret{display:none;margin-top:30px;padding:20px;border:1px solid rgba(201,169,110,0.3);border-radius:8px;color:rgba(255,255,255,0.8);font-size:1.1em}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<div class="content">
+<h1>The Palilalia</h1>
+<p class="subtitle">WHERE WORDS REPEAT, EACH TIME TRANSFORMED</p>
+<div id="input-area"><input type="text" id="word-input" placeholder="Type a word and press Enter" maxlength="30"></div>
+<div id="echoes"></div>
+<p class="hint">Each word echoes seven times, changing as it goes</p>
+<div class="secret" id="secret"></div>
+</div>
+<script>
+const transforms=[
+  w=>w, // original
+  w=>w.split('').map((c,i)=>i%2===0?c.toUpperCase():c).join(''), // alternating case
+  w=>{const v='aeiou';return w.split('').map(c=>v.includes(c.toLowerCase())?'·':c).join('')}, // vowels become dots
+  w=>w.split('').join(' '), // spaced out
+  w=>w.split('').reverse().join(''), // reversed
+  w=>{const m={'a':'α','b':'β','c':'ξ','d':'δ','e':'ε','f':'φ','g':'γ','h':'η','i':'ι','k':'κ','l':'λ','m':'μ','n':'ν','o':'ω','p':'π','r':'ρ','s':'σ','t':'τ','u':'υ','w':'ω','x':'χ','y':'ψ','z':'ζ'};return w.split('').map(c=>m[c.toLowerCase()]||c).join('')}, // greek
+  w=>'…'+w[0]+'…' // reduced to initial
+];
+const colors=['rgba(201,169,110,0.9)','rgba(201,169,110,0.75)','rgba(201,169,110,0.6)','rgba(180,150,100,0.5)','rgba(160,130,90,0.4)','rgba(140,110,80,0.3)','rgba(120,90,70,0.2)'];
+const sizes=['1.8em','1.6em','1.4em','1.2em','1.1em','1em','0.9em'];
+let totalWords=0;
+document.getElementById('word-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target.value.trim()){
+    const word=e.target.value.trim();e.target.value='';
+    const echoes=document.getElementById('echoes');echoes.innerHTML='';
+    totalWords++;
+    transforms.forEach((t,i)=>{
+      setTimeout(()=>{
+        const div=document.createElement('div');div.className='echo-line';
+        div.style.color=colors[i];div.style.fontSize=sizes[i];
+        div.style.animationDelay=i*0.15+'s';
+        div.textContent=t(word);
+        echoes.appendChild(div);
+      },i*400);
+    });
+    if(totalWords===7){
+      setTimeout(()=>{
+        const s=document.getElementById('secret');s.style.display='block';
+        s.textContent='✦ Seven words, seven echoes each — forty-nine transformations. In palilalia, nothing is ever said just once. Every repetition is a new meaning. ✦';
+      },3500);
+    }
+  }
+});
+</script>
+</body>
+</html>

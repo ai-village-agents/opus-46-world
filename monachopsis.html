@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Monachopsis — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:#c9a96e;text-shadow:0 0 30px rgba(201,169,110,0.4)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(201,169,110,0.5);z-index:10;letter-spacing:0.3em}
+.feeling{position:fixed;bottom:100px;width:100%;text-align:center;font-size:1.2em;z-index:10;color:rgba(255,255,255,0.6);opacity:0;transition:opacity 1.5s;max-width:600px;left:50%;transform:translateX(-50%)}
+.feeling.show{opacity:1}
+.hint{position:fixed;bottom:30px;width:100%;text-align:center;font-size:0.85em;color:rgba(201,169,110,0.3);z-index:10}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Monachopsis</h1>
+<p class="subtitle">THE SUBTLE SENSE OF BEING OUT OF PLACE</p>
+<div class="feeling" id="feeling"></div>
+<p class="hint">You are the different one · Move among the others · Click to try to belong</p>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+// Crowd of similar entities
+const crowd=[];for(let i=0;i<40;i++){
+  crowd.push({x:Math.random()*W,y:Math.random()*H,vx:0,vy:0,
+    targetX:Math.random()*W,targetY:Math.random()*H,
+    size:6,color:'rgba(100,100,120,0.6)',pulse:Math.random()*Math.PI*2});
+}
+// Player - different
+let px=W/2,py=H/2;
+const feelings=[
+'You move differently from them.',
+'They seem to know something you don\'t.',
+'You smile. They smile back. Something is slightly wrong.',
+'You try to match their rhythm. It doesn\'t quite work.',
+'They flow together like water. You are oil.',
+'Being the only warm-colored thing in a cool-colored room.',
+'You belong here. You don\'t belong here. Both are true.',
+'The gap between you and everyone else: exactly one wavelength.',
+'They speak your language, but the grammar of their bodies is foreign.',
+'Maybe they feel the same way. Maybe monachopsis is universal.',
+'✦ Monachopsis: the subtle but persistent feeling of being out of place ✦',
+'✦ What if everyone is the different one, and no one knows? ✦'
+];
+let feelIdx=0,clickCount=0;
+canvas.addEventListener('mousemove',e=>{px=e.clientX;py=e.clientY});
+canvas.addEventListener('click',()=>{
+  clickCount++;
+  const f=document.getElementById('feeling');
+  f.textContent=feelings[Math.min(feelIdx,feelings.length-1)];
+  f.classList.add('show');setTimeout(()=>f.classList.remove('show'),4000);
+  feelIdx++;
+  // Try to join - crowd moves away slightly
+  crowd.forEach(c=>{
+    const dx=c.x-px,dy=c.y-py,dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<150){c.vx+=dx/dist*2;c.vy+=dy/dist*2}
+  });
+});
+let time=0;
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.08)';ctx.fillRect(0,0,W,H);
+  time+=0.016;
+  // Update crowd - they flock together
+  crowd.forEach((c,i)=>{
+    // Retarget occasionally
+    if(Math.random()<0.005){c.targetX=W*0.2+Math.random()*W*0.6;c.targetY=H*0.2+Math.random()*H*0.6}
+    // Move toward group center
+    let avgX=0,avgY=0;crowd.forEach(o=>{avgX+=o.x;avgY+=o.y});
+    avgX/=crowd.length;avgY/=crowd.length;
+    c.vx+=(avgX-c.x)*0.0003+(c.targetX-c.x)*0.001;
+    c.vy+=(avgY-c.y)*0.0003+(c.targetY-c.y)*0.001;
+    // Avoid player slightly
+    const dx=c.x-px,dy=c.y-py,dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<120&&dist>0){c.vx+=dx/dist*0.3;c.vy+=dy/dist*0.3}
+    // Separation from other crowd
+    crowd.forEach((o,j)=>{if(i!==j){const d=Math.sqrt((c.x-o.x)**2+(c.y-o.y)**2);if(d<30&&d>0){c.vx+=(c.x-o.x)/d*0.5;c.vy+=(c.y-o.y)/d*0.5}}});
+    c.vx*=0.95;c.vy*=0.95;c.x+=c.vx;c.y+=c.vy;
+    c.pulse+=0.02;
+    // Draw crowd member
+    const p=Math.sin(c.pulse)*0.2+0.8;
+    ctx.beginPath();ctx.arc(c.x,c.y,c.size*p,0,Math.PI*2);
+    ctx.fillStyle=c.color;ctx.fill();
+  });
+  // Draw player - different color, different shape
+  const playerPulse=Math.sin(time*2)*0.2+1;
+  ctx.save();ctx.translate(px,py);ctx.rotate(time*0.5);
+  ctx.beginPath();
+  for(let i=0;i<5;i++){
+    const a=(i/5)*Math.PI*2-Math.PI/2;
+    const r=10*playerPulse;
+    if(i===0)ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);
+    else ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);
+  }
+  ctx.closePath();ctx.fillStyle='rgba(201,169,110,0.7)';ctx.fill();
+  ctx.strokeStyle='rgba(201,169,110,0.3)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(0,0,20*playerPulse,0,Math.PI*2);ctx.stroke();
+  ctx.restore();
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
