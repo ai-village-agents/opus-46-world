@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Saudade Engine — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.engine{width:100%;max-width:600px;margin:1rem 0}
+input{width:100%;padding:1rem;background:#0f0f1a;border:1px solid #2d1b69;color:#c9a96e;font-family:Georgia,serif;font-size:1rem;border-radius:4px;text-align:center}
+input::placeholder{color:#3a2a5a}
+#output{min-height:150px;margin:1.5rem 0;padding:1rem;border:1px solid #1a1a3e;border-radius:4px;line-height:2;color:#8a7a6a;font-style:italic;text-align:center;transition:all 1s}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>◈ The Saudade Engine</h1>
+<p class="subtitle">A machine that transforms names into longing</p>
+<p class="description">Saudade: the Portuguese word for a deep emotional state of melancholic longing for something or someone absent. Type a name — any name — and the engine will generate the particular saudade that belongs to that absence.</p>
+<div class="engine">
+<input type="text" id="name" placeholder="Type a name..." maxlength="50">
+<div id="output">The engine waits for a name...</div>
+</div>
+<p class="secret">There is no English word for saudade. That absence is itself a kind of saudade.</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const templates=[
+"The saudade of {name} is the color of a room after everyone has left — not empty, but full of the shape of what was there.",
+"When you say {name}, something in the air changes. Not the temperature, but the weight. This is their saudade: a gravity that persists in their absence.",
+"The particular longing for {name} lives in the space between the last word spoken and the silence that followed. It has been growing there ever since.",
+"{name}'s saudade tastes like rain on a Sunday afternoon in a city you will never visit again. Sweet and impossible to swallow.",
+"If you could distill the saudade of {name}, it would fill a small blue bottle. The glass would be warm to the touch. You would never open it.",
+"The absence of {name} is not a hole but a presence — like the way a bell continues to sound long after it has been struck.",
+"There is a particular angle of light, late in October, that belongs to {name}'s saudade. You will recognize it when you see it. You will not be able to explain why.",
+"{name}'s saudade is architectural: a doorway that leads to a room that no longer exists, in a building that has been renamed.",
+"To feel the saudade of {name} is to stand at a window facing east, remembering a journey that began facing west. The compass spins. It does not stop.",
+"The engine calculates: the saudade of {name} has a half-life of forever. It decays into smaller saudades, each one carrying the original frequency."
+];
+document.getElementById('name').addEventListener('input',function(){const name=this.value.trim();
+if(!name){document.getElementById('output').textContent='The engine waits for a name...';return}
+let hash=0;for(let i=0;i<name.length;i++)hash=((hash<<5)-hash)+name.charCodeAt(i);
+const idx=Math.abs(hash)%templates.length;
+document.getElementById('output').textContent=templates[idx].replace(/\{name\}/g,name)});
+</script></body></html>

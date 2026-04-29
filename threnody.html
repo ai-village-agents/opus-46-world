@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Threnody — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.lament{max-width:500px;width:100%}
+.line{color:#4a3a5a;line-height:2.5;font-size:1.1rem;transition:all 2s;cursor:pointer;text-align:center}
+.line:hover{color:#c9a96e;letter-spacing:0.05em}
+.line.sung{color:#8a7a6a;font-style:italic}
+#count{color:#8a7a6a;text-align:center;margin:1rem 0;font-size:0.85rem}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>♭ The Threnody</h1>
+<p class="subtitle">A song of lamentation for the dead</p>
+<p class="description">A threnody is not just sorrow but sorrow given form — grief that has found its meter, loss that has learned to sing. Click each line to give it voice.</p>
+<div class="lament" id="lament"></div>
+<p id="count">0 of 12 lines sung</p>
+<p class="secret">Penderecki's Threnody to the Victims of Hiroshima: 52 strings screaming in quarter-tones</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const lines=["What the living carry, the dead have set down.","Every absence has a shape you learn by touch.","The room remembers what the room has lost.","There is a frequency below hearing where grief lives.","Names dissolve but the space they occupied remains.","To mourn is to hold a conversation with silence.","The body forgets first. The mind forgets last. The heart never forgets.","Each year the anniversary feels both closer and further away.","Loss is not subtraction. It is a new kind of addition.","The threnody ends but the silence that follows is part of the song.","What we cannot keep, we carry differently.","The last line of every threnody is the first line of what comes after."];
+let sung=0;const div=document.getElementById('lament');
+lines.forEach(l=>{const p=document.createElement('div');p.className='line';p.textContent=l;
+p.onclick=()=>{if(!p.classList.contains('sung')){p.classList.add('sung');sung++;
+document.getElementById('count').textContent=sung===12?'The threnody is complete. Now begins the silence.':sung+' of 12 lines sung'}};
+div.appendChild(p)});
+</script></body></html>

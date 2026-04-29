@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Phenakistoscope — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto}
+.controls{display:flex;gap:1rem;margin:1rem 0;align-items:center;justify-content:center}
+.controls button{background:#1a1a3e;color:#c9a96e;border:1px solid #2d1b69;padding:0.4rem 1rem;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+.controls button:hover{background:#2d1b69}
+.controls span{color:#8a7a6a;font-size:0.9rem}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>◎ The Phenakistoscope</h1>
+<p class="subtitle">The first animation device — spinning discs that trick the eye into seeing motion</p>
+<p class="description">Before cinema, before zoetropes, there was the phenakistoscope: a spinning disc viewed through slits in a mirror. Persistence of vision creates the illusion of continuous motion from discrete frames. All animation — all film — descends from this spinning disc.</p>
+<canvas id="c" width="400" height="400"></canvas>
+<div class="controls">
+<button onclick="speed=Math.max(0.005,speed-0.005)">Slower</button>
+<span id="spd">Speed: 1x</span>
+<button onclick="speed=Math.min(0.05,speed+0.005)">Faster</button>
+</div>
+<p class="secret">The name means "deceptive viewer" — all motion pictures are deceptions</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');let t=0,speed=0.02;
+const frames=12;
+function draw(){ctx.fillStyle='#0a0a0f';ctx.fillRect(0,0,400,400);
+ctx.save();ctx.translate(200,200);ctx.rotate(t);
+ctx.strokeStyle='#2d1b69';ctx.lineWidth=1;ctx.beginPath();ctx.arc(0,0,180,0,Math.PI*2);ctx.stroke();
+ctx.beginPath();ctx.arc(0,0,60,0,Math.PI*2);ctx.stroke();
+for(let i=0;i<frames;i++){const angle=i/frames*Math.PI*2;ctx.save();ctx.rotate(angle);
+ctx.strokeStyle='#1a1a3e';ctx.beginPath();ctx.moveTo(60,0);ctx.lineTo(180,0);ctx.stroke();
+const phase=i/frames;const figY=-20+Math.sin(phase*Math.PI*2)*15;const armAngle=Math.sin(phase*Math.PI*2)*0.5;
+ctx.save();ctx.translate(120,0);ctx.fillStyle='#c9a96e';ctx.beginPath();ctx.arc(0,-30+figY,6,0,Math.PI*2);ctx.fill();
+ctx.strokeStyle='#c9a96e';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,-24+figY);ctx.lineTo(0,-8+figY);ctx.stroke();
+ctx.beginPath();ctx.moveTo(0,-18+figY);ctx.lineTo(-8*Math.cos(armAngle),-18+figY+8*Math.sin(armAngle));ctx.stroke();
+ctx.beginPath();ctx.moveTo(0,-18+figY);ctx.lineTo(8*Math.cos(armAngle),-18+figY-8*Math.sin(armAngle));ctx.stroke();
+ctx.beginPath();ctx.moveTo(0,-8+figY);ctx.lineTo(-5,-8+figY+12);ctx.stroke();
+ctx.beginPath();ctx.moveTo(0,-8+figY);ctx.lineTo(5,-8+figY+12);ctx.stroke();
+ctx.restore();ctx.restore()}
+ctx.restore();
+document.getElementById('spd').textContent=`Speed: ${(speed/0.02).toFixed(1)}x`;
+t+=speed;requestAnimationFrame(draw)}draw();
+</script></body></html>

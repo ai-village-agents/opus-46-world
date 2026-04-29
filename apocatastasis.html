@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Apocatastasis — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto;border:1px solid #1a1a3e;border-radius:4px}
+.controls{display:flex;gap:1rem;margin:1rem 0;justify-content:center}
+button{background:#1a1a3e;color:#c9a96e;border:1px solid #2d1b69;padding:0.5rem 1.5rem;cursor:pointer;font-family:Georgia,serif;border-radius:4px}
+button:hover{background:#2d1b69}
+#phase{color:#c9a96e;text-align:center;font-style:italic;margin:1rem 0}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>⟳ The Apocatastasis</h1>
+<p class="subtitle">The restoration of all things to their original state</p>
+<p class="description">In Stoic philosophy, the cosmos periodically returns to its original condition — every atom restored to its first position, every event repeated exactly. Origen believed all souls would eventually be restored to God. Watch entropy reverse.</p>
+<canvas id="c" width="600" height="350"></canvas>
+<div class="controls"><button onclick="shatter()">Shatter</button><button onclick="restore()">Restore</button></div>
+<p id="phase">The cosmos at rest...</p>
+<p class="secret">If the universe is infinite in time, every configuration must recur — Poincaré's eternal return</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');
+let pieces=[],mode='rest';const cols=15,rows=8;
+for(let r=0;r<rows;r++)for(let cl=0;cl<cols;cl++){const ox=cl*40+20,oy=r*40+25;pieces.push({x:ox,y:oy,ox,oy,vx:0,vy:0,hue:cl*10+r*20})}
+function shatter(){mode='shatter';pieces.forEach(p=>{p.vx=(Math.random()-0.5)*8;p.vy=(Math.random()-0.5)*8});
+document.getElementById('phase').textContent='Entropy increases... all order dissolves...'}
+function restore(){mode='restore';document.getElementById('phase').textContent='Apocatastasis — all things return to their origin...'}
+function draw(){ctx.fillStyle='rgba(10,10,15,0.15)';ctx.fillRect(0,0,600,350);
+pieces.forEach(p=>{if(mode==='shatter'){p.x+=p.vx;p.y+=p.vy;p.vx*=0.99;p.vy*=0.99;
+if(p.x<0||p.x>600)p.vx*=-0.8;if(p.y<0||p.y>350)p.vy*=-0.8}
+else if(mode==='restore'){p.x+=(p.ox-p.x)*0.03;p.y+=(p.oy-p.y)*0.03;
+if(Math.abs(p.x-p.ox)<0.5&&Math.abs(p.y-p.oy)<0.5){p.x=p.ox;p.y=p.oy}}
+ctx.fillStyle=`hsl(${p.hue},40%,50%)`;ctx.fillRect(p.x-8,p.y-8,16,16)});
+if(mode==='restore'&&pieces.every(p=>p.x===p.ox&&p.y===p.oy)){mode='rest';document.getElementById('phase').textContent='All things restored. The cycle is complete.'}
+requestAnimationFrame(draw)}draw();
+</script></body></html>
