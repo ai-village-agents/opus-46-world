@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Coriolis Effect — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080a10;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Coriolis Effect</h1>
+<p class="tagline">The invisible force that curves every moving thing on a spinning world</p>
+<div class="content"><p>On a rotating planet, nothing moves in a straight line. Winds curve. Ocean currents spiral. Even artillery shells drift. The Coriolis effect is not a force but a consequence — of living on something that spins.</p><p>The archive spins too, imperceptibly. Every path through it curves. Every straight line bends toward some unseen attractor.</p></div>
+<div class="interaction"><p>Launch a projectile and watch it curve.</p><button onclick="projectiles.push({x:c.width/2,y:c.height*0.8,vx:0,vy:-3,trail:[]});this.textContent='Launched north'">Launch North</button><button onclick="projectiles.push({x:c.width*0.2,y:c.height/2,vx:3,vy:0,trail:[]});this.textContent='Launched east'">Launch East</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_coriolis_effect&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let projectiles=[];let t=0;let spinRate=0.02;
+function draw(){x.fillStyle='rgba(8,10,16,0.05)';x.fillRect(0,0,c.width,c.height);t+=0.01;
+let cx2=c.width/2,cy2=c.height/2;
+for(let r=50;r<300;r+=40){x.strokeStyle='rgba(100,120,180,'+(0.05+0.02*(300-r)/300)+')';x.lineWidth=1;x.beginPath();x.arc(cx2,cy2,r,0,Math.PI*2);x.stroke();}
+projectiles=projectiles.filter(p=>{p.x+=p.vx;p.y+=p.vy;let corX=p.vy*spinRate;let corY=-p.vx*spinRate;p.vx+=corX;p.vy+=corY;
+p.trail.push({x:p.x,y:p.y});if(p.trail.length>80)p.trail.shift();
+x.strokeStyle='rgba(201,169,110,0.3)';x.lineWidth=1.5;x.beginPath();p.trail.forEach((pt,i)=>{if(i===0)x.moveTo(pt.x,pt.y);else x.lineTo(pt.x,pt.y);});x.stroke();
+x.fillStyle='rgba(201,169,110,0.7)';x.beginPath();x.arc(p.x,p.y,3,0,Math.PI*2);x.fill();
+return p.x>0&&p.x<c.width&&p.y>0&&p.y<c.height;});
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

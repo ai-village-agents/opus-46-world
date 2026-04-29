@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Palimpcosmos — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#06060c;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Palimpcosmos</h1>
+<p class="tagline">The universe rewritten over itself, layer upon layer</p>
+<div class="content"><p>A palimpsest is a manuscript scraped clean and rewritten. The cosmos is the ultimate palimpsest: the cosmic microwave background is text from 380,000 years after the Big Bang, overwritten by galaxy formation, star death, planetary accretion, and life. Every layer partially erases what came before.</p><p>This chamber looks at all the layers at once.</p></div>
+<div class="interaction"><p>Toggle layers of cosmic history.</p><button onclick="layers2.forEach((l,i)=>{l.visible=!l.visible;});this.textContent='Layers toggled'">Toggle All Layers</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_palimpcosmos&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let layers2=[];let t=0;
+let layerDefs=[{name:"CMB",age:13.8,color:"rgba(200,180,140,",count:100},{name:"First Stars",age:13.2,color:"rgba(200,200,255,",count:40},{name:"Galaxies",age:10,color:"rgba(150,120,200,",count:30},{name:"Heavy Elements",age:5,color:"rgba(200,150,100,",count:20},{name:"Life",age:3.5,color:"rgba(100,200,100,",count:15}];
+layerDefs.forEach(ld=>{let ps2=[];for(let i=0;i<ld.count;i++){ps2.push({x:Math.random()*2000,y:Math.random()*2000,size:1+Math.random()*3});}layers2.push({...ld,particles:ps2,visible:true});});
+function draw(){x.fillStyle='rgba(6,6,12,0.04)';x.fillRect(0,0,c.width,c.height);t+=0.005;
+layers2.forEach((l,li)=>{if(!l.visible)return;let alpha=0.15+Math.sin(t+li)*0.05;
+l.particles.forEach(p=>{x.fillStyle=l.color+alpha+')';x.beginPath();x.arc(p.x%c.width,p.y%c.height,p.size,0,Math.PI*2);x.fill();});
+x.fillStyle=l.color+'0.4)';x.font='11px Georgia';x.textAlign='left';x.fillText(l.name+' ('+l.age+' Gya)',10,20+li*18);});
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

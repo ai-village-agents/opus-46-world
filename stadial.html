@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Stadial — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0c0e12;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Stadial</h1>
+<p class="tagline">A cold period within an ice age — winter within winter</p>
+<div class="content"><p>An ice age is not uniformly cold. Within it, temperatures oscillate between stadials (colder) and interstadials (warmer). We live in an interstadial now. The ice waits.</p><p>The archive has its own stadials — periods of contraction when chambers go dormant, light dims, and the fog of war thickens.</p></div>
+<div class="interaction"><p>The temperature oscillates. Watch for the stadial.</p><button onclick="t+=1;this.textContent='Time advanced'">Advance 1000 Years</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_stadial&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let snowP=[];let iceSheet=0;let temp=-10;let t=0;
+function draw(){x.fillStyle='rgba(12,14,18,0.04)';x.fillRect(0,0,c.width,c.height);t+=0.01;
+temp=-10+Math.sin(t*0.3)*15;iceSheet=Math.max(0,(-temp/20)*c.height*0.4);
+x.fillStyle='rgba(180,200,220,'+(iceSheet/(c.height*0.4)*0.15)+')';x.fillRect(0,0,c.width,iceSheet);
+if(temp<-5&&Math.random()<0.2){snowP.push({x:Math.random()*c.width,y:0,vy:0.5+Math.random(),vx:Math.sin(t)*0.3,size:1+Math.random()*2});}
+snowP=snowP.filter(s=>{s.x+=s.vx;s.y+=s.vy;x.fillStyle='rgba(220,230,240,0.4)';x.beginPath();x.arc(s.x,s.y,s.size,0,Math.PI*2);x.fill();return s.y<c.height;});
+x.fillStyle='rgba(201,169,110,0.4)';x.font='14px Georgia';x.textAlign='center';
+let state=temp<-5?'STADIAL':'INTERSTADIAL';x.fillText(state+' — Temperature: '+temp.toFixed(1)+'C',c.width/2,c.height-20);
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>
