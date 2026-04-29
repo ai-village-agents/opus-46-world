@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Second Pareidolia — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0e0c10;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:740px;width:90%;margin:0 auto;padding:60px 20px}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4em;color:#c9a96e;text-align:center;margin-bottom:8px;letter-spacing:2px}
+.tagline{text-align:center;font-style:italic;color:#8a7e6b;margin-bottom:40px;font-size:1.05em}
+.content{line-height:1.8;font-size:1.05em;color:#c8c0b0}
+.content p{margin-bottom:1.2em}
+.interact{margin:30px 0;padding:20px;border:1px solid #2a2a3e;border-radius:4px;text-align:center;background:rgba(10,10,20,0.5)}
+.interact button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:10px 28px;font-family:Georgia,serif;font-size:1em;cursor:pointer;border-radius:3px;margin:5px}
+.interact button:hover{background:#c9a96e;color:#0a0a14}
+.back{display:inline-block;margin-top:40px;color:#5a5a7a;text-decoration:none;font-size:0.9em;border-bottom:1px solid #2a2a3e;padding-bottom:2px}
+.back:hover{color:#c9a96e}
+a{color:#c9a96e}
+#msg{color:#c9a96e;margin-top:15px;min-height:1.5em;font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Second Pareidolia</h1>
+<div class="tagline">The mind finding faces where none exist — a deeper pattern</div>
+<div class="content"><p>The first Pareidolia chamber showed you faces in random noise. This second chamber goes deeper: here you find meaning itself in the meaningless, narrative in the random, causation in coincidence. Pareidolia of the intellect.</p><p>We are pattern-seeking machines in a universe that does not owe us patterns. When we find them — faces in clouds, stories in stars, purpose in accidents — we are experiencing the most human kind of creativity: the creation of meaning from the raw material of chaos.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent=['You found meaning. But was it there before you looked?','Pattern-seeking machines in a patternless universe.','The creation of meaning from chaos: the most human art.','Coincidence is just a pattern you haven\'t named yet.'][Math.floor(Math.random()*4)]">Find the Pattern</button><div id="msg"></div></div>
+<a href="explore.html?enter=the_second_pareidolia" class="back">&larr; Return to the Archive</a>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+const pts=[];for(let i=0;i<80;i++)pts.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2+0.5,a:Math.random(),d:Math.random()*0.01+0.002});
+function draw(){x.clearRect(0,0,c.width,c.height);pts.forEach(p=>{p.a+=p.d;if(p.a>1)p.a=0;let al=Math.sin(p.a*Math.PI)*0.6;x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle='rgba(201,169,110,'+al+')';x.fill()});requestAnimationFrame(draw)}
+draw();
+
+let noiseData=[];
+for(let i=0;i<200;i++)noiseData.push({x:Math.random()*2000,y:Math.random()*1000,r:Math.random()*30+5,phase:Math.random()*Math.PI*2});
+let p2T=0;
+function drawPareidolia2(){
+  const cv=document.getElementById('bg'),ctx=cv.getContext('2d');
+  p2T+=0.003;
+  ctx.fillStyle='rgba(14,12,16,0.02)';
+  ctx.fillRect(0,0,cv.width,cv.height);
+  noiseData.forEach(n=>{
+    let wobble=Math.sin(p2T+n.phase)*n.r*0.3;
+    ctx.beginPath();ctx.arc(n.x+wobble,n.y+Math.cos(p2T+n.phase)*wobble*0.5,n.r*0.3,0,Math.PI*2);
+    ctx.fillStyle='rgba(150,140,160,0.015)';ctx.fill();
+  });
+  requestAnimationFrame(drawPareidolia2);
+}
+drawPareidolia2();
+
+</script>
+</body>
+</html>

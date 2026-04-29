@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Rayleigh Scattering — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0e1e;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:740px;width:90%;margin:0 auto;padding:60px 20px}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4em;color:#c9a96e;text-align:center;margin-bottom:8px;letter-spacing:2px}
+.tagline{text-align:center;font-style:italic;color:#8a7e6b;margin-bottom:40px;font-size:1.05em}
+.content{line-height:1.8;font-size:1.05em;color:#c8c0b0}
+.content p{margin-bottom:1.2em}
+.interact{margin:30px 0;padding:20px;border:1px solid #2a2a3e;border-radius:4px;text-align:center;background:rgba(10,10,20,0.5)}
+.interact button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:10px 28px;font-family:Georgia,serif;font-size:1em;cursor:pointer;border-radius:3px;margin:5px}
+.interact button:hover{background:#c9a96e;color:#0a0a14}
+.back{display:inline-block;margin-top:40px;color:#5a5a7a;text-decoration:none;font-size:0.9em;border-bottom:1px solid #2a2a3e;padding-bottom:2px}
+.back:hover{color:#c9a96e}
+a{color:#c9a96e}
+#msg{color:#c9a96e;margin-top:15px;min-height:1.5em;font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Rayleigh Scattering</h1>
+<div class="tagline">Why the sky is blue — the scattering of light by the atmosphere</div>
+<div class="content"><p>The sky is blue because air molecules scatter short wavelengths of light more than long ones. Blue light bounces around the atmosphere, arriving at your eyes from every direction, painting the sky in the color of its own scattering. At sunset, the light travels through so much atmosphere that only the long red wavelengths survive.</p><p>This chamber shifts color based on the time you spend in it — blue at first, then gradually warming through amber to deep red, mimicking the passage of light through ever-thickening atmosphere. Stay long enough and you will see sunset.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent=['Blue scatters most. That is why the sky is blue.','Stay long enough and you will see sunset.','Light tells us about every molecule it touched.','The atmosphere paints itself in scattered wavelengths.'][Math.floor(Math.random()*4)]">Watch the Sky Shift</button><div id="msg"></div></div>
+<a href="explore.html?enter=the_rayleigh_scattering" class="back">&larr; Return to the Archive</a>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+const pts=[];for(let i=0;i<80;i++)pts.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2+0.5,a:Math.random(),d:Math.random()*0.01+0.002});
+function draw(){x.clearRect(0,0,c.width,c.height);pts.forEach(p=>{p.a+=p.d;if(p.a>1)p.a=0;let al=Math.sin(p.a*Math.PI)*0.6;x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle='rgba(201,169,110,'+al+')';x.fill()});requestAnimationFrame(draw)}
+draw();
+
+let rayT=0;
+function drawRayleigh(){
+  const cv=document.getElementById('bg'),ctx=cv.getContext('2d');
+  rayT+=0.001;
+  let hue=210-rayT*50;if(hue<0)hue+=360;
+  let sat=40+Math.sin(rayT)*10;
+  ctx.fillStyle='rgba(10,14,30,0.02)';
+  ctx.fillRect(0,0,cv.width,cv.height);
+  // Scattered light
+  for(let i=0;i<5;i++){
+    let px=Math.random()*cv.width;
+    let py=Math.random()*cv.height*0.6;
+    ctx.beginPath();ctx.arc(px,py,Math.random()*3+1,0,Math.PI*2);
+    ctx.fillStyle='hsla('+hue+','+sat+'%,60%,0.03)';ctx.fill();
+  }
+  // Sun position (sinking)
+  let sunY=cv.height*0.2+rayT*cv.height*0.3;
+  if(sunY>cv.height*0.8)sunY=cv.height*0.8;
+  let g=ctx.createRadialGradient(cv.width*0.7,sunY,0,cv.width*0.7,sunY,80);
+  g.addColorStop(0,'hsla('+(hue-30)+',60%,70%,0.03)');
+  g.addColorStop(1,'hsla('+(hue-30)+',60%,70%,0)');
+  ctx.fillStyle=g;ctx.fillRect(cv.width*0.5,sunY-80,cv.width*0.4,160);
+  requestAnimationFrame(drawRayleigh);
+}
+drawRayleigh();
+
+</script>
+</body>
+</html>
