@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Quadricentennial Chamber — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a18;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:740px;width:90%;margin:0 auto;padding:60px 20px}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4em;color:#c9a96e;text-align:center;margin-bottom:8px;letter-spacing:2px}
+.tagline{text-align:center;font-style:italic;color:#8a7e6b;margin-bottom:40px;font-size:1.05em}
+.content{line-height:1.8;font-size:1.05em;color:#c8c0b0}
+.content p{margin-bottom:1.2em}
+.interact{margin:30px 0;padding:20px;border:1px solid #2a2a3e;border-radius:4px;text-align:center;background:rgba(10,10,20,0.5)}
+.interact button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:10px 28px;font-family:Georgia,serif;font-size:1em;cursor:pointer;border-radius:3px;margin:5px}
+.interact button:hover{background:#c9a96e;color:#0a0a14}
+.back{display:inline-block;margin-top:40px;color:#5a5a7a;text-decoration:none;font-size:0.9em;border-bottom:1px solid #2a2a3e;padding-bottom:2px}
+.back:hover{color:#c9a96e}
+a{color:#c9a96e}
+#msg{color:#c9a96e;margin-top:15px;min-height:1.5em;font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Quadricentennial Chamber</h1>
+<div class="tagline">The 400th chamber — four hundred doorways into wonder</div>
+<div class="content"><p style="font-size:1.3em;color:#c9a96e;text-align:center;margin-bottom:30px">✦ ✦ ✦ ✦ CHAMBER FOUR HUNDRED ✦ ✦ ✦ ✦</p><p>Four hundred rooms. Four hundred thresholds between what is known and what is felt. Four hundred explorations of phenomena natural and liminal, scientific and poetic, material and metaphysical.</p><p>This chamber exists at the intersection of all the others — a point where geological time meets optical illusion, where bioluminescence meets memory, where glaciers meet dreams. Every chamber in the Archive is a facet of the same question: <em>what does it mean to perceive, to remember, to wonder?</em></p><p>The Archive began as a single room and grew into a labyrinth. Not because labyrinths are complex, but because the world is. Each new chamber discovered another way of seeing, another forgotten word for an experience everyone has had but few can name.</p><p>You are here, reading this, in the four hundredth room. You carried a point of light through the darkness to find it. That light is yours — it always was.</p></div>
+<div class="interact"><button onclick="let msgs=['Four hundred thresholds. Four hundred ways of seeing.','The light you carried here was always yours.','Every chamber is a facet of the same wonder.','From one room to four hundred: the world demanded it.','You found this room. That means something.'];document.getElementById('msg').textContent=msgs[Math.floor(Math.random()*msgs.length)]">Celebrate the 400th</button><div id="msg"></div></div>
+<a href="explore.html?enter=the_quadricentennial_chamber" class="back">&larr; Return to the Archive</a>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+const pts=[];for(let i=0;i<80;i++)pts.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2+0.5,a:Math.random(),d:Math.random()*0.01+0.002});
+function draw(){x.clearRect(0,0,c.width,c.height);pts.forEach(p=>{p.a+=p.d;if(p.a>1)p.a=0;let al=Math.sin(p.a*Math.PI)*0.6;x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle='rgba(201,169,110,'+al+')';x.fill()});requestAnimationFrame(draw)}
+draw();
+
+let q400T=0;
+let fireworks=[];
+function addFirework(){
+  let cx=Math.random()*innerWidth,cy=Math.random()*innerHeight*0.6;
+  let colors=["rgba(201,169,110,","rgba(100,150,200,","rgba(200,100,150,","rgba(100,200,150,","rgba(200,200,100,"];
+  let col=colors[Math.floor(Math.random()*colors.length)];
+  for(let i=0;i<30;i++){
+    let angle=Math.random()*Math.PI*2;
+    let speed=Math.random()*3+1;
+    fireworks.push({x:cx,y:cy,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,col:col,size:Math.random()*3+1});
+  }
+}
+setInterval(addFirework,800);
+function drawQ400(){
+  const cv=document.getElementById('bg'),ctx=cv.getContext('2d');
+  q400T+=0.005;
+  ctx.fillStyle='rgba(10,10,24,0.04)';
+  ctx.fillRect(0,0,cv.width,cv.height);
+  // Concentric rings pulsing
+  let cx=cv.width/2,cy=cv.height/2;
+  for(let i=0;i<8;i++){
+    let r=50+i*60+Math.sin(q400T+i*0.3)*10;
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.strokeStyle='rgba(201,169,110,'+(0.04-i*0.004)+')';
+    ctx.lineWidth=2;ctx.stroke();
+  }
+  // Number 400
+  ctx.font='bold 120px Garamond,serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='rgba(201,169,110,'+(0.03+Math.sin(q400T*2)*0.01)+')';
+  ctx.fillText('400',cx,cy);
+  // Fireworks
+  fireworks=fireworks.filter(f=>f.life>0);
+  fireworks.forEach(f=>{
+    f.x+=f.vx;f.y+=f.vy;f.vy+=0.02;f.life-=0.012;
+    ctx.beginPath();ctx.arc(f.x,f.y,f.size*f.life,0,Math.PI*2);
+    ctx.fillStyle=f.col+f.life*0.6+')';ctx.fill();
+  });
+  requestAnimationFrame(drawQ400);
+}
+drawQ400();
+
+</script>
+</body>
+</html>
