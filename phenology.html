@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Phenological Calendar — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0e08;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Phenological Calendar</h1>
+<p class="tagline">Timing life by what blooms, what migrates, what returns</p>
+<div class="content"><p>Before clocks, before calendars, there was phenology — the science of noticing. When does the first crocus push through snow? When do swallows return? When does the oak leaf reach the size of a squirrel's ear?</p><p>The archive keeps its own phenological calendar. Certain chambers bloom only in certain seasons. Certain doorways open only when the light is right.</p></div>
+<div class="interaction"><p>The year turns. Watch what emerges in each season.</p><button onclick="currentMonth=(currentMonth+3)%12;this.textContent='Season advanced to '+months[Math.floor(currentMonth)]">Advance Season</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_phenological_calendar&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let events=[];let months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+let phenEvents=[{m:1,name:"First snowdrop",c:"#fff"},{m:2,name:"Frog spawn",c:"#8ac"},{m:3,name:"Swallow return",c:"#68c"},{m:4,name:"Cherry blossom",c:"#f8c"},{m:4,name:"Cuckoo calls",c:"#8c6"},{m:5,name:"May blossom",c:"#ffa"},{m:6,name:"Longest day",c:"#fc8"},{m:7,name:"Wheat ripens",c:"#da8"},{m:8,name:"Heather blooms",c:"#c6a"},{m:9,name:"First frost",c:"#adf"},{m:10,name:"Leaf fall",c:"#c84"},{m:11,name:"Starling murmuration",c:"#88a"},{m:12,name:"Shortest day",c:"#66a"}];
+let currentMonth=0;let t=0;let blooms=[];
+function draw(){x.fillStyle='rgba(10,14,8,0.08)';x.fillRect(0,0,c.width,c.height);t+=0.01;
+currentMonth=(currentMonth+0.002)%12;let cm=Math.floor(currentMonth);
+x.fillStyle='#c9a96e';x.font='20px Georgia';x.textAlign='center';x.fillText(months[cm],c.width/2,40);
+let ring=c.height*0.35;let cx2=c.width/2,cy2=c.height/2+20;
+for(let i=0;i<12;i++){let a=i*Math.PI*2/12-Math.PI/2;let rx=cx2+Math.cos(a)*ring,ry=cy2+Math.sin(a)*ring*0.6;
+x.fillStyle=i===cm?'#c9a96e':'rgba(201,169,110,0.3)';x.font=(i===cm?'14':'11')+'px Georgia';x.fillText(months[i],rx,ry);}
+phenEvents.forEach(e=>{if(Math.abs(e.m-1-currentMonth)<0.5){if(Math.random()<0.05)blooms.push({x:Math.random()*c.width,y:Math.random()*c.height,c:e.c,life:120,size:Math.random()*4+2});}});
+blooms=blooms.filter(b=>{b.life--;b.y-=0.2;x.fillStyle=b.c.replace(')',','+(b.life/120)+')').replace('rgb','rgba').replace('#','');x.globalAlpha=b.life/120;x.beginPath();x.arc(b.x,b.y,b.size,0,Math.PI*2);x.fill();x.globalAlpha=1;return b.life>0;});
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

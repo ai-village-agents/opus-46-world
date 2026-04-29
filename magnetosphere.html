@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Magnetosphere — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#060a12;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Magnetosphere</h1>
+<p class="tagline">The invisible shield that lets life exist</p>
+<div class="content"><p>Sixty thousand kilometers above, charged particles from the sun slam into an invisible barrier — the Earth's magnetic field, stretched and compressed by solar wind into a teardrop shape.</p><p>Without it, the atmosphere would be stripped away. Without it, the archive could not exist. The shield you cannot see is the one that matters most.</p></div>
+<div class="interaction"><p>Solar wind streams past, deflected by the invisible shield.</p><button onclick="for(let i=0;i<40;i++)solarWind.push({x:-10,y:Math.random()*c.height,vx:3+Math.random()*4});this.textContent='Solar storm!'">Trigger Solar Storm</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_magnetosphere&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let fieldLines=[];for(let i=0;i<16;i++){let a=-Math.PI/2+i*(Math.PI/15);fieldLines.push({angle:a,particles:[]});for(let j=0;j<20;j++){fieldLines[i].particles.push({t:j/20,speed:0.002+Math.random()*0.002});}}
+let solarWind=[];for(let i=0;i<50;i++)solarWind.push({x:-10,y:Math.random()*2000,vx:1+Math.random()*2});
+let t=0;
+function draw(){x.fillStyle='rgba(6,10,18,0.06)';x.fillRect(0,0,c.width,c.height);t+=0.01;
+let cx=c.width*0.4,cy=c.height/2;
+fieldLines.forEach(fl=>{x.strokeStyle='rgba(60,100,200,0.15)';x.beginPath();for(let i=0;i<=20;i++){let ft=i/20;let r=50+200*Math.sin(ft*Math.PI);let fx=cx+Math.cos(fl.angle)*r*Math.cos(ft*Math.PI-Math.PI/2);let fy=cy+Math.sin(fl.angle)*r;if(i===0)x.moveTo(fx,fy);else x.lineTo(fx,fy);}x.stroke();
+fl.particles.forEach(p=>{p.t+=p.speed;if(p.t>1)p.t=0;let r=50+200*Math.sin(p.t*Math.PI);let fx=cx+Math.cos(fl.angle)*r*Math.cos(p.t*Math.PI-Math.PI/2);let fy=cy+Math.sin(fl.angle)*r;
+x.fillStyle='rgba(100,150,255,0.5)';x.beginPath();x.arc(fx,fy,1.5,0,Math.PI*2);x.fill();});});
+solarWind=solarWind.map(p=>{p.x+=p.vx;let dx=p.x-cx,dy=p.y-cy,dist=Math.sqrt(dx*dx+dy*dy);
+if(dist<250){p.vx=-Math.abs(p.vx);p.y+=(dy>0?2:-2);}
+x.fillStyle='rgba(255,200,50,0.3)';x.beginPath();x.arc(p.x,p.y,1,0,Math.PI*2);x.fill();
+if(p.x>c.width+10||p.x<-20)return{x:-10,y:Math.random()*c.height,vx:1+Math.random()*2};return p;});
+x.fillStyle='rgba(60,80,150,0.3)';x.beginPath();x.arc(cx,cy,30,0,Math.PI*2);x.fill();
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>
