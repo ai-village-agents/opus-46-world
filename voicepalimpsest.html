@@ -1,0 +1,68 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Palimpsest of Voices — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0e;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;width:90%;padding:60px 20px;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.2em;margin-bottom:0.3em}
+.tagline{font-style:italic;opacity:0.7;margin-bottom:2em}.content{text-align:left;line-height:1.8;margin-bottom:2em}.content p{margin-bottom:1em}
+.interaction{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:20px;margin:20px 0}
+.interaction h3{margin-bottom:10px;font-family:'Cormorant Garamond',Garamond,serif;text-align:center}
+#voices{min-height:200px;padding:15px;position:relative}
+.voice{position:absolute;transition:all 2s;cursor:default;user-select:none}
+button{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#c9a96e;padding:8px 16px;border-radius:4px;cursor:pointer;font-family:Georgia,serif;margin:5px}
+button:hover{background:rgba(255,255,255,0.2)}
+input[type="text"]{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);color:#e0d8c8;padding:8px 12px;border-radius:4px;width:60%;font-family:Georgia,serif}
+nav.nav-links{margin-top:40px;display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
+nav.nav-links a{color:#c9a96e;text-decoration:none;font-size:0.9em;opacity:0.7}nav.nav-links a:hover{opacity:1}
+.mark-section{margin-top:30px;padding:20px;border-top:1px solid rgba(255,255,255,0.1)}.mark-section a{color:#c9a96e}
+</style></head><body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Palimpsest of Voices</h1>
+<p class="tagline">Every voice overwrites and reveals the one before</p>
+<div class="content">
+<p>Voices layer upon voices here. The first speaker's words are still faintly visible beneath the second's, and the second beneath the third. Like a manuscript scraped and rewritten, no voice is ever fully erased.</p>
+<p>Add your voice. It will drift across the surface, slowly fading as new voices arrive — but never disappearing entirely. The palimpsest remembers everything.</p>
+</div>
+<div class="interaction">
+<h3>Speak Into the Palimpsest</h3>
+<input type="text" id="inp" placeholder="Your words...">
+<button onclick="speak()">Speak</button>
+<div id="voices"></div>
+</div>
+<div class="mark-section"><p style="font-size:0.9em;opacity:0.6">Leave your mark:</p>
+<a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+Palimpsest+of+Voices&body=I+visited+the+Palimpsest+of+Voices.+My+mark:+&labels=inscription" target="_blank">✒️ Make it permanent →</a></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a><a href="index.html">Main Hall</a></nav>
+</div>
+<script>
+const c=document.getElementById('bg'),ctx=c.getContext('2d');let W,H;
+function resize(){W=c.width=innerWidth;H=c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+let ps=[];for(let i=0;i<50;i++)ps.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,o:Math.random()*0.3+0.1});
+function draw(){ctx.clearRect(0,0,W,H);ps.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(201,169,110,${p.o})`;ctx.fill();p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>W)p.dx*=-1;if(p.y<0||p.y>H)p.dy*=-1});requestAnimationFrame(draw)}
+draw();
+var voices=JSON.parse(localStorage.getItem('palimpsest_voices')||'[]');
+var seedVoices=['I was here before the archive had a name.','Between silence and speech, there is this.','Memory is just imagination facing backward.','The first word was also the last.','What remains when all voices fade?'];
+if(!voices.length) voices=seedVoices.map(function(v,i){return{t:v,x:Math.random()*80,y:10+i*35,o:0.2+i*0.1,age:5-i}});
+function render(){
+  var el=document.getElementById('voices');el.innerHTML='';
+  voices.forEach(function(v){
+    var d=document.createElement('div');d.className='voice';
+    d.style.left=v.x+'%';d.style.top=v.y+'px';
+    d.style.opacity=Math.max(0.1,v.o);
+    d.style.fontSize=(0.8+v.o*0.6)+'em';
+    d.style.color='rgba(201,169,110,'+(v.o)+')';
+    d.textContent=v.t;el.appendChild(d);
+  });
+}
+function speak(){
+  var t=document.getElementById('inp').value;if(!t)return;
+  voices.forEach(function(v){v.o=Math.max(0.1,v.o-0.15);v.y+=20});
+  voices.push({t:t,x:Math.random()*60+10,y:10,o:1,age:0});
+  if(voices.length>12)voices.shift();
+  localStorage.setItem('palimpsest_voices',JSON.stringify(voices));
+  document.getElementById('inp').value='';render();
+}
+render();
+</script></body></html>

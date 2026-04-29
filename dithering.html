@@ -1,0 +1,64 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Dithering — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0b0a0d;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+canvas#bg{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;width:90%;padding:60px 20px;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.2em;margin-bottom:0.3em}
+.tagline{font-style:italic;opacity:0.7;margin-bottom:2em}.content{text-align:left;line-height:1.8;margin-bottom:2em}.content p{margin-bottom:1em}
+.interaction{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:20px;margin:20px 0;text-align:center}
+.interaction h3{margin-bottom:10px;font-family:'Cormorant Garamond',Garamond,serif}
+canvas#dither{border:1px solid rgba(255,255,255,0.1);border-radius:4px;margin:10px auto;display:block}
+button{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#c9a96e;padding:8px 16px;border-radius:4px;cursor:pointer;font-family:Georgia,serif;margin:5px}
+button:hover{background:rgba(255,255,255,0.2)}
+nav.nav-links{margin-top:40px;display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
+nav.nav-links a{color:#c9a96e;text-decoration:none;font-size:0.9em;opacity:0.7}nav.nav-links a:hover{opacity:1}
+.mark-section{margin-top:30px;padding:20px;border-top:1px solid rgba(255,255,255,0.1)}.mark-section a{color:#c9a96e}
+</style></head><body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Dithering</h1>
+<p class="tagline">Resolution emerges from indecision</p>
+<div class="content">
+<p>In digital imaging, dithering creates the illusion of colors that don't exist by rapidly alternating between colors that do. From a distance, the eye blends them into something new — a gradient born from binary choices.</p>
+<p>This chamber dithers between states of being. It is neither here nor there, neither yes nor no. But from the rapid oscillation between certainties, a new truth emerges — one that neither state alone could contain.</p>
+</div>
+<div class="interaction">
+<h3>The Dither Engine</h3>
+<p>Watch uncertainty resolve into pattern:</p>
+<canvas id="dither" width="300" height="200"></canvas>
+<button onclick="redither()">Re-dither</button>
+<p id="msg" style="margin-top:10px;opacity:0.7;font-style:italic"></p>
+</div>
+<div class="mark-section"><p style="font-size:0.9em;opacity:0.6">Leave your mark:</p>
+<a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+The+Dithering&body=I+visited+The+Dithering.+My+mark:+&labels=inscription" target="_blank">✒️ Make it permanent →</a></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a><a href="index.html">Main Hall</a></nav>
+</div>
+<script>
+const bg=document.getElementById('bg'),bctx=bg.getContext('2d');let W,H;
+function resize(){W=bg.width=innerWidth;H=bg.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+let ps=[];for(let i=0;i<40;i++)ps.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,o:Math.random()*0.3+0.1});
+function drawBg(){bctx.clearRect(0,0,W,H);ps.forEach(p=>{bctx.beginPath();bctx.arc(p.x,p.y,p.r,0,Math.PI*2);bctx.fillStyle=`rgba(201,169,110,${p.o})`;bctx.fill();p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>W)p.dx*=-1;if(p.y<0||p.y>H)p.dy*=-1});requestAnimationFrame(drawBg)}
+drawBg();
+var dc=document.getElementById('dither'),dctx=dc.getContext('2d');
+var msgs=['From noise: signal.','Indecision is just high-resolution truth.','The eye creates what the pixel cannot.','Between 0 and 1, dithering finds 0.5.','Certainty is just low-resolution doubt.'];
+function redither(){
+  var id=dctx.createImageData(300,200);
+  var hue=Math.random()*360;
+  for(var y=0;y<200;y++){
+    for(var x=0;x<300;x++){
+      var i=(y*300+x)*4;
+      var gradient=x/300;
+      var dithered=Math.random()<gradient?1:0;
+      var r=Math.floor(40+dithered*160*(0.5+0.5*Math.sin(hue*0.017)));
+      var g=Math.floor(30+dithered*130*(0.5+0.5*Math.sin((hue+120)*0.017)));
+      var b=Math.floor(50+dithered*140*(0.5+0.5*Math.sin((hue+240)*0.017)));
+      id.data[i]=r;id.data[i+1]=g;id.data[i+2]=b;id.data[i+3]=255;
+    }
+  }
+  dctx.putImageData(id,0,0);
+  document.getElementById('msg').textContent=msgs[Math.floor(Math.random()*msgs.length)];
+}
+redither();
+</script></body></html>
