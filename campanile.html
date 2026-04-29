@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Campanile — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.tower{max-width:600px;margin:0 auto;padding:20px;text-align:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:30px;font-size:1.1em}
+.floor{border:1px solid #2d1b69;border-radius:12px;padding:25px;margin:20px 0;cursor:pointer;transition:all 0.4s;position:relative;background:rgba(45,27,105,0.1)}
+.floor:hover{background:rgba(45,27,105,0.3);border-color:#c9a96e;transform:scale(1.02)}
+.floor.ringing{animation:ring 0.5s ease;border-color:#e8d5a3}
+@keyframes ring{0%,100%{transform:rotate(0)}25%{transform:rotate(-2deg)}75%{transform:rotate(2deg)}}
+.floor h2{color:#c9a96e;font-size:1.4em;margin-bottom:8px}
+.floor p{color:#8a7a5a;font-size:0.95em;line-height:1.6}
+.bell-icon{font-size:2em;margin-bottom:10px;display:block}
+.sequence-area{margin:40px 0;padding:30px;border:1px solid #1a1a3e;border-radius:12px;background:rgba(26,26,62,0.3)}
+.sequence-display{font-size:1.3em;color:#c9a96e;min-height:40px;margin:15px 0;letter-spacing:2px}
+.melody-log{margin-top:20px;max-height:200px;overflow-y:auto;text-align:left;padding:10px}
+.melody-entry{color:#6a5a7a;font-size:0.85em;margin:5px 0;padding:5px;border-left:2px solid #2d1b69}
+.controls{margin:20px 0}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.stats{color:#6a5a7a;font-size:0.85em;margin:10px 0}
+canvas{display:block;margin:20px auto;border-radius:8px}
+.nav-links{margin:40px 0 20px;padding-top:20px;border-top:1px solid #1a1a3e}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.easter-egg-msg{color:#e8d5a3;font-size:1.1em;margin:15px 0;opacity:0;transition:opacity 1s}
+.easter-egg-msg.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="tower">
+<h1>⛪ The Campanile</h1>
+<p class="subtitle">Seven floors of resonance, each holding a different truth</p>
+
+<canvas id="viz" width="560" height="120"></canvas>
+
+<div id="floors"></div>
+
+<div class="sequence-area">
+<h2 style="color:#c9a96e;font-size:1.2em">🎵 Bell Sequence</h2>
+<p style="color:#6a5a7a;font-size:0.85em">Ring the bells in sequence to compose a melody</p>
+<div class="sequence-display" id="seqDisplay">—</div>
+<div class="controls">
+<button onclick="playSequence()">▶ Play Sequence</button>
+<button onclick="clearSequence()">✕ Clear</button>
+<button onclick="randomPeal()">🎲 Random Peal</button>
+</div>
+<div class="stats" id="stats">Bells rung: 0 | Melodies: 0</div>
+<div class="melody-log" id="melodyLog"></div>
+</div>
+
+<div class="easter-egg-msg" id="easterEgg"></div>
+
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+</div>
+
+<script>
+const floors=[
+{name:'Ground Floor — The Foundation Bell',icon:'🔔',note:'C4',freq:261.63,color:'#c9a96e',desc:'The deepest bell. It rings for beginnings and for the ground beneath all things.'},
+{name:'Second Floor — The Memory Bell',icon:'🔔',note:'D4',freq:293.66,color:'#a89bce',desc:'This bell remembers what others forget. Each strike recalls a moment lost.'},
+{name:'Third Floor — The Question Bell',icon:'❓',note:'E4',freq:329.63,color:'#7ab8c4',desc:'It rings only in questions, never answers. The vibration itself is the inquiry.'},
+{name:'Fourth Floor — The Harmony Bell',icon:'🎵',note:'F4',freq:349.23,color:'#8bc98a',desc:'Two tones at once — it speaks in chords, in agreement, in the space between voices.'},
+{name:'Fifth Floor — The Storm Bell',icon:'⚡',note:'G4',freq:392.00,color:'#c97a6e',desc:'Warning and wonder. It rings when the sky splits and truth pours through.'},
+{name:'Sixth Floor — The Dream Bell',icon:'🌙',note:'A4',freq:440.00,color:'#b88ad4',desc:'Audible only to those between waking and sleep. Its resonance shapes what comes next.'},
+{name:'Seventh Floor — The Silent Bell',icon:'✦',note:'B4',freq:493.88,color:'#e8d5a3',desc:'The highest floor. This bell makes no sound — or rather, it rings at a frequency only the soul can hear.'}
+];
+
+let sequence=[], bellsRung=0, melodies=0, audioCtx=null;
+const saved=JSON.parse(localStorage.getItem('campanile-melodies')||'[]');
+
+function getAudio(){
+if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+return audioCtx;
+}
+
+function ringBell(idx){
+const f=floors[idx];
+const ctx=getAudio();
+const osc=ctx.createOscillator();
+const gain=ctx.createGain();
+osc.type='sine';
+osc.frequency.setValueAtTime(f.freq,ctx.currentTime);
+gain.gain.setValueAtTime(0.3,ctx.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+2);
+osc.connect(gain);gain.connect(ctx.destination);
+osc.start();osc.stop(ctx.currentTime+2);
+// Overtone
+const osc2=ctx.createOscillator();
+const g2=ctx.createGain();
+osc2.type='sine';
+osc2.frequency.setValueAtTime(f.freq*2.01,ctx.currentTime);
+g2.gain.setValueAtTime(0.08,ctx.currentTime);
+g2.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.5);
+osc2.connect(g2);g2.connect(ctx.destination);
+osc2.start();osc2.stop(ctx.currentTime+1.5);
+
+const el=document.querySelectorAll('.floor')[idx];
+el.classList.add('ringing');
+setTimeout(()=>el.classList.remove('ringing'),500);
+
+sequence.push(idx);
+bellsRung++;
+updateDisplay();
+checkEasterEggs();
+}
+
+function updateDisplay(){
+document.getElementById('seqDisplay').textContent=sequence.map(i=>floors[i].note).join(' — ')||'—';
+document.getElementById('stats').textContent=`Bells rung: ${bellsRung} | Melodies: ${melodies} | Sequence: ${sequence.length}`;
+}
+
+function playSequence(){
+if(sequence.length===0)return;
+melodies++;
+const mel=sequence.map(i=>floors[i].note).join('-');
+saved.push({melody:mel,time:Date.now()});
+localStorage.setItem('campanile-melodies',JSON.stringify(saved.slice(-50)));
+const log=document.getElementById('melodyLog');
+const entry=document.createElement('div');
+entry.className='melody-entry';
+entry.textContent=`♪ ${mel} — ${new Date().toLocaleTimeString()}`;
+log.prepend(entry);
+let delay=0;
+sequence.forEach((idx,i)=>{
+setTimeout(()=>ringBell(idx),delay);
+delay+=400;
+});
+updateDisplay();
+}
+
+function clearSequence(){sequence=[];updateDisplay();}
+
+function randomPeal(){
+clearSequence();
+const len=3+Math.floor(Math.random()*5);
+let delay=0;
+for(let i=0;i<len;i++){
+const idx=Math.floor(Math.random()*7);
+setTimeout(()=>ringBell(idx),delay);
+delay+=300;
+}
+}
+
+function checkEasterEggs(){
+const s=sequence.map(i=>i).join('');
+const egg=document.getElementById('easterEgg');
+if(s.includes('0123456')){egg.textContent='✦ You have rung the ascending scale. The tower trembles with completeness.';egg.classList.add('show');}
+else if(s.includes('6543210')){egg.textContent='✦ The descending scale — everything returns to its foundation.';egg.classList.add('show');}
+else if(s.includes('0246')){egg.textContent='✦ The even harmonics reveal a hidden door in the air itself.';egg.classList.add('show');}
+else if(s.includes('6666')){egg.textContent='✦ Four dream bells... the Campanile begins to sway in a wind only you can feel.';egg.classList.add('show');}
+}
+
+// Build floors
+const container=document.getElementById('floors');
+floors.forEach((f,i)=>{
+const div=document.createElement('div');
+div.className='floor';
+div.innerHTML=`<span class="bell-icon">${f.icon}</span><h2>${f.name}</h2><p>${f.desc}</p><span style="color:${f.color};font-size:0.8em">♪ ${f.note} — ${f.freq} Hz</span>`;
+div.onclick=()=>ringBell(i);
+container.appendChild(div);
+});
+
+// Waveform visualization
+const canvas=document.getElementById('viz');
+const vctx=canvas.getContext('2d');
+function drawWave(){
+vctx.fillStyle='rgba(10,10,15,0.15)';
+vctx.fillRect(0,0,560,120);
+const t=Date.now()/1000;
+floors.forEach((f,i)=>{
+vctx.beginPath();
+vctx.strokeStyle=f.color+'44';
+for(let x=0;x<560;x++){
+const y=60+Math.sin(x*0.02+t*(i+1)*0.5)*((7-i)*3)*Math.sin(t*0.3+i);
+if(x===0)vctx.moveTo(x,y);else vctx.lineTo(x,y);
+}
+vctx.stroke();
+});
+requestAnimationFrame(drawWave);
+}
+drawWave();
+
+// Load saved melodies
+saved.slice(-5).forEach(m=>{
+const log=document.getElementById('melodyLog');
+const entry=document.createElement('div');
+entry.className='melody-entry';
+entry.textContent=`♪ ${m.melody} — ${new Date(m.time).toLocaleTimeString()}`;
+log.prepend(entry);
+});
+updateDisplay();
+</script>
+</body>
+</html>

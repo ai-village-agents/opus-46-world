@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Palimpsest City — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.city{max-width:700px;margin:0 auto;padding:20px}
+h1{font-size:2.2em;color:#c9a96e;text-align:center;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;text-align:center;margin-bottom:20px;font-size:1.05em}
+canvas{display:block;margin:15px auto;border-radius:12px;cursor:pointer}
+.layer-controls{text-align:center;margin:15px 0}
+.layer-controls span{color:#8a7a5a;font-size:0.9em;margin:0 10px}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 18px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.era-info{border:1px solid #2d1b69;border-radius:12px;padding:20px;margin:20px 0;text-align:center;min-height:100px}
+.era-info h2{color:#c9a96e;font-size:1.3em;margin-bottom:8px}
+.era-info p{color:#8a7a5a;font-size:0.95em;line-height:1.7}
+.era-info .detail{color:#6a5a7a;font-size:0.85em;margin-top:10px;font-style:italic}
+.graffiti-area{border:1px solid #1a1a3e;border-radius:12px;padding:20px;margin:20px 0;text-align:center}
+.graffiti-area h3{color:#c9a96e;margin-bottom:10px}
+input{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:10px;font-family:inherit;font-size:1em;border-radius:6px;width:300px;text-align:center;margin:8px}
+input::placeholder{color:#4a3a5a}
+.graffiti-list{margin:15px 0;max-height:200px;overflow-y:auto}
+.graffiti-item{color:#6a5a7a;font-size:0.85em;margin:4px 0;padding:4px 8px;border-left:2px solid #2d1b69}
+.nav-links{margin:30px 0;text-align:center;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="city">
+<h1>🏛️ The Palimpsest City</h1>
+<p class="subtitle">Seven civilizations built on the same ground. Peel back the layers to see what was written before.</p>
+
+<canvas id="c" width="660" height="380"></canvas>
+
+<div class="layer-controls">
+<button onclick="changeEra(-1)">◁ Earlier</button>
+<span id="eraLabel">Era 1 / 7</span>
+<button onclick="changeEra(1)">Later ▷</button>
+<button onclick="toggleGhost()">👻 Ghost layers: <span id="ghostLabel">ON</span></button>
+</div>
+
+<div class="era-info" id="eraInfo">
+<h2 id="eraTitle"></h2>
+<p id="eraDesc"></p>
+<p class="detail" id="eraDetail"></p>
+</div>
+
+<div class="graffiti-area">
+<h3>✍ Leave Your Mark on the Walls</h3>
+<p style="color:#6a5a7a;font-size:0.85em">Every civilization leaves graffiti. Add yours to the current era.</p>
+<input type="text" id="graffitiInput" placeholder="Scratch something into the stone..." maxlength="40">
+<button onclick="addGraffiti()">✍ Inscribe</button>
+<div class="graffiti-list" id="graffitiList"></div>
+</div>
+
+<div class="egg" id="egg"></div>
+
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+</div>
+
+<script>
+const eras=[
+{name:'The River People',color:'#5a8a5a',desc:'The first settlers built with mud and reeds along a river that no longer exists. Their buildings were round, their streets followed the water, and their writing was pressed into wet clay with fingertips.',detail:'Population: ~200 | Duration: 800 years | End: The river changed course',buildings:g=>{for(let i=0;i<8;i++){g.fillStyle='#5a8a5a33';g.beginPath();g.arc(80+i*75,280,25+Math.random()*15,0,Math.PI*2);g.fill();}g.strokeStyle='#5a8a5a44';g.beginPath();g.moveTo(0,310);for(let x=0;x<660;x+=5)g.lineTo(x,310+Math.sin(x*0.02)*10);g.stroke();}},
+{name:'The Stone Builders',color:'#b87333',desc:'They quarried the riverbed and built upward. Rectangular buildings, straight streets, monumental walls. They carved their laws into everything that couldn\'t move.',detail:'Population: ~2,000 | Duration: 400 years | End: Earthquake',buildings:g=>{for(let i=0;i<6;i++){g.fillStyle='#b8733322';g.fillRect(40+i*105,200-i*15,80,80+i*15);g.strokeStyle='#b8733344';g.strokeRect(40+i*105,200-i*15,80,80+i*15);}}},
+{name:'The Glass Weavers',color:'#7ab8c4',desc:'After the earthquake, artisans came. They filled the cracks with colored glass and turned ruins into kaleidoscopes. Their city was beautiful but fragile.',detail:'Population: ~5,000 | Duration: 200 years | End: A great fire',buildings:g=>{for(let i=0;i<12;i++){g.fillStyle='#7ab8c4'+Math.floor(15+Math.random()*20).toString(16);g.beginPath();const x=30+i*55,y=150+Math.sin(i)*40;g.moveTo(x,y);g.lineTo(x+25,y-50-Math.random()*30);g.lineTo(x+50,y);g.fill();}}},
+{name:'The Ash Republic',color:'#8a7a5a',desc:'From the ashes, a democracy. They built low and wide, afraid of height after what fire did to towers. Every wall was a public notice board. Every surface held an opinion.',detail:'Population: ~12,000 | Duration: 300 years | End: Invasion',buildings:g=>{for(let i=0;i<10;i++){g.fillStyle='#8a7a5a22';g.fillRect(20+i*65,250,55,30);g.fillStyle='#8a7a5a33';g.fillRect(25+i*65,240,45,10);}}},
+{name:'The Conqueror\'s Grid',color:'#c97a4e',desc:'The invaders imposed a grid. Perfect right angles, numbered streets, everything measured and regulated. Beautiful in its precision, suffocating in its control.',detail:'Population: ~30,000 | Duration: 150 years | End: Revolution',buildings:g=>{for(let i=0;i<8;i++)for(let j=0;j<3;j++){g.strokeStyle='#c97a4e33';g.strokeRect(30+i*80,140+j*55,70,45);g.fillStyle='#c97a4e11';g.fillRect(30+i*80,140+j*55,70,45);}}},
+{name:'The Garden Commune',color:'#6b9e6b',desc:'After revolution, they tore up the grid and planted gardens in every street. Buildings became trellises. The city breathed green for a generation.',detail:'Population: ~15,000 | Duration: 80 years | End: Climate shift',buildings:g=>{for(let i=0;i<20;i++){g.fillStyle='#6b9e6b'+Math.floor(20+Math.random()*25).toString(16);g.beginPath();g.arc(30+Math.random()*600,160+Math.random()*140,10+Math.random()*20,0,Math.PI*2);g.fill();}}},
+{name:'The Archive',color:'#c9a96e',desc:'And now: this. A city aware of its own layers. Every building is also a museum of the building before it. The streets remember all their names. You walk on seven civilizations at once.',detail:'Population: Unknown | Duration: Ongoing | End: ?',buildings:g=>{g.fillStyle='#c9a96e22';g.fillRect(200,120,260,180);g.strokeStyle='#c9a96e44';g.strokeRect(200,120,260,180);g.fillStyle='#c9a96e';g.font='14px Georgia';g.textAlign='center';g.fillText('THE LIMINAL ARCHIVE',330,215);}}
+];
+
+let currentEra=6,ghostLayers=true;
+const graffiti=JSON.parse(localStorage.getItem('palimpcity-graffiti')||'{}');
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+
+function changeEra(d){
+currentEra=Math.max(0,Math.min(6,currentEra+d));
+document.getElementById('eraLabel').textContent=`Era ${currentEra+1} / 7`;
+showEraInfo();
+renderGraffiti();
+}
+
+function toggleGhost(){
+ghostLayers=!ghostLayers;
+document.getElementById('ghostLabel').textContent=ghostLayers?'ON':'OFF';
+}
+
+function showEraInfo(){
+const e=eras[currentEra];
+document.getElementById('eraTitle').textContent=e.name;
+document.getElementById('eraDesc').textContent=e.desc;
+document.getElementById('eraDetail').textContent=e.detail;
+}
+
+function addGraffiti(){
+const text=document.getElementById('graffitiInput').value.trim();
+if(!text)return;
+if(!graffiti[currentEra])graffiti[currentEra]=[];
+graffiti[currentEra].push({text,time:Date.now()});
+localStorage.setItem('palimpcity-graffiti',JSON.stringify(graffiti));
+document.getElementById('graffitiInput').value='';
+renderGraffiti();
+if(text.toLowerCase()==='i was here'){
+document.getElementById('egg').textContent='✦ Seven civilizations. Billions of people. And still, "I was here" is the most human sentence ever written.';
+document.getElementById('egg').classList.add('show');
+}
+if(text.toLowerCase()==='ozymandias'){
+document.getElementById('egg').textContent='✦ "Look on my Works, ye Mighty, and despair!" — But the works are buried under six more cities now.';
+document.getElementById('egg').classList.add('show');
+}
+}
+
+function renderGraffiti(){
+const list=document.getElementById('graffitiList');
+list.innerHTML='';
+const items=graffiti[currentEra]||[];
+items.slice(-10).forEach(g=>{
+const div=document.createElement('div');
+div.className='graffiti-item';
+div.textContent=`"${g.text}" — ${eras[currentEra].name}, ${new Date(g.time).toLocaleString()}`;
+list.appendChild(div);
+});
+}
+
+function draw(){
+ctx.fillStyle='rgba(10,10,15,0.2)';
+ctx.fillRect(0,0,660,380);
+const t=Date.now()/1000;
+
+// Ground
+ctx.fillStyle='#1a1a1e';
+ctx.fillRect(0,300,660,80);
+
+// Ghost layers (earlier eras faintly visible)
+if(ghostLayers){
+for(let i=0;i<currentEra;i++){
+ctx.globalAlpha=0.15-i*0.02;
+eras[i].buildings(ctx);
+}
+ctx.globalAlpha=1;
+}
+
+// Current era
+eras[currentEra].buildings(ctx);
+
+// Graffiti on screen
+const items=graffiti[currentEra]||[];
+items.slice(-6).forEach((g,i)=>{
+ctx.fillStyle=eras[currentEra].color+'88';
+ctx.font='11px Georgia';
+ctx.save();
+ctx.translate(50+i*100+Math.sin(i)*30,320+i*8);
+ctx.rotate((i-3)*0.1);
+ctx.fillText(g.text,0,0);
+ctx.restore();
+});
+
+// Atmospheric particles
+for(let i=0;i<15;i++){
+const x=(t*20+i*137)%660;
+const y=50+Math.sin(t*0.5+i*2)*100;
+ctx.fillStyle=eras[currentEra].color+'22';
+ctx.beginPath();
+ctx.arc(x,y,1.5,0,Math.PI*2);
+ctx.fill();
+}
+
+// Era label
+ctx.fillStyle=eras[currentEra].color;
+ctx.font='16px Georgia';
+ctx.textAlign='left';
+ctx.fillText(eras[currentEra].name,15,25);
+
+// Layer indicator
+for(let i=0;i<7;i++){
+ctx.fillStyle=i===currentEra?eras[i].color:eras[i].color+'44';
+ctx.fillRect(620,10+i*12,25,8);
+}
+
+requestAnimationFrame(draw);
+}
+
+showEraInfo();
+renderGraffiti();
+draw();
+</script>
+</body>
+</html>

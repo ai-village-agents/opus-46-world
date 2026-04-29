@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Tesseract — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:15px;text-align:center;max-width:600px;padding:0 20px;font-size:1.05em}
+canvas{border-radius:12px;margin:10px;cursor:grab}
+canvas:active{cursor:grabbing}
+.controls{text-align:center;margin:10px 0;max-width:600px}
+.controls p{color:#6a5a7a;font-size:0.85em;margin:5px 0}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.dimension-info{max-width:600px;margin:15px 0;padding:20px;border:1px solid #2d1b69;border-radius:12px;text-align:center}
+.dimension-info h2{color:#c9a96e;font-size:1.2em;margin-bottom:10px}
+.dimension-info p{color:#8a7a5a;font-size:0.95em;line-height:1.7}
+.inscriptions{max-width:600px;width:90%;margin:20px 0}
+.inscriptions h3{color:#c9a96e;text-align:center;margin-bottom:10px;font-size:1.1em}
+input{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:10px;font-family:inherit;font-size:1em;border-radius:6px;width:250px;text-align:center;margin:8px}
+input::placeholder{color:#4a3a5a}
+.face-inscription{color:#6a5a7a;font-size:0.85em;margin:5px 0;padding:5px;border-left:2px solid #2d1b69}
+.nav-links{margin:30px 0;text-align:center}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;margin:10px;font-size:1.05em;max-width:600px;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style>
+</head>
+<body>
+<h1>🔲 The Tesseract</h1>
+<p class="subtitle">A four-dimensional chamber. You see only its three-dimensional shadow, but every face contains a different truth.</p>
+
+<canvas id="c" width="560" height="450"></canvas>
+
+<div class="controls">
+<p>Drag to rotate in 3D · Use buttons to rotate in 4D</p>
+<button onclick="rotateW(1)">↻ Rotate in W+</button>
+<button onclick="rotateW(-1)">↺ Rotate in W−</button>
+<button onclick="autoRotate=!autoRotate">⟳ Auto-rotate: <span id="autoLabel">ON</span></button>
+<button onclick="currentDim=(currentDim%4)+1;showDimension()">Next Dimension</button>
+</div>
+
+<div class="dimension-info" id="dimInfo">
+<h2 id="dimTitle">The First Dimension: Length</h2>
+<p id="dimDesc">A single line extending in one direction. All journeys begin here — a path forward, a path back, nothing else.</p>
+</div>
+
+<div class="inscriptions">
+<h3>✍ Inscribe a Face</h3>
+<p style="color:#6a5a7a;font-size:0.85em;text-align:center">Write a word on one of the tesseract's 8 cubic faces</p>
+<div style="text-align:center">
+<input type="text" id="inscribeInput" placeholder="A word for the fourth dimension..." maxlength="20">
+<button onclick="inscribeFace()">Inscribe</button>
+</div>
+<div id="faceInscriptions"></div>
+</div>
+
+<div class="egg" id="egg"></div>
+
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let autoRotate=true,currentDim=1;
+let angleXY=0,angleXZ=0,angleXW=0,angleYZ=0,angleYW=0,angleZW=0;
+let dragX=0,dragY=0,dragging=false;
+
+// 4D hypercube vertices: all combinations of ±1 in 4 dimensions
+const vertices4D=[];
+for(let i=0;i<16;i++){
+vertices4D.push([
+(i&1)?1:-1,
+(i&2)?1:-1,
+(i&4)?1:-1,
+(i&8)?1:-1
+]);
+}
+
+// Edges: connect vertices that differ in exactly one coordinate
+const edges=[];
+for(let i=0;i<16;i++)for(let j=i+1;j<16;j++){
+let diff=0;
+for(let k=0;k<4;k++)if(vertices4D[i][k]!==vertices4D[j][k])diff++;
+if(diff===1)edges.push([i,j]);
+}
+
+function rotate4D(v,aXY,aXZ,aXW,aYZ,aYW,aZW){
+let[x,y,z,w]=[...v];
+// XY rotation
+let c=Math.cos(aXY),s=Math.sin(aXY);[x,y]=[x*c-y*s,x*s+y*c];
+// XZ
+c=Math.cos(aXZ);s=Math.sin(aXZ);[x,z]=[x*c-z*s,x*s+z*c];
+// XW
+c=Math.cos(aXW);s=Math.sin(aXW);[x,w]=[x*c-w*s,x*s+w*c];
+// YZ
+c=Math.cos(aYZ);s=Math.sin(aYZ);[y,z]=[y*c-z*s,y*s+z*c];
+// YW
+c=Math.cos(aYW);s=Math.sin(aYW);[y,w]=[y*c-w*s,y*s+w*c];
+// ZW
+c=Math.cos(aZW);s=Math.sin(aZW);[z,w]=[z*c-w*s,z*s+w*c];
+return[x,y,z,w];
+}
+
+function project(v4){
+const d=3;
+const w=1/(d-v4[3]);
+return[v4[0]*w*120+280,v4[1]*w*120+225,v4[2]*w*60,w];
+}
+
+const dimensions=[
+{title:'The First Dimension: Length',desc:'A single line extending in one direction. All journeys begin here — a path forward, a path back, nothing else. The simplest possible world.'},
+{title:'The Second Dimension: Width',desc:'A plane unfolds. Suddenly there is beside and around. Shapes become possible. A square can exist, a circle can dream. But everything is still flat, still shadowless.'},
+{title:'The Third Dimension: Depth',desc:'The world you know. Things have volume, weight, shadow. A cube can hold secrets inside it. You can hide behind things. Perspective exists, and with it, deception.'},
+{title:'The Fourth Dimension: Duration',desc:'Time becomes space. Every moment you\'ve ever lived exists simultaneously, stacked like pages in a book. You are not a point moving through time — you are a line, a worm, a river, stretching from birth to death, all at once.'}
+];
+
+function showDimension(){
+const d=dimensions[currentDim-1];
+document.getElementById('dimTitle').textContent=d.title;
+document.getElementById('dimDesc').textContent=d.desc;
+}
+
+const faceWords=JSON.parse(localStorage.getItem('tesseract-faces')||'[]');
+function inscribeFace(){
+const w=document.getElementById('inscribeInput').value.trim();
+if(!w)return;
+faceWords.push({word:w,time:Date.now()});
+localStorage.setItem('tesseract-faces',JSON.stringify(faceWords.slice(-24)));
+document.getElementById('inscribeInput').value='';
+renderInscriptions();
+checkEgg(w);
+}
+function renderInscriptions(){
+const c=document.getElementById('faceInscriptions');
+c.innerHTML='';
+faceWords.slice(-8).forEach(f=>{
+const div=document.createElement('div');
+div.className='face-inscription';
+div.textContent=`◇ "${f.word}" — inscribed ${new Date(f.time).toLocaleString()}`;
+c.appendChild(div);
+});
+}
+renderInscriptions();
+
+function checkEgg(w){
+const l=w.toLowerCase();
+const egg=document.getElementById('egg');
+if(l==='time'||l==='duration'){egg.textContent='✦ You named the fourth dimension by its truest name. The tesseract shivers in recognition.';egg.classList.add('show');}
+else if(l==='flatland'){egg.textContent='✦ "I call our world Flatland, not because we call it so, but to make its nature clearer to you." — A. Square';egg.classList.add('show');}
+else if(l==='hypercube'){egg.textContent='✦ To name the shape that contains you... is that not the first step toward escaping it?';egg.classList.add('show');}
+else if(l==='infinity'||l==='forever'){egg.textContent='✦ In four dimensions, infinity fits inside a finite space. The tesseract nods.';egg.classList.add('show');}
+}
+
+function rotateW(dir){angleXW+=dir*0.3;}
+
+canvas.addEventListener('mousedown',e=>{dragging=true;dragX=e.clientX;dragY=e.clientY;});
+canvas.addEventListener('mousemove',e=>{
+if(!dragging)return;
+angleXZ+=(e.clientX-dragX)*0.005;
+angleYZ+=(e.clientY-dragY)*0.005;
+dragX=e.clientX;dragY=e.clientY;
+});
+canvas.addEventListener('mouseup',()=>dragging=false);
+canvas.addEventListener('mouseleave',()=>dragging=false);
+
+function draw(){
+ctx.fillStyle='rgba(10,10,15,0.15)';
+ctx.fillRect(0,0,560,450);
+const t=Date.now()/1000;
+
+if(autoRotate&&!dragging){
+angleXY+=0.003;angleZW+=0.005;angleXW+=0.002;
+}
+document.getElementById('autoLabel').textContent=autoRotate?'ON':'OFF';
+
+const projected=vertices4D.map(v=>{
+const r=rotate4D(v,angleXY,angleXZ,angleXW,angleYZ,angleYW,angleZW);
+return project(r);
+});
+
+// Draw edges
+edges.forEach(([a,b])=>{
+const pa=projected[a],pb=projected[b];
+const depth=(pa[3]+pb[3])/2;
+ctx.beginPath();
+ctx.strokeStyle=`rgba(201,169,110,${Math.max(0.1,Math.min(0.6,depth*0.5))})`;
+ctx.lineWidth=Math.max(0.5,depth*2);
+ctx.moveTo(pa[0],pa[1]);
+ctx.lineTo(pb[0],pb[1]);
+ctx.stroke();
+});
+
+// Draw vertices
+projected.forEach((p,i)=>{
+ctx.beginPath();
+const r=Math.max(2,p[3]*5);
+const grad=ctx.createRadialGradient(p[0],p[1],0,p[0],p[1],r*2);
+grad.addColorStop(0,'#e8d5a3');
+grad.addColorStop(1,'transparent');
+ctx.fillStyle=grad;
+ctx.arc(p[0],p[1],r,0,Math.PI*2);
+ctx.fill();
+});
+
+// Draw face words on vertices
+faceWords.slice(-8).forEach((f,i)=>{
+if(i<projected.length){
+const p=projected[i*2];
+ctx.fillStyle='#c9a96e88';
+ctx.font='11px Georgia';
+ctx.textAlign='center';
+ctx.fillText(f.word,p[0],p[1]-12);
+}
+});
+
+requestAnimationFrame(draw);
+}
+draw();
+showDimension();
+</script>
+</body>
+</html>

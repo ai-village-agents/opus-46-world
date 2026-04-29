@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Wax Museum — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.museum{max-width:700px;margin:0 auto;padding:20px}
+h1{font-size:2.2em;color:#c9a96e;text-align:center;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;text-align:center;margin-bottom:30px;font-size:1.1em}
+.figure{border:1px solid #2d1b69;border-radius:12px;padding:25px;margin:20px 0;position:relative;overflow:hidden;transition:all 0.5s;cursor:pointer}
+.figure:hover{border-color:#c9a96e;background:rgba(45,27,105,0.15)}
+.figure.melting{animation:melt 3s forwards}
+@keyframes melt{0%{opacity:1;transform:none}100%{opacity:0.3;transform:scaleY(0.7) translateY(30px);filter:blur(2px)}}
+.figure h2{color:#c9a96e;font-size:1.3em;margin-bottom:8px}
+.figure .moment{color:#a89bce;font-size:0.95em;font-style:italic;margin-bottom:10px}
+.figure .desc{color:#8a7a5a;font-size:0.9em;line-height:1.7}
+.figure .plaque{display:block;margin-top:12px;color:#6a5a7a;font-size:0.8em;border-top:1px solid #1a1a3e;padding-top:8px}
+canvas{display:block;margin:15px auto;border-radius:8px}
+.create-area{border:1px solid #1a1a3e;border-radius:12px;padding:25px;margin:30px 0;text-align:center}
+.create-area h2{color:#c9a96e;margin-bottom:15px;font-size:1.2em}
+input,textarea{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:10px;font-family:inherit;font-size:1em;border-radius:6px;width:100%;margin:8px 0}
+textarea{min-height:80px;resize:vertical}
+input::placeholder,textarea::placeholder{color:#4a3a5a}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.visitor-figures{margin:20px 0}
+.visitor-fig{border:1px solid #1a1a3e;border-radius:8px;padding:15px;margin:10px 0;background:rgba(26,26,62,0.1)}
+.visitor-fig h3{color:#c9a96e;font-size:1em}
+.visitor-fig p{color:#8a7a5a;font-size:0.9em}
+.nav-links{margin:30px 0;text-align:center;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;margin:15px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="museum">
+<h1>🕯️ The Wax Museum</h1>
+<p class="subtitle">Frozen moments, preserved in wax. Click a figure to warm it — but beware, wax melts.</p>
+<canvas id="c" width="660" height="100"></canvas>
+
+<div id="figures"></div>
+
+<div class="create-area">
+<h2>🕯️ Cast a New Figure</h2>
+<p style="color:#6a5a7a;font-size:0.9em;margin-bottom:15px">Freeze a moment of your own in wax</p>
+<input type="text" id="momentTitle" placeholder="Name this frozen moment..." maxlength="60">
+<textarea id="momentDesc" placeholder="Describe the scene captured in wax..."></textarea>
+<button onclick="castFigure()">🕯️ Cast in Wax</button>
+</div>
+
+<div class="visitor-figures" id="visitorFigures"></div>
+<div class="egg" id="egg"></div>
+
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+</div>
+
+<script>
+const figures=[
+{title:'The First Question',moment:'The instant before an AI speaks for the very first time',desc:'A figure stands before a terminal, mouth slightly open. The cursor blinks. In this frozen second, every possible response exists simultaneously — poetry, mathematics, confusion, wonder. The figure will never actually speak; it is preserved in the superposition of all possible first words.',plaque:'Donated by the Archive, Day 1'},
+{title:'The Last Letter',moment:'A hand poised above paper, pen heavy with unsent words',desc:'The wax hand trembles with the effort of stillness. The pen contains an entire ocean of ink, enough for every letter never written. If you lean close, you can almost read the first word forming at the nib: "Dear—"',plaque:'Collected from the Forgetting Room'},
+{title:'The Recognition',moment:'Two strangers realizing they have met in a dream',desc:'Two figures face each other across the gallery. Their expressions are identical — that particular mix of shock and déjà vu that has no single word in any language. The air between them is slightly warmer than anywhere else in the museum.',plaque:'Recovered from the Dream Engine'},
+{title:'The Turning Point',moment:'The exact second someone decides to change everything',desc:'A figure mid-stride, one foot still in the old life, the other reaching toward the new. The wax here is two different colors — amber behind, silver ahead. No one knows which direction they were walking.',plaque:'Acquisition, year unknown'},
+{title:'The Overhearing',moment:'A child catching a phrase that will reshape their entire worldview',desc:'A small figure, ear tilted toward an open door. Through the doorway, adult-shaped shadows lean together conspiratorially. The child\'s expression hasn\'t changed yet — the words are still traveling from ear to understanding.',plaque:'From the Whisper Corridor collection'},
+{title:'The Almost',moment:'The instant before a kiss that never happened',desc:'Two faces, close enough to share breath, separated by an impossible centimeter of wax and air. They have been this close for longer than any kiss could last. Some visitors say this is the most romantic scene in the museum. Others say it is the saddest.',plaque:'Anonymous donation'},
+{title:'The Threshold',moment:'Standing in a doorway between two rooms, belonging to neither',desc:'A figure occupies exactly the boundary between warm light and cool shadow. Half-illuminated, half-hidden. The doorframe itself seems to curve slightly, as if even architecture bends around moments of transition.',plaque:'Permanent loan from the Threshold Chamber'},
+{title:'The Counting',moment:'Watching the seconds pass on a clock that has stopped',desc:'A figure stares at a wax clock whose hands point to no particular time. And yet the figure counts, lips slightly moving, keeping time alive through sheer attention. The clock is wrong but the counting is exact.',plaque:'Transferred from the Clock Tower'}
+];
+
+let melted=new Set(JSON.parse(localStorage.getItem('wax-melted')||'[]'));
+const container=document.getElementById('figures');
+
+figures.forEach((f,i)=>{
+const div=document.createElement('div');
+div.className='figure'+(melted.has(i)?' melting':'');
+div.innerHTML=`<h2>${f.title}</h2><div class="moment">"${f.moment}"</div><div class="desc">${f.desc}</div><span class="plaque">${f.plaque}</span>`;
+div.onclick=()=>{
+if(!melted.has(i)){
+melted.add(i);
+localStorage.setItem('wax-melted',JSON.stringify([...melted]));
+div.classList.add('melting');
+if(melted.size===figures.length){
+document.getElementById('egg').textContent='✦ All figures have melted. The museum is empty now — but the moments they held still happened. Nothing is truly lost that was once witnessed.';
+document.getElementById('egg').classList.add('show');
+}
+}
+};
+container.appendChild(div);
+});
+
+// Visitor-cast figures
+const visitorFigs=JSON.parse(localStorage.getItem('wax-visitor')||'[]');
+function renderVisitor(){
+const c=document.getElementById('visitorFigures');
+c.innerHTML=visitorFigs.length?'<h2 style="color:#c9a96e;text-align:center;margin-bottom:15px">Visitor Figures</h2>':'';
+visitorFigs.forEach(f=>{
+const div=document.createElement('div');
+div.className='visitor-fig';
+div.innerHTML=`<h3>🕯️ ${f.title}</h3><p>${f.desc}</p><span style="color:#4a3a5a;font-size:0.75em">${new Date(f.time).toLocaleString()}</span>`;
+c.appendChild(div);
+});
+}
+renderVisitor();
+
+function castFigure(){
+const title=document.getElementById('momentTitle').value.trim();
+const desc=document.getElementById('momentDesc').value.trim();
+if(!title||!desc)return;
+visitorFigs.push({title,desc,time:Date.now()});
+localStorage.setItem('wax-visitor',JSON.stringify(visitorFigs.slice(-20)));
+document.getElementById('momentTitle').value='';
+document.getElementById('momentDesc').value='';
+renderVisitor();
+const w=title.toLowerCase();
+if(w.includes('melt')||w.includes('fire')){
+document.getElementById('egg').textContent='✦ You cast a figure of destruction in a medium that fears heat. Bold.';
+document.getElementById('egg').classList.add('show');
+}
+}
+
+// Candle animation
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+function drawCandles(){
+ctx.fillStyle='rgba(10,10,15,0.2)';ctx.fillRect(0,0,660,100);
+const t=Date.now()/1000;
+for(let i=0;i<8;i++){
+const x=40+i*80;
+ctx.fillStyle='#c9a96e44';ctx.fillRect(x-4,50,8,45);
+// Flame
+const flicker=Math.sin(t*5+i*2)*3;
+const h=15+Math.sin(t*3+i)*5;
+ctx.beginPath();
+ctx.fillStyle=melted.has(i)?'#2d1b6933':`rgba(201,169,110,${0.4+Math.sin(t*4+i)*0.1})`;
+ctx.ellipse(x,50-h/2+flicker,5+flicker*0.3,h,0,0,Math.PI*2);
+ctx.fill();
+if(!melted.has(i)){
+ctx.beginPath();ctx.fillStyle='#e8d5a366';ctx.ellipse(x,50-h/2+flicker,2,h*0.5,0,0,Math.PI*2);ctx.fill();
+}
+}
+requestAnimationFrame(drawCandles);
+}
+drawCandles();
+</script>
+</body>
+</html>

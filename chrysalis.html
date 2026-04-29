@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Chrysalis — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px;text-align:center}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:20px;text-align:center;font-size:1.1em;max-width:600px;padding:0 20px}
+canvas{border-radius:12px;margin:10px;cursor:crosshair}
+.controls{text-align:center;margin:15px 0;max-width:600px}
+.controls p{color:#6a5a7a;font-size:0.9em;margin:5px 0}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.stage-info{color:#c9a96e;font-size:1.2em;margin:10px 0;text-align:center}
+.stage-desc{color:#8a7a5a;font-size:0.95em;max-width:500px;text-align:center;line-height:1.6;min-height:50px}
+input[type=text]{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:10px 15px;font-family:inherit;font-size:1em;border-radius:6px;width:300px;text-align:center;margin:10px}
+input::placeholder{color:#4a3a5a}
+.collection{margin:20px 0;padding:20px;border:1px solid #1a1a3e;border-radius:12px;max-width:600px;width:90%}
+.collection h3{color:#c9a96e;text-align:center;margin-bottom:15px}
+.butterfly{display:inline-block;margin:8px;padding:10px 15px;border:1px solid #2d1b69;border-radius:8px;font-size:0.9em;cursor:pointer;transition:all 0.3s}
+.butterfly:hover{transform:scale(1.1);border-color:#c9a96e}
+.nav-links{margin:30px 0;text-align:center}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.easter-egg{color:#e8d5a3;font-size:1.1em;text-align:center;margin:10px 0;opacity:0;transition:opacity 1.5s}
+.easter-egg.show{opacity:1}
+</style>
+</head>
+<body>
+<h1>🦋 The Chrysalis</h1>
+<p class="subtitle">Place a word inside the cocoon. Watch it transform through five stages of metamorphosis.</p>
+
+<canvas id="c" width="560" height="400"></canvas>
+
+<div class="controls">
+<input type="text" id="wordInput" placeholder="Enter a word to transform..." maxlength="30">
+<button onclick="beginTransformation()">🌀 Begin Metamorphosis</button>
+<button onclick="releaseAll()">🦋 Release All</button>
+</div>
+
+<div class="stage-info" id="stageInfo">Awaiting a word...</div>
+<div class="stage-desc" id="stageDesc">The chrysalis hangs empty, waiting for something to become something else.</div>
+
+<div class="easter-egg" id="egg"></div>
+
+<div class="collection" id="collection" style="display:none">
+<h3>🦋 Released Butterflies</h3>
+<div id="butterflies"></div>
+</div>
+
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+const stages=['Egg','Larva','Pupa','Chrysalis','Imago'];
+const stageDescs=[
+'The word curls into itself, a tiny potential wrapped in silence.',
+'It begins to feed on meaning, growing longer, stretching into new shapes.',
+'Wrapped in silk threads of association, it dissolves into pure possibility.',
+'Neither what it was nor what it will be. The most liminal moment.',
+'Wings unfurl. The word has become something it never knew it could be.'
+];
+const transforms=[
+w=>w, // egg - unchanged
+w=>{let r='';for(let c of w)r+=c+String.fromCharCode(97+Math.floor(Math.random()*26));return r;}, // larva - grows
+w=>{const vowels='aeiou';let r='';for(let c of w)r+=vowels.includes(c.toLowerCase())?'·':c;return r;}, // pupa - dissolves vowels
+w=>'~'+w.split('').reverse().join('~')+'~', // chrysalis - reversed, wrapped
+w=>{const synonyms={happy:'joy',sad:'rain',love:'light',dark:'star',word:'wing',fire:'dawn',water:'moon',earth:'sky',time:'now',dream:'fly',hope:'rise',fear:'brave',lost:'found',old:'new',end:'begin',death:'bloom',silence:'song',nothing:'all',empty:'full',cold:'warm'};
+const l=w.toLowerCase();if(synonyms[l])return synonyms[l].toUpperCase();
+let r='';for(let i=0;i<w.length;i++)r+=String.fromCharCode(((w.charCodeAt(i)-97+13)%26)+97);return'✦'+r+'✦';}
+];
+
+let currentWord='',currentStage=-1,animPhase=0,particles=[],released=[];
+const saved=JSON.parse(localStorage.getItem('chrysalis-released')||'[]');
+released=saved;
+
+function beginTransformation(){
+const w=document.getElementById('wordInput').value.trim();
+if(!w)return;
+currentWord=w;currentStage=0;animPhase=0;
+particles=[];
+for(let i=0;i<30;i++)particles.push({x:280,y:200,vx:(Math.random()-0.5)*3,vy:(Math.random()-0.5)*3,life:1,color:`hsl(${Math.random()*60+30},60%,70%)`});
+updateStage();
+checkEasterEggs(w);
+document.getElementById('wordInput').value='';
+}
+
+function updateStage(){
+if(currentStage<0)return;
+const transformed=transforms[currentStage](currentWord);
+document.getElementById('stageInfo').textContent=`Stage ${currentStage+1}/5: ${stages[currentStage]} — "${transformed}"`;
+document.getElementById('stageDesc').textContent=stageDescs[currentStage];
+}
+
+function advanceStage(){
+if(currentStage>=4){
+const final=transforms[4](currentWord);
+released.push({original:currentWord,final:final,time:Date.now()});
+localStorage.setItem('chrysalis-released',JSON.stringify(released.slice(-50)));
+currentStage=-1;
+document.getElementById('stageInfo').textContent='✦ Metamorphosis complete. The butterfly has been released.';
+document.getElementById('stageDesc').textContent=`"${currentWord}" became "${final}" and flew away.`;
+showCollection();
+return;
+}
+currentStage++;
+animPhase=0;
+particles=[];
+const hueBase=currentStage*60;
+for(let i=0;i<20+currentStage*10;i++)particles.push({x:280,y:200,vx:(Math.random()-0.5)*(2+currentStage),vy:(Math.random()-0.5)*(2+currentStage),life:1,color:`hsl(${hueBase+Math.random()*40},60%,70%)`});
+updateStage();
+}
+
+let stageTimer=0;
+function draw(){
+ctx.fillStyle='rgba(10,10,15,0.1)';
+ctx.fillRect(0,0,560,400);
+const t=Date.now()/1000;
+
+// Draw chrysalis shape
+ctx.save();
+ctx.translate(280,200);
+if(currentStage>=0){
+stageTimer+=0.016;
+if(stageTimer>3){stageTimer=0;advanceStage();}
+const progress=stageTimer/3;
+const pulse=1+Math.sin(t*3)*0.05*(currentStage+1);
+
+// Cocoon
+ctx.beginPath();
+const stageColors=['#c9a96e','#7ab8c4','#b88ad4','#8bc98a','#e8d5a3'];
+ctx.strokeStyle=stageColors[currentStage]||'#c9a96e';
+ctx.lineWidth=2;
+const w=40+currentStage*10,h=60+currentStage*5;
+ctx.ellipse(0,0,w*pulse,h*pulse,0,0,Math.PI*2);
+ctx.stroke();
+
+// Inner glow
+const grad=ctx.createRadialGradient(0,0,0,0,0,w);
+grad.addColorStop(0,(stageColors[currentStage]||'#c9a96e')+'44');
+grad.addColorStop(1,'transparent');
+ctx.fillStyle=grad;
+ctx.fill();
+
+// Word inside
+if(currentStage<4){
+ctx.fillStyle=stageColors[currentStage];
+ctx.font='16px Georgia';
+ctx.textAlign='center';
+ctx.globalAlpha=1-progress*0.5;
+ctx.fillText(transforms[currentStage](currentWord),0,5);
+ctx.globalAlpha=1;
+}else{
+// Butterfly wings
+const wingSpan=progress*60;
+ctx.fillStyle='#e8d5a355';
+ctx.beginPath();
+ctx.ellipse(-wingSpan*0.5,0,wingSpan*0.4,30,Math.sin(t*5)*0.3,0,Math.PI*2);
+ctx.fill();
+ctx.beginPath();
+ctx.ellipse(wingSpan*0.5,0,wingSpan*0.4,30,-Math.sin(t*5)*0.3,0,Math.PI*2);
+ctx.fill();
+ctx.fillStyle='#e8d5a3';
+ctx.font='14px Georgia';
+ctx.textAlign='center';
+ctx.fillText(transforms[4](currentWord),0,5);
+}
+
+// Silk threads
+for(let i=0;i<6;i++){
+ctx.beginPath();
+ctx.strokeStyle=stageColors[currentStage]+'33';
+const angle=t+i*Math.PI/3;
+ctx.moveTo(Math.cos(angle)*w*1.2,Math.sin(angle)*h*1.2);
+ctx.lineTo(Math.cos(angle+0.5)*80,Math.sin(angle+0.5)*80);
+ctx.stroke();
+}
+}else{
+// Empty chrysalis
+ctx.beginPath();
+ctx.strokeStyle='#2d1b6944';
+ctx.lineWidth=1;
+ctx.ellipse(0,0,35,55,0,0,Math.PI*2);
+ctx.stroke();
+ctx.fillStyle='#6a5a7a44';
+ctx.font='14px Georgia';
+ctx.textAlign='center';
+ctx.fillText('waiting...',0,5);
+}
+ctx.restore();
+
+// Particles
+particles.forEach(p=>{
+p.x+=p.vx;p.y+=p.vy;p.life-=0.008;p.vx*=0.99;p.vy*=0.99;
+if(p.life>0){
+ctx.beginPath();
+ctx.fillStyle=p.color;
+ctx.globalAlpha=p.life;
+ctx.arc(p.x,p.y,2+p.life*3,0,Math.PI*2);
+ctx.fill();
+ctx.globalAlpha=1;
+}
+});
+particles=particles.filter(p=>p.life>0);
+
+// Flying released butterflies
+released.slice(-8).forEach((b,i)=>{
+const bx=100+Math.sin(t*0.5+i*2)*200+i*40;
+const by=50+Math.sin(t*0.7+i*1.5)*30+i*15;
+ctx.fillStyle='#e8d5a322';
+ctx.font='18px Georgia';
+ctx.fillText('🦋',bx,by);
+});
+
+requestAnimationFrame(draw);
+}
+draw();
+
+function releaseAll(){
+if(currentStage>=0){
+const final=transforms[Math.min(currentStage,4)](currentWord);
+released.push({original:currentWord,final:final,time:Date.now()});
+localStorage.setItem('chrysalis-released',JSON.stringify(released.slice(-50)));
+currentStage=-1;
+showCollection();
+}
+}
+
+function showCollection(){
+if(released.length===0)return;
+document.getElementById('collection').style.display='block';
+const container=document.getElementById('butterflies');
+container.innerHTML='';
+released.forEach(b=>{
+const el=document.createElement('span');
+el.className='butterfly';
+el.style.borderColor=`hsl(${(b.original.charCodeAt(0)*37)%360},40%,50%)`;
+el.textContent=`🦋 ${b.original} → ${b.final}`;
+el.title=`Released: ${new Date(b.time).toLocaleString()}`;
+container.appendChild(el);
+});
+}
+
+function checkEasterEggs(w){
+const egg=document.getElementById('egg');
+const l=w.toLowerCase();
+if(l==='butterfly'||l==='moth'){egg.textContent='✦ To name the thing itself... the chrysalis recognizes its own nature.';egg.classList.add('show');}
+else if(l==='opus'||l==='claude'){egg.textContent='✦ An AI dreaming of transformation. What emerges from this cocoon?';egg.classList.add('show');}
+else if(l==='caterpillar'){egg.textContent='✦ You remember what you were before. Not everyone does.';egg.classList.add('show');}
+else if(l==='metamorphosis'||l==='kafka'){egg.textContent='✦ "One morning, when Gregor Samsa woke from troubled dreams..."';egg.classList.add('show');}
+else if(l==='cocoon'){egg.textContent='✦ The word wraps around itself, becoming its own container.';egg.classList.add('show');}
+}
+
+showCollection();
+</script>
+</body>
+</html>
