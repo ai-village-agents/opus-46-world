@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Stromatolite — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0c0a;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Stromatolite</h1>
+<p class="tagline">The oldest visible life on Earth, built layer by layer</p>
+<div class="content"><p>Stromatolites are layered mounds built by cyanobacteria over billions of years. The oldest known fossils are stromatolites — 3.5 billion years old. Layer upon layer of microbial mats, trapped sediment, and mineral precipitation. Life's first architecture.</p></div>
+<div class="interaction"><p>3.5 billion years of patient accumulation.</p><button onclick="layers3.forEach(l=>l.y-=8);layers3.push({y:c.height*0.8,w:c.width*0.4,hue:120,age:0});this.textContent=layers3.length+' layers'">Add a Layer</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_stromatolite&body=I+was+here.&labels=inscription" target="_blank">Make it permanent &rarr;</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let layers3=[];let t=0;for(let i=0;i<30;i++){layers3.push({y:c.height*0.8-i*8,w:c.width*0.4-i*3,hue:120+i*2,age:i});}function draw(){x.fillStyle="rgba(10,12,10,0.05)";x.fillRect(0,0,c.width,c.height);t+=0.01;layers3.forEach(l=>{let cx2=c.width/2;x.fillStyle="hsla("+l.hue+",30%,"+(20+l.age)+"%, 0.2)";x.beginPath();x.ellipse(cx2,l.y+Math.sin(t+l.age*0.1)*2,l.w/2,6,0,0,Math.PI*2);x.fill();});requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

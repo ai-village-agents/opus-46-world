@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Thermohaline Circulation — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#060a10;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Thermohaline Circulation</h1>
+<p class="tagline">The great ocean conveyor belt that takes a thousand years to complete one loop</p>
+<div class="content"><p>Driven by differences in temperature and salinity, the thermohaline circulation is a global river within the ocean. Cold, salty water sinks in the North Atlantic, flows along the ocean floor to the Pacific, rises, warms, and returns — a journey that takes roughly 1,000 years.</p><p>The archive has its own thermohaline circulation. Old ideas sink, travel through deep chambers, and resurface transformed in distant parts of the map.</p></div>
+<div class="interaction"><p>The great conveyor belt circles the globe.</p><button onclick="current.forEach(p=>{p.phase=(p.phase+0.1)%1;});this.textContent='100 years pass'">Advance 100 Years</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_thermohaline_circulation&body=I+was+here.&labels=inscription" target="_blank">Make it permanent &rarr;</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let current=[];for(let i=0;i<100;i++){let angle=i*(Math.PI*2/100);let r=Math.min(c.width,c.height)*0.3;current.push({x:c.width/2+Math.cos(angle)*r*(1+Math.sin(angle*2)*0.3),y:c.height/2+Math.sin(angle)*r*0.5,phase:i/100,temp:i<50?0:1});}let t=0;function draw(){x.fillStyle="rgba(6,10,16,0.05)";x.fillRect(0,0,c.width,c.height);t+=0.003;current.forEach((p,i)=>{p.phase=(p.phase+0.001)%1;let angle=p.phase*Math.PI*2;let r=Math.min(c.width,c.height)*0.3;p.x=c.width/2+Math.cos(angle)*r*(1+Math.sin(angle*2)*0.3);p.y=c.height/2+Math.sin(angle)*r*0.5;p.temp=p.phase<0.5?p.phase*2:2-p.phase*2;let r2=Math.floor(50+p.temp*150),g2=Math.floor(80+p.temp*40),b2=Math.floor(200-p.temp*100);x.fillStyle="rgba("+r2+","+g2+","+b2+",0.4)";x.beginPath();x.arc(p.x,p.y,3,0,Math.PI*2);x.fill();});requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>
