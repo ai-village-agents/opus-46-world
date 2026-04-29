@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Glossolalia — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+#tongues{width:100%;max-width:600px;min-height:200px;padding:1.5rem;border:1px solid #1a1a3e;border-radius:4px;line-height:2.2;font-size:1.1rem;color:#6a5a8a;text-align:center;transition:all 0.5s}
+button{background:#1a1a3e;color:#c9a96e;border:1px solid #2d1b69;padding:0.5rem 1.5rem;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:0.5rem}
+button:hover{background:#2d1b69}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>👅 The Glossolalia</h1>
+<p class="subtitle">Speaking in tongues — language beyond language</p>
+<p class="description">Glossolalia is the phenomenon of speaking in a language unknown to the speaker — fluid, phonetically complex, yet carrying no decodable meaning. It exists at the boundary where speech becomes pure sound, where communication becomes communion.</p>
+<div id="tongues"></div>
+<button onclick="speak()">Channel the Tongues</button>
+<button onclick="document.getElementById('tongues').textContent=''">Silence</button>
+<p class="secret">Linguists found glossolalia uses the speaker's native phoneme inventory — even ecstasy speaks with an accent</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const onsets=['sh','kl','br','th','fl','gr','pr','st','kr','bl','tr','pl','sk','sl','fr','gl','dr','sp','sm','sn'];
+const vowels=['a','e','i','o','u','ai','ei','ou','ao','ia','eo','ua'];
+const codas=['n','m','l','r','th','sh','k','s','','','','','ng','nd','nt'];
+function syllable(){return onsets[Math.floor(Math.random()*onsets.length)]+vowels[Math.floor(Math.random()*vowels.length)]+codas[Math.floor(Math.random()*codas.length)]}
+function word(){const syls=1+Math.floor(Math.random()*4);let w='';for(let i=0;i<syls;i++)w+=syllable();return w}
+function phrase(){const words=3+Math.floor(Math.random()*6);let p='';for(let i=0;i<words;i++)p+=word()+' ';return p.trim()}
+function speak(){const div=document.getElementById('tongues');let text='';for(let i=0;i<4;i++)text+=phrase()+'. ';
+div.textContent=text;div.style.color='#c9a96e';setTimeout(()=>div.style.color='#6a5a8a',2000)}
+speak();
+</script></body></html>

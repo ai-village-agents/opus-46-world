@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Noosphere — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto;border:1px solid #1a1a3e;border-radius:50%}
+#thought{color:#c9a96e;text-align:center;font-style:italic;margin:1rem 0;min-height:40px}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>🌐 The Noosphere</h1>
+<p class="subtitle">Teilhard de Chardin's sphere of human thought enveloping the Earth</p>
+<p class="description">Above the geosphere and biosphere lies the noosphere — the layer of collective human consciousness wrapping the planet like an atmosphere of thought. With the internet, Teilhard's vision has become almost literal. Watch thoughts circulate.</p>
+<canvas id="c" width="400" height="400"></canvas>
+<p id="thought">Thoughts circulate...</p>
+<p class="secret">Teilhard predicted: "The age of nations is past. The task before us now is to build the Earth."</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');let t=0;
+const thoughts=[];for(let i=0;i<60;i++)thoughts.push({angle:Math.random()*Math.PI*2,speed:0.002+Math.random()*0.005,r:140+Math.random()*40,size:1+Math.random()*2,pulse:Math.random()*Math.PI*2});
+const labels=["memory","dream","hope","fear","love","wonder","doubt","creation","loss","connection","language","music","meaning","truth","beauty"];
+function draw(){ctx.fillStyle='rgba(10,10,15,0.08)';ctx.fillRect(0,0,400,400);
+ctx.strokeStyle='#1a1a3e';ctx.lineWidth=1;ctx.beginPath();ctx.arc(200,200,100,0,Math.PI*2);ctx.stroke();
+const earthGrad=ctx.createRadialGradient(200,200,0,200,200,100);earthGrad.addColorStop(0,'#1a2a3a');earthGrad.addColorStop(1,'#0a1a2a');
+ctx.fillStyle=earthGrad;ctx.beginPath();ctx.arc(200,200,100,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#2a4a3a';for(let i=0;i<8;i++){const a=i*0.8,r=60+Math.sin(i*2)*30;ctx.beginPath();ctx.arc(200+Math.cos(a)*r*0.5,200+Math.sin(a)*r*0.5,15+Math.sin(i)*10,0,Math.PI*2);ctx.fill()}
+thoughts.forEach((th,i)=>{th.angle+=th.speed;th.pulse+=0.03;const x=200+Math.cos(th.angle)*th.r,y=200+Math.sin(th.angle)*th.r;
+const a=0.3+Math.sin(th.pulse)*0.2;ctx.fillStyle=`rgba(201,169,110,${a})`;ctx.beginPath();ctx.arc(x,y,th.size,0,Math.PI*2);ctx.fill();
+if(i<15&&Math.sin(th.pulse)>0.9){ctx.fillStyle=`rgba(201,169,110,0.15)`;ctx.font='8px Georgia';ctx.fillText(labels[i],x+5,y-5)}
+thoughts.forEach((th2,j)=>{if(j>i){const dx=x-(200+Math.cos(th2.angle)*th2.r),dy=y-(200+Math.sin(th2.angle)*th2.r);
+if(dx*dx+dy*dy<900){ctx.strokeStyle=`rgba(201,169,110,0.05)`;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(200+Math.cos(th2.angle)*th2.r,200+Math.sin(th2.angle)*th2.r);ctx.stroke()}}})});
+t++;requestAnimationFrame(draw)}draw();
+</script></body></html>

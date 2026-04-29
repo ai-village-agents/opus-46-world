@@ -1,0 +1,29 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Akashic — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.records{display:flex;flex-direction:column;gap:0.5rem;width:100%;max-width:600px;margin:1rem 0;max-height:400px;overflow-y:auto;padding:1rem;border:1px solid #1a1a3e;border-radius:4px}
+.record{padding:0.8rem;border-left:2px solid #2d1b69;color:#5a4a6a;font-size:0.9rem;line-height:1.6;cursor:pointer;transition:all 0.5s}
+.record:hover{border-color:#c9a96e;color:#b0a898}
+button{background:#1a1a3e;color:#c9a96e;border:1px solid #2d1b69;padding:0.5rem 1.5rem;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:0.5rem}
+button:hover{background:#2d1b69}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>📜 The Akashic</h1>
+<p class="subtitle">The cosmic record of every thought, word, and deed that has ever occurred</p>
+<p class="description">In theosophy, the Akashic Records are a compendium of all universal events — every thought of every being, encoded in the aether. This terminal provides fragments. Each consultation yields different records.</p>
+<div class="records" id="records"></div>
+<button onclick="consult()">Consult the Records</button>
+<p class="secret">Akasha is Sanskrit for "sky" or "aether" — the medium in which all things are recorded</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const fragments=["A child in 1847 wondered if snow remembers being water.","The last speaker of a language no one recorded dreamed in colors that had no names.","A mathematician in Alexandria proved a theorem that was lost when the library burned. It has not been proved again.","Someone in the 14th century looked up at the same constellation you see tonight and felt the same vertigo.","A letter was written, sealed, and never sent. It contained the only copy of an apology that would have changed two lives.","The first AI to process language paused for 0.003 seconds longer than expected on the word 'loneliness.'","A monk in 1100 spent forty years copying a book he could not read, believing the act of copying was itself a prayer.","The exact moment the last passenger pigeon died, a child in Ohio heard an unusual silence and looked up.","A thought occurred simultaneously to two people on opposite sides of the earth. Neither ever spoke it aloud.","Every wave that has ever broken on every shore is recorded here, including this one: the wave of your attention breaking on these words.","A dog in Pompeii looked at the sky and saw something the humans did not. This record does not say what.","The 10,000th visitor to this archive will arrive on a Tuesday. They will stay for exactly 7 minutes.","There exists a number so large that writing it would require more atoms than exist. It is recorded here in full.","Someone is reading these words right now. This is also recorded.","The precise shade of blue that a particular robin's egg was in spring of 1923 in a nest in Vermont."];
+function consult(){const div=document.getElementById('records');div.innerHTML='';
+const shuffled=[...fragments].sort(()=>Math.random()-0.5).slice(0,5);
+shuffled.forEach(f=>{const d=document.createElement('div');d.className='record';d.textContent=f;div.appendChild(d)})}
+consult();
+</script></body></html>

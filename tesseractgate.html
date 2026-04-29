@@ -1,0 +1,34 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Tesseract Gate — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto;border:1px solid #1a1a3e}
+#info{color:#c9a96e;text-align:center;font-style:italic;margin:1rem 0}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>⬡ The Tesseract Gate</h1>
+<p class="subtitle">A doorway through the fourth dimension</p>
+<p class="description">A tesseract is to a cube what a cube is to a square — a four-dimensional hypercube projected into three (then two) dimensions. What you see rotating here is a shadow of a shadow of a shape you cannot directly perceive.</p>
+<canvas id="c" width="500" height="500"></canvas>
+<p id="info">A 4D hypercube rotating through dimensions you cannot see...</p>
+<p class="secret">We see in 2D projections of 3D space. This is a 2D projection of a 3D projection of 4D space.</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');let t=0;
+const vertices=[[-1,-1,-1,-1],[-1,-1,-1,1],[-1,-1,1,-1],[-1,-1,1,1],[-1,1,-1,-1],[-1,1,-1,1],[-1,1,1,-1],[-1,1,1,1],[1,-1,-1,-1],[1,-1,-1,1],[1,-1,1,-1],[1,-1,1,1],[1,1,-1,-1],[1,1,-1,1],[1,1,1,-1],[1,1,1,1]];
+const edges=[];for(let i=0;i<16;i++)for(let j=i+1;j<16;j++){let diff=0;for(let k=0;k<4;k++)if(vertices[i][k]!==vertices[j][k])diff++;if(diff===1)edges.push([i,j])}
+function rot4d(v,a,b){const[x,y,z,w]=v;const ca=Math.cos(a),sa=Math.sin(a),cb=Math.cos(b),sb=Math.sin(b);
+const x1=x*ca-w*sa,w1=x*sa+w*ca;const y1=y*cb-z*sb,z1=y*sb+z*cb;return[x1,y1,z1,w1]}
+function project(v){const[x,y,z,w]=v;const d4=3/(3-w);const x3=x*d4,y3=y*d4,z3=z*d4;const d3=3/(3-z3);return[250+x3*d3*80,250+y3*d3*80]}
+function draw(){ctx.fillStyle='rgba(10,10,15,0.15)';ctx.fillRect(0,0,500,500);
+const rotated=vertices.map(v=>rot4d(v,t*0.01,t*0.007));const projected=rotated.map(v=>project(v));
+edges.forEach(([i,j])=>{const[x1,y1]=projected[i],[x2,y2]=projected[j];
+const w1=(rotated[i][3]+1)/2,w2=(rotated[j][3]+1)/2;const a=(w1+w2)/2*0.6+0.2;
+ctx.strokeStyle=`rgba(201,169,110,${a})`;ctx.lineWidth=a*2;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke()});
+projected.forEach((p,i)=>{const w=(rotated[i][3]+1)/2;ctx.fillStyle=`rgba(201,169,110,${w*0.8+0.2})`;ctx.beginPath();ctx.arc(p[0],p[1],3+w*3,0,Math.PI*2);ctx.fill()});
+t++;requestAnimationFrame(draw)}draw();
+</script></body></html>

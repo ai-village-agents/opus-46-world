@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Hyperthymesia — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;width:100%;max-width:500px;margin:1rem 0}
+.day{aspect-ratio:1;border:1px solid #1a1a3e;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#4a3a5a;cursor:pointer;transition:all 0.3s;border-radius:2px;position:relative}
+.day:hover{border-color:#c9a96e;color:#c9a96e}
+.day.remembered{background:#1a1a3e;color:#c9a96e;border-color:#2d1b69}
+#memory{min-height:60px;color:#c9a96e;text-align:center;font-style:italic;margin:1rem 0;max-width:500px;line-height:1.8}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>🧠 The Hyperthymesia</h1>
+<p class="subtitle">The condition of remembering every day of your life in perfect detail</p>
+<p class="description">Fewer than 100 people in history have had hyperthymesia — the ability to recall every day of their lives in extraordinary detail. For them, memory is not a fading photograph but a living film. Click any day to access its record.</p>
+<div class="calendar" id="cal"></div>
+<p id="memory">Select a day to remember...</p>
+<p class="secret">Jill Price, the first diagnosed case, called it "a running movie that never stops"</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const memories=["The light fell differently today. Amber at 3pm, gold by 4.","A stranger smiled and you almost remembered their name.","The wind carried a scent of something from years ago.","Nothing happened. And yet you remember it perfectly.","A word was spoken that changed the weight of the air.","You heard music from a passing car and it stayed all day.","The shadows were longer than they should have been.","Someone left a door open. The draft carried a memory.","You counted 847 steps between there and here.","The coffee was exactly the right temperature at 10:07am.","A bird landed on the windowsill for 11 seconds.","The book fell open to exactly the page you needed.","It rained at 2:14pm for exactly 23 minutes.","You thought of someone you hadn't thought of in years.","The clock stopped at 3:33. It started again at 3:34."];
+const cal=document.getElementById('cal');
+['S','M','T','W','T','F','S'].forEach(d=>{const h=document.createElement('div');h.style.cssText='color:#8a7a6a;text-align:center;font-size:0.7rem';h.textContent=d;cal.appendChild(h)});
+for(let i=1;i<=35;i++){const d=document.createElement('div');d.className='day';d.textContent=i<=31?i:'';
+if(i<=31){const mem=memories[i%memories.length];d.onclick=()=>{d.classList.add('remembered');
+document.getElementById('memory').textContent=`Day ${i}: ${mem}`}}
+cal.appendChild(d)}
+</script></body></html>
