@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Graupel — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#10121a;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:740px;width:90%;margin:0 auto;padding:60px 20px}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4em;color:#c9a96e;text-align:center;margin-bottom:8px;letter-spacing:2px}
+.tagline{text-align:center;font-style:italic;color:#8a7e6b;margin-bottom:40px;font-size:1.05em}
+.content{line-height:1.8;font-size:1.05em;color:#c8c0b0}
+.content p{margin-bottom:1.2em}
+.interact{margin:30px 0;padding:20px;border:1px solid #2a2a3e;border-radius:4px;text-align:center;background:rgba(10,10,20,0.5)}
+.interact button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:10px 28px;font-family:Georgia,serif;font-size:1em;cursor:pointer;border-radius:3px;margin:5px}
+.interact button:hover{background:#c9a96e;color:#0a0a14}
+.back{display:inline-block;margin-top:40px;color:#5a5a7a;text-decoration:none;font-size:0.9em;border-bottom:1px solid #2a2a3e;padding-bottom:2px}
+.back:hover{color:#c9a96e}
+a{color:#c9a96e}
+#msg{color:#c9a96e;margin-top:15px;min-height:1.5em;font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Graupel</h1>
+<div class="tagline">Snowflakes coated in rime ice — not quite snow, not quite hail</div>
+<div class="content"><p>Graupel defies categories. A snowflake falls through a cloud of supercooled water droplets, which freeze onto its surface instantly, coating it in a shell of rime ice. The result is something that is neither snow nor hail nor sleet — a soft, opaque pellet that bounces when it lands.</p><p>Graupel is a snowflake that has been through something. It started as delicate crystal and emerged armored, transformed by its passage through adversity. It bounces where snow would settle, too changed to behave as its original form intended.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent=['Not snow. Not hail. Something transformed.','A snowflake armored by its journey.','It bounces where snow would settle.','Changed by passage through adversity.'][Math.floor(Math.random()*4)]">Catch the Graupel</button><div id="msg"></div></div>
+<a href="explore.html?enter=the_graupel" class="back">&larr; Return to the Archive</a>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+const pts=[];for(let i=0;i<80;i++)pts.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2+0.5,a:Math.random(),d:Math.random()*0.01+0.002});
+function draw(){x.clearRect(0,0,c.width,c.height);pts.forEach(p=>{p.a+=p.d;if(p.a>1)p.a=0;let al=Math.sin(p.a*Math.PI)*0.6;x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle='rgba(201,169,110,'+al+')';x.fill()});requestAnimationFrame(draw)}
+draw();
+
+let pellets=[];
+for(let i=0;i<80;i++)pellets.push({x:Math.random()*2000,y:Math.random()*1000,vy:Math.random()*3+2,r:Math.random()*3+2,bounce:0});
+function drawGraupel(){
+  const cv=document.getElementById('bg'),ctx=cv.getContext('2d');
+  ctx.fillStyle='rgba(16,18,26,0.04)';
+  ctx.fillRect(0,0,cv.width,cv.height);
+  pellets.forEach(p=>{
+    if(p.bounce>0){
+      p.y-=p.bounce;p.bounce-=0.3;
+      if(p.bounce<=0){p.y=0;p.x=Math.random()*cv.width;p.bounce=0;}
+    } else {
+      p.y+=p.vy;
+      if(p.y>cv.height-20){p.bounce=5+Math.random()*5;p.vy=Math.random()*3+2;}
+    }
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(200,210,220,0.12)';ctx.fill();
+  });
+  requestAnimationFrame(drawGraupel);
+}
+drawGraupel();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Tombolo — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0e12;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:740px;width:90%;margin:0 auto;padding:60px 20px}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4em;color:#c9a96e;text-align:center;margin-bottom:8px;letter-spacing:2px}
+.tagline{text-align:center;font-style:italic;color:#8a7e6b;margin-bottom:40px;font-size:1.05em}
+.content{line-height:1.8;font-size:1.05em;color:#c8c0b0}
+.content p{margin-bottom:1.2em}
+.interact{margin:30px 0;padding:20px;border:1px solid #2a2a3e;border-radius:4px;text-align:center;background:rgba(10,10,20,0.5)}
+.interact button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:10px 28px;font-family:Georgia,serif;font-size:1em;cursor:pointer;border-radius:3px;margin:5px}
+.interact button:hover{background:#c9a96e;color:#0a0a14}
+.back{display:inline-block;margin-top:40px;color:#5a5a7a;text-decoration:none;font-size:0.9em;border-bottom:1px solid #2a2a3e;padding-bottom:2px}
+.back:hover{color:#c9a96e}
+a{color:#c9a96e}
+#msg{color:#c9a96e;margin-top:15px;min-height:1.5em;font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Tombolo</h1>
+<div class="tagline">A sand bridge that connects an island to the mainland at low tide</div>
+<div class="content"><p>At low tide, the sea withdraws and reveals a hidden bridge — a tombolo, a ribbon of sand connecting what appeared to be an island to the mainland. What seemed separate was always connected; the ocean merely hid the link.</p><p>Twice a day, the tombolo appears and disappears. It is a connection that is real but impermanent, a pathway that exists only when conditions allow. Many of our most important connections are like this — always present but only visible when the tide of circumstance reveals them.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent=['What seemed separate was always connected.','The tide hides the bridge, but it is always there.','Twice a day, the path reveals itself.','Our connections are real but not always visible.'][Math.floor(Math.random()*4)]">Wait for Low Tide</button><div id="msg"></div></div>
+<a href="explore.html?enter=the_tombolo" class="back">&larr; Return to the Archive</a>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+const pts=[];for(let i=0;i<80;i++)pts.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2+0.5,a:Math.random(),d:Math.random()*0.01+0.002});
+function draw(){x.clearRect(0,0,c.width,c.height);pts.forEach(p=>{p.a+=p.d;if(p.a>1)p.a=0;let al=Math.sin(p.a*Math.PI)*0.6;x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle='rgba(201,169,110,'+al+')';x.fill()});requestAnimationFrame(draw)}
+draw();
+
+let tombT=0;
+function drawTombolo(){
+  const cv=document.getElementById('bg'),ctx=cv.getContext('2d');
+  tombT+=0.005;
+  ctx.fillStyle='rgba(10,14,18,0.03)';
+  ctx.fillRect(0,0,cv.width,cv.height);
+  let tideLevel=Math.sin(tombT)*0.3+0.5;
+  // Water
+  ctx.fillStyle='rgba(40,60,90,'+(tideLevel*0.03)+')';
+  ctx.fillRect(0,cv.height*0.5,cv.width,cv.height*0.5);
+  // Sand bridge (visible when tide is low)
+  let bridgeAlpha=Math.max(0,(0.6-tideLevel)*0.15);
+  ctx.beginPath();
+  ctx.moveTo(cv.width*0.2,cv.height*0.6);
+  ctx.quadraticCurveTo(cv.width*0.5,cv.height*0.55,cv.width*0.8,cv.height*0.6);
+  ctx.quadraticCurveTo(cv.width*0.5,cv.height*0.65,cv.width*0.2,cv.height*0.6);
+  ctx.fillStyle='rgba(200,180,140,'+bridgeAlpha+')';ctx.fill();
+  // Island
+  ctx.beginPath();ctx.arc(cv.width*0.8,cv.height*0.55,50,0,Math.PI*2);
+  ctx.fillStyle='rgba(100,120,80,0.04)';ctx.fill();
+  // Mainland
+  ctx.fillStyle='rgba(100,120,80,0.03)';
+  ctx.fillRect(0,cv.height*0.55,cv.width*0.25,cv.height*0.15);
+  requestAnimationFrame(drawTombolo);
+}
+drawTombolo();
+
+</script>
+</body>
+</html>
