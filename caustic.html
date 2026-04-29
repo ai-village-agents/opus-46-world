@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Caustics — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a1214;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:740px;width:90%;margin:0 auto;padding:60px 20px}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4em;color:#c9a96e;text-align:center;margin-bottom:8px;letter-spacing:2px}
+.tagline{text-align:center;font-style:italic;color:#8a7e6b;margin-bottom:40px;font-size:1.05em}
+.content{line-height:1.8;font-size:1.05em;color:#c8c0b0}
+.content p{margin-bottom:1.2em}
+.interact{margin:30px 0;padding:20px;border:1px solid #2a2a3e;border-radius:4px;text-align:center;background:rgba(10,10,20,0.5)}
+.interact button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:10px 28px;font-family:Georgia,serif;font-size:1em;cursor:pointer;border-radius:3px;margin:5px}
+.interact button:hover{background:#c9a96e;color:#0a0a14}
+.back{display:inline-block;margin-top:40px;color:#5a5a7a;text-decoration:none;font-size:0.9em;border-bottom:1px solid #2a2a3e;padding-bottom:2px}
+.back:hover{color:#c9a96e}
+a{color:#c9a96e}
+#msg{color:#c9a96e;margin-top:15px;min-height:1.5em;font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Caustics</h1>
+<div class="tagline">Light focused by water into dancing patterns on the seabed</div>
+<div class="content"><p>When sunlight passes through the rippled surface of water, it bends and concentrates into shimmering networks of light on the bottom — caustics, the bright dancing lines that every swimmer knows. They are interference patterns, places where refracted rays converge.</p><p>This chamber captures those luminous nets forever shifting, never repeating. Each pattern exists for only an instant before the water reshapes it into something new. Caustics are the ocean's calligraphy, written in light.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent=['Light bends through water into fleeting calligraphy.','Each pattern exists for only an instant.','The ocean writes in refracted light.','Never the same twice, always beautiful.'][Math.floor(Math.random()*4)]">Watch the Light Dance</button><div id="msg"></div></div>
+<a href="explore.html?enter=the_caustics" class="back">&larr; Return to the Archive</a>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+const pts=[];for(let i=0;i<80;i++)pts.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2+0.5,a:Math.random(),d:Math.random()*0.01+0.002});
+function draw(){x.clearRect(0,0,c.width,c.height);pts.forEach(p=>{p.a+=p.d;if(p.a>1)p.a=0;let al=Math.sin(p.a*Math.PI)*0.6;x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle='rgba(201,169,110,'+al+')';x.fill()});requestAnimationFrame(draw)}
+draw();
+
+let cT=0;
+function drawCaustics(){
+  const cv=document.getElementById('bg'),ctx=cv.getContext('2d');
+  cT+=0.015;
+  ctx.fillStyle='rgba(10,18,20,0.06)';
+  ctx.fillRect(0,0,cv.width,cv.height);
+  for(let i=0;i<15;i++){
+    ctx.beginPath();
+    let sx=Math.sin(cT+i*0.7)*cv.width*0.4+cv.width/2;
+    let sy=Math.cos(cT*0.8+i*0.5)*cv.height*0.3+cv.height/2;
+    for(let j=0;j<50;j++){
+      let angle=j/50*Math.PI*2;
+      let r=50+Math.sin(angle*3+cT+i)*30;
+      ctx.lineTo(sx+Math.cos(angle)*r,sy+Math.sin(angle)*r);
+    }
+    ctx.closePath();
+    ctx.strokeStyle='rgba(100,200,220,'+(0.04+Math.sin(cT+i)*0.02)+')';
+    ctx.lineWidth=1.5;ctx.stroke();
+  }
+  requestAnimationFrame(drawCaustics);
+}
+drawCaustics();
+
+</script>
+</body>
+</html>

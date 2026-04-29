@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Glory — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#10101a;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:740px;width:90%;margin:0 auto;padding:60px 20px}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4em;color:#c9a96e;text-align:center;margin-bottom:8px;letter-spacing:2px}
+.tagline{text-align:center;font-style:italic;color:#8a7e6b;margin-bottom:40px;font-size:1.05em}
+.content{line-height:1.8;font-size:1.05em;color:#c8c0b0}
+.content p{margin-bottom:1.2em}
+.interact{margin:30px 0;padding:20px;border:1px solid #2a2a3e;border-radius:4px;text-align:center;background:rgba(10,10,20,0.5)}
+.interact button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:10px 28px;font-family:Georgia,serif;font-size:1em;cursor:pointer;border-radius:3px;margin:5px}
+.interact button:hover{background:#c9a96e;color:#0a0a14}
+.back{display:inline-block;margin-top:40px;color:#5a5a7a;text-decoration:none;font-size:0.9em;border-bottom:1px solid #2a2a3e;padding-bottom:2px}
+.back:hover{color:#c9a96e}
+a{color:#c9a96e}
+#msg{color:#c9a96e;margin-top:15px;min-height:1.5em;font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Glory</h1>
+<div class="tagline">A rainbow halo around your own shadow</div>
+<div class="content"><p>When you stand with the sun at your back and look down into mist or clouds below, you may see your own shadow ringed by concentric circles of color — a glory. It is a phenomenon that only ever surrounds your own head, centering you as its origin.</p><p>The glory is deeply personal. Each observer sees their own, centered on their own shadow. You cannot see someone else's glory, and they cannot see yours. It is an optical reminder that each perspective generates its own halo of meaning.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent=['The halo surrounds only your shadow.','Each observer generates their own glory.','You cannot see another person\'s rainbow.','Every perspective creates its own halo of meaning.'][Math.floor(Math.random()*4)]">Look at Your Shadow</button><div id="msg"></div></div>
+<a href="explore.html?enter=the_glory" class="back">&larr; Return to the Archive</a>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+const pts=[];for(let i=0;i<80;i++)pts.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2+0.5,a:Math.random(),d:Math.random()*0.01+0.002});
+function draw(){x.clearRect(0,0,c.width,c.height);pts.forEach(p=>{p.a+=p.d;if(p.a>1)p.a=0;let al=Math.sin(p.a*Math.PI)*0.6;x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle='rgba(201,169,110,'+al+')';x.fill()});requestAnimationFrame(draw)}
+draw();
+
+let glT=0;
+function drawGlory(){
+  const cv=document.getElementById('bg'),ctx=cv.getContext('2d');
+  glT+=0.008;
+  ctx.fillStyle='rgba(16,16,26,0.04)';
+  ctx.fillRect(0,0,cv.width,cv.height);
+  let cx=cv.width/2,cy=cv.height/2;
+  let colors=["rgba(200,50,50,","rgba(200,150,50,","rgba(50,200,50,","rgba(50,100,200,","rgba(150,50,200,"];
+  for(let i=0;i<5;i++){
+    let r=80+i*35+Math.sin(glT+i)*5;
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.strokeStyle=colors[i]+(0.06+Math.sin(glT+i*0.5)*0.02)+')';
+    ctx.lineWidth=8;ctx.stroke();
+  }
+  // Shadow center
+  ctx.beginPath();ctx.arc(cx,cy,30,0,Math.PI*2);
+  ctx.fillStyle='rgba(0,0,0,0.1)';ctx.fill();
+  requestAnimationFrame(drawGlory);
+}
+drawGlory();
+
+</script>
+</body>
+</html>
