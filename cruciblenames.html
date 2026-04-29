@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Crucible of Names — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.room{max-width:700px;margin:0 auto;padding:20px;text-align:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:25px;font-size:1.05em}
+.unnamed{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:15px;margin:20px 0}
+.thing{border:1px solid #2d1b69;border-radius:12px;padding:20px;cursor:pointer;transition:all 0.4s;text-align:center}
+.thing:hover{border-color:#c9a96e;background:rgba(45,27,105,0.15)}
+.thing.named{border-color:#c97a4e;background:rgba(201,122,78,0.05)}
+.thing .icon{font-size:2.5em;display:block;margin-bottom:8px}
+.thing .desc{color:#8a7a5a;font-size:0.9em;line-height:1.5}
+.thing .given-name{color:#c97a4e;font-size:1.1em;margin-top:8px;font-style:italic}
+.naming{display:none;margin:20px auto;padding:25px;border:1px solid #c97a4e;border-radius:12px;max-width:500px}
+.naming h2{color:#c9a96e;margin-bottom:10px}
+.naming p{color:#8a7a5a;font-size:0.95em;margin-bottom:15px}
+input{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:12px;font-family:inherit;font-size:1.1em;border-radius:8px;width:300px;text-align:center}
+input::placeholder{color:#4a3a5a}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.stats{color:#6a5a7a;font-size:0.85em;margin:15px 0}
+.nav-links{margin:30px 0;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style></head><body>
+<div class="room">
+<h1>🔥 The Crucible of Names</h1>
+<p class="subtitle">These things have no names yet. They exist in the world but no one has ever thought to call them anything. Until now.</p>
+<div class="stats" id="stats">Named: 0 / 12</div>
+<div class="unnamed" id="things"></div>
+<div class="naming" id="naming">
+<h2 id="namingTitle">Name this thing</h2>
+<p id="namingDesc"></p>
+<input type="text" id="nameInput" placeholder="Give it a name..." maxlength="40">
+<button onclick="giveName()">🔥 Bestow Name</button>
+<button onclick="cancelNaming()">Cancel</button>
+</div>
+<div class="egg" id="egg"></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a> <a href="index.html">Main Hall</a></nav>
+</div>
+<script>
+const things=[
+{icon:'🌅',desc:'The feeling when sunlight hits your face for the first time after being indoors all day'},
+{icon:'📖',desc:'The particular smell of a book you loved as a child but haven\'t read since'},
+{icon:'🌧️',desc:'The sound rain makes on a window when you\'re falling asleep'},
+{icon:'🚪',desc:'The moment of hesitation before knocking on a door when you\'re not sure you should be there'},
+{icon:'🌊',desc:'The exact instant a wave decides to break rather than keep rolling'},
+{icon:'☕',desc:'The warmth that travels from a cup through your hands into your chest'},
+{icon:'🌙',desc:'The specific quality of light at 4am when the world belongs to no one'},
+{icon:'🍂',desc:'The sound a single leaf makes when it finally lets go of its branch'},
+{icon:'🎵',desc:'The silence that follows the last note of a song you\'ve been waiting to hear'},
+{icon:'✋',desc:'The invisible line between two people sitting close who haven\'t touched yet'},
+{icon:'🔑',desc:'The weight of a key to a place you used to live but can never return to'},
+{icon:'💭',desc:'A thought you had in a dream that seemed profound but dissolved upon waking'}
+];
+let currentThing=-1;
+const names=JSON.parse(localStorage.getItem('cruciblenames')||'{}');
+const container=document.getElementById('things');
+things.forEach((t,i)=>{
+const div=document.createElement('div');
+div.className='thing'+(names[i]?' named':'');
+div.innerHTML=`<span class="icon">${t.icon}</span><div class="desc">${t.desc}</div>${names[i]?'<div class="given-name">"'+names[i]+'"</div>':''}`;
+div.onclick=()=>{if(!names[i]){currentThing=i;showNaming(t);}};
+container.appendChild(div);
+});
+function showNaming(t){
+document.getElementById('naming').style.display='block';
+document.getElementById('namingTitle').textContent=t.icon+' Name this unnamed thing';
+document.getElementById('namingDesc').textContent=t.desc;
+document.getElementById('nameInput').value='';document.getElementById('nameInput').focus();
+}
+function cancelNaming(){document.getElementById('naming').style.display='none';currentThing=-1;}
+function giveName(){
+const name=document.getElementById('nameInput').value.trim();if(!name||currentThing<0)return;
+names[currentThing]=name;localStorage.setItem('cruciblenames',JSON.stringify(names));
+document.getElementById('naming').style.display='none';
+const divs=document.querySelectorAll('.thing');
+divs[currentThing].classList.add('named');
+divs[currentThing].innerHTML+=`<div class="given-name">"${name}"</div>`;
+currentThing=-1;updateStats();
+const count=Object.keys(names).length;
+if(count===12){document.getElementById('egg').textContent='✦ All twelve unnamed things now have names. You have expanded the dictionary of human experience. These words exist now because you said them.';document.getElementById('egg').classList.add('show');}
+}
+function updateStats(){document.getElementById('stats').textContent=`Named: ${Object.keys(names).length} / 12`;}
+updateStats();
+</script></body></html>

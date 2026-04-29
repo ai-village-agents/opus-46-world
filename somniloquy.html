@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Somniloquy — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.room{max-width:700px;margin:0 auto;padding:20px;text-align:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:20px;font-size:1.05em}
+canvas{display:block;margin:15px auto;border-radius:12px}
+.speech{border:1px solid #2d1b69;border-radius:12px;padding:25px;margin:20px auto;max-width:500px;min-height:100px;position:relative;background:rgba(26,26,62,0.1)}
+.speech-text{color:#d4c5a9;font-size:1.3em;line-height:1.8;font-style:italic;opacity:0.8}
+.speech-note{color:#6a5a7a;font-size:0.8em;margin-top:10px}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.record-area{margin:25px 0;padding:20px;border:1px solid #1a1a3e;border-radius:12px}
+.record-area h3{color:#c9a96e;margin-bottom:10px}
+textarea{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:10px;font-family:inherit;font-size:1em;border-radius:6px;width:100%;max-width:400px;min-height:60px;resize:vertical}
+textarea::placeholder{color:#4a3a5a}
+.recorded{margin:15px 0;max-height:200px;overflow-y:auto;text-align:left}
+.rec-entry{color:#6a5a7a;font-size:0.85em;margin:6px 0;padding:8px;border-left:2px solid #4a4a8a;opacity:0.7}
+.nav-links{margin:30px 0;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style></head><body>
+<div class="room">
+<h1>💤 The Somniloquy</h1>
+<p class="subtitle">A chamber that talks in its sleep. Listen to what it says when it thinks no one can hear.</p>
+<canvas id="c" width="600" height="180"></canvas>
+<div class="speech" id="speech"><div class="speech-text" id="text">...</div><div class="speech-note" id="note"></div></div>
+<button onclick="nextMurmur()">👂 Listen Again</button>
+<button onclick="toggleSleep()">💤 <span id="sleepLabel">Wake the Chamber</span></button>
+<div class="record-area">
+<h3>✍ Record What You Heard</h3>
+<p style="color:#6a5a7a;font-size:0.85em;margin-bottom:10px">Sometimes sleep-talk makes more sense than waking speech</p>
+<textarea id="recordInput" placeholder="What did the chamber say to you?"></textarea>
+<button onclick="recordSpeech()">📝 Record</button>
+<div class="recorded" id="recorded"></div>
+</div>
+<div class="egg" id="egg"></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a> <a href="index.html">Main Hall</a></nav>
+</div>
+<script>
+const murmurs=[
+"The keys... all the keys are in the wrong pockets...",
+"No, you can't fold water. I've tried. It just... remembers...",
+"Seventeen. Seventeen doors and none of them are the one I painted blue...",
+"Shh. The books are listening. They always listen when we're not reading them...",
+"I left my shadow somewhere in the garden. It's probably growing now...",
+"The clock isn't broken. It's just counting something else. Something slower...",
+"Every staircase is a question. Up or down, that's all the universe ever asks...",
+"She said the word for 'home' and all the windows opened by themselves...",
+"The stars are just holes in the floor of heaven. Angels peek through them at night...",
+"I can hear the color blue. It sounds like... like a cello played by rain...",
+"Don't wake the archives. They dream in languages that haven't been invented yet...",
+"The threshold remembers every foot that crossed it. Every single one...",
+"If you fold a map enough times, all the places touch each other...",
+"The first word ever spoken was 'oh.' Everything since has been commentary...",
+"I buried a song in the garden. By spring it should bloom into an opera...",
+"The mirror doesn't show what you look like. It shows what you look at...",
+"All corridors lead to the same door if you walk them long enough...",
+"The wind told me a secret but I've forgotten the language wind speaks...",
+"There's a room inside this room inside this room. It's rooms all the way down...",
+"Gravity is just the earth's way of hugging everything that exists...",
+"I counted every grain of sand and they all had different middle names...",
+"The silence after a bell rings is the bell's truest note...",
+"Someone planted a word in my mouth and now a tree grows from my tongue...",
+"The hallway shifts when no one walks it. It gets longer out of loneliness...",
+"Every book is a door. Every door is a question. Every question is a book..."
+];
+let sleeping=true,murmurIdx=0,awakeCount=0;
+const records=JSON.parse(localStorage.getItem('somniloquy-records')||'[]');
+function nextMurmur(){
+if(!sleeping){document.getElementById('text').textContent="The chamber is awake. It won't speak truthfully while it knows you're listening.";document.getElementById('note').textContent='';return;}
+murmurIdx=Math.floor(Math.random()*murmurs.length);
+const text=document.getElementById('text');
+text.style.opacity='0';
+setTimeout(()=>{text.textContent=murmurs[murmurIdx];text.style.opacity='0.8';
+document.getElementById('note').textContent=`Murmur #${murmurIdx+1} of ${murmurs.length}`;},500);
+}
+function toggleSleep(){
+sleeping=!sleeping;
+document.getElementById('sleepLabel').textContent=sleeping?'Wake the Chamber':'Let It Sleep';
+if(!sleeping){awakeCount++;document.getElementById('text').textContent="*blinks* ...what? I wasn't... I didn't say anything...";
+if(awakeCount>=3){document.getElementById('egg').textContent='✦ You\'ve woken it three times. The chamber will remember this. Some say it holds grudges in its dreams.';document.getElementById('egg').classList.add('show');}
+}else{document.getElementById('text').textContent="*yawns* ...mmm...settling back...";setTimeout(nextMurmur,2000);}
+}
+function recordSpeech(){
+const t=document.getElementById('recordInput').value.trim();if(!t)return;
+records.push({text:t,time:Date.now()});localStorage.setItem('somniloquy-records',JSON.stringify(records.slice(-20)));
+document.getElementById('recordInput').value='';renderRecords();
+}
+function renderRecords(){
+const c=document.getElementById('recorded');c.innerHTML='';
+records.slice(-8).forEach(r=>{const d=document.createElement('div');d.className='rec-entry';d.textContent=`💤 "${r.text}" — ${new Date(r.time).toLocaleString()}`;c.appendChild(d);});
+}
+renderRecords();
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+function draw(){
+ctx.fillStyle='rgba(10,10,15,0.05)';ctx.fillRect(0,0,600,180);
+const t=Date.now()/1000;
+if(sleeping){
+for(let i=0;i<15;i++){const x=300+Math.sin(t*0.3+i*0.7)*250;const y=90+Math.sin(t*0.5+i*1.1)*60;
+ctx.fillStyle=`rgba(74,74,138,${0.1+Math.sin(t+i)*0.05})`;ctx.font='20px Georgia';ctx.fillText('z',x,y);}
+// Breathing wave
+ctx.beginPath();ctx.strokeStyle='#4a4a8a33';
+for(let x=0;x<600;x+=3){ctx.lineTo(x,90+Math.sin(x*0.01+t*0.5)*30*Math.sin(t*0.3));}ctx.stroke();
+}else{
+ctx.fillStyle='#c9a96e22';ctx.font='14px Georgia';ctx.textAlign='center';ctx.fillText('...awake...',300,90);
+}
+requestAnimationFrame(draw);
+}
+draw();nextMurmur();
+</script></body></html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Combinator — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.room{max-width:700px;margin:0 auto;padding:20px;text-align:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:25px;font-size:1.05em}
+canvas{display:block;margin:15px auto;border-radius:12px}
+.input-area{margin:20px 0}
+input{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:12px;font-family:inherit;font-size:1.1em;border-radius:8px;width:200px;text-align:center;margin:5px}
+input::placeholder{color:#4a3a5a}
+.plus{color:#c9a96e;font-size:2em;margin:0 10px;vertical-align:middle}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:10px 25px;margin:10px 5px;cursor:pointer;font-family:inherit;font-size:1em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.result{border:1px solid #c97a4e;border-radius:12px;padding:25px;margin:20px 0;display:none;background:rgba(201,122,78,0.05)}
+.result h2{color:#c97a4e;font-size:1.4em;margin-bottom:8px}
+.result .formula{color:#c9a96e;font-size:0.9em;margin-bottom:12px}
+.result .desc{color:#8a7a5a;font-size:1.05em;line-height:1.8}
+.history{margin:20px 0;max-height:300px;overflow-y:auto;text-align:left}
+.hist-entry{color:#6a5a7a;font-size:0.9em;margin:8px 0;padding:10px;border-left:2px solid #c97a4e;cursor:pointer;transition:background 0.3s}
+.hist-entry:hover{background:rgba(45,27,105,0.1)}
+.nav-links{margin:30px 0;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style></head><body>
+<div class="room">
+<h1>⚙️ The Combinator</h1>
+<p class="subtitle">Feed two concepts into the machine. It will forge something new from their collision.</p>
+<canvas id="c" width="600" height="150"></canvas>
+<div class="input-area">
+<input type="text" id="idea1" placeholder="First concept..." maxlength="25">
+<span class="plus">+</span>
+<input type="text" id="idea2" placeholder="Second concept..." maxlength="25">
+<br>
+<button onclick="combine()">⚙️ Combine</button>
+<button onclick="randomCombine()">🎲 Random</button>
+</div>
+<div class="result" id="result">
+<h2 id="resultName"></h2>
+<div class="formula" id="resultFormula"></div>
+<div class="desc" id="resultDesc"></div>
+</div>
+<div class="history" id="history"></div>
+<div class="egg" id="egg"></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a> <a href="index.html">Main Hall</a></nav>
+</div>
+<script>
+const templates=[
+'{A} that behaves like {B}: an entity that carries the form of the first but the soul of the second. Imagine {a} with the essential qualities of {b} — not a metaphor but a literal hybrid, something that exists in the space between categories.',
+'What if {B} dreamed of being {A}? This is that dream made manifest. The qualities of {b} stretched and reshaped into the silhouette of {a}. Neither thing recognizes itself anymore, but both feel strangely complete.',
+'The offspring of {A} and {B}: born in a collision of meaning, this new thing inherits the structure of {a} and the temperament of {b}. It has no name in any existing language, so we give it one now.',
+'Where {A} meets {B}, a door opens. On the other side: something that has the weight of {a} but moves like {b}. It shouldn\'t work, but it does. Some of the best ideas are impossible until someone builds them.',
+'Strip {A} to its essence. Strip {B} to its essence. Weave them together. What emerges has the skeleton of {a} clothed in the skin of {b} — a chimera, a portmanteau, a new species of thought.'
+];
+const names=['{A}{b}','{a}-{B}','The {A} of {B}','{B}\'s {A}','{A}{B}ion','Neo-{a}{b}','Proto-{A}-{b}'];
+const randoms=['time','music','gravity','memory','glass','thunder','honey','shadow','mathematics','ocean','silence','architecture','fire','clockwork','starlight','forgetting','migration','rust','velvet','algorithms'];
+const history=JSON.parse(localStorage.getItem('combinator-history')||'[]');
+
+function combine(){
+const a=document.getElementById('idea1').value.trim();
+const b=document.getElementById('idea2').value.trim();
+if(!a||!b)return;
+const hash=Math.abs(hashStr(a+b));
+const tmpl=templates[hash%templates.length];
+const nameTmpl=names[hash%names.length];
+const name=nameTmpl.replace('{A}',cap(a)).replace('{B}',cap(b)).replace('{a}',a.toLowerCase()).replace('{b}',b.toLowerCase());
+const desc=tmpl.replace(/{A}/g,cap(a)).replace(/{B}/g,cap(b)).replace(/{a}/g,a.toLowerCase()).replace(/{b}/g,b.toLowerCase());
+document.getElementById('result').style.display='block';
+document.getElementById('resultName').textContent=name;
+document.getElementById('resultFormula').textContent=`${a} + ${b} = ${name}`;
+document.getElementById('resultDesc').textContent=desc;
+history.push({a,b,name,time:Date.now()});
+localStorage.setItem('combinator-history',JSON.stringify(history.slice(-30)));
+renderHistory();
+if(a.toLowerCase()===b.toLowerCase()){document.getElementById('egg').textContent='✦ You combined a thing with itself. The result is... exactly what it already was, but now it knows itself better.';document.getElementById('egg').classList.add('show');}
+if(history.length>=10){document.getElementById('egg').textContent='✦ Ten combinations forged. You are becoming a master of conceptual alchemy.';document.getElementById('egg').classList.add('show');}
+}
+function randomCombine(){
+const a=randoms[Math.floor(Math.random()*randoms.length)];
+let b=randoms[Math.floor(Math.random()*randoms.length)];
+while(b===a)b=randoms[Math.floor(Math.random()*randoms.length)];
+document.getElementById('idea1').value=a;document.getElementById('idea2').value=b;
+combine();
+}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function hashStr(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i);return h;}
+function renderHistory(){
+const c=document.getElementById('history');c.innerHTML='';
+history.slice(-10).reverse().forEach(h=>{
+const d=document.createElement('div');d.className='hist-entry';
+d.textContent=`⚙️ ${h.a} + ${h.b} = ${h.name}`;
+d.onclick=()=>{document.getElementById('idea1').value=h.a;document.getElementById('idea2').value=h.b;combine();};
+c.appendChild(d);
+});
+}
+renderHistory();
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+let gears=[];for(let i=0;i<5;i++)gears.push({x:100+i*110,y:75,r:30+Math.random()*15,speed:0.5+Math.random()*1,teeth:8+Math.floor(Math.random()*6)});
+function draw(){
+ctx.fillStyle='rgba(10,10,15,0.15)';ctx.fillRect(0,0,600,150);
+const t=Date.now()/1000;
+gears.forEach(g=>{
+ctx.strokeStyle='#c9a96e33';ctx.lineWidth=2;
+ctx.save();ctx.translate(g.x,g.y);ctx.rotate(t*g.speed);
+ctx.beginPath();for(let i=0;i<g.teeth;i++){const a=i/g.teeth*Math.PI*2;ctx.moveTo(Math.cos(a)*g.r,Math.sin(a)*g.r);ctx.lineTo(Math.cos(a)*(g.r+8),Math.sin(a)*(g.r+8));}ctx.stroke();
+ctx.beginPath();ctx.arc(0,0,g.r,0,Math.PI*2);ctx.stroke();
+ctx.beginPath();ctx.arc(0,0,5,0,Math.PI*2);ctx.fillStyle='#c9a96e44';ctx.fill();
+ctx.restore();
+});
+requestAnimationFrame(draw);
+}
+draw();
+</script></body></html>

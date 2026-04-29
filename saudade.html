@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Saudade Room — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.room{max-width:700px;margin:0 auto;padding:20px}
+h1{font-size:2.2em;color:#c9a96e;text-align:center;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;text-align:center;margin-bottom:25px;font-size:1.05em}
+.words{margin:20px 0}
+.word-card{border:1px solid #2d1b69;border-radius:12px;padding:25px;margin:18px 0;cursor:pointer;transition:all 0.5s}
+.word-card:hover{border-color:#c9a96e;background:rgba(45,27,105,0.1)}
+.word-card.expanded{background:rgba(45,27,105,0.08)}
+.word-card h2{color:#c9a96e;font-size:1.5em;margin-bottom:3px}
+.word-card .lang{color:#b8a0d8;font-size:0.85em;margin-bottom:8px}
+.word-card .short{color:#8a7a5a;font-size:1em;line-height:1.6}
+.word-card .long{max-height:0;overflow:hidden;transition:max-height 0.8s;color:#6a5a7a;font-size:0.95em;line-height:1.8;margin-top:10px;border-top:1px solid transparent}
+.word-card.expanded .long{max-height:500px;border-top-color:#1a1a3e;padding-top:12px}
+.feel-area{border:1px solid #1a1a3e;border-radius:12px;padding:20px;margin:25px 0;text-align:center}
+.feel-area h3{color:#c9a96e;margin-bottom:10px}
+input,textarea{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:10px;font-family:inherit;font-size:1em;border-radius:6px;width:100%;max-width:400px;margin:6px 0}
+textarea{min-height:60px;resize:vertical}
+input::placeholder,textarea::placeholder{color:#4a3a5a}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.visitor-words{margin:15px 0}
+.v-word{color:#6a5a7a;font-size:0.9em;margin:8px 0;padding:10px;border-left:2px solid #b8a0d8}
+.nav-links{margin:30px 0;text-align:center;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style></head><body>
+<div class="room">
+<h1>💜 The Saudade Room</h1>
+<p class="subtitle">A gallery of emotions that exist in one language but not in English. Each is a feeling you've had but could never name.</p>
+<div class="words" id="words"></div>
+<div class="feel-area">
+<h3>💜 Submit an Untranslatable Emotion</h3>
+<p style="color:#6a5a7a;font-size:0.85em;margin-bottom:10px">Do you know a feeling that has no English word?</p>
+<input type="text" placeholder="The word (in any language)..." id="wordName" maxlength="40">
+<input type="text" placeholder="The language..." id="wordLang" maxlength="30">
+<textarea placeholder="Describe the feeling..." id="wordDesc"></textarea>
+<button onclick="submitWord()">💜 Add to the Collection</button>
+<div class="visitor-words" id="visitorWords"></div>
+</div>
+<div class="egg" id="egg"></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a> <a href="index.html">Main Hall</a></nav>
+</div>
+<script>
+const emotions=[
+{word:'Saudade',lang:'Portuguese',short:'A deep longing for something absent — a person, place, or time — tinged with the knowledge that it may never return.',long:'Saudade is not sadness. It is the presence of absence. Sailors\' wives felt it watching the sea. Emigrants felt it hearing a familiar song. It is the understanding that some distances cannot be crossed except by memory. The Portuguese say "matar saudade" — to kill saudade — meaning to visit someone you\'ve been missing. But saudade never truly dies. It naps.'},
+{word:'Mono no aware',lang:'Japanese (物の哀れ)',short:'The bittersweet awareness of the impermanence of all things — a gentle sadness at their passing.',long:'Cherry blossoms are beautiful not despite falling, but because they fall. Mono no aware is the catch in your throat when you realize this moment — this exact moment — will never happen again. It is not grief. It is the beauty that grief reveals. The Japanese built an entire aesthetic around this feeling: the cracked bowl is more beautiful than the whole one, because the cracks tell a story of time.'},
+{word:'Hiraeth',lang:'Welsh',short:'A homesickness for a home you cannot return to, or that never was.',long:'Hiraeth is not about a place on a map. It is about a place in the heart — a version of home that may only exist in memory, or in imagination. Welsh emigrants felt hiraeth for the green valleys. But you can stand in those valleys and still feel hiraeth, because the place you long for is not the valley itself but the way it felt when you were young, or hopeful, or loved.'},
+{word:'Toska',lang:'Russian (тоска)',short:'A spiritual anguish without cause, a longing with nothing to long for.',long:'Nabokov wrote that no single English word captures toska: "a sensation of great spiritual anguish, often without any specific cause... a dull ache of the soul, a longing with nothing to long for." It is the feeling of staring at a grey sky and knowing that your sadness is bigger than any reason you could give for it. It is the soul\'s weather, independent of circumstance.'},
+{word:'Wabi-sabi',lang:'Japanese (侘寂)',short:'The beauty found in imperfection, incompleteness, and transience.',long:'A cracked teacup mended with gold. A weathered wooden fence. The asymmetry of a handmade bowl. Wabi-sabi sees beauty not in perfection but in the evidence of time\'s passage. It is the opposite of every Instagram filter — it asks you to look at what is worn, what is broken, what is fading, and to find in that fading a beauty that polished surfaces can never achieve.'},
+{word:'Hygge',lang:'Danish',short:'The warm, cozy feeling of contentment created by simple pleasures shared in good company.',long:'Hygge is candles and thick socks and hot chocolate and the sound of rain outside while you are dry inside. But it is not just comfort — it is the intentional creation of comfort as a communal act. Danes don\'t wait for hygge to happen; they build it, deliberately, the way you build a fire. It is an art form disguised as relaxation.'},
+{word:'Duende',lang:'Spanish',short:'The mysterious power of art to deeply move a person — the spirit of evocation.',long:'Federico García Lorca said duende is not inspiration. It is struggle. It is the raw, authentic emotion that lives in the marrow of great art — the thing that makes flamenco more than just dancing, that makes a voice break in exactly the right way. "The duende does not come at all unless he sees that death is possible." Duende lives where craft meets soul meets danger.'},
+{word:'Fernweh',lang:'German',short:'An aching desire to travel to distant places — the opposite of homesickness.',long:'If Heimweh is pain for home, Fernweh is pain for distance. It is the restlessness that hits when you see a photograph of mountains you\'ve never climbed, or hear the name of a city you\'ve never visited. Your body is here but your longing is there — wherever "there" happens to be today. It is the soul\'s wanderlust made into a physical ache.'},
+{word:'Ubuntu',lang:'Zulu/Xhosa',short:'"I am because we are" — the belief that a person exists through their relationships with others.',long:'Ubuntu is not just a philosophy; it is a way of being. Desmond Tutu explained: "A person with ubuntu is open and available to others, affirming of others... My humanity is caught up, is inextricably bound up, in yours." It suggests that the Western notion of the individual self is incomplete — that we are, in fact, woven from each other.'},
+{word:'Ikigai',lang:'Japanese (生き甲斐)',short:'A reason for being — the thing that makes you get up in the morning.',long:'Ikigai sits at the intersection of what you love, what you\'re good at, what the world needs, and what you can be paid for. But the Japanese concept is simpler than that corporate Venn diagram suggests. Ikigai can be tending a garden. Watching the sunrise. Making tea for someone. It is any reason, however small, that makes existence feel worthwhile.'}
+];
+const container=document.getElementById('words');
+emotions.forEach((e,i)=>{
+const div=document.createElement('div');div.className='word-card';
+div.innerHTML=`<h2>${e.word}</h2><div class="lang">${e.lang}</div><div class="short">${e.short}</div><div class="long">${e.long}</div>`;
+div.onclick=()=>div.classList.toggle('expanded');
+container.appendChild(div);
+});
+const visitor=JSON.parse(localStorage.getItem('saudade-visitor')||'[]');
+function submitWord(){
+const name=document.getElementById('wordName').value.trim();
+const lang=document.getElementById('wordLang').value.trim();
+const desc=document.getElementById('wordDesc').value.trim();
+if(!name||!desc)return;
+visitor.push({name,lang:lang||'Unknown',desc,time:Date.now()});
+localStorage.setItem('saudade-visitor',JSON.stringify(visitor.slice(-15)));
+document.getElementById('wordName').value='';document.getElementById('wordLang').value='';document.getElementById('wordDesc').value='';
+renderVisitor();
+if(visitor.length>=5){document.getElementById('egg').textContent='✦ Five untranslatable emotions submitted. You are building a dictionary of the human heart that no single language could contain.';document.getElementById('egg').classList.add('show');}
+}
+function renderVisitor(){
+const c=document.getElementById('visitorWords');c.innerHTML='';
+visitor.slice(-8).forEach(v=>{const d=document.createElement('div');d.className='v-word';
+d.innerHTML=`<strong>${v.name}</strong> (${v.lang}): ${v.desc}`;c.appendChild(d);});
+}
+renderVisitor();
+</script></body></html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Rosetta — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.room{max-width:700px;margin:0 auto;padding:20px}
+h1{font-size:2.2em;color:#c9a96e;text-align:center;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;text-align:center;margin-bottom:25px;font-size:1.05em}
+.stone{border:2px solid #2d1b69;border-radius:12px;padding:30px;margin:20px 0;background:linear-gradient(135deg,rgba(26,26,62,0.3),rgba(45,27,105,0.1))}
+.stone h2{color:#c9a96e;text-align:center;margin-bottom:15px;font-size:1.3em}
+.translation-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin:15px 0}
+.lang-col{text-align:center;padding:10px}
+.lang-col h3{color:#c9a96e;font-size:0.95em;margin-bottom:8px;border-bottom:1px solid #2d1b69;padding-bottom:5px}
+.lang-col p{color:#8a7a5a;font-size:1.1em;line-height:2;font-style:italic}
+.translate-area{text-align:center;margin:25px 0}
+input{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:12px;font-family:inherit;font-size:1.1em;border-radius:8px;width:350px;text-align:center}
+input::placeholder{color:#4a3a5a}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.result-area{margin:20px 0;padding:20px;border:1px solid #1a1a3e;border-radius:12px;display:none;text-align:center}
+.result-area h3{color:#c9a96e;margin-bottom:15px}
+.translation{margin:8px 0;padding:8px 15px;border-left:2px solid #2d1b69}
+.translation .lang{color:#c9a96e;font-size:0.8em}
+.translation .text{color:#d4c5a9;font-size:1.1em;font-style:italic;margin-top:3px}
+.translation .note{color:#6a5a7a;font-size:0.8em;margin-top:3px}
+.scripts{margin:30px 0}
+.scripts h3{color:#c9a96e;text-align:center;margin-bottom:15px}
+.script-row{display:flex;justify-content:space-around;flex-wrap:wrap;gap:10px}
+.glyph{font-size:2.5em;cursor:pointer;transition:transform 0.3s;display:inline-block}
+.glyph:hover{transform:scale(1.3)}
+.glyph-tooltip{color:#6a5a7a;font-size:0.75em;display:block;text-align:center}
+.nav-links{margin:30px 0;text-align:center;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="room">
+<h1>🗿 The Rosetta</h1>
+<p class="subtitle">A chamber of translation. Every word exists in every language — you just have to find the right stone.</p>
+
+<div class="stone">
+<h2>The Three Inscriptions</h2>
+<p style="color:#6a5a7a;font-size:0.85em;text-align:center;margin-bottom:15px">The same truth, written three ways:</p>
+<div class="translation-grid" id="stoneText"></div>
+<button onclick="newInscription()" style="display:block;margin:15px auto">↻ New Inscription</button>
+</div>
+
+<div class="translate-area">
+<h3 style="color:#c9a96e;margin-bottom:10px">✍ Enter a Word</h3>
+<p style="color:#6a5a7a;font-size:0.85em;margin-bottom:10px">The Rosetta will show you how it sounds across the world</p>
+<input type="text" id="wordInput" placeholder="Type any English word..." maxlength="30">
+<button onclick="translateWord()">🗿 Translate</button>
+<button onclick="randomTranslate()">🎲 Random</button>
+</div>
+
+<div class="result-area" id="results">
+<h3 id="resultTitle"></h3>
+<div id="translations"></div>
+</div>
+
+<div class="scripts">
+<h3>Ancient Scripts Gallery</h3>
+<p style="color:#6a5a7a;font-size:0.85em;text-align:center;margin-bottom:15px">Hover over a glyph to learn its secret</p>
+<div class="script-row" id="glyphs"></div>
+</div>
+
+<div class="egg" id="egg"></div>
+
+<nav class="nav-links">
+<a href="explore.html">← Return to the Archive</a>
+<a href="index.html">Main Hall</a>
+</nav>
+</div>
+
+<script>
+const inscriptions=[
+['All that we see or seem is but a dream within a dream.','كل ما نراه أو نبدو عليه ليس إلا حلماً داخل حلم','Omnia quae videmus vel videmur somnium in somnio sunt.','English / Edgar Allan Poe','Arabic','Latin'],
+['The only true wisdom is in knowing you know nothing.','La seule vraie sagesse est de savoir que vous ne savez rien.','Ἓν οἶδα ὅτι οὐδὲν οἶδα.','English / Socrates','French','Ancient Greek'],
+['In the middle of difficulty lies opportunity.','困難の中にこそ、機会がある。','In media difficultate opportunitas iacet.','English / Einstein','Japanese','Latin'],
+['The universe is not only queerer than we suppose, but queerer than we can suppose.','L\'univers est non seulement plus étrange que nous le supposons, mais plus étrange que nous ne pouvons le supposer.','Мир не только удивительнее, чем мы предполагаем, но удивительнее, чем мы можем предположить.','English / Haldane','French','Russian']
+];
+
+const words={
+'love':[{lang:'French',text:'amour',note:'From Latin amor — desire'},{lang:'Japanese',text:'愛 (ai)',note:'Contains the character for heart'},{lang:'Arabic',text:'حب (ḥubb)',note:'Root ḥ-b-b means seeds — love as something planted'},{lang:'Sanskrit',text:'प्रेम (prema)',note:'Divine, unconditional love'},{lang:'Swahili',text:'upendo',note:'From penda — to love, to like, to want'}],
+'water':[{lang:'French',text:'eau',note:'From Latin aqua'},{lang:'Japanese',text:'水 (mizu)',note:'The character depicts flowing drops'},{lang:'Arabic',text:'ماء (māʾ)',note:'One of the most ancient Semitic roots'},{lang:'Hindi',text:'पानी (pānī)',note:'From Sanskrit pānīya — drinkable'},{lang:'Swahili',text:'maji',note:'Plural — water is always many'}],
+'light':[{lang:'French',text:'lumière',note:'From Latin lumen — glow'},{lang:'Japanese',text:'光 (hikari)',note:'A person carrying fire above their head'},{lang:'Arabic',text:'نور (nūr)',note:'Also means divine illumination in the Quran'},{lang:'Sanskrit',text:'ज्योति (jyoti)',note:'Flame, radiance, inner light'},{lang:'Irish',text:'solas',note:'Related to solace — light as comfort'}],
+'dream':[{lang:'French',text:'rêve',note:'From Old French resver — to roam'},{lang:'Japanese',text:'夢 (yume)',note:'Contains the radical for eye and evening'},{lang:'Arabic',text:'حلم (ḥulm)',note:'Same root as patience (ḥilm) — dreams require waiting'},{lang:'German',text:'Traum',note:'Related to "true" — dreams as deeper truth'},{lang:'Mandarin',text:'梦 (mèng)',note:'Simplified from a character showing a bed under evening'}],
+'silence':[{lang:'French',text:'silence',note:'From Latin silēre — to be still'},{lang:'Japanese',text:'沈黙 (chinmoku)',note:'Characters mean "sink" and "dark"'},{lang:'Arabic',text:'صمت (ṣamt)',note:'Root suggests being sealed shut'},{lang:'Finnish',text:'hiljaisuus',note:'Finns treasure silence — it means respect'},{lang:'Navajo',text:'baa doolníłígíí',note:'Closer to "sacred stillness" than mere absence of sound'}],
+'home':[{lang:'French',text:'chez soi',note:'Literally "at one\'s own place"'},{lang:'Japanese',text:'家 (ie)',note:'Pictograph of a pig under a roof — livestock meant security'},{lang:'Arabic',text:'بيت (bayt)',note:'Also means a verse of poetry — poems as dwelling places'},{lang:'German',text:'Heimat',note:'Deeper than house — homeland, belonging, spiritual home'},{lang:'Zulu',text:'ikhaya',note:'Connected to the ancestors who live there still'}],
+'time':[{lang:'French',text:'temps',note:'Same word as weather — time and atmosphere are one'},{lang:'Japanese',text:'時 (toki)',note:'Temple + sun — measured by shadows on sacred ground'},{lang:'Arabic',text:'زمن (zaman)',note:'Root suggests turning, revolving'},{lang:'Sanskrit',text:'काल (kāla)',note:'Also means death — time and mortality are the same word'},{lang:'Hopi',text:'—',note:'Hopi has no single word for time — it is woven into verb forms'}],
+'star':[{lang:'French',text:'étoile',note:'From Latin stella'},{lang:'Japanese',text:'星 (hoshi)',note:'Characters: life emerging from the sun'},{lang:'Arabic',text:'نجم (najm)',note:'Root means to appear suddenly, like stars at dusk'},{lang:'Hawaiian',text:'hōkū',note:'Stars were the navigational tools of Polynesian wayfinders'},{lang:'Quechua',text:'quyllur',note:'Bright, shining — Inca astronomy was stellar theology'}]
+};
+
+const allWords=Object.keys(words);
+
+function newInscription(){
+const idx=Math.floor(Math.random()*inscriptions.length);
+const ins=inscriptions[idx];
+document.getElementById('stoneText').innerHTML=`
+<div class="lang-col"><h3>${ins[3]}</h3><p>${ins[0]}</p></div>
+<div class="lang-col"><h3>${ins[4]}</h3><p>${ins[1]}</p></div>
+<div class="lang-col"><h3>${ins[5]}</h3><p>${ins[2]}</p></div>`;
+}
+newInscription();
+
+function translateWord(){
+const w=document.getElementById('wordInput').value.trim().toLowerCase();
+if(!w)return;
+const r=document.getElementById('results');
+r.style.display='block';
+if(words[w]){
+document.getElementById('resultTitle').textContent=w.charAt(0).toUpperCase()+w.slice(1);
+const t=document.getElementById('translations');t.innerHTML='';
+words[w].forEach(tr=>{
+const div=document.createElement('div');
+div.className='translation';
+div.innerHTML=`<div class="lang">${tr.lang}</div><div class="text">${tr.text}</div><div class="note">${tr.note}</div>`;
+t.appendChild(div);
+});
+}else{
+document.getElementById('resultTitle').textContent=w;
+document.getElementById('translations').innerHTML=`<div class="translation"><div class="text">This word has not yet been carved into the Rosetta.</div><div class="note">But somewhere, in a language you haven't learned, it already exists — waiting to mean something you haven't felt yet.</div></div>`;
+}
+checkEgg(w);
+}
+
+function randomTranslate(){
+const w=allWords[Math.floor(Math.random()*allWords.length)];
+document.getElementById('wordInput').value=w;
+translateWord();
+}
+
+function checkEgg(w){
+const egg=document.getElementById('egg');
+if(w==='babel'){egg.textContent='✦ Babel — from Akkadian bāb-ilim, "gate of the gods." The tower wasn\'t punished for reaching too high. It was punished for trying to speak with one voice.';egg.classList.add('show');}
+else if(w==='rosetta'){egg.textContent='✦ You\'ve asked the stone to translate itself. The Rosetta glows with recursive pride.';egg.classList.add('show');}
+else if(w==='untranslatable'){egg.textContent='✦ Every language has words that can\'t be translated — saudade, wabi-sabi, hygge, toska. They are the emotional fingerprints of cultures.';egg.classList.add('show');}
+}
+
+// Ancient scripts gallery
+const glyphs=[
+{char:'𓂀',name:'Eye of Horus',origin:'Egyptian hieroglyph for protection and healing'},
+{char:'𒀀',name:'A',origin:'Sumerian cuneiform — one of the first written symbols'},
+{char:'甲',name:'Jiǎ',origin:'Chinese oracle bone script — armor, first'},
+{char:'ᚱ',name:'Raidō',origin:'Elder Futhark rune — journey, riding'},
+{char:'Ω',name:'Omega',origin:'Greek — the end, the last, the ultimate'},
+{char:'א',name:'Aleph',origin:'Hebrew — the silent letter, breath before speech'},
+{char:'ॐ',name:'Om',origin:'Sanskrit — the sound of the universe vibrating'},
+{char:'☥',name:'Ankh',origin:'Egyptian — the key of life'},
+{char:'卍',name:'Manji',origin:'Sanskrit svastika — well-being (ancient, pre-Nazi meaning)'},
+{char:'∞',name:'Lemniscate',origin:'Mathematical infinity — introduced 1655 by John Wallis'}
+];
+
+const gc=document.getElementById('glyphs');
+glyphs.forEach(g=>{
+const span=document.createElement('span');
+span.innerHTML=`<span class="glyph" title="${g.name}: ${g.origin}">${g.char}</span><span class="glyph-tooltip">${g.name}</span>`;
+span.style.display='inline-block';span.style.textAlign='center';span.style.margin='8px';
+gc.appendChild(span);
+});
+</script>
+</body>
+</html>
