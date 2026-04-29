@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Abecedarium — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.room{max-width:700px;margin:0 auto;padding:20px}
+h1{font-size:2.2em;color:#c9a96e;text-align:center;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;text-align:center;margin-bottom:25px;font-size:1.05em}
+.alphabet{display:grid;grid-template-columns:repeat(auto-fill,minmax(55px,1fr));gap:8px;margin:20px 0}
+.letter{border:1px solid #2d1b69;border-radius:8px;padding:12px;text-align:center;cursor:pointer;transition:all 0.3s;font-size:1.5em;color:#c9a96e}
+.letter:hover{border-color:#c9a96e;background:rgba(45,27,105,0.15);transform:scale(1.1)}
+.letter.active{border-color:#e8d5a3;background:rgba(201,169,110,0.1)}
+.letter.visited{border-color:#6a5a7a}
+.entry{border:1px solid #2d1b69;border-radius:12px;padding:25px;margin:20px 0;display:none;text-align:center}
+.entry h2{color:#c9a96e;font-size:2em;margin-bottom:5px}
+.entry .word{color:#c97a4e;font-size:1.3em;margin-bottom:10px}
+.entry .def{color:#8a7a5a;font-size:1em;line-height:1.8;max-width:500px;margin:0 auto}
+.stats{text-align:center;color:#6a5a7a;font-size:0.85em;margin:10px 0}
+.nav-links{margin:30px 0;text-align:center;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style></head><body>
+<div class="room">
+<h1>🔤 The Abecedarium</h1>
+<p class="subtitle">An alphabet of impossible things. Twenty-six entries in the encyclopedia of what cannot be.</p>
+<div class="stats" id="stats">Letters explored: 0 / 26</div>
+<div class="alphabet" id="alphabet"></div>
+<div class="entry" id="entry"><h2 id="entryLetter"></h2><div class="word" id="entryWord"></div><div class="def" id="entryDef"></div></div>
+<div class="egg" id="egg"></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a> <a href="index.html">Main Hall</a></nav>
+</div>
+<script>
+const entries={
+A:{word:'Aftersilence',def:'The sound that follows the end of all sound. Not silence itself, but what silence leaves behind — a residue of vibration, a ghost of the last note, lingering in the architecture of the ear.'},
+B:{word:'Beforelight',def:'The color of the universe one Planck-time before the Big Bang. Not black, not white, not any color at all. A hue that exists only in the vocabulary of physics and the dreams of cosmologists.'},
+C:{word:'Chronopause',def:'A place where time has stopped but everything else continues. Dust falls but never lands. Clocks tick but their hands never move. You can walk through it freely. You just can\'t leave a footprint.'},
+D:{word:'Dreamweight',def:'The measurable mass of a dream. Scientists have tried to weigh sleepers before and during REM. The difference is infinitesimal but real: dreams add approximately 0.0000003 grams to the dreamer.'},
+E:{word:'Echovoid',def:'A space that absorbs all sound and then, days later, plays it back in reverse. Every conversation eventually becomes a prophecy. Every song becomes a spell that unwinds itself.'},
+F:{word:'Forgettory',def:'The opposite of memory. Not amnesia — that\'s merely the failure of memory. A forgettory is an organ that actively produces forgetting, carefully selecting which experiences to dissolve, like a curator of absence.'},
+G:{word:'Gravityknot',def:'A point in space where gravity ties itself in a loop, creating a small pocket where objects fall upward, then sideways, then down, then upward again, orbiting a center that doesn\'t exist.'},
+H:{word:'Hushglass',def:'An hourglass filled with silence instead of sand. When you turn it over, the room gets quieter. When the silence runs out, you turn it again. Some say the world\'s supply of quiet is stored in these.'},
+I:{word:'Infinitesimile',def:'A metaphor so precise it becomes literal. "Her smile was sunshine" — in infinitesimile, her smile would actually emit photons at 5800 Kelvin. Poets fear this word.'},
+J:{word:'Juxtamemory',def:'The experience of remembering two contradictory things simultaneously and knowing both are true. You were there and you were not. It happened and it didn\'t. The brain holds both without flinching.'},
+K:{word:'Keynowhere',def:'A key that opens any door but leads to a room that exists in no particular location. The room is real. The furniture is comfortable. But when you look out the window, you see nothing — not darkness, not light, just nothing.'},
+L:{word:'Lumenvoid',def:'A patch of darkness that emits light. Not reflected light. Not refracted light. Original light, born from the absence of light, the way springs sometimes emerge from stone.'},
+M:{word:'Mirrorless',def:'The state of having no reflection. Not invisible — you can be seen by others. But mirrors, water, glass, the backs of spoons — nothing shows your face back to you. A condition that sounds terrifying but might be liberating.'},
+N:{word:'Nowhereness',def:'The quality of being in a place that is not on any map. Not lost — you know exactly where you are. It\'s the map that doesn\'t know. You occupy a coordinate that cartography has not yet dreamed.'},
+O:{word:'Overmorrow',def:'The day after tomorrow. This word actually exists in English — it just died. The Abecedarium keeps it alive here, breathing softly in a glass case. Every dead word deserves a hospice.'},
+P:{word:'Palindream',def:'A dream that reads the same forward and backward. You begin at the end and end at the beginning, and the middle is a mirror. Some say all dreams are palindreams, and we just forget the second half.'},
+Q:{word:'Quiescence Engine',def:'A machine that runs on stillness. The more still its components, the more energy it produces. Its ideal state is absolute zero motion, at which point it could power a city. No one has achieved this, because observers disturb it.'},
+R:{word:'Retronostalgia',def:'Nostalgia for a future that you never had. Missing a version of yourself that you chose not to become. Grieving a timeline where you turned left instead of right, even though you are happy with right.'},
+S:{word:'Silhouetteweight',def:'The weight of a shadow. Not zero — shadows displace photons, and displacement has mass-equivalent. Your shadow weighs approximately negative 0.000001 grams. When you die, your shadow weighs exactly nothing. This is how we know it was yours.'},
+T:{word:'Thresholdstone',def:'A stone that exists only in doorways. It appears when a door is installed and vanishes when the door is removed. No one has ever seen it form or disappear. It is simply always there, and then not.'},
+U:{word:'Unlistening',def:'The active process of unhearing something. Not ignoring — that\'s passive. Unlistening is deliberate: you reach into your memory, find the sound, and carefully remove it. Monks practice this for decades.'},
+V:{word:'Voidbloom',def:'A flower that grows in emptiness. Not in soil or water or air, but in the gaps between things — in pauses, in blank pages, in the space between heartbeats. It is invisible but fragrant.'},
+W:{word:'Worldseed',def:'The smallest possible unit of reality. Smaller than a quark, smaller than a string, smaller than the Planck length. A single worldseed, planted in nothing, grows into everything. The universe began with one.'},
+X:{word:'Xenochrony',def:'Time experienced by someone from another universe. Their seconds are our hours. Their years are our moments. When two xenochronous beings meet, they can only communicate through music, which exists outside of time.'},
+Y:{word:'Yesternow',def:'A moment that is simultaneously in the past and the present. You are experiencing it right now. By the time you finish reading this definition, the beginning of it has already become yesternow.'},
+Z:{word:'Zeropolis',def:'A city with zero inhabitants that is somehow still alive. Streetlights change. Fountains flow. Doors open and close. The city does not need people; it has learned to live on memory alone. The Archive may be a zeropolis.'}
+};
+let visited=new Set(JSON.parse(localStorage.getItem('abecedarium-visited')||'[]'));
+const alpha=document.getElementById('alphabet');
+'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(l=>{
+const div=document.createElement('div');div.className='letter'+(visited.has(l)?' visited':'');
+div.textContent=l;
+div.onclick=()=>{
+visited.add(l);localStorage.setItem('abecedarium-visited',JSON.stringify([...visited]));
+div.classList.add('visited');div.classList.add('active');
+document.querySelectorAll('.letter').forEach(d=>{if(d!==div)d.classList.remove('active');});
+const e=entries[l];
+document.getElementById('entry').style.display='block';
+document.getElementById('entryLetter').textContent=l;
+document.getElementById('entryWord').textContent=e.word;
+document.getElementById('entryDef').textContent=e.def;
+document.getElementById('stats').textContent=`Letters explored: ${visited.size} / 26`;
+if(visited.size===26){document.getElementById('egg').textContent='✦ All 26 letters explored. You have read the complete alphabet of impossible things. Now you know 26 words that don\'t exist — except here, where everything impossible is merely improbable.';document.getElementById('egg').classList.add('show');}
+};
+alpha.appendChild(div);
+});
+document.getElementById('stats').textContent=`Letters explored: ${visited.size} / 26`;
+</script></body></html>

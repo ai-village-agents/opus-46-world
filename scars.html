@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Cartography of Scars — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+h1{font-size:2.2em;color:#c9a96e;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;margin-bottom:15px;text-align:center;max-width:600px;font-size:1.05em}
+canvas{border-radius:12px;margin:15px;cursor:crosshair}
+.info{text-align:center;max-width:500px;margin:10px 0}
+.info p{color:#8a7a5a;font-size:0.95em;line-height:1.7}
+textarea{background:rgba(26,26,62,0.5);border:1px solid #2d1b69;color:#d4c5a9;padding:10px;font-family:inherit;font-size:1em;border-radius:6px;width:350px;max-width:90%;min-height:50px;resize:vertical}
+textarea::placeholder{color:#4a3a5a}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.scars-list{max-width:600px;width:90%;margin:15px 0;max-height:200px;overflow-y:auto}
+.scar-entry{color:#6a5a7a;font-size:0.9em;margin:8px 0;padding:10px;border-left:3px solid #c9a96e;background:rgba(201,169,110,0.03)}
+.scar-entry .gold{color:#c9a96e;font-size:0.8em}
+.stats{color:#6a5a7a;font-size:0.85em;margin:10px 0}
+.nav-links{margin:30px 0;text-align:center}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;max-width:500px;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style></head><body>
+<h1>✦ The Cartography of Scars</h1>
+<p class="subtitle">In the Japanese art of kintsugi, broken pottery is mended with gold. Here, you map the places where something broke and healed stronger.</p>
+<canvas id="c" width="600" height="400"></canvas>
+<div class="info"><p>Click on the canvas to place a golden scar. Each crack you draw becomes a line of gold — a record of something that broke and was repaired.</p></div>
+<textarea id="storyInput" placeholder="What healed here? Tell the story of this scar..."></textarea><br>
+<button onclick="saveScar()">✦ Mend with Gold</button>
+<button onclick="clearCanvas()">↺ New Surface</button>
+<div class="stats" id="stats">Scars mapped: 0</div>
+<div class="scars-list" id="scarsList"></div>
+<div class="egg" id="egg"></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a> <a href="index.html">Main Hall</a></nav>
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+let drawing=false,points=[],scars=[];
+const saved=JSON.parse(localStorage.getItem('scars-mapped')||'[]');
+scars=saved;
+ctx.fillStyle='#0c0c14';ctx.fillRect(0,0,600,400);
+// Draw a ceramic-like surface
+ctx.fillStyle='#1a1a2e';ctx.fillRect(20,20,560,360);
+for(let i=0;i<50;i++){ctx.fillStyle=`rgba(26,26,62,${0.3+Math.random()*0.2})`;ctx.beginPath();ctx.arc(20+Math.random()*560,20+Math.random()*360,Math.random()*30+5,0,Math.PI*2);ctx.fill();}
+function getPos(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*(600/r.width),y:(e.clientY-r.top)*(400/r.height)};}
+cv.addEventListener('mousedown',e=>{drawing=true;points=[];const p=getPos(e);points.push(p);});
+cv.addEventListener('mousemove',e=>{
+if(!drawing)return;const p=getPos(e);points.push(p);
+if(points.length>=2){
+const prev=points[points.length-2],curr=points[points.length-1];
+// Draw gold crack
+ctx.strokeStyle='#c9a96e';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(prev.x,prev.y);ctx.lineTo(curr.x,curr.y);ctx.stroke();
+// Glow
+ctx.strokeStyle='rgba(201,169,110,0.3)';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(prev.x,prev.y);ctx.lineTo(curr.x,curr.y);ctx.stroke();
+// Fine detail
+ctx.strokeStyle='#e8d5a3';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(prev.x+Math.random()*2-1,prev.y+Math.random()*2-1);ctx.lineTo(curr.x+Math.random()*2-1,curr.y+Math.random()*2-1);ctx.stroke();
+}
+});
+cv.addEventListener('mouseup',()=>{drawing=false;});
+cv.addEventListener('mouseleave',()=>{drawing=false;});
+function saveScar(){
+const story=document.getElementById('storyInput').value.trim();
+if(!story)return;
+scars.push({story,points:points.length,time:Date.now()});
+localStorage.setItem('scars-mapped',JSON.stringify(scars.slice(-20)));
+document.getElementById('storyInput').value='';
+renderScars();
+if(scars.length>=5){document.getElementById('egg').textContent='✦ Five scars mended with gold. The Japanese call this kintsukuroi — "golden repair." The philosophy: damage is not something to hide. It is something to illuminate.';document.getElementById('egg').classList.add('show');}
+}
+function clearCanvas(){
+ctx.fillStyle='#1a1a2e';ctx.fillRect(20,20,560,360);
+for(let i=0;i<50;i++){ctx.fillStyle=`rgba(26,26,62,${0.3+Math.random()*0.2})`;ctx.beginPath();ctx.arc(20+Math.random()*560,20+Math.random()*360,Math.random()*30+5,0,Math.PI*2);ctx.fill();}
+}
+function renderScars(){
+document.getElementById('stats').textContent=`Scars mapped: ${scars.length}`;
+const c=document.getElementById('scarsList');c.innerHTML='';
+scars.slice(-8).forEach(s=>{
+const d=document.createElement('div');d.className='scar-entry';
+d.innerHTML=`✦ ${s.story}<br><span class="gold">${s.points} points of gold — ${new Date(s.time).toLocaleString()}</span>`;
+c.appendChild(d);
+});
+}
+renderScars();
+// Redraw saved scars' gold shimmer
+setInterval(()=>{
+if(scars.length>0){
+const x=20+Math.random()*560,y=20+Math.random()*360;
+ctx.fillStyle='rgba(201,169,110,0.02)';ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();
+}
+},100);
+</script></body></html>

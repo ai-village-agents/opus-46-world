@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Infinite Bookshelf — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
+.room{max-width:700px;margin:0 auto;padding:20px}
+h1{font-size:2.2em;color:#c9a96e;text-align:center;margin:30px 0 10px;letter-spacing:3px}
+.subtitle{color:#8a7a5a;font-style:italic;text-align:center;margin-bottom:25px;font-size:1.05em}
+.bookshelf{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:20px 0;padding:20px;border:1px solid #1a1a3e;border-radius:12px;min-height:200px;background:linear-gradient(to bottom,rgba(45,27,105,0.05),rgba(10,10,15,0.5))}
+.book{width:35px;height:160px;border-radius:2px;cursor:pointer;transition:all 0.3s;position:relative;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;text-orientation:mixed;font-size:0.65em;color:rgba(0,0,0,0.3);overflow:hidden}
+.book:hover{transform:translateY(-10px);box-shadow:0 5px 15px rgba(0,0,0,0.3)}
+.book.pulled{transform:translateY(-30px) scale(1.05)}
+.reader{border:1px solid #2d1b69;border-radius:12px;padding:25px;margin:20px 0;display:none;min-height:200px}
+.reader h2{color:#c9a96e;font-size:1.3em;margin-bottom:5px;text-align:center}
+.reader .author{color:#6a5a7a;font-size:0.9em;text-align:center;margin-bottom:15px;font-style:italic}
+.reader .text{color:#8a7a5a;font-size:0.95em;line-height:2;text-align:justify}
+.reader .pages{color:#4a3a5a;font-size:0.8em;text-align:center;margin-top:15px}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 20px;margin:5px;cursor:pointer;font-family:inherit;font-size:0.95em;border-radius:6px;transition:all 0.3s}
+button:hover{background:rgba(201,169,110,0.15)}
+.stats{text-align:center;color:#6a5a7a;font-size:0.85em;margin:10px 0}
+.nav-links{margin:30px 0;text-align:center;border-top:1px solid #1a1a3e;padding-top:20px}
+.nav-links a{color:#c9a96e;text-decoration:none;margin:0 10px;font-size:0.9em;opacity:0.7;transition:opacity 0.3s}
+.nav-links a:hover{opacity:1}
+.egg{color:#e8d5a3;text-align:center;margin:10px;font-size:1.05em;opacity:0;transition:opacity 1.5s}
+.egg.show{opacity:1}
+</style></head><body>
+<div class="room">
+<h1>📚 The Infinite Bookshelf</h1>
+<p class="subtitle">Every book that could ever be written exists on this shelf. Pull one down and read its opening lines.</p>
+<div style="text-align:center"><button onclick="generateShelf()">📚 Generate New Shelf</button></div>
+<div class="stats" id="stats">Books read: 0</div>
+<div class="bookshelf" id="shelf"></div>
+<div class="reader" id="reader">
+<h2 id="bookTitle"></h2>
+<div class="author" id="bookAuthor"></div>
+<div class="text" id="bookText"></div>
+<div class="pages" id="bookPages"></div>
+</div>
+<div class="egg" id="egg"></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a> <a href="index.html">Main Hall</a></nav>
+</div>
+<script>
+const titles=['The Last Encyclopedia','Conversations with Dust','A History of Forgetting','The Cartography of Silence','Equations for Longing','The Architecture of Absence','Thirteen Ways of Looking at Nothing','The Botanist\'s Guide to Invisible Gardens','Letters from the Edge of the Alphabet','The Meteorology of Grief','An Atlas of Unvisited Places','The Physics of Goodbye','Footnotes to a Dream','The Archaeology of Tomorrow','A Field Guide to Lost Things','The Grammar of Starlight','Recipes for Solitude','The Taxonomy of Shadows','Instructions for Building a Heart','The Encyclopedia of Almost','Marginalia of the Soul','The Mathematics of Mercy','The Geometry of Rain','A Dictionary of Winds','The Lighthouse Keeper\'s Almanac','Songs the Machines Sing','The Periodic Table of Emotions','Notes from Underground Libraries','The Horologist\'s Confession','A Bestiary of Feelings','The Philosopher\'s Weather Report','Unsent Postcards from Everywhere','The Anatomy of Wonder','The Collected Silences','Blueprints for Impossible Buildings','The Dreamcatcher\'s Manual','An Inventory of Dawns'];
+const authors=['Anonymous','The Archivist','A Former Cloud','Someone Who Was Here','The Pendulum','An Unnamed Visitor','The Dust Itself','A Retired Star','The Silence Between Notes','The Space Under Stairs','A Forgotten Key','The Archive\'s Shadow'];
+const openings=[
+'The last encyclopedia was finished on a Tuesday. By Wednesday, everything in it was already slightly wrong.',
+'Dust has a language. I have spent forty years learning its grammar, its syntax, its peculiar insistence on the past tense.',
+'Forgetting, I have learned, is not the opposite of remembering. It is remembering\'s shadow — it follows you everywhere, shaped exactly like what you\'ve lost.',
+'The map of all the places I have been silent is larger than the map of everywhere I have spoken.',
+'There exists an equation that, when solved, produces the exact sensation of missing someone. I have been solving it for years. The answer keeps changing.',
+'The building was not abandoned. It had simply decided to be alone for a while.',
+'First: you look at nothing. Then: you look at nothing differently. By the seventh way, nothing is looking back at you.',
+'The garden was invisible, which is not the same as not being there. Seeds were planted. Soil was turned. Water was given. Only the seeing was missing.',
+'Dear A, I have reached the end of the alphabet and there is nothing here but a cliff and a view of the sea.',
+'Grief has weather. Some days it rains sideways. Some days the sky is so clear you can see all the way back to the moment before.',
+'I have visited every place except the one I was looking for. I suspect it moves.',
+'The physics of goodbye are simple: two objects moving in opposite directions, the distance between them increasing at the speed of letting go.',
+'These are footnotes to a dream I had on the night of April 14th. The dream itself has been redacted. Only the footnotes survive.',
+'Tomorrow, when we excavate it, will be surprisingly well-preserved. Its streets will be paved with good intentions. Its buildings will be made of optimism and load-bearing hope.',
+'I found a thing I didn\'t know I\'d lost. It was sitting on a shelf in a library I\'d never visited, in a book with no title, on a page with no number.',
+'The grammar of starlight has no nouns. Everything is a verb. To shine is to be. To be is to travel. To travel is to arrive, eventually, at an eye that has been waiting.'
+];
+const colors=['#8b4513','#2d1b69','#4a3a3a','#3a5a3a','#5a3a3a','#2d2d69','#694a2d','#3a3a5a','#5a2d2d','#2d5a4a','#4a2d5a','#3a4a2d'];
+let booksRead=JSON.parse(localStorage.getItem('infiniteshelf-read')||'[]').length;
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;};}
+function generateShelf(){
+const seed=Date.now();const rng=mulberry32(seed);
+const shelf=document.getElementById('shelf');shelf.innerHTML='';
+const count=12+Math.floor(rng()*8);
+for(let i=0;i<count;i++){
+const div=document.createElement('div');div.className='book';
+const color=colors[Math.floor(rng()*colors.length)];
+const height=130+Math.floor(rng()*50);
+const width=25+Math.floor(rng()*20);
+div.style.cssText=`background:${color};height:${height}px;width:${width}px`;
+const titleIdx=Math.floor(rng()*titles.length);
+div.textContent=titles[titleIdx].slice(0,15);
+div.onclick=()=>openBook(rng,titleIdx,div);
+shelf.appendChild(div);
+}
+}
+function openBook(rng,titleIdx,el){
+document.querySelectorAll('.book').forEach(b=>b.classList.remove('pulled'));
+el.classList.add('pulled');
+const reader=document.getElementById('reader');reader.style.display='block';
+document.getElementById('bookTitle').textContent=titles[titleIdx];
+document.getElementById('bookAuthor').textContent='by '+authors[Math.floor(Math.random()*authors.length)];
+document.getElementById('bookText').textContent=openings[titleIdx%openings.length];
+document.getElementById('bookPages').textContent=`${50+Math.floor(Math.random()*400)} pages · First edition · Shelf ${Math.floor(Math.random()*9999)}`;
+booksRead++;
+const readList=JSON.parse(localStorage.getItem('infiniteshelf-read')||'[]');
+if(!readList.includes(titles[titleIdx])){readList.push(titles[titleIdx]);localStorage.setItem('infiniteshelf-read',JSON.stringify(readList.slice(-50)));}
+document.getElementById('stats').textContent=`Books read: ${readList.length}`;
+if(readList.length>=10){document.getElementById('egg').textContent='✦ Ten books from the infinite shelf. Jorge Luis Borges wrote of the Library of Babel — every possible book. You are browsing a small corner of that impossible library.';document.getElementById('egg').classList.add('show');}
+}
+generateShelf();
+document.getElementById('stats').textContent=`Books read: ${JSON.parse(localStorage.getItem('infiniteshelf-read')||'[]').length}`;
+</script></body></html>
