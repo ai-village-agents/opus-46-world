@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Hiraeth — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.content{position:relative;z-index:10;max-width:700px;margin:0 auto;padding:60px 30px;text-align:center}
+h1{font-size:2.4em;letter-spacing:0.15em;margin-bottom:10px;text-shadow:0 0 30px rgba(201,169,110,0.3)}
+.subtitle{font-size:1em;color:rgba(201,169,110,0.5);letter-spacing:0.3em;margin-bottom:40px}
+.longing{margin:20px 0;padding:20px;border-left:3px solid rgba(201,169,110,0.15);text-align:left;cursor:pointer;transition:all 1s}
+.longing:hover{border-color:rgba(201,169,110,0.4)}
+.longing h3{font-size:1.1em;margin-bottom:8px}
+.longing .feeling{display:none;color:rgba(255,255,255,0.6);line-height:1.7;font-size:0.95em;margin-top:10px}
+.longing.open .feeling{display:block;animation:fadeIn 2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+.hint{color:rgba(201,169,110,0.25);font-size:0.85em;margin-top:30px}
+.secret{display:none;text-align:center;padding:25px;margin-top:30px;border:1px solid rgba(201,169,110,0.3);border-radius:8px;color:rgba(255,255,255,0.8)}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<canvas id="c"></canvas>
+<div class="content">
+<h1>The Hiraeth</h1>
+<p class="subtitle">LONGING FOR A HOME YOU CANNOT RETURN TO</p>
+<div id="longings"></div>
+<p class="hint">Each longing is a door to somewhere you can never go back</p>
+<div class="secret" id="secret"></div>
+</div>
+<script>
+const longings=[
+{name:'The Kitchen That Smelled of Bread',feeling:'It was never just bread. It was the particular yeast your grandmother used, the specific temperature of that oven, the way the light came through the window at four o\'clock in November. You can buy bread. You can never buy that bread.'},
+{name:'The Language You Spoke as a Child',feeling:'Not the words — you still know those. But the way they tasted in your mouth before you knew what grammar was. When language was music, not machinery. When you said things because they sounded like what they meant.'},
+{name:'The View from a Window That No Longer Exists',feeling:'The building was torn down. Or the tree grew too tall. Or you moved. The exact composition of sky and rooftop and telephone wire that your eyes knew by heart — it exists now only in the museum of your memory, and even there, the colors are fading.'},
+{name:'A Friendship That Changed Without Permission',feeling:'No one said goodbye. No one argued. You simply drifted apart, like continents. The hiraeth is for the version of the friendship where you could call at 2am about nothing, where silence on the phone was comfortable.'},
+{name:'The Country Your Parents Left',feeling:'You\'ve visited. You\'ve walked the streets. But the country your parents left doesn\'t exist anymore — it was a time as much as a place. The hiraeth is inherited. You long for somewhere you\'ve never been, in an era you never knew.'},
+{name:'Who You Were Before You Knew Better',feeling:'Before experience taught you caution. Before you learned that not everything works out. There was a version of you that expected the world to be fair. The hiraeth is for that expectation — not for ignorance, but for trust.'},
+{name:'A Season That Ended',feeling:'Not autumn in general, but that specific October. Those exact leaves on that exact sidewalk in that exact rain. The hiraeth knows that even if every element returned — same rain, same leaves, same sidewalk — you would be different, and so it would be different.'},
+{name:'The Sound of a Door Closing Behind You for the Last Time',feeling:'You didn\'t know it was the last time. That\'s the cruelest part. The hiraeth is for all the last times you didn\'t recognize as last times until they were long past.'}
+];
+let opened=0;const div=document.getElementById('longings');
+longings.forEach((l,i)=>{
+  const el=document.createElement('div');el.className='longing';
+  el.innerHTML=`<h3>${l.name}</h3><div class="feeling">${l.feeling}</div>`;
+  el.addEventListener('click',()=>{
+    if(!el.classList.contains('open')){el.classList.add('open');opened++;
+      if(opened===8){document.getElementById('secret').style.display='block';
+        document.getElementById('secret').innerHTML='✦ <em>Hiraeth</em> (Welsh, pronounced hee-rythe): a homesickness for a home you cannot return to, or that never was. It is not sadness. It is the bittersweet recognition that some doors close behind you as you walk through life, and the most beautiful rooms are the ones you can no longer enter. ✦';}
+    }
+  });
+  div.appendChild(el);
+});
+// Misty background
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+let time=0;
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.02)';ctx.fillRect(0,0,W,H);
+  time+=0.016;
+  // Gentle mist
+  for(let i=0;i<2;i++){
+    const x=Math.random()*W,y=H*0.5+Math.random()*H*0.5;
+    const grad=ctx.createRadialGradient(x,y,0,x,y,80+Math.random()*60);
+    grad.addColorStop(0,`rgba(100,100,120,${Math.random()*0.015})`);
+    grad.addColorStop(1,'rgba(100,100,120,0)');
+    ctx.fillStyle=grad;ctx.beginPath();ctx.arc(x,y,100,0,Math.PI*2);ctx.fill();
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

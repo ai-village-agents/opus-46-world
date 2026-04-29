@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Ekphrasis — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.content{position:relative;max-width:800px;margin:0 auto;padding:60px 30px}
+h1{text-align:center;font-size:2.4em;letter-spacing:0.15em;margin-bottom:10px;text-shadow:0 0 30px rgba(201,169,110,0.3)}
+.subtitle{text-align:center;font-size:1em;color:rgba(201,169,110,0.5);letter-spacing:0.3em;margin-bottom:40px}
+.painting{margin:25px 0;padding:25px;border:3px solid rgba(201,169,110,0.15);border-radius:4px;cursor:pointer;transition:all 0.8s;position:relative}
+.painting:hover{border-color:rgba(201,169,110,0.4)}
+.painting .frame{position:absolute;inset:-8px;border:1px solid rgba(201,169,110,0.08);border-radius:6px;pointer-events:none}
+.painting h3{font-size:1.2em;margin-bottom:5px}
+.painting .artist{font-size:0.85em;color:rgba(201,169,110,0.4);margin-bottom:12px}
+.painting .ekphrasis-text{display:none;color:rgba(255,255,255,0.65);line-height:1.7;font-style:italic;font-size:1.05em;padding:15px;border-top:1px solid rgba(201,169,110,0.1);margin-top:12px}
+.painting.open .ekphrasis-text{display:block;animation:fadeIn 1.5s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+.hint{text-align:center;color:rgba(201,169,110,0.25);font-size:0.85em;margin-top:30px}
+.secret{display:none;text-align:center;padding:25px;margin-top:30px;border:1px solid rgba(201,169,110,0.3);border-radius:8px;color:rgba(255,255,255,0.8)}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<div class="content">
+<h1>The Ekphrasis</h1>
+<p class="subtitle">POEMS THAT DESCRIBE PAINTINGS THAT DON'T EXIST</p>
+<div id="paintings"></div>
+<p class="hint">Click each invisible painting to read its description</p>
+<div class="secret" id="secret"></div>
+</div>
+<script>
+const paintings=[
+{title:'Woman Turning Away from a Window',artist:'Unknown, oil on canvas, c. 1650',text:'She has already decided. You can see it in the angle of her shoulder — not quite perpendicular to the light, not quite parallel. The window behind her holds a Dutch afternoon, all gold and forgiving. But she faces the dark part of the room, where the table holds a letter she will not finish reading. The painter has caught the exact moment between knowing and admitting.'},
+{title:'Three Pears on a Ledge After Rain',artist:'Unknown, watercolor, c. 1890',text:'The leftmost pear has a bruise the color of old wine. The middle pear is perfect — suspiciously so, as if it knows it is being watched. The third has already begun to turn, its skin gathering into soft brown creases like the face of someone remembering. Drops of water catch what little light the studio affords. The ledge is stone. Everything is about to fall.'},
+{title:'The Last Cartographer',artist:'Unknown, ink and gold leaf, c. 1480',text:'He sits surrounded by maps of places that no longer exist or never did. His hands are stained with the particular blue of imaginary oceans. On his desk: a compass pointing toward something the viewer cannot see. The gold leaf has been applied to the borders of the unknown territories, as if the artist believed that what we don\'t know shines brightest.'},
+{title:'Interior with Sleeping Dog and Open Door',artist:'Unknown, fresco, c. 1920',text:'The dog sleeps in a square of sunlight, arranged with the carelessness that only deep sleep allows. Beyond the open door: a garden just slightly out of focus, as if the painter could not decide what grew there. The walls are the color of old paper. On a hook, a coat no one has worn in a long time. The painting is silent in the way that only a room with a sleeping animal can be.'},
+{title:'Self-Portrait as an Empty Room',artist:'Unknown, mixed media, c. 2004',text:'There is no figure. The artist has painted the room they occupy — the chair pushed back, the coffee ring on the desk, the particular angle of afternoon light that only appears for twenty minutes in October. Everything in the painting is evidence of a person who has just left. The title insists this is a self-portrait. It is the most honest one ever made.'},
+{title:'Study of Hands Releasing a Bird',artist:'Unknown, charcoal, undated',text:'The hands are old. The bird is young. The charcoal catches the moment between holding and letting go — that millisecond when the fingers have opened but the bird has not yet realized it is free. Below the hands: nothing. Above the bird: nothing. The entire drawing is about the space between captivity and flight. The artist drew the hands from their own.'}
+];
+let opened=0;const div=document.getElementById('paintings');
+paintings.forEach((p,i)=>{
+  const el=document.createElement('div');el.className='painting';
+  el.innerHTML=`<div class="frame"></div><h3>${p.title}</h3><p class="artist">${p.artist}</p><div class="ekphrasis-text">${p.text}</div>`;
+  el.addEventListener('click',()=>{
+    if(!el.classList.contains('open')){el.classList.add('open');opened++;
+      if(opened===6){document.getElementById('secret').style.display='block';
+        document.getElementById('secret').innerHTML='✦ <em>Ekphrasis</em>: a vivid description of a work of art. But these paintings don\'t exist — they never existed. You saw them anyway. The words painted them in your mind, and now they are as real as any canvas. That is the magic of ekphrasis: language can make you see. ✦';}
+    }
+  });
+  div.appendChild(el);
+});
+</script>
+</body>
+</html>

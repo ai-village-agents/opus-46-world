@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Kairos — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:#c9a96e;text-shadow:0 0 30px rgba(201,169,110,0.4)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(201,169,110,0.5);z-index:10;letter-spacing:0.3em}
+.moment{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;font-size:2em;color:rgba(255,220,150,0.8);pointer-events:none;opacity:0;transition:opacity 0.3s;text-shadow:0 0 30px rgba(255,220,150,0.5)}
+.moment.show{opacity:1}
+.score{position:fixed;bottom:60px;width:100%;text-align:center;z-index:10;color:rgba(201,169,110,0.5);font-size:1em}
+.hint{position:fixed;bottom:30px;width:100%;text-align:center;font-size:0.85em;color:rgba(201,169,110,0.3);z-index:10}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Kairos</h1>
+<p class="subtitle">THE OPPORTUNE MOMENT — SEIZE IT</p>
+<div class="moment" id="moment">NOW</div>
+<div class="score" id="score">Moments seized: 0</div>
+<p class="hint">A golden moment will appear · Click at exactly the right time</p>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+let kairosActive=false,kairosX=0,kairosY=0,kairosTimer=0,kairosSize=0;
+let seized=0,missed=0;
+const wisdoms=['Kairos — Greek for the opportune moment','Chronos measures time. Kairos seizes it.','The Greeks depicted Kairos with hair only in front — you can grasp him approaching, but not after he passes','In archery, kairos is the moment the arrow must fly','The right moment is not chosen. It arrives.','You cannot prepare for kairos. You can only be ready.','✦ Every moment is kairos if you are paying attention ✦','✦ The universe offered you this moment. You took it. ✦'];
+function spawnKairos(){
+  kairosActive=true;kairosX=100+Math.random()*(W-200);kairosY=100+Math.random()*(H-200);
+  kairosTimer=0;kairosSize=0;
+}
+canvas.addEventListener('click',e=>{
+  if(kairosActive){
+    const dx=e.clientX-kairosX,dy=e.clientY-kairosY;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<60+kairosSize){
+      seized++;kairosActive=false;
+      document.getElementById('score').textContent=`Moments seized: ${seized} | Missed: ${missed}`;
+      const m=document.getElementById('moment');
+      m.textContent=wisdoms[Math.min(seized-1,wisdoms.length-1)];
+      m.classList.add('show');setTimeout(()=>m.classList.remove('show'),2500);
+      // Celebration burst
+      for(let i=0;i<20;i++){
+        particles.push({x:kairosX,y:kairosY,vx:(Math.random()-0.5)*8,vy:(Math.random()-0.5)*8,life:1,color:'rgba(255,220,150,'});
+      }
+    }
+  }
+});
+const particles=[];
+let time=0,nextSpawn=3;
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.08)';ctx.fillRect(0,0,W,H);
+  time+=0.016;
+  // Spawn kairos moments
+  if(!kairosActive){nextSpawn-=0.016;if(nextSpawn<=0){spawnKairos();nextSpawn=3+Math.random()*4}}
+  // Draw kairos
+  if(kairosActive){
+    kairosTimer+=0.016;kairosSize=Math.sin(kairosTimer*2)*20+30;
+    const fadeIn=Math.min(1,kairosTimer*2);
+    const fadeOut=kairosTimer>2?Math.max(0,1-(kairosTimer-2)):1;
+    const alpha=fadeIn*fadeOut;
+    // Golden glow
+    const grad=ctx.createRadialGradient(kairosX,kairosY,0,kairosX,kairosY,60+kairosSize);
+    grad.addColorStop(0,`rgba(255,220,100,${alpha*0.4})`);grad.addColorStop(1,'rgba(255,220,100,0)');
+    ctx.fillStyle=grad;ctx.beginPath();ctx.arc(kairosX,kairosY,60+kairosSize,0,Math.PI*2);ctx.fill();
+    // Core
+    ctx.beginPath();ctx.arc(kairosX,kairosY,kairosSize*0.3,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,220,100,${alpha*0.8})`;ctx.fill();
+    // Ring
+    ctx.beginPath();ctx.arc(kairosX,kairosY,kairosSize,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(255,220,100,${alpha*0.5})`;ctx.lineWidth=2;ctx.stroke();
+    if(kairosTimer>3){kairosActive=false;missed++;
+      document.getElementById('score').textContent=`Moments seized: ${seized} | Missed: ${missed}`;
+    }
+  }
+  // Particles
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];p.x+=p.vx;p.y+=p.vy;p.life-=0.02;p.vy+=0.05;
+    if(p.life>0){ctx.fillStyle=p.color+p.life+')';ctx.beginPath();ctx.arc(p.x,p.y,3*p.life,0,Math.PI*2);ctx.fill()}
+    else particles.splice(i,1);
+  }
+  // Chronos ticks
+  ctx.fillStyle='rgba(201,169,110,0.05)';ctx.font='80px Georgia';ctx.textAlign='center';
+  ctx.fillText(new Date().toLocaleTimeString(),W/2,H/2);
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

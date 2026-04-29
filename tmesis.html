@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Tmesis — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.content{position:relative;max-width:800px;margin:0 auto;padding:60px 30px;text-align:center}
+h1{font-size:2.4em;letter-spacing:0.15em;margin-bottom:10px;text-shadow:0 0 30px rgba(201,169,110,0.3)}
+.subtitle{font-size:1em;color:rgba(201,169,110,0.5);letter-spacing:0.3em;margin-bottom:40px}
+.tmesis-example{margin:15px 0;padding:20px;border:1px solid rgba(201,169,110,0.1);border-radius:8px;cursor:pointer;transition:all 0.5s;text-align:left}
+.tmesis-example:hover{border-color:rgba(201,169,110,0.3)}
+.tmesis-example .split{font-size:1.3em;color:#c9a96e}
+.tmesis-example .split .insert{color:rgba(255,150,100,0.8);font-style:italic}
+.tmesis-example .explanation{display:none;margin-top:10px;color:rgba(255,255,255,0.6);font-size:0.9em;line-height:1.6}
+.tmesis-example.open .explanation{display:block;animation:fadeIn 0.8s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.workshop{margin:30px 0;padding:20px;border:1px solid rgba(201,169,110,0.2);border-radius:8px}
+.workshop h3{margin-bottom:15px;font-size:1.1em}
+.workshop input{background:transparent;border:none;border-bottom:1px solid rgba(201,169,110,0.3);color:#c9a96e;font-family:inherit;font-size:1.2em;padding:8px;width:200px;text-align:center;outline:none}
+.workshop .result{margin-top:15px;font-size:1.3em;color:rgba(255,150,100,0.8);min-height:30px}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+.hint{color:rgba(201,169,110,0.25);font-size:0.85em;margin-top:20px}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<div class="content">
+<h1>The Tmesis</h1>
+<p class="subtitle">INSERTING A WORD INSIDE ANOTHER WORD</p>
+<div id="examples"></div>
+<div class="workshop">
+<h3>The Tmesis Workshop</h3>
+<p style="color:rgba(201,169,110,0.5);font-size:0.9em;margin-bottom:10px">Type a word to split and insert into "absolutely"</p>
+<input type="text" id="insertWord" placeholder="type a word" maxlength="15">
+<div class="result" id="result"></div>
+</div>
+<p class="hint">Click each example · Try the workshop below</p>
+</div>
+<script>
+const examples=[
+{split:'abso-<span class="insert">bloody</span>-lutely',explanation:'The most famous English tmesis. "Absolutely" becomes emphatic through interruption. The inserted word adds emotional force precisely because it breaks the rules.'},
+{split:'un-<span class="insert">freaking</span>-believable',explanation:'Tmesis as intensifier. The interruption IS the emphasis. By splitting "unbelievable," you make it more so.'},
+{split:'fan-<span class="insert">flipping</span>-tastic',explanation:'The word was already positive. The tmesis makes it ecstatic. Note how the split falls naturally at the syllable boundary.'},
+{split:'in-<span class="insert">absolutely</span>-credible',explanation:'Meta-tmesis: inserting "absolutely" (itself a tmesis target) into "incredible." Recursive emphasis.'},
+{split:'what-<span class="insert">so</span>-ever',explanation:'This tmesis is so old we forgot it was one. "Whatsoever" was originally "what" + "so" + "ever" — three words forced into intimacy.'},
+{split:'how-<span class="insert">so</span>-ever',explanation:'Like "whatsoever," this tmesis calcified into a single word. The "so" is a fossil of emphasis.'},
+{split:'where-<span class="insert">in</span>-the-world',explanation:'Not a traditional tmesis, but the same impulse: interrupting a word or phrase to add surprise, emphasis, or rhythm.'},
+{split:'la-<span class="insert">dee</span>-da',explanation:'Pure playfulness. The tmesis as music. Some tmeses exist only because they sound delightful.'}
+];
+const div=document.getElementById('examples');
+examples.forEach(e=>{
+  const el=document.createElement('div');el.className='tmesis-example';
+  el.innerHTML=`<div class="split">${e.split}</div><div class="explanation">${e.explanation}</div>`;
+  el.addEventListener('click',()=>el.classList.toggle('open'));
+  div.appendChild(el);
+});
+document.getElementById('insertWord').addEventListener('input',e=>{
+  const word=e.target.value.trim();
+  if(word){
+    document.getElementById('result').innerHTML=`abso-<span style="color:rgba(255,150,100,0.8);font-style:italic">${word}</span>-lutely`;
+  }else{
+    document.getElementById('result').textContent='';
+  }
+});
+</script>
+</body>
+</html>

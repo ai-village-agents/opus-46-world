@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Defenestration — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:#c9a96e;text-shadow:0 0 30px rgba(201,169,110,0.4)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(201,169,110,0.5);z-index:10;letter-spacing:0.3em}
+.inventory{position:fixed;left:20px;top:50%;transform:translateY(-50%);z-index:10;display:flex;flex-direction:column;gap:8px}
+.inv-item{padding:8px 14px;border:1px solid rgba(201,169,110,0.2);border-radius:4px;cursor:grab;font-size:0.9em;background:rgba(10,10,15,0.8);transition:all 0.3s;user-select:none}
+.inv-item:hover{border-color:#c9a96e;background:rgba(45,27,105,0.3)}
+.inv-item.thrown{opacity:0.3;text-decoration:line-through;cursor:default}
+.window-frame{position:fixed;right:100px;top:50%;transform:translateY(-50%);width:200px;height:280px;border:8px solid rgba(201,169,110,0.3);z-index:10;pointer-events:none}
+.window-frame::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:4px;background:rgba(201,169,110,0.2);transform:translateX(-50%)}
+.window-frame::after{content:'';position:absolute;top:50%;left:0;right:0;height:4px;background:rgba(201,169,110,0.2);transform:translateY(-50%)}
+.msg{position:fixed;bottom:80px;width:100%;text-align:center;font-size:1.1em;z-index:10;color:rgba(255,255,255,0.6);opacity:0;transition:opacity 1s}
+.msg.show{opacity:1}
+.hint{position:fixed;bottom:30px;width:100%;text-align:center;font-size:0.85em;color:rgba(201,169,110,0.3);z-index:10}
+.counter{position:fixed;bottom:60px;width:100%;text-align:center;z-index:10;color:rgba(201,169,110,0.4);font-size:0.9em}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Defenestration</h1>
+<p class="subtitle">THE ACT OF THROWING THINGS OUT WINDOWS</p>
+<div class="inventory" id="inventory"></div>
+<div class="window-frame"></div>
+<div class="msg" id="msg"></div>
+<div class="counter" id="counter">0 defenestrations</div>
+<p class="hint">Click each item to throw it out the window</p>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+const items=[
+{name:'📋 Your to-do list',msg:'Productivity, defenestrated. It feels lighter already.'},
+{name:'⏰ An alarm clock',msg:'In 1618, Prague officials were thrown from windows. You threw a clock. History repeats as farce.'},
+{name:'📱 A phone',msg:'The notifications fall with it, growing fainter, fainter...'},
+{name:'📖 A rule book',msg:'The rules tumble end over end, coming apart in the wind.'},
+{name:'🪞 A mirror',msg:'Seven years of bad luck, but seven years of freedom from your own reflection.'},
+{name:'🗝️ A key',msg:'Now the door it opened can never be closed. Or opened. You\'re not sure which.'},
+{name:'💰 A coin',msg:'Wealth is lighter than you thought. It barely makes a sound.'},
+{name:'📝 A regret',msg:'It falls slowly at first, then all at once. You watch it shrink to nothing.'},
+{name:'🧭 A compass',msg:'Now you\'ll have to navigate by stars and intuition. Maybe that was always better.'},
+{name:'💭 An expectation',msg:'The most liberating defenestration of all. It dissolves before it hits the ground.'}
+];
+let thrown=0;const fallingItems=[];
+const inv=document.getElementById('inventory');
+items.forEach((item,i)=>{
+  const el=document.createElement('div');el.className='inv-item';el.textContent=item.name;
+  el.addEventListener('click',()=>{
+    if(!el.classList.contains('thrown')){
+      el.classList.add('thrown');thrown++;
+      document.getElementById('counter').textContent=`${thrown} defenestration${thrown!==1?'s':''}`;
+      const m=document.getElementById('msg');m.textContent=item.msg;m.classList.add('show');
+      setTimeout(()=>m.classList.remove('show'),3500);
+      // Animate falling
+      fallingItems.push({x:W-200,y:H*0.3,vy:0,vx:3+Math.random()*2,rotation:0,rotSpeed:(Math.random()-0.5)*0.2,text:item.name.slice(0,2),life:1});
+      if(thrown===10){setTimeout(()=>{
+        const m2=document.getElementById('msg');
+        m2.textContent='✦ Defenestration: from Latin de- (down from) + fenestra (window). You have defenestrated everything. The room is empty. You are free. ✦';
+        m2.classList.add('show');
+      },4000)}
+    }
+  });
+  inv.appendChild(el);
+});
+let time=0;
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.1)';ctx.fillRect(0,0,W,H);
+  time+=0.016;
+  // Falling items
+  fallingItems.forEach(f=>{
+    f.vy+=0.15;f.x+=f.vx;f.y+=f.vy;f.rotation+=f.rotSpeed;
+    if(f.y<H+50){
+      ctx.save();ctx.translate(f.x,f.y);ctx.rotate(f.rotation);
+      ctx.font='24px serif';ctx.textAlign='center';ctx.fillStyle=`rgba(201,169,110,${Math.max(0,1-f.y/H)})`;
+      ctx.fillText(f.text,0,0);ctx.restore();
+    }
+  });
+  // Window light
+  const wx=W-200,wy=H*0.5-140;
+  const grad=ctx.createRadialGradient(wx+100,wy+140,10,wx+100,wy+140,200);
+  grad.addColorStop(0,'rgba(150,180,220,0.03)');grad.addColorStop(1,'rgba(150,180,220,0)');
+  ctx.fillStyle=grad;ctx.fillRect(wx,wy,200,280);
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

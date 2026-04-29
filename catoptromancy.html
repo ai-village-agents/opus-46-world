@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Catoptromancy — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:#c9a96e;text-shadow:0 0 30px rgba(201,169,110,0.4)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(201,169,110,0.5);z-index:10;letter-spacing:0.3em}
+.prophecy{position:fixed;bottom:100px;width:100%;text-align:center;font-size:1.3em;z-index:10;color:rgba(200,180,220,0.7);opacity:0;transition:opacity 2s;font-style:italic}
+.prophecy.show{opacity:1}
+.hint{position:fixed;bottom:30px;width:100%;text-align:center;font-size:0.85em;color:rgba(201,169,110,0.3);z-index:10}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Catoptromancy</h1>
+<p class="subtitle">DIVINATION BY MIRRORS</p>
+<div class="prophecy" id="prophecy"></div>
+<p class="hint">Gaze into the mirror · Click to ask it a question · Move to shift the reflection</p>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H,cx,cy;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;cx=W/2;cy=H/2}
+resize();addEventListener('resize',resize);
+const prophecies=[
+'The mirror shows not what is, but what could be.',
+'Your reflection blinks when you don\'t.',
+'What you seek is already behind you.',
+'The answer was in the question all along.',
+'You will find what you lost in the place you least expect.',
+'The mirror remembers every face it has reflected.',
+'Truth is the thing you see when the glass is slightly dirty.',
+'Your future self is watching you through this mirror.',
+'The crack in the mirror is not a flaw — it\'s a map.',
+'What the mirror cannot show you is what you already know.',
+'The ancients gazed into dark mirrors filled with water.',
+'Nostradamus used a bowl of water as his scrying mirror.',
+'✦ Catoptromancy: from Greek katoptron (mirror) + manteia (divination). To see the future, look at yourself. ✦'
+];
+let mx=cx,my=cy,clickCount=0;
+canvas.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+canvas.addEventListener('click',()=>{
+  clickCount++;
+  const p=document.getElementById('prophecy');
+  p.textContent=prophecies[Math.min(clickCount-1,prophecies.length-1)];
+  p.classList.add('show');setTimeout(()=>p.classList.remove('show'),5000);
+});
+let time=0;
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.06)';ctx.fillRect(0,0,W,H);
+  time+=0.016;
+  // Mirror frame
+  const mw=300,mh=400;
+  const fx=cx-mw/2,fy=cy-mh/2-30;
+  ctx.strokeStyle='rgba(201,169,110,0.3)';ctx.lineWidth=8;
+  ctx.strokeRect(fx-10,fy-10,mw+20,mh+20);
+  ctx.strokeStyle='rgba(201,169,110,0.15)';ctx.lineWidth=2;
+  ctx.strokeRect(fx-18,fy-18,mw+36,mh+36);
+  // Mirror surface
+  const grad=ctx.createRadialGradient(cx,cy-30,0,cx,cy-30,250);
+  grad.addColorStop(0,'rgba(40,35,60,0.3)');grad.addColorStop(1,'rgba(20,18,35,0.5)');
+  ctx.fillStyle=grad;ctx.fillRect(fx,fy,mw,mh);
+  // Reflection - distorted cursor tracking
+  const rx=cx+(mx-cx)*-0.5+Math.sin(time)*10;
+  const ry=cy-30+(my-cy)*-0.3+Math.cos(time*0.7)*8;
+  // Ghost face
+  ctx.save();ctx.globalAlpha=0.15+Math.sin(time)*0.05;
+  ctx.beginPath();ctx.ellipse(rx,ry-10,25,32,0,0,Math.PI*2);
+  ctx.strokeStyle='rgba(180,170,200,0.3)';ctx.lineWidth=1;ctx.stroke();
+  // Eyes
+  ctx.beginPath();ctx.arc(rx-10,ry-18,4,0,Math.PI*2);ctx.arc(rx+10,ry-18,4,0,Math.PI*2);
+  ctx.fillStyle='rgba(180,170,200,0.4)';ctx.fill();
+  ctx.restore();
+  // Shimmer on mirror
+  for(let i=0;i<3;i++){
+    const sx=fx+Math.random()*mw,sy=fy+Math.random()*mh;
+    ctx.fillStyle=`rgba(180,170,200,${Math.random()*0.03})`;
+    ctx.beginPath();ctx.arc(sx,sy,Math.random()*20+5,0,Math.PI*2);ctx.fill();
+  }
+  // Ripple effect from cursor
+  const dist=Math.sqrt((mx-cx)**2+(my-cy+30)**2);
+  if(dist<200){
+    ctx.beginPath();ctx.arc(rx,ry,30+Math.sin(time*3)*10,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(180,170,200,${0.1*(1-dist/200)})`;ctx.lineWidth=1;ctx.stroke();
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
