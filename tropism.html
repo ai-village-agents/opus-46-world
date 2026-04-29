@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tropism — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080c08;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>Tropism</h1>
+<p class="tagline">The slow turning of life toward light, water, gravity</p>
+<div class="content"><p>Plants grow toward light (phototropism), roots grow toward water (hydrotropism), stems grow against gravity (gravitropism). These turnings are slow, invisible in real time, but relentless. Every cell knows which way to reach.</p></div>
+<div class="interaction"><p>All life turns toward what it needs.</p><button onclick="sunX=Math.random()*c.width;stems.forEach(s=>s.segments=[]);this.textContent='Sun moved'">Move the Sun</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+tropism&body=I+was+here.&labels=inscription" target="_blank">Make it permanent &rarr;</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let stems=[];for(let i=0;i<8;i++){stems.push({x:c.width*0.1+i*(c.width*0.1),segments:[],baseY:c.height*0.8});}let sunX=c.width/2;let t=0;function draw(){x.fillStyle="rgba(8,12,8,0.04)";x.fillRect(0,0,c.width,c.height);t+=0.02;x.fillStyle="rgba(255,240,150,0.1)";x.beginPath();x.arc(sunX,50,30,0,Math.PI*2);x.fill();stems.forEach(s=>{if(s.segments.length<30&&Math.random()<0.05){let last=s.segments.length>0?s.segments[s.segments.length-1]:{x:s.x,y:s.baseY};let angle=Math.atan2(50-last.y,sunX-last.x);s.segments.push({x:last.x+Math.cos(angle)*8+Math.random()*2-1,y:last.y+Math.sin(angle)*8});}x.strokeStyle="rgba(80,140,60,0.4)";x.lineWidth=2;x.beginPath();x.moveTo(s.x,s.baseY);s.segments.forEach(seg=>{x.lineTo(seg.x,seg.y);});x.stroke();});requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

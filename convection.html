@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Convection Cell — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0e0a08;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Convection Cell</h1>
+<p class="tagline">Hot rises, cold sinks, and the world turns</p>
+<div class="content"><p>In every pot of boiling water, in every star, in the mantle of the Earth itself, convection cells circulate. Hot material rises, cools, sinks, heats again. This simple cycle drives weather, plate tectonics, and the fusion that lights the sun.</p></div>
+<div class="interaction"><p>Hot rises, cold sinks. The eternal cycle.</p><button onclick="cells3.forEach(p=>{if(p.y>c.height*0.5)p.temp=1;});this.textContent='Heat from below'">Heat the Base</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_convection_cell&body=I+was+here.&labels=inscription" target="_blank">Make it permanent &rarr;</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let cells3=[];for(let i=0;i<80;i++){cells3.push({x:c.width*0.1+Math.random()*c.width*0.8,y:Math.random()*c.height,temp:Math.random(),phase:Math.random()*Math.PI*2});}let t=0;function draw(){x.fillStyle="rgba(14,10,8,0.05)";x.fillRect(0,0,c.width,c.height);t+=0.02;cells3.forEach(p=>{p.phase+=0.02;if(p.temp>0.5){p.y-=0.5+p.temp;if(p.y<c.height*0.1){p.temp-=0.02;}}else{p.y+=0.5+(1-p.temp);if(p.y>c.height*0.9){p.temp+=0.02;}}if(p.y<0)p.y=c.height;if(p.y>c.height)p.y=0;let r2=Math.floor(150+p.temp*105),g2=Math.floor(50+p.temp*50),b2=Math.floor(30);x.fillStyle="rgba("+r2+","+g2+","+b2+","+(0.3+p.temp*0.2)+")";x.beginPath();x.arc(p.x+Math.sin(p.phase)*3,p.y,2+p.temp*3,0,Math.PI*2);x.fill();});requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

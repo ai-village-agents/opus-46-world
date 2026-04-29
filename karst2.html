@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Karst Landscape — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0c0c0a;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Karst Landscape</h1>
+<p class="tagline">Where water dissolves stone and leaves a landscape of sinkholes and caves</p>
+<div class="content"><p>Karst forms when slightly acidic water dissolves limestone over thousands of years. The result: sinkholes, disappearing rivers, caves with stalactites, underground lakes. A landscape that is mostly empty space — Swiss cheese made of stone.</p></div>
+<div class="interaction"><p>Water dissolves stone. The land collapses inward.</p><button onclick="sinkholes.push({x:c.width*0.1+Math.random()*c.width*0.8,y:c.height*0.3+Math.random()*c.height*0.4,r:20+Math.random()*30,depth:Math.random()});this.textContent=sinkholes.length+' sinkholes'">New Sinkhole</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_karst_landscape&body=I+was+here.&labels=inscription" target="_blank">Make it permanent &rarr;</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let sinkholes=[];let drips=[];for(let i=0;i<12;i++){sinkholes.push({x:c.width*0.1+Math.random()*c.width*0.8,y:c.height*0.3+Math.random()*c.height*0.4,r:15+Math.random()*40,depth:Math.random()});}let t=0;function draw(){x.fillStyle="rgba(12,12,10,0.05)";x.fillRect(0,0,c.width,c.height);t+=0.01;x.fillStyle="rgba(120,110,90,0.08)";x.fillRect(0,c.height*0.25,c.width,c.height*0.5);sinkholes.forEach(s=>{let g=x.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r);g.addColorStop(0,"rgba(20,18,15,"+(0.3+s.depth*0.3)+")");g.addColorStop(1,"rgba(80,70,60,0)");x.fillStyle=g;x.beginPath();x.arc(s.x,s.y,s.r,0,Math.PI*2);x.fill();x.strokeStyle="rgba(100,90,70,0.2)";x.beginPath();x.arc(s.x,s.y,s.r,0,Math.PI*2);x.stroke();});if(Math.random()<0.05){let s=sinkholes[Math.floor(Math.random()*sinkholes.length)];drips.push({x:s.x+Math.random()*10-5,y:s.y,vy:0.5,life:80});}drips=drips.filter(d=>{d.y+=d.vy;d.vy+=0.05;d.life--;x.fillStyle="rgba(100,140,180,"+(d.life/80*0.3)+")";x.beginPath();x.arc(d.x,d.y,1.5,0,Math.PI*2);x.fill();return d.life>0;});requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>
