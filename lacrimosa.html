@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Lacrimosa — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto;border:1px solid #1a1a3e}
+.verse{max-width:500px;text-align:center;color:#8a7a6a;font-style:italic;line-height:2;margin:1rem 0}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>💧 The Lacrimosa</h1>
+<p class="subtitle">The tearful day — Mozart's last composition, left unfinished at his death</p>
+<p class="description">The Lacrimosa dies illa — that tearful day when from the ashes shall rise the guilty to be judged. Mozart wrote eight bars and then could write no more. This chamber holds all unfinished works, all sentences that trail into silence.</p>
+<canvas id="c" width="500" height="300"></canvas>
+<div class="verse">
+<p>Lacrimosa dies illa,</p>
+<p>qua resurget ex favilla</p>
+<p>judicandus homo reus.</p>
+<p style="color:#4a3a5a">Huic ergo parce, Deus:</p>
+<p style="color:#3a2a4a">pie Jesu Domine,</p>
+<p style="color:#2a1a3a">dona eis requiem...</p>
+<p style="color:#1a0a2a">Amen.</p>
+</div>
+<p class="secret">Mozart died on bar 8. His student Süssmayr completed it. We can never know what Mozart heard.</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');let drops=[];
+function addDrop(){drops.push({x:Math.random()*500,y:0,speed:1+Math.random()*2,size:2+Math.random()*3,opacity:0.3+Math.random()*0.5})}
+function draw(){ctx.fillStyle='rgba(10,10,15,0.05)';ctx.fillRect(0,0,500,300);
+if(Math.random()<0.3)addDrop();
+drops.forEach((d,i)=>{d.y+=d.speed;
+ctx.fillStyle=`rgba(140,160,200,${d.opacity*(1-d.y/300)})`;ctx.beginPath();ctx.arc(d.x,d.y,d.size,0,Math.PI*2);ctx.fill();
+if(d.y>300){ctx.strokeStyle=`rgba(140,160,200,0.1)`;ctx.beginPath();ctx.arc(d.x,300,d.size*3,Math.PI,0);ctx.stroke();drops.splice(i,1)}});
+requestAnimationFrame(draw)}draw();
+</script></body></html>

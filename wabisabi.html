@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Wabi-Sabi — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;width:100%;max-width:600px;margin:1rem 0}
+.piece{aspect-ratio:1;border:1px solid #1a1a3e;border-radius:4px;overflow:hidden;position:relative;cursor:pointer;transition:all 0.5s}
+.piece:hover{border-color:#c9a96e}
+.piece canvas{width:100%;height:100%}
+.piece-label{position:absolute;bottom:0;left:0;right:0;background:rgba(10,10,15,0.8);padding:0.5rem;text-align:center;font-size:0.8rem;color:#8a7a6a;transform:translateY(100%);transition:transform 0.3s}
+.piece:hover .piece-label{transform:translateY(0)}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>🍂 The Wabi-Sabi</h1>
+<p class="subtitle">Beauty in imperfection, impermanence, and incompleteness</p>
+<p class="description">The cracked tea bowl mended with gold. The moss-covered stone. The fading autumn leaf. Wabi-sabi finds beauty not despite imperfection but because of it. Each piece below is deliberately flawed — and perfect in its flaw.</p>
+<div class="gallery" id="gallery"></div>
+<p class="description">Nothing lasts, nothing is finished, nothing is perfect. And that is where beauty lives.</p>
+<p class="secret">Kintsugi mends broken pottery with gold — the cracks become the most beautiful part</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const pieces=[
+{name:"Kintsugi Bowl",draw:function(ctx,w){ctx.fillStyle='#3a2a1a';ctx.beginPath();ctx.arc(w/2,w/2+20,w*0.35,Math.PI,0);ctx.fill();
+for(let i=0;i<5;i++){ctx.strokeStyle='#c9a96e';ctx.lineWidth=2;ctx.beginPath();const sx=w*0.2+Math.random()*w*0.6;ctx.moveTo(sx,w*0.3);ctx.quadraticCurveTo(sx+Math.random()*30-15,w*0.5,sx+Math.random()*20-10,w*0.7);ctx.stroke()}}},
+{name:"Weathered Stone",draw:function(ctx,w){for(let i=0;i<200;i++){ctx.fillStyle=`rgba(${80+Math.random()*40},${80+Math.random()*30},${70+Math.random()*20},${Math.random()*0.5})`;const x=w*0.2+Math.random()*w*0.6,y=w*0.2+Math.random()*w*0.6;ctx.fillRect(x,y,2+Math.random()*4,2+Math.random()*4)}
+for(let i=0;i<30;i++){ctx.fillStyle=`rgba(80,120,60,${Math.random()*0.4})`;ctx.beginPath();ctx.arc(w*0.3+Math.random()*w*0.4,w*0.2+Math.random()*w*0.3,2+Math.random()*5,0,Math.PI*2);ctx.fill()}}},
+{name:"Autumn Leaf",draw:function(ctx,w){ctx.fillStyle='#2a1a0a';ctx.fillRect(0,0,w,w);const cx=w/2,cy=w/2;
+for(let a=0;a<Math.PI*2;a+=0.3){const r=w*0.25+Math.sin(a*3)*w*0.08;ctx.fillStyle=`rgba(${160+Math.random()*40},${80+Math.random()*40},${20+Math.random()*30},0.6)`;
+ctx.beginPath();ctx.arc(cx+Math.cos(a)*r*0.4,cy+Math.sin(a)*r*0.4,r*0.3,0,Math.PI*2);ctx.fill()}
+ctx.strokeStyle='rgba(100,60,20,0.4)';ctx.lineWidth=1;for(let i=0;i<6;i++){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(i)*w*0.3,cy+Math.sin(i)*w*0.3);ctx.stroke()}}},
+{name:"Rust Pattern",draw:function(ctx,w){for(let i=0;i<500;i++){const x=Math.random()*w,y=Math.random()*w;const r=Math.random();
+ctx.fillStyle=r>0.7?`rgba(160,80,30,${Math.random()*0.4})`:`rgba(${60+Math.random()*40},${40+Math.random()*20},${20+Math.random()*20},${Math.random()*0.3})`;
+ctx.fillRect(x,y,1+Math.random()*3,1+Math.random()*3)}}}
+];
+const gallery=document.getElementById('gallery');
+pieces.forEach(p=>{const div=document.createElement('div');div.className='piece';
+const cv=document.createElement('canvas');cv.width=200;cv.height=200;
+const ctx=cv.getContext('2d');ctx.fillStyle='#0f0f15';ctx.fillRect(0,0,200,200);p.draw(ctx,200);
+div.appendChild(cv);div.innerHTML+=`<div class="piece-label">${p.name}</div>`;gallery.appendChild(div)});
+</script></body></html>

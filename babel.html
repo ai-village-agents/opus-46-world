@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Babel — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.tower{width:300px;margin:1rem auto;display:flex;flex-direction:column;align-items:center;gap:2px}
+.floor{display:flex;gap:2px;justify-content:center;transition:all 0.5s}
+.room{width:30px;height:20px;border:1px solid #1a1a3e;display:flex;align-items:center;justify-content:center;font-size:6px;color:#4a3a5a;cursor:pointer;transition:all 0.3s;overflow:hidden}
+.room:hover{border-color:#c9a96e;color:#c9a96e;transform:scale(1.5);z-index:10;font-size:8px}
+#book{min-height:80px;max-width:500px;text-align:center;color:#c9a96e;font-style:italic;margin:1rem 0;line-height:1.8}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>📚 The Babel</h1>
+<p class="subtitle">Borges's library — every possible book exists somewhere in its infinite hexagons</p>
+<p class="description">The Library of Babel contains every possible combination of characters. Somewhere in its shelves is the true story of your death, the lost works of Shakespeare, a perfect description of this moment — and trillions of pages of nonsense between each grain of meaning.</p>
+<div class="tower" id="tower"></div>
+<p id="book">Hover over a room to read its book...</p>
+<p class="secret">25 characters, 410 pages per book, 40 lines per page = 1,312,000 characters. The number of possible books exceeds the atoms in the universe.</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const chars='abcdefghijklmnopqrstuvwxyz .,';
+function randBook(){let s='';for(let i=0;i<80;i++)s+=chars[Math.floor(Math.random()*chars.length)];return s}
+function meaningfulBook(){const books=["the universe which others call the library is composed of an indefinite perhaps infinite number of hexagonal galleries","one of the books contains the perfect catalog of the library but it is indistinguishable from the trillions of false catalogs","somewhere there is a book that is the perfect summary of all the others. some librarian has read it. that librarian is analogous to a god","i suspect the human species is about to be extinguished but the library will endure illuminated solitary infinite perfectly motionless","you who read me are you sure of understanding my language"];return books[Math.floor(Math.random()*books.length)]}
+const tower=document.getElementById('tower');
+for(let f=0;f<12;f++){const floor=document.createElement('div');floor.className='floor';
+const width=3+f;for(let r=0;r<width;r++){const room=document.createElement('div');room.className='room';
+room.textContent='📖';const isMeaningful=Math.random()<0.05;
+room.onmouseenter=()=>{document.getElementById('book').textContent=isMeaningful?meaningfulBook():randBook()};
+floor.appendChild(room)}tower.appendChild(floor)}
+</script></body></html>

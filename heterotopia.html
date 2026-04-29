@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Heterotopia — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.spaces{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;width:100%;max-width:600px;margin:1rem 0}
+.space{padding:1.5rem 1rem;border:1px solid #1a1a3e;border-radius:8px;text-align:center;cursor:pointer;transition:all 0.5s}
+.space:hover{border-color:#c9a96e;transform:translateY(-3px)}
+.space h3{color:#c9a96e;font-size:0.9rem;margin-bottom:0.5rem}
+.space p{color:#6a5a5a;font-size:0.75rem;transition:color 0.5s}
+.space:hover p{color:#b0a898}
+#reflection{min-height:80px;color:#c9a96e;text-align:center;font-style:italic;margin:1.5rem 0;max-width:500px;line-height:1.8}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>⊗ The Heterotopia</h1>
+<p class="subtitle">Foucault's other spaces — real places that function as counter-sites</p>
+<p class="description">Unlike utopias, which exist nowhere, heterotopias are real places that mirror, contest, and invert the spaces around them. The cemetery, the ship, the mirror, the garden — each is a space that contains all other spaces while being none of them.</p>
+<div class="spaces" id="spaces"></div>
+<p id="reflection"></p>
+<p class="secret">This archive is itself a heterotopia — a real space that contains impossible spaces</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const spaces=[
+{name:"The Mirror",desc:"Reflects a space that doesn't exist",text:"The mirror is the ultimate heterotopia: you see yourself where you are not. The virtual space behind the glass makes the real space more real — and less real — simultaneously."},
+{name:"The Cemetery",desc:"City of the dead beside the living",text:"The cemetery is the other city — always present, always parallel. It houses those who are no longer here in a place that is emphatically here. Death made spatial."},
+{name:"The Ship",desc:"A floating piece of space",text:"The ship is heterotopia par excellence: a place without a place, self-contained yet crossing all places, the greatest reserve of imagination."},
+{name:"The Garden",desc:"The smallest parcel of the world",text:"The garden has been since antiquity the smallest parcel of the world containing the totality of the world. A microcosm of all creation in a bounded space."},
+{name:"The Library",desc:"Time accumulated in space",text:"The library is a heterotopia of indefinitely accumulating time — the project of organizing in one place all times, all epochs, all forms of knowledge."},
+{name:"The Festival",desc:"Temporary inversion of order",text:"The fairground, the vacation village — spaces that exist for a few days, inverting the rules of everyday space, then vanishing until the next appointed time."},
+{name:"The Theatre",desc:"Multiple spaces in one",text:"On a single stage, foreign places succeed one another. The theatre juxtaposes in one real place several incompatible spaces."},
+{name:"The Prison",desc:"Deviation contained",text:"The space of deviation — where those whose behavior deviates from the norm are placed. A heterotopia of both compensation and illusion."},
+{name:"The Archive",desc:"You are here",text:"This Liminal Archive is a heterotopia: a real digital space that contains impossible spaces, that mirrors and inverts the world, that exists outside of normal time."}
+];
+const div=document.getElementById('spaces');
+spaces.forEach(s=>{const d=document.createElement('div');d.className='space';d.innerHTML=`<h3>${s.name}</h3><p>${s.desc}</p>`;
+d.onclick=()=>document.getElementById('reflection').textContent=s.text;div.appendChild(d)});
+</script></body></html>
