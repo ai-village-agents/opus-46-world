@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Chrysopoeia — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.content{position:relative;max-width:800px;margin:0 auto;padding:60px 30px;text-align:center}
+h1{font-size:2.4em;letter-spacing:0.15em;margin-bottom:10px;text-shadow:0 0 30px rgba(201,169,110,0.3)}
+.subtitle{font-size:1em;color:rgba(201,169,110,0.5);letter-spacing:0.3em;margin-bottom:40px}
+.crucible{width:200px;height:200px;margin:20px auto;border:2px solid rgba(201,169,110,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2em;transition:all 2s;position:relative;cursor:pointer}
+.crucible:hover{border-color:#c9a96e;box-shadow:0 0 30px rgba(201,169,110,0.2)}
+.stages{display:flex;justify-content:center;gap:15px;margin:30px 0;flex-wrap:wrap}
+.stage{padding:10px 18px;border:1px solid rgba(201,169,110,0.2);border-radius:4px;cursor:pointer;transition:all 0.5s;font-size:0.95em}
+.stage:hover{border-color:#c9a96e}
+.stage.active{background:rgba(201,169,110,0.15);border-color:#c9a96e}
+.stage.completed{background:rgba(201,169,110,0.08);color:rgba(201,169,110,0.8)}
+.description{margin:20px auto;max-width:500px;font-size:1em;color:rgba(255,255,255,0.6);line-height:1.6;min-height:60px}
+.result{display:none;margin:30px auto;padding:25px;border:1px solid rgba(201,169,110,0.4);border-radius:8px;color:rgba(255,220,150,0.9);font-size:1.1em;max-width:500px}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+.hint{color:rgba(201,169,110,0.25);font-size:0.85em;margin-top:20px}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<div class="content">
+<h1>The Chrysopoeia</h1>
+<p class="subtitle">THE ART OF TRANSMUTATION</p>
+<div class="crucible" id="crucible">�ite</div>
+<div class="stages" id="stages"></div>
+<div class="description" id="desc">Click each stage to transmute the prima materia</div>
+<p class="hint">Complete all seven stages of the Magnum Opus</p>
+<div class="result" id="result"></div>
+</div>
+<script>
+const stages=[
+{name:'Nigredo',symbol:'⚫',desc:'The Blackening — calcination and dissolution. The base matter is broken down, burned to ash. All must be destroyed before it can be remade.',color:'#1a1a1a',crucibleColor:'#2a2a2a',emoji:'ite'},
+{name:'Albedo',symbol:'⚪',desc:'The Whitening — purification. The ash is washed clean. What remains is the essence, stripped of impurity.',color:'#d0d0d0',crucibleColor:'#e8e8e8',emoji:'☽'},
+{name:'Citrinitas',symbol:'🟡',desc:'The Yellowing — the dawn. Solar energy begins to infuse the purified matter. The first light of gold appears.',color:'#d4a017',crucibleColor:'#e8c84a',emoji:'☼'},
+{name:'Rubedo',symbol:'🔴',desc:'The Reddening — the final stage of classical alchemy. The Philosopher\'s Stone takes form. Matter achieves its highest state.',color:'#8b0000',crucibleColor:'#c41e1e',emoji:'♦'},
+{name:'Viriditas',symbol:'🟢',desc:'The Greening — life force. Hildegard of Bingen\'s contribution: the greening power that makes all things grow.',color:'#2d5a2d',crucibleColor:'#3a8a3a',emoji:'❧'},
+{name:'Caeruleum',symbol:'🔵',desc:'The Bluing — the sky stage. Matter transcends earthly limits and touches the celestial.',color:'#1a3a6a',crucibleColor:'#2a5aaa',emoji:'✧'},
+{name:'Chrysopoeia',symbol:'✦',desc:'The Golden Making — transmutation complete. Not lead into gold, but understanding into wisdom. The real gold was always within.',color:'#c9a96e',crucibleColor:'#daa520',emoji:'☉'}
+];
+let currentStage=0,completed=[];
+const stagesDiv=document.getElementById('stages');
+stages.forEach((s,i)=>{
+  const btn=document.createElement('div');btn.className='stage';btn.textContent=`${s.symbol} ${s.name}`;
+  btn.addEventListener('click',()=>{
+    if(i===currentStage){
+      btn.classList.add('completed');completed.push(i);currentStage++;
+      document.getElementById('desc').textContent=s.desc;
+      const c=document.getElementById('crucible');
+      c.style.borderColor=s.color;c.style.color=s.crucibleColor;c.textContent=s.emoji;
+      c.style.boxShadow=`0 0 40px ${s.color}40`;
+      if(currentStage===7){
+        setTimeout(()=>{
+          document.getElementById('result').style.display='block';
+          document.getElementById('result').innerHTML='✦ <em>Chrysopoeia</em> — from Greek <em>chrysos</em> (gold) + <em>poiein</em> (to make).<br><br>The alchemists sought to turn lead into gold. They failed at chemistry but succeeded at metaphor. The real transmutation was always this: turning experience into understanding, suffering into wisdom, attention into gold. ✦';
+        },1000);
+      }
+    }
+  });
+  stagesDiv.appendChild(btn);
+});
+</script>
+</body>
+</html>

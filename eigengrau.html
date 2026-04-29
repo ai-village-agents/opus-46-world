@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Eigengrau — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#16161d;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:rgba(201,169,110,0.6);text-shadow:0 0 20px rgba(201,169,110,0.2)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(201,169,110,0.3);z-index:10;letter-spacing:0.3em}
+.fact{position:fixed;bottom:100px;width:100%;text-align:center;font-size:1.1em;z-index:10;color:rgba(180,180,200,0.5);opacity:0;transition:opacity 2s;max-width:600px;left:50%;transform:translateX(-50%)}
+.fact.show{opacity:1}
+.darkness{position:fixed;top:0;left:0;width:100%;height:100%;z-index:5;background:#16161d;transition:background 5s;pointer-events:none}
+.hint{position:fixed;bottom:30px;width:100%;text-align:center;font-size:0.85em;color:rgba(201,169,110,0.2);z-index:10}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.3);text-decoration:none;font-size:0.9em}
+nav a:hover{color:rgba(201,169,110,0.6)}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Eigengrau</h1>
+<p class="subtitle">THE COLOR YOU SEE IN TOTAL DARKNESS</p>
+<div class="darkness" id="darkness"></div>
+<div class="fact" id="fact"></div>
+<p class="hint">Wait in the dark · Your eyes will adjust · Click to go deeper</p>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+const facts=[
+'Eigengrau — German for "intrinsic grey"',
+'It is #16161d — darker than most greys, lighter than true black',
+'Your retinal cells fire randomly even in complete darkness',
+'This dark grey is the color of your visual system at rest',
+'Eigengrau was first described in the 19th century by Gustav Fechner',
+'Close your eyes right now. That dark grey-purple? That\'s eigengrau.',
+'It proves that darkness is not nothing — it is something your brain creates',
+'Even the void has a color. Even emptiness has a texture.',
+'Your neurons paint this grey to fill the absence of signal',
+'In space, between the stars, eigengrau is what you would see',
+'✦ There is no true black in human experience. Only eigengrau. ✦',
+'✦ The darkest thing you can perceive is still your brain, whispering. ✦'
+];
+let depth=0,clickCount=0;
+const darknessEl=document.getElementById('darkness');
+let darknessLevel=1;// starts fully dark
+canvas.addEventListener('click',()=>{
+  clickCount++;
+  darknessLevel=Math.max(0,darknessLevel-0.08);
+  darknessEl.style.background=`rgba(22,22,29,${darknessLevel})`;
+  if(clickCount<=facts.length){
+    const f=document.getElementById('fact');
+    f.textContent=facts[clickCount-1];f.classList.add('show');
+    setTimeout(()=>f.classList.remove('show'),5000);
+  }
+});
+// Very subtle visual noise
+let time=0;
+function animate(){
+  ctx.fillStyle='rgba(22,22,29,0.3)';ctx.fillRect(0,0,W,H);
+  time+=0.016;
+  // Neural noise - random dim flickers
+  for(let i=0;i<5;i++){
+    const x=Math.random()*W,y=Math.random()*H;
+    const brightness=Math.random()*0.04;
+    ctx.fillStyle=`rgba(${130+Math.random()*40},${130+Math.random()*30},${150+Math.random()*30},${brightness})`;
+    ctx.beginPath();ctx.arc(x,y,Math.random()*3+1,0,Math.PI*2);ctx.fill();
+  }
+  // Slow-moving dark shapes (entoptic phenomena)
+  for(let i=0;i<3;i++){
+    const x=W/2+Math.sin(time*0.3+i*2)*200;
+    const y=H/2+Math.cos(time*0.2+i*3)*150;
+    const grad=ctx.createRadialGradient(x,y,0,x,y,100);
+    grad.addColorStop(0,`rgba(25,20,35,${0.02+Math.sin(time+i)*0.01})`);
+    grad.addColorStop(1,'rgba(22,22,29,0)');
+    ctx.fillStyle=grad;ctx.beginPath();ctx.arc(x,y,100,0,Math.PI*2);ctx.fill();
+  }
+  // Eigengrau color swatch that slowly appears
+  if(clickCount>3){
+    const alpha=Math.min(0.3,(clickCount-3)*0.05);
+    ctx.fillStyle=`rgba(22,22,29,${alpha})`;
+    ctx.fillRect(W/2-60,H/2-30,120,60);
+    ctx.strokeStyle=`rgba(201,169,110,${alpha*0.5})`;ctx.strokeRect(W/2-60,H/2-30,120,60);
+    ctx.fillStyle=`rgba(201,169,110,${alpha})`;ctx.font='12px Georgia';ctx.textAlign='center';
+    ctx.fillText('#16161d',W/2,H/2+5);
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

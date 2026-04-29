@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Backmasking — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+.content{position:relative;max-width:800px;margin:0 auto;padding:60px 30px;text-align:center}
+h1{font-size:2.4em;letter-spacing:0.15em;margin-bottom:10px;text-shadow:0 0 30px rgba(201,169,110,0.3)}
+.subtitle{font-size:1em;color:rgba(201,169,110,0.5);letter-spacing:0.3em;margin-bottom:40px}
+.record{width:200px;height:200px;border-radius:50%;border:2px solid rgba(201,169,110,0.3);margin:20px auto;position:relative;cursor:pointer;transition:all 0.5s}
+.record:hover{box-shadow:0 0 30px rgba(201,169,110,0.2)}
+.record .grooves{position:absolute;inset:20px;border-radius:50%;border:1px solid rgba(201,169,110,0.1)}
+.record .label{position:absolute;inset:35%;border-radius:50%;background:rgba(201,169,110,0.1);display:flex;align-items:center;justify-content:center;font-size:0.8em}
+.spinning{animation:spin 2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.message{margin:25px 0;padding:20px;border:1px solid rgba(201,169,110,0.15);border-radius:8px;cursor:pointer;transition:all 0.5s}
+.message:hover{border-color:rgba(201,169,110,0.4)}
+.message .forward{font-size:1.1em;color:rgba(201,169,110,0.7)}
+.message .reversed{color:rgba(255,255,255,0.7);font-style:italic;margin-top:8px;display:none}
+.message.revealed .reversed{display:block;animation:fadeIn 1s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.direction{font-size:0.8em;color:rgba(201,169,110,0.3);margin-top:5px}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+.hint{color:rgba(201,169,110,0.25);font-size:0.85em;margin-top:30px}
+.secret{display:none;margin-top:25px;padding:20px;border:1px solid rgba(201,169,110,0.3);border-radius:8px;color:rgba(255,255,255,0.8)}
+.counter{position:fixed;bottom:30px;right:30px;color:rgba(201,169,110,0.4);font-size:0.9em}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<div class="content">
+<h1>The Backmasking</h1>
+<p class="subtitle">MESSAGES HIDDEN IN REVERSE</p>
+<div class="record" id="record"><div class="grooves"></div><div class="label">▶ PLAY</div></div>
+<div id="messages"></div>
+<p class="hint">Click each message to play it backwards and reveal the hidden meaning</p>
+<div class="secret" id="secret"></div>
+</div>
+<div class="counter" id="counter">0 / 8 reversed</div>
+<script>
+const messages=[
+{forward:'erehwyreve si ecnelis ehT',hidden:'The silence is everywhere',note:'A truth hiding in plain sight'},
+{forward:'kcab emoc syawla sgnihT',hidden:'Things always come back',note:'Time runs both directions'},
+{forward:'drawkcab nur skcol ehT',hidden:'The clocks run backward',note:'In this room they do'},
+{forward:'netsil uoy fi raeh nac uoY',hidden:'You can hear if you listen',note:'Attention is the key'},
+{forward:'rorrim a ni egassem A',hidden:'A message in a mirror',note:'Everything reversed is revealed'},
+{forward:'sdrow ruoy era eseht tuB',hidden:'But these are your words',note:'The reader becomes the author'},
+{forward:'gninnigeb eht si dne ehT',hidden:'The end is the beginning',note:'The ouroboros of meaning'},
+{forward:'✦ dlrow eht fo hturt ehT ✦',hidden:'✦ The truth of the world ✦',note:'Some things can only be said backwards'}
+];
+let revealed=0;
+const div=document.getElementById('messages');
+messages.forEach((m,i)=>{
+  const el=document.createElement('div');el.className='message';
+  el.innerHTML=`<div class="forward">${m.forward}</div><div class="reversed">→ "${m.hidden}"<br><span class="direction">${m.note}</span></div>`;
+  el.addEventListener('click',()=>{
+    if(!el.classList.contains('revealed')){
+      el.classList.add('revealed');revealed++;
+      document.getElementById('counter').textContent=`${revealed} / 8 reversed`;
+      // Spin record
+      const rec=document.getElementById('record');rec.classList.add('spinning');
+      setTimeout(()=>rec.classList.remove('spinning'),2000);
+      if(revealed===8){
+        document.getElementById('secret').style.display='block';
+        document.getElementById('secret').textContent='✦ Backmasking was accused of hiding satanic messages in music. The truth was simpler: humans find patterns everywhere, even in noise played backwards. The real hidden message was always just this — pay attention. ✦';
+      }
+    }
+  });
+  div.appendChild(el);
+});
+</script>
+</body>
+</html>

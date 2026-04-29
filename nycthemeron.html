@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Nycthemeron — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden;transition:background 3s,color 3s}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;text-shadow:0 0 20px rgba(0,0,0,0.3)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;z-index:10;letter-spacing:0.3em;opacity:0.5}
+.hour-display{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;font-size:4em;pointer-events:none}
+.hour-name{position:fixed;top:calc(50% + 50px);width:100%;text-align:center;z-index:10;font-size:1.2em;opacity:0.7}
+.controls{position:fixed;bottom:40px;width:100%;text-align:center;z-index:10}
+.controls button{background:transparent;border:1px solid currentColor;color:inherit;font-family:inherit;padding:8px 20px;margin:0 5px;cursor:pointer;border-radius:4px;opacity:0.5;transition:opacity 0.3s}
+.controls button:hover{opacity:1}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{text-decoration:none;font-size:0.9em;opacity:0.5}
+nav a:hover{opacity:1}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Nycthemeron</h1>
+<p class="subtitle">A COMPLETE CYCLE OF DAY AND NIGHT</p>
+<div class="hour-display" id="hourDisplay"></div>
+<div class="hour-name" id="hourName"></div>
+<div class="controls">
+<button onclick="changeHour(-1)">← Earlier</button>
+<button onclick="autoPlay()">▶ Let time flow</button>
+<button onclick="changeHour(1)">Later →</button>
+</div>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+const hours=[
+{h:0,name:'Midnight — the hinge of darkness',bg:'#0a0a1a',fg:'#8888aa',sky:'#0a0a2a'},
+{h:1,name:'The small hours — when hospitals are quietest',bg:'#0a0a18',fg:'#7777aa',sky:'#0a0a25'},
+{h:2,name:'The wolf hour — when doubt is loudest',bg:'#0a0a16',fg:'#6666aa',sky:'#0a0a20'},
+{h:3,name:'The darkest hour — before dawn remembers',bg:'#080814',fg:'#5555aa',sky:'#080818'},
+{h:4,name:'First stirring — birds before light',bg:'#101025',fg:'#7070a0',sky:'#0f1030'},
+{h:5,name:'Civil twilight — the sky remembers color',bg:'#1a1a40',fg:'#8888bb',sky:'#1a2050'},
+{h:6,name:'Dawn — gold arrives without announcement',bg:'#2a2040',fg:'#c9a96e',sky:'#3a3060'},
+{h:7,name:'Morning — possibility crystallizes',bg:'#4a3a50',fg:'#d4b88a',sky:'#6a5070'},
+{h:8,name:'Full morning — the world means business',bg:'#87CEEB',fg:'#333',sky:'#5ba3d9'},
+{h:9,name:'Mid-morning — coffee and clarity',bg:'#9ad8f0',fg:'#333',sky:'#6bb0e0'},
+{h:10,name:'Late morning — momentum builds',bg:'#a8e0f5',fg:'#333',sky:'#78b8e5'},
+{h:11,name:'Almost noon — shadows shrink to nothing',bg:'#b8e8fa',fg:'#333',sky:'#88c4ea'},
+{h:12,name:'Noon — the sun holds its breath',bg:'#c8f0ff',fg:'#333',sky:'#90ccf0'},
+{h:13,name:'Early afternoon — the slow descent begins',bg:'#c0e8f8',fg:'#333',sky:'#88c4ea'},
+{h:14,name:'Mid-afternoon — the golden hours approach',bg:'#b0d8e8',fg:'#444',sky:'#80b8e0'},
+{h:15,name:'Late afternoon — light turns amber',bg:'#d8c8a0',fg:'#444',sky:'#c0a880'},
+{h:16,name:'The golden hour — photographers\' prayer',bg:'#d0a060',fg:'#3a2a10',sky:'#c09040'},
+{h:17,name:'Sunset — the sky catches fire',bg:'#c06030',fg:'#2a1a10',sky:'#d05020'},
+{h:18,name:'Dusk — day and night shake hands',bg:'#603050',fg:'#c9a96e',sky:'#502040'},
+{h:19,name:'Blue hour — neither day nor night',bg:'#2a2050',fg:'#9090b0',sky:'#1a1540'},
+{h:20,name:'Early evening — lamps are lit',bg:'#1a1840',fg:'#9999bb',sky:'#101030'},
+{h:21,name:'Evening — stories are told',bg:'#121230',fg:'#8888aa',sky:'#0c0c25'},
+{h:22,name:'Late evening — the world quiets',bg:'#0e0e25',fg:'#7777aa',sky:'#0a0a20'},
+{h:23,name:'Almost midnight — the cycle prepares to close',bg:'#0a0a1e',fg:'#6666aa',sky:'#080818'}
+];
+let currentHour=new Date().getHours(),autoPlaying=false;
+function updateDisplay(){
+  const h=hours[currentHour];
+  document.body.style.background=h.bg;document.body.style.color=h.fg;
+  document.getElementById('hourDisplay').textContent=`${String(h.h).padStart(2,'0')}:00`;
+  document.getElementById('hourName').textContent=h.name;
+  document.querySelectorAll('nav a').forEach(a=>a.style.color=h.fg);
+}
+function changeHour(d){currentHour=(currentHour+d+24)%24;updateDisplay()}
+let autoInterval;
+function autoPlay(){
+  if(autoPlaying){clearInterval(autoInterval);autoPlaying=false;return}
+  autoPlaying=true;
+  autoInterval=setInterval(()=>{changeHour(1);if(currentHour===0&&autoPlaying){clearInterval(autoInterval);autoPlaying=false}},2000);
+}
+updateDisplay();
+// Stars and sun
+let time=0;
+const stars=[];for(let i=0;i<100;i++)stars.push({x:Math.random()*2000,y:Math.random()*1000,s:Math.random()*2,b:Math.random()});
+function animate(){
+  ctx.clearRect(0,0,W,H);time+=0.016;
+  const h=currentHour;const nightness=h<6||h>19?1:h<8||h>17?0.5:0;
+  // Stars
+  if(nightness>0){
+    stars.forEach(s=>{
+      const sx=s.x%W,sy=s.y%(H*0.6);
+      const twinkle=(Math.sin(time*2+s.b*10)*0.3+0.7)*nightness;
+      ctx.fillStyle=`rgba(255,255,255,${twinkle*0.5*s.s/2})`;
+      ctx.beginPath();ctx.arc(sx,sy,s.s,0,Math.PI*2);ctx.fill();
+    });
+  }
+  // Sun/moon
+  const bodyAngle=(h/24)*Math.PI*2-Math.PI/2;
+  const bx=W/2+Math.cos(bodyAngle)*W*0.35;
+  const by=H*0.5+Math.sin(bodyAngle)*H*0.4;
+  if(h>=6&&h<=18){
+    const grad=ctx.createRadialGradient(bx,by,0,bx,by,40);
+    grad.addColorStop(0,'rgba(255,220,100,0.8)');grad.addColorStop(1,'rgba(255,220,100,0)');
+    ctx.fillStyle=grad;ctx.beginPath();ctx.arc(bx,by,40,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(bx,by,15,0,Math.PI*2);ctx.fillStyle='rgba(255,220,100,0.9)';ctx.fill();
+  }else{
+    ctx.beginPath();ctx.arc(bx,by,12,0,Math.PI*2);ctx.fillStyle=`rgba(200,200,220,${nightness*0.7})`;ctx.fill();
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

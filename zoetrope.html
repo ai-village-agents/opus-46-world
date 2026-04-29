@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Zoetrope — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:#c9a96e;text-shadow:0 0 30px rgba(201,169,110,0.4)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(201,169,110,0.5);z-index:10;letter-spacing:0.3em}
+.speed{position:fixed;bottom:60px;width:100%;text-align:center;z-index:10;color:rgba(201,169,110,0.5);font-size:0.9em}
+.msg{position:fixed;bottom:100px;width:100%;text-align:center;z-index:10;color:rgba(255,255,255,0.6);font-size:1.1em;opacity:0;transition:opacity 1s}
+.msg.show{opacity:1}
+.hint{position:fixed;bottom:30px;width:100%;text-align:center;font-size:0.85em;color:rgba(201,169,110,0.3);z-index:10}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Zoetrope</h1>
+<p class="subtitle">THE WHEEL OF LIFE — ILLUSION OF MOTION</p>
+<div class="msg" id="msg"></div>
+<div class="speed" id="speed">Spin speed: 0</div>
+<p class="hint">Scroll or click to spin the wheel · Watch stillness become movement</p>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H,cx,cy;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;cx=W/2;cy=H/2}
+resize();addEventListener('resize',resize);
+let spinAngle=0,spinSpeed=0,totalSpins=0;
+const frames=12;
+// Animation: a figure walking
+function drawFrame(angle,frameIdx,r){
+  const x=cx+Math.cos(angle)*r;
+  const y=cy+Math.sin(angle)*r;
+  const phase=frameIdx/frames;
+  ctx.save();ctx.translate(x,y);
+  // Stick figure in different walking poses
+  const legAngle=Math.sin(phase*Math.PI*2)*0.5;
+  const armAngle=-legAngle;
+  const headY=-20;const bodyLen=15;
+  // Head
+  ctx.beginPath();ctx.arc(0,headY,5,0,Math.PI*2);
+  ctx.fillStyle='rgba(201,169,110,0.7)';ctx.fill();
+  // Body
+  ctx.strokeStyle='rgba(201,169,110,0.6)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,headY+5);ctx.lineTo(0,headY+5+bodyLen);ctx.stroke();
+  // Legs
+  ctx.beginPath();ctx.moveTo(0,headY+5+bodyLen);ctx.lineTo(Math.sin(legAngle)*10,headY+5+bodyLen+12);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,headY+5+bodyLen);ctx.lineTo(Math.sin(-legAngle)*10,headY+5+bodyLen+12);ctx.stroke();
+  // Arms
+  ctx.beginPath();ctx.moveTo(0,headY+10);ctx.lineTo(Math.sin(armAngle)*8,headY+10+8);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,headY+10);ctx.lineTo(Math.sin(-armAngle)*8,headY+10+8);ctx.stroke();
+  ctx.restore();
+}
+const msgs=['The zoetrope was invented in 1834','12 frames create the illusion of life','Your brain fills in the gaps between images','Persistence of vision: the retina holds each image for 1/25th of a second','At the right speed, stillness becomes dance','The first movies were zoetropes','✦ All animation is a lie your brain loves to believe ✦'];
+let msgIdx=0;
+canvas.addEventListener('wheel',e=>{
+  e.preventDefault();spinSpeed+=e.deltaY*0.0005;
+},{passive:false});
+canvas.addEventListener('click',()=>{
+  spinSpeed+=0.02;totalSpins++;
+  if(totalSpins<=msgs.length){
+    const m=document.getElementById('msg');m.textContent=msgs[totalSpins-1];m.classList.add('show');
+    setTimeout(()=>m.classList.remove('show'),3500);
+  }
+});
+let time=0;
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.15)';ctx.fillRect(0,0,W,H);
+  time+=0.016;
+  spinAngle+=spinSpeed;spinSpeed*=0.995;// friction
+  document.getElementById('speed').textContent=`Spin speed: ${Math.abs(spinSpeed*100).toFixed(1)}`;
+  const r=Math.min(W,H)*0.3;
+  // Draw drum
+  ctx.beginPath();ctx.arc(cx,cy,r+30,0,Math.PI*2);
+  ctx.strokeStyle='rgba(201,169,110,0.15)';ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,r-30,0,Math.PI*2);
+  ctx.strokeStyle='rgba(201,169,110,0.1)';ctx.stroke();
+  // Slits
+  for(let i=0;i<frames;i++){
+    const a=spinAngle+(i/frames)*Math.PI*2;
+    const sx=cx+Math.cos(a)*(r+30),sy=cy+Math.sin(a)*(r+30);
+    const ex=cx+Math.cos(a)*(r+40),ey=cy+Math.sin(a)*(r+40);
+    ctx.strokeStyle='rgba(201,169,110,0.3)';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
+  }
+  // Draw animation frames
+  for(let i=0;i<frames;i++){
+    const a=spinAngle+(i/frames)*Math.PI*2;
+    drawFrame(a,i,r);
+  }
+  // Center axle
+  ctx.beginPath();ctx.arc(cx,cy,8,0,Math.PI*2);ctx.fillStyle='rgba(201,169,110,0.4)';ctx.fill();
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
