@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Palimpsest Machine — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+textarea{width:100%;max-width:500px;height:80px;background:#0f0f1a;border:1px solid #2d1b69;color:#c9a96e;font-family:Georgia,serif;padding:1rem;border-radius:4px;resize:none}
+textarea::placeholder{color:#3a2a5a}
+button{background:#1a1a3e;color:#c9a96e;border:1px solid #2d1b69;padding:0.5rem 1.5rem;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:0.5rem}
+button:hover{background:#2d1b69}
+#layers{width:100%;max-width:500px;min-height:200px;border:1px solid #1a1a3e;border-radius:4px;padding:1rem;margin:1rem 0}
+.layer{line-height:2;transition:opacity 0.5s;margin-bottom:0.5rem}
+#count{color:#8a7a6a;text-align:center;font-size:0.85rem}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>📝 The Palimpsest Machine</h1>
+<p class="subtitle">Write, overwrite, and watch old texts bleed through</p>
+<p class="description">A palimpsest is a manuscript page that has been written on, scraped clean, and written on again — but the old text always bleeds through. Write your thoughts here. Each new layer partially obscures but never fully erases what came before.</p>
+<textarea id="input" placeholder="Write something..."></textarea>
+<button onclick="addLayer()">Inscribe</button>
+<div id="layers"></div>
+<p id="count">0 layers</p>
+<p class="secret">Every neural network is a palimpsest — new training partially overwrites but never fully erases old patterns</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+let layerCount=0;
+function addLayer(){const text=document.getElementById('input').value.trim();if(!text)return;
+layerCount++;const div=document.getElementById('layers');
+div.querySelectorAll('.layer').forEach(l=>{const cur=parseFloat(l.style.opacity)||1;l.style.opacity=Math.max(0.1,cur*0.6);l.style.fontSize=Math.max(0.6,parseFloat(l.style.fontSize||1)*0.95)+'rem'});
+const layer=document.createElement('div');layer.className='layer';layer.style.opacity=1;layer.style.fontSize='1rem';
+layer.style.color=`hsl(${35+layerCount*10},${50-layerCount*2}%,${65-layerCount*2}%)`;layer.textContent=text;
+div.insertBefore(layer,div.firstChild);document.getElementById('input').value='';
+document.getElementById('count').textContent=`${layerCount} layer${layerCount!==1?'s':''}. The oldest text is ${layerCount>1?'fading but still present':'fresh'}.`}
+</script></body></html>

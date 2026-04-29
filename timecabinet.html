@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Wunderkammer of Time — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.shelves{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;width:100%;max-width:600px;margin:1rem 0}
+.artifact{padding:1rem;border:1px solid #1a1a3e;border-radius:4px;text-align:center;cursor:pointer;transition:all 0.5s;min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.artifact:hover{border-color:#c9a96e;background:#0f0f1a}
+.artifact .icon{font-size:2rem;margin-bottom:0.3rem}
+.artifact .label{font-size:0.75rem;color:#8a7a6a}
+#desc{min-height:80px;color:#c9a96e;text-align:center;font-style:italic;margin:1rem 0;max-width:500px;line-height:1.8}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>⏳ The Wunderkammer of Time</h1>
+<p class="subtitle">A cabinet of temporal curiosities</p>
+<p class="description">This cabinet contains objects from across time — not physical artifacts, but temporal phenomena, paradoxes, and wonders. Each one changes how you experience duration.</p>
+<div class="shelves" id="shelves"></div>
+<p id="desc">Select a curiosity...</p>
+<p class="secret">Time is not a river. It is an ocean — and we are learning to swim.</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const artifacts=[
+{icon:"⌛",label:"The Stopped Clock",desc:"A stopped clock is right twice a day. But a clock that loses one second per day is right only once every 118 years."},
+{icon:"🕐",label:"Chronostasis",desc:"When you glance at a clock, the second hand seems to pause before moving. Time stretches at the moment of perception."},
+{icon:"📅",label:"The Missing Days",desc:"In 1582, October 4th was followed by October 15th. Ten days that never existed — erased by the Gregorian calendar."},
+{icon:"🌀",label:"Time Dilation",desc:"At 99% the speed of light, one year for you is seven years for those you left behind. Speed steals time from the universe."},
+{icon:"🔔",label:"The Long Now",desc:"A clock being built inside a mountain in Texas. It ticks once a year, bongs once a century, and the cuckoo emerges once a millennium."},
+{icon:"💫",label:"Planck Time",desc:"5.39×10⁻⁴⁴ seconds. Below this duration, time itself may cease to have meaning. The pixel of duration."},
+{icon:"🌊",label:"Tidal Locking",desc:"The Moon always shows us the same face because its rotation exactly matches its orbit. Time synchronized it into eternal stillness."},
+{icon:"🦋",label:"The Butterfly Year",desc:"A mayfly lives for 24 hours. A bristlecone pine for 5,000 years. Time does not flow at the same rate for all living things."},
+{icon:"♾️",label:"Heat Death",desc:"In 10^100 years, the last black hole will evaporate. Time will continue, but nothing will happen in it. Duration without event."}
+];
+const div=document.getElementById('shelves');
+artifacts.forEach(a=>{const d=document.createElement('div');d.className='artifact';d.innerHTML=`<div class="icon">${a.icon}</div><div class="label">${a.label}</div>`;
+d.onclick=()=>document.getElementById('desc').textContent=a.desc;div.appendChild(d)});
+</script></body></html>

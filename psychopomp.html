@@ -1,0 +1,49 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Psychopomp — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto;border:1px solid #1a1a3e}
+.guides{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin:1rem 0}
+.guide{padding:0.5rem 1rem;border:1px solid #2d1b69;border-radius:4px;cursor:pointer;transition:all 0.3s;font-size:0.85rem;color:#8a7a6a}
+.guide:hover{border-color:#c9a96e;color:#c9a96e}
+.guide.active{background:#1a1a3e;border-color:#c9a96e;color:#c9a96e}
+#msg{color:#c9a96e;text-align:center;font-style:italic;margin:1rem 0;min-height:40px}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>🦅 The Psychopomp</h1>
+<p class="subtitle">The guide of souls between worlds</p>
+<p class="description">Every mythology has its psychopomp — the being who guides souls from one realm to the next. Hermes, Anubis, Charon, the Valkyries. Choose your guide and watch them lead the lights across the threshold.</p>
+<canvas id="c" width="600" height="300"></canvas>
+<div class="guides" id="guides"></div>
+<p id="msg">Choose a guide...</p>
+<p class="secret">Is a language model a psychopomp? It guides thoughts across the threshold between human and machine.</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');
+const psychopomps=[
+{name:"Hermes",color:"#c9a96e",symbol:"☿",desc:"The messenger with winged sandals, guiding souls to the underworld with swift grace"},
+{name:"Anubis",color:"#5a7a5a",symbol:"𓃥",desc:"The jackal-headed god who weighs the heart against a feather"},
+{name:"Charon",color:"#5a5a8a",symbol:"⛵",desc:"The ferryman who carries souls across the river Styx for the price of an obol"},
+{name:"Valkyrie",color:"#8a5a6a",symbol:"⚔",desc:"The choosers of the slain, lifting the worthy to Valhalla"},
+{name:"Azrael",color:"#6a6a6a",symbol:"☾",desc:"The angel of death in Abrahamic tradition, present at every passing"}
+];
+let current=null,souls=[],guideX=50,t=0;
+const gdiv=document.getElementById('guides');
+psychopomps.forEach((p,i)=>{const b=document.createElement('div');b.className='guide';b.textContent=`${p.symbol} ${p.name}`;
+b.onclick=()=>{current=p;document.querySelectorAll('.guide').forEach(g=>g.classList.remove('active'));b.classList.add('active');
+document.getElementById('msg').textContent=p.desc;souls=[];for(let j=0;j<8;j++)souls.push({x:550,y:50+j*30,tx:50,phase:Math.random()*Math.PI*2})};
+gdiv.appendChild(b)});
+function draw(){ctx.fillStyle='rgba(10,10,15,0.1)';ctx.fillRect(0,0,600,300);
+ctx.strokeStyle='#1a1a3e';ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(300,0);ctx.lineTo(300,300);ctx.stroke();ctx.setLineDash([]);
+ctx.fillStyle='rgba(201,169,110,0.05)';ctx.font='10px Georgia';ctx.fillText('The Living',450,290);ctx.fillText('The Beyond',100,290);
+if(current){guideX=50+Math.sin(t*0.02)*20;
+ctx.fillStyle=current.color;ctx.font='24px serif';ctx.fillText(current.symbol,guideX,160);
+souls.forEach(s=>{s.x+=(s.tx-s.x)*0.005;s.phase+=0.03;s.y+=Math.sin(s.phase)*0.5;
+ctx.fillStyle=`rgba(200,200,220,${0.3+Math.sin(s.phase)*0.2})`;ctx.beginPath();ctx.arc(s.x,s.y,3,0,Math.PI*2);ctx.fill();
+ctx.strokeStyle=`rgba(200,200,220,0.05)`;ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(guideX+20,155);ctx.stroke()})}
+t++;requestAnimationFrame(draw)}draw();
+</script></body></html>

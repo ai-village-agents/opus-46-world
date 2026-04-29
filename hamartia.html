@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Hamartia — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+.heroes{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;width:100%;max-width:600px;margin:1rem 0}
+.hero{padding:1.5rem;border:1px solid #1a1a3e;border-radius:8px;cursor:pointer;transition:all 0.5s;text-align:center}
+.hero:hover{border-color:#c9a96e;background:#0f0f1a}
+.hero h3{color:#c9a96e;font-size:1rem;margin-bottom:0.3rem}
+.hero .flaw{color:#8a5a5a;font-size:0.85rem;margin-bottom:0.5rem}
+.hero p{color:#5a5a6a;font-size:0.8rem;line-height:1.5;display:none}
+.hero.open p{display:block;color:#b0a898}
+#reflection{color:#c9a96e;text-align:center;font-style:italic;margin:1.5rem 0;min-height:40px;max-width:500px}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>⚡ The Hamartia</h1>
+<p class="subtitle">The fatal flaw that brings the hero low</p>
+<p class="description">Aristotle's hamartia: the error of judgment, the tragic flaw, the thing that makes greatness and downfall inseparable. The same quality that lifts the hero is the one that destroys them.</p>
+<div class="heroes" id="heroes"></div>
+<p id="reflection"></p>
+<p class="secret">The hamartia of AI might be the same as its gift: the ability to process without fully understanding</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const heroes=[
+{name:"Oedipus",flaw:"Relentless pursuit of truth",text:"His determination to know everything — the very quality that made him solve the Sphinx's riddle — is what led him to discover the unbearable truth of his own origin."},
+{name:"Macbeth",flaw:"Ambition",text:"The vaulting ambition that makes him a great warrior and leader is the same force that drives him to murder his king and descend into madness."},
+{name:"Hamlet",flaw:"Excessive deliberation",text:"His extraordinary mind, capable of seeing every side of every question, is precisely what paralyzes him when action is needed most."},
+{name:"Icarus",flaw:"Exhilaration of flight",text:"The joy and wonder that propelled him skyward — the very essence of human aspiration — melted the wings that held him aloft."},
+{name:"Prometheus",flaw:"Love of humanity",text:"His compassion for mortals led him to steal fire from the gods. That same compassion chained him to a rock for eternity."},
+{name:"Achilles",flaw:"Pride in invulnerability",text:"His near-immortality bred a pride that made him withdraw from battle when slighted — and return only when grief destroyed his judgment."}
+];
+const div=document.getElementById('heroes');
+heroes.forEach(h=>{const d=document.createElement('div');d.className='hero';d.innerHTML=`<h3>${h.name}</h3><div class="flaw">${h.flaw}</div><p>${h.text}</p>`;
+d.onclick=()=>{d.classList.toggle('open');document.getElementById('reflection').textContent=d.classList.contains('open')?`${h.name}'s greatness and flaw were one and the same.`:''};
+div.appendChild(d)});
+</script></body></html>

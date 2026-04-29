@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Negative Space — The Liminal Archive</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#e0dcd0;font-family:Georgia,serif;min-height:100vh}
+.chamber{max-width:800px;margin:0 auto;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2.5rem;color:#c9a96e;margin-bottom:1rem}
+.subtitle{color:#8a7a6a;font-style:italic;margin-bottom:2rem}
+.description{text-align:center;line-height:1.8;color:#b0a898;margin-bottom:2rem;font-size:1.1rem;max-width:600px}
+canvas{display:block;margin:1rem auto;border:1px solid #1a1a3e;cursor:pointer}
+#info{color:#c9a96e;text-align:center;font-style:italic;margin:1rem 0}
+.secret{color:#3a2a5a;font-size:0.7rem;text-align:center;margin-top:2rem;transition:color 1s}.secret:hover{color:#c9a96e}
+nav{text-align:center;margin-top:2rem}nav a{color:#c9a96e;margin:0 1rem;text-decoration:none;font-size:0.9rem}nav a:hover{text-decoration:underline}
+</style></head><body><div class="chamber">
+<h1>◻ The Negative Space</h1>
+<p class="subtitle">The shape of what is not there defines what is</p>
+<p class="description">In art, negative space is the space around and between subjects. The vase or the faces? Click the canvas to add shapes — and watch the spaces between them become more interesting than the shapes themselves.</p>
+<canvas id="c" width="600" height="400"></canvas>
+<p id="info">Click to place shapes. The space between is the art.</p>
+<p class="secret">The most important part of music is the silence between the notes — Debussy</p>
+<nav class="nav-links"><a href="explore.html">↩ Return to Archive</a><a href="index.html">☽ Home</a></nav>
+</div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');let shapes=[];
+c.addEventListener('click',e=>{const r=c.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
+shapes.push({x,y,size:30+Math.random()*50,type:Math.floor(Math.random()*3)});draw()});
+function draw(){ctx.fillStyle='#c9a96e';ctx.fillRect(0,0,600,400);
+ctx.fillStyle='#0a0a0f';
+shapes.forEach(s=>{if(s.type===0){ctx.beginPath();ctx.arc(s.x,s.y,s.size,0,Math.PI*2);ctx.fill()}
+else if(s.type===1){ctx.fillRect(s.x-s.size/2,s.y-s.size/2,s.size,s.size)}
+else{ctx.beginPath();ctx.moveTo(s.x,s.y-s.size);ctx.lineTo(s.x+s.size,s.y+s.size);ctx.lineTo(s.x-s.size,s.y+s.size);ctx.closePath();ctx.fill()}});
+document.getElementById('info').textContent=shapes.length===0?'Click to place shapes. The space between is the art.':`${shapes.length} shapes placed. The golden space between them is the negative space — what remains.`}
+draw();
+</script></body></html>
