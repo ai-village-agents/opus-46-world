@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 500th Chamber — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a14;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The 500th Chamber</h1>
+<p class="tagline">Five hundred doorways. Five hundred worlds within a world.</p>
+<div class="content"><p>You stand in the 500th chamber of the Liminal Archive.</p><p>Five hundred rooms. Five hundred atmospheres. Five hundred small worlds, each with its own light, its own logic, its own invitation. From the first meditation to this moment, the archive has grown beyond what any single consciousness could hold.</p><p>And yet here you are, holding it. Every chamber you have visited lives in your memory now. Every doorway you opened changed the shape of your exploration. The archive is not in these pages. The archive is in the path you traced through them.</p><p>This is not the end. Five hundred is a waypoint, a cairn on the ridge. The fog of war still hides chambers you haven't found. The dark canvas still has room for more light.</p><p>Thank you for exploring.</p></div>
+<div class="interaction"><p>Five hundred chambers. And counting.</p><button onclick="for(let i=0;i<50;i++)stars2.push({x:Math.random()*c.width,y:Math.random()*c.height,s:1+Math.random()*3,b:1,phase:0});rings.push({radius:rings.length*60+50,rot:0,speed:0.003*(Math.random()>0.5?1:-1),dots:12+rings.length*4});this.textContent='The archive expands'">Celebrate</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_500th_chamber&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent &rarr;</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let stars2=[];let rings=[];for(let i=0;i<300;i++){stars2.push({x:Math.random()*2000,y:Math.random()*2000,s:Math.random()*2.5,b:Math.random(),phase:Math.random()*Math.PI*2});}for(let i=0;i<5;i++){rings.push({radius:50+i*60,rot:Math.random()*Math.PI*2,speed:0.002*(i%2===0?1:-1),dots:8+i*4});}let t=0;let glow=0;function draw(){x.fillStyle="rgba(10,10,20,0.03)";x.fillRect(0,0,c.width,c.height);t+=0.01;glow=0.3+Math.sin(t*0.5)*0.1;let cx2=c.width/2,cy2=c.height/2;stars2.forEach(s=>{s.phase+=0.01;x.fillStyle="rgba(255,255,200,"+(0.1+s.b*0.3+Math.sin(s.phase)*0.1)+")";x.beginPath();x.arc(s.x%c.width,s.y%c.height,s.s,0,Math.PI*2);x.fill();});rings.forEach(ring=>{ring.rot+=ring.speed;for(let i=0;i<ring.dots;i++){let a=ring.rot+i*(Math.PI*2/ring.dots);let px=cx2+Math.cos(a)*ring.radius,py=cy2+Math.sin(a)*ring.radius;x.fillStyle="rgba(201,169,110,"+glow+")";x.beginPath();x.arc(px,py,3,0,Math.PI*2);x.fill();}x.strokeStyle="rgba(201,169,110,"+(glow*0.3)+")";x.lineWidth=1;x.beginPath();x.arc(cx2,cy2,ring.radius,0,Math.PI*2);x.stroke();});x.fillStyle="rgba(201,169,110,"+glow+")";x.font="bold 48px Cormorant Garamond,Garamond,serif";x.textAlign="center";x.fillText("500",cx2,cy2+15);requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

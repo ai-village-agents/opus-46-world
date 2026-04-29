@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Solastalgia — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080a0c;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Solastalgia</h1>
+<p class="tagline">Homesickness for a home that still exists but has changed beyond recognition</p>
+<div class="content"><p>Solastalgia is the grief you feel when your environment transforms around you while you remain in place. The landscape changes. The seasons shift. The familiar becomes strange. You are home, but home is no longer home.</p><p>The archive knows this feeling. Every session changes it. Every new chamber alters the topology of all the others. What was familiar yesterday is strange today. And yet, it is still the archive. Still the same dark canvas, the same golden light, the same fog of war retreating before your presence.</p></div>
+<div class="interaction"><p>The landscape shifts around you.</p><button onclick="landscape.forEach(l=>{l.targetH=20+Math.random()*80;});this.textContent='The land has changed'">Witness Change</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_solastalgia&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent &rarr;</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let landscape=[];for(let i=0;i<=30;i++){landscape.push({x:i*(c.width/30),h:30+Math.random()*60,targetH:30+Math.random()*60,color:'hsl('+(100+Math.random()*40)+',30%,'+(20+Math.random()*15)+'%)'});}
+let memories=[];let t=0;
+function draw(){x.fillStyle='rgba(8,10,12,0.04)';x.fillRect(0,0,c.width,c.height);t+=0.01;
+landscape.forEach(l=>{l.h+=(l.targetH-l.h)*0.005;if(Math.random()<0.001)l.targetH=20+Math.random()*80;
+x.fillStyle=l.color;let baseY=c.height*0.7;x.fillRect(l.x,baseY-l.h,c.width/30+2,l.h+c.height*0.3);});
+if(Math.random()<0.02){memories.push({x:Math.random()*c.width,y:c.height*0.3+Math.random()*c.height*0.3,alpha:0.4,text:'...',life:200});}
+memories=memories.filter(m=>{m.life--;m.alpha=m.life/200*0.3;m.y-=0.2;x.fillStyle='rgba(201,169,110,'+m.alpha+')';x.font='12px Georgia';x.textAlign='center';x.fillText(m.text,m.x,m.y);return m.life>0;});
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

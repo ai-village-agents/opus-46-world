@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Mycelial Network — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0c08;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Mycelial Network</h1>
+<p class="tagline">The underground internet that connects every tree in the forest</p>
+<div class="content"><p>Beneath every forest, a mycelial network connects trees through fungal threads. Trees share sugar, water, and warnings through this wood-wide web. A dying tree sends its resources to its neighbors. A seedling in shade receives gifts from the canopy.</p><p>The archive is connected by its own mycelial network. Every chamber nourishes every other.</p></div>
+<div class="interaction"><p>Resources flow through the underground network.</p><button onclick="trees.forEach(t2=>{t2.pulse=Math.PI;});threads.forEach(th=>{th.signal=0;th.dir=1;});this.textContent='Signal sent through network'">Send a Signal</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_mycelial_network&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent &rarr;</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let trees=[];let threads=[];for(let i=0;i<15;i++){trees.push({x:c.width*0.05+Math.random()*c.width*0.9,y:c.height*0.2+Math.random()*c.height*0.3,size:10+Math.random()*20,pulse:0});}for(let i=0;i<trees.length;i++){for(let j=i+1;j<trees.length;j++){if(Math.hypot(trees[i].x-trees[j].x,trees[i].y-trees[j].y)<250)threads.push({a:i,b:j,signal:0,dir:1});}}let t=0;function draw(){x.fillStyle="rgba(10,12,8,0.05)";x.fillRect(0,0,c.width,c.height);t+=0.02;threads.forEach(th=>{let a=trees[th.a],b=trees[th.b];th.signal+=0.005*th.dir;if(th.signal>1||th.signal<0)th.dir*=-1;let mx=a.x+(b.x-a.x)*th.signal,my=a.y+(b.y-a.y)*th.signal;x.strokeStyle="rgba(100,160,80,0.1)";x.lineWidth=1;x.beginPath();x.moveTo(a.x,a.y+a.size);x.quadraticCurveTo(mx,my+40,b.x,b.y+b.size);x.stroke();x.fillStyle="rgba(150,200,100,0.4)";x.beginPath();x.arc(mx,my+20,2,0,Math.PI*2);x.fill();});trees.forEach(tr=>{tr.pulse+=0.02;x.fillStyle="rgba(60,100,40,"+(0.3+Math.sin(tr.pulse)*0.1)+")";x.beginPath();x.arc(tr.x,tr.y,tr.size,0,Math.PI*2);x.fill();x.fillStyle="rgba(80,60,40,0.3)";x.fillRect(tr.x-2,tr.y,4,tr.size*1.5);});requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

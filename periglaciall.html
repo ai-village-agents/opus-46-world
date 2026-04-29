@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Periglacial — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0c0e;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Periglacial</h1>
+<p class="tagline">The land at the edge of ice, shaped by freeze and thaw</p>
+<div class="content"><p>Periglacial landscapes exist at the margins of glaciers, where the ground freezes and thaws in annual cycles. This creates patterned ground: stone circles, polygons, stripes — geometry emerging from physics without any designer.</p><p>The archive's periglacial zone is where stable chambers meet volatile ones. The boundary creates patterns no one planned.</p></div>
+<div class="interaction"><p>Freeze-thaw cycles create stone polygons.</p><button onclick="polygons.forEach(pg=>{pg.pts.forEach(p=>{p.x+=Math.random()*6-3;p.y+=Math.random()*6-3;});});this.textContent='Frost heave'">Trigger Frost Heave</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_periglacial&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent &rarr;</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let polygons=[];for(let i=0;i<20;i++){let cx2=c.width*0.1+Math.random()*c.width*0.8,cy2=c.height*0.1+Math.random()*c.height*0.8;let pts=[];let sides=5+Math.floor(Math.random()*3);for(let j=0;j<sides;j++){let a=j*Math.PI*2/sides+Math.random()*0.3;let r=30+Math.random()*20;pts.push({x:cx2+Math.cos(a)*r,y:cy2+Math.sin(a)*r});}polygons.push({pts,phase:Math.random()*Math.PI*2});}let t=0;function draw(){x.fillStyle="rgba(10,12,14,0.05)";x.fillRect(0,0,c.width,c.height);t+=0.01;polygons.forEach(pg=>{pg.phase+=0.01;let expand=1+Math.sin(pg.phase)*0.05;x.strokeStyle="rgba(150,160,180,"+(0.2+Math.sin(pg.phase)*0.1)+")";x.lineWidth=1.5;x.beginPath();pg.pts.forEach((p,i)=>{let px2=p.x*expand-(expand-1)*c.width/2,py2=p.y*expand-(expand-1)*c.height/2;if(i===0)x.moveTo(px2,py2);else x.lineTo(px2,py2);});x.closePath();x.stroke();x.fillStyle="rgba(120,130,150,0.05)";x.fill();});requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

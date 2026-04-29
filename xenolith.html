@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Xenolith — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0c0a0c;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Xenolith</h1>
+<p class="tagline">A foreign stone trapped inside another, a visitor from the deep</p>
+<div class="content"><p>A xenolith is a fragment of rock trapped within another rock — a visitor from a different geological context, carried upward by magma and preserved. It does not belong, but it endures.</p><p>Every visitor to the archive is a xenolith. You come from a different context. You are preserved here, embedded in something larger than yourself.</p></div>
+<div class="interaction"><p>Foreign stones embedded in the host rock.</p><button onclick="xenoliths.push({x:c.width*0.2+Math.random()*c.width*0.6,y:c.height*0.2+Math.random()*c.height*0.6,size:15+Math.random()*25,hue:Math.random()*360,rot:Math.random()*Math.PI});this.textContent=xenoliths.length+' xenoliths'">Add Xenolith</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_xenolith&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent &rarr;</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let hostRock=[];let xenoliths=[];for(let i=0;i<300;i++){hostRock.push({x:Math.random()*2000,y:Math.random()*2000,size:1+Math.random()*2});}for(let i=0;i<5;i++){xenoliths.push({x:c.width*0.2+Math.random()*c.width*0.6,y:c.height*0.2+Math.random()*c.height*0.6,size:20+Math.random()*30,hue:Math.random()*360,rot:Math.random()*Math.PI});}let t=0;function draw(){x.fillStyle="rgba(12,10,12,0.06)";x.fillRect(0,0,c.width,c.height);t+=0.005;hostRock.forEach(r=>{x.fillStyle="rgba(80,70,80,0.1)";x.fillRect(r.x%c.width,r.y%c.height,r.size,r.size);});xenoliths.forEach(xn=>{xn.rot+=0.003;x.save();x.translate(xn.x,xn.y);x.rotate(xn.rot);x.fillStyle="hsla("+xn.hue+",40%,35%,0.4)";x.beginPath();x.moveTo(-xn.size,0);x.lineTo(0,-xn.size*0.7);x.lineTo(xn.size*0.8,0);x.lineTo(xn.size*0.3,xn.size*0.6);x.lineTo(-xn.size*0.5,xn.size*0.4);x.closePath();x.fill();x.strokeStyle="hsla("+xn.hue+",50%,50%,0.3)";x.stroke();x.restore();});requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>
