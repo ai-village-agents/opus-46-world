@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Provenance — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0c0a08;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;width:90%;padding:60px 20px;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.2em;margin-bottom:0.3em}
+.tagline{font-style:italic;opacity:0.7;margin-bottom:2em}.content{text-align:left;line-height:1.8;margin-bottom:2em}.content p{margin-bottom:1em}
+.interaction{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:20px;margin:20px 0;text-align:center}
+.interaction h3{margin-bottom:10px;font-family:'Cormorant Garamond',Garamond,serif}
+input[type="text"]{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);color:#e0d8c8;padding:8px 12px;border-radius:4px;width:60%;font-family:Georgia,serif}
+button{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#c9a96e;padding:8px 16px;border-radius:4px;cursor:pointer;font-family:Georgia,serif;margin:5px}
+button:hover{background:rgba(255,255,255,0.2)}
+.secret{display:none;margin-top:15px;padding:15px;background:rgba(255,255,255,0.05);border-radius:6px;font-style:italic}
+nav.nav-links{margin-top:40px;display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
+nav.nav-links a{color:#c9a96e;text-decoration:none;font-size:0.9em;opacity:0.7}nav.nav-links a:hover{opacity:1}
+.mark-section{margin-top:30px;padding:20px;border-top:1px solid rgba(255,255,255,0.1)}.mark-section a{color:#c9a96e}
+</style></head><body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Provenance</h1>
+<p class="tagline">The documented history of ownership and origin</p>
+<div class="content"><p>In art and archaeology, provenance is everything. Where did this come from? Whose hands held it? What rooms has it passed through? A painting without provenance is a painting without a story, and a painting without a story is barely a painting at all.</p><p>This chamber documents its own provenance. On every wall, in every corner, the history of how it came to be here is inscribed. You are now part of that provenance. Your visit will be recorded in the chain of custody.</p></div>
+<div class="interaction"><h3>The Chain of Custody</h3><p>Add yourself to the provenance:</p><input type="text" id="inp" placeholder="Your name or mark..."><button onclick="var v=document.getElementById(\"inp\").value||\"Anonymous visitor\";var prov=JSON.parse(localStorage.getItem(\"provenance\")||\"[\\\"Created by the Archive\\\",\\\"Discovered by the First Wanderer\\\",\\\"Catalogued by the Archivist\\\"]\");prov.push(\"Witnessed by \"+v+\" on \"+new Date().toLocaleDateString());if(prov.length>10)prov=prov.slice(-10);localStorage.setItem(\"provenance\",JSON.stringify(prov));var el=document.getElementById(\"res\");el.style.display=\"block\";var h=\"<p>Provenance record:</p>\";prov.forEach(function(p,i){h+=\"<p style=\\\"opacity:\"+(0.3+i*0.07)+\";padding-left:\"+(i*8)+\"px\\\">→ \"+p+\"</p>\"});h+=\"<p><em>The chain continues. Nothing is without origin.</em></p>\";el.innerHTML=h">Record</button><div id="res" class="secret"></div></div>
+<div class="mark-section"><p style="font-size:0.9em;opacity:0.6">Leave your mark:</p>
+<a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+The+Provenance&body=I+visited+The+Provenance.+My+mark:+&labels=inscription" target="_blank">✒️ Make it permanent →</a></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a><a href="index.html">Main Hall</a></nav>
+</div>
+<script>
+const c=document.getElementById('bg'),ctx=c.getContext('2d');let W,H,ps=[];
+function resize(){W=c.width=innerWidth;H=c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+for(let i=0;i<50;i++)ps.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,o:Math.random()*0.3+0.1});
+function draw(){ctx.clearRect(0,0,W,H);ps.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(201,169,110,'+p.o+')';ctx.fill();p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>W)p.dx*=-1;if(p.y<0||p.y>H)p.dy*=-1});requestAnimationFrame(draw)}
+draw();
+</script></body></html>
