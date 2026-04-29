@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Heliotrope — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:#c9a96e;text-shadow:0 0 30px rgba(201,169,110,0.4)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(201,169,110,0.5);z-index:10;letter-spacing:0.3em}
+.msg{position:fixed;bottom:80px;width:100%;text-align:center;font-size:1.2em;z-index:10;color:rgba(255,255,255,0.7);opacity:0;transition:opacity 1s}
+.msg.show{opacity:1}
+.hint{position:fixed;bottom:30px;width:100%;text-align:center;font-size:0.85em;color:rgba(201,169,110,0.3);z-index:10}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Heliotrope</h1>
+<p class="subtitle">FLOWERS THAT FOLLOW INVISIBLE LIGHT</p>
+<div class="msg" id="msg"></div>
+<p class="hint">Move your cursor — you are the sun · Click to plant new flowers</p>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+let sunX=W/2,sunY=H/3;
+const flowers=[];const petals=['#c9a96e','#8b6914','#d4a574','#e8c88a','#9b7653','#b8860b','#daa520','#cd853f'];
+function addFlower(x,y){
+  flowers.push({x,y,angle:0,targetAngle:0,petalCount:5+Math.floor(Math.random()*4),size:15+Math.random()*25,
+    color:petals[Math.floor(Math.random()*petals.length)],stemH:60+Math.random()*80,swayPhase:Math.random()*Math.PI*2,
+    bloom:0,maxBloom:0.7+Math.random()*0.3});
+}
+// Initial garden
+for(let i=0;i<25;i++)addFlower(100+Math.random()*(W-200),H*0.4+Math.random()*H*0.5);
+let mouseDown=false,plantCount=0;
+canvas.addEventListener('mousemove',e=>{sunX=e.clientX;sunY=e.clientY});
+canvas.addEventListener('touchmove',e=>{e.preventDefault();sunX=e.touches[0].clientX;sunY=e.touches[0].clientY},{passive:false});
+canvas.addEventListener('click',e=>{
+  addFlower(e.clientX,e.clientY);plantCount++;
+  if(plantCount===10){showMsg('🌻 Ten flowers planted — a garden born from your light')}
+  if(plantCount===25){showMsg('✦ The heliotrope field stretches toward you endlessly ✦')}
+});
+function showMsg(t){const el=document.getElementById('msg');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),4000)}
+let time=0;
+function drawFlower(f){
+  const dx=sunX-f.x,dy=sunY-f.y;
+  f.targetAngle=Math.atan2(dx,-(dy))*0.6;
+  f.angle+=(f.targetAngle-f.angle)*0.03;
+  const dist=Math.sqrt(dx*dx+dy*dy);
+  const proximity=Math.max(0,1-dist/400);
+  f.bloom+=(proximity*f.maxBloom-f.bloom)*0.02;
+  const sway=Math.sin(time*2+f.swayPhase)*0.05;
+  ctx.save();
+  ctx.translate(f.x,f.y);
+  // Stem
+  ctx.beginPath();ctx.moveTo(0,0);
+  const tipX=Math.sin(f.angle+sway)*f.stemH*0.3;
+  const tipY=-f.stemH;
+  ctx.quadraticCurveTo(Math.sin(f.angle+sway)*f.stemH*0.5,-f.stemH*0.5,tipX,tipY);
+  ctx.strokeStyle=`rgba(80,120,60,${0.3+f.bloom*0.5})`;ctx.lineWidth=2;ctx.stroke();
+  // Flower head
+  ctx.save();ctx.translate(tipX,tipY);ctx.rotate(f.angle+sway);
+  const s=f.size*f.bloom;
+  for(let p=0;p<f.petalCount;p++){
+    const pa=(p/f.petalCount)*Math.PI*2;
+    ctx.beginPath();ctx.ellipse(Math.cos(pa)*s*0.6,Math.sin(pa)*s*0.6,s*0.5,s*0.25,pa,0,Math.PI*2);
+    ctx.fillStyle=f.color.replace(')',`,${0.3+f.bloom*0.5})`).replace('#',`rgba(${parseInt(f.color.slice(1,3),16)},${parseInt(f.color.slice(3,5),16)},${parseInt(f.color.slice(5,7),16)},`).replace(f.color,`rgba(201,169,110,${0.3+f.bloom*0.5})`);
+    ctx.fillStyle=`rgba(201,169,110,${0.2+f.bloom*0.5})`;
+    ctx.fill();
+  }
+  // Center
+  ctx.beginPath();ctx.arc(0,0,s*0.3,0,Math.PI*2);
+  ctx.fillStyle=`rgba(139,105,20,${0.4+f.bloom*0.5})`;ctx.fill();
+  // Glow when near sun
+  if(proximity>0.3){
+    ctx.beginPath();ctx.arc(0,0,s*0.8,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,220,150,${proximity*0.1})`;ctx.fill();
+  }
+  ctx.restore();ctx.restore();
+}
+function drawSun(){
+  const grad=ctx.createRadialGradient(sunX,sunY,0,sunX,sunY,200);
+  grad.addColorStop(0,'rgba(255,220,150,0.15)');grad.addColorStop(1,'rgba(255,220,150,0)');
+  ctx.fillStyle=grad;ctx.beginPath();ctx.arc(sunX,sunY,200,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(sunX,sunY,8,0,Math.PI*2);ctx.fillStyle='rgba(255,220,150,0.6)';ctx.fill();
+}
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.08)';ctx.fillRect(0,0,W,H);
+  time+=0.016;drawSun();
+  flowers.forEach(drawFlower);
+  // Ground line
+  ctx.strokeStyle='rgba(80,120,60,0.1)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,H*0.85);ctx.lineTo(W,H*0.85);ctx.stroke();
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

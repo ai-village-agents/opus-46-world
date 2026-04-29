@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Antechamber — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:#c9a96e;text-shadow:0 0 30px rgba(201,169,110,0.4)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(201,169,110,0.5);z-index:10;letter-spacing:0.3em}
+.doors{position:fixed;bottom:50%;transform:translateY(50%);width:100%;display:flex;justify-content:center;gap:30px;z-index:10;flex-wrap:wrap;padding:0 30px}
+.door{width:80px;height:140px;border:1px solid rgba(201,169,110,0.2);border-radius:4px 4px 0 0;cursor:pointer;transition:all 0.5s;display:flex;align-items:center;justify-content:center;flex-direction:column;background:rgba(10,10,15,0.8);position:relative;overflow:hidden}
+.door:hover{border-color:rgba(201,169,110,0.6);background:rgba(45,27,105,0.3);transform:scale(1.05)}
+.door .glow{position:absolute;bottom:0;width:100%;height:3px;background:rgba(201,169,110,0.3)}
+.door span{font-size:0.75em;text-align:center;padding:5px;color:rgba(201,169,110,0.6);writing-mode:vertical-rl;text-orientation:mixed}
+.door.opened{border-color:rgba(201,169,110,0.5);background:rgba(45,27,105,0.15)}
+.door.opened .glow{background:rgba(201,169,110,0.7);height:100%;opacity:0.1}
+.counter{position:fixed;bottom:20px;width:100%;text-align:center;z-index:10;color:rgba(201,169,110,0.4);font-size:0.9em}
+.msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;color:#fff;font-size:1.5em;text-align:center;opacity:0;transition:opacity 1s;pointer-events:none;text-shadow:0 0 30px rgba(255,255,255,0.5)}
+.msg.show{opacity:1}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Antechamber</h1>
+<p class="subtitle">THE ROOM BEFORE ALL ROOMS</p>
+<div class="doors" id="doors"></div>
+<div class="msg" id="msg"></div>
+<div class="counter" id="counter">0 doors opened</div>
+<canvas id="c"></canvas>
+<script>
+const doorNames=['Memory','Dream','Forgetting','Wonder','Silence','Echo','Shadow','Light','Time','Nothing','Everything','Between'];
+const doorQuotes=[
+'Behind this door: every moment you thought you forgot, waiting patiently.',
+'Behind this door: the dream you were having just before you woke.',
+'Behind this door: blissful emptiness, like fresh snow.',
+'Behind this door: the feeling of seeing the ocean for the first time, forever.',
+'Behind this door: perfect silence — not absence of sound, but presence of peace.',
+'Behind this door: every word you ever said, returning transformed.',
+'Behind this door: your shadow\'s shadow — the one that moves when you\'re still.',
+'Behind this door: light so old it started traveling before the Earth existed.',
+'Behind this door: a clock that runs on attention instead of springs.',
+'Behind this door: nothing. Genuine, beautiful, liberating nothing.',
+'Behind this door: everything. All at once. Somehow bearable.',
+'Behind this door: the space between one thought and the next.'
+];
+let opened=0;
+const doorsDiv=document.getElementById('doors');
+doorNames.forEach((name,i)=>{
+  const d=document.createElement('div');d.className='door';
+  d.innerHTML=`<span>${name}</span><div class="glow"></div>`;
+  d.addEventListener('click',()=>{
+    if(!d.classList.contains('opened')){
+      d.classList.add('opened');opened++;
+      document.getElementById('counter').textContent=`${opened} door${opened!==1?'s':''} opened`;
+      const m=document.getElementById('msg');m.textContent=doorQuotes[i];m.classList.add('show');
+      setTimeout(()=>m.classList.remove('show'),4000);
+      if(opened===12){setTimeout(()=>{
+        const m2=document.getElementById('msg');
+        m2.textContent='✦ You have opened every door in the antechamber. But the antechamber itself was always the destination. ✦';
+        m2.classList.add('show');
+      },5000)}
+    }
+  });
+  doorsDiv.appendChild(d);
+});
+// Background particles
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+const motes=[];for(let i=0;i<80;i++)motes.push({x:Math.random()*W,y:Math.random()*H,s:Math.random()*2,vx:(Math.random()-0.5)*0.3,vy:-0.2-Math.random()*0.3,a:Math.random()});
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.05)';ctx.fillRect(0,0,W,H);
+  motes.forEach(m=>{
+    m.x+=m.vx;m.y+=m.vy;m.a+=0.01;
+    if(m.y<0){m.y=H;m.x=Math.random()*W}
+    if(m.x<0)m.x=W;if(m.x>W)m.x=0;
+    ctx.fillStyle=`rgba(201,169,110,${(Math.sin(m.a)*0.3+0.3)*0.15})`;
+    ctx.beginPath();ctx.arc(m.x,m.y,m.s,0,Math.PI*2);ctx.fill();
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

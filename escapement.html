@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Escapement — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+h1{position:fixed;top:30px;width:100%;text-align:center;font-size:2.2em;letter-spacing:0.15em;z-index:10;color:#c9a96e;text-shadow:0 0 30px rgba(201,169,110,0.4)}
+.subtitle{position:fixed;top:85px;width:100%;text-align:center;font-size:1em;color:rgba(201,169,110,0.5);z-index:10;letter-spacing:0.3em}
+.tick-text{position:fixed;bottom:80px;width:100%;text-align:center;font-size:1.4em;z-index:10;color:rgba(255,255,255,0.7);transition:opacity 0.3s;opacity:0}
+.tick-text.visible{opacity:1}
+.hint{position:fixed;bottom:30px;width:100%;text-align:center;font-size:0.85em;color:rgba(201,169,110,0.3);z-index:10}
+nav{position:fixed;top:15px;left:20px;z-index:20}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<h1>The Escapement</h1>
+<p class="subtitle">THE MECHANISM THAT REGULATES TIME</p>
+<div class="tick-text" id="tickText"></div>
+<p class="hint">Click to wind the mechanism · Watch how time escapes</p>
+<canvas id="c"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H,cx,cy;
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;cx=W/2;cy=H/2}
+resize();addEventListener('resize',resize);
+
+const thoughts=['tick','tock','time escapes','between the teeth','regulated chaos','one moment at a time',
+'the anchor holds','the wheel turns','precision of loss','each second, released','wound tight','unwinding slowly',
+'the spring remembers','gears mesh like memories','pendulum of doubt','balance wheel spinning'];
+let tickIdx=0,tickTimer=0;
+
+// Escapement mechanism
+let wheelAngle=0,anchorAngle=0,pendulumAngle=0,pendulumVel=0;
+let wound=1,totalClicks=0;
+const gears=[];for(let i=0;i<5;i++){
+  gears.push({x:0,y:0,r:40+i*25,teeth:8+i*4,angle:0,speed:(i%2?-1:1)*(0.5-i*0.08),color:`rgba(201,169,110,${0.15+i*0.05})`});
+}
+const sparks=[];
+
+canvas.addEventListener('click',e=>{
+  wound=Math.min(wound+0.3,2);totalClicks++;
+  for(let i=0;i<12;i++)sparks.push({x:e.clientX,y:e.clientY,vx:(Math.random()-0.5)*6,vy:(Math.random()-0.5)*6,life:1});
+  if(totalClicks===8){showThought('✦ The escapement knows: time cannot be held, only briefly touched ✦')}
+});
+
+function showThought(t){
+  const el=document.getElementById('tickText');el.textContent=t;el.classList.add('visible');
+  setTimeout(()=>el.classList.remove('visible'),3000);
+}
+
+function drawGear(x,y,r,teeth,angle,color){
+  ctx.save();ctx.translate(x,y);ctx.rotate(angle);
+  ctx.beginPath();
+  const toothH=r*0.15;
+  for(let i=0;i<teeth;i++){
+    const a=(i/teeth)*Math.PI*2;const a2=((i+0.5)/teeth)*Math.PI*2;
+    ctx.lineTo(Math.cos(a)*(r+toothH),Math.sin(a)*(r+toothH));
+    ctx.lineTo(Math.cos((a+a2)/2)*r,Math.sin((a+a2)/2)*r);
+  }
+  ctx.closePath();ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.stroke();
+  ctx.beginPath();ctx.arc(0,0,4,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
+  ctx.restore();
+}
+
+function drawPendulum(){
+  const len=200;
+  const px=cx+Math.sin(pendulumAngle)*len;
+  const py=cy+100+Math.cos(pendulumAngle)*len;
+  ctx.strokeStyle='rgba(201,169,110,0.5)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(cx,cy+100);ctx.lineTo(px,py);ctx.stroke();
+  ctx.beginPath();ctx.arc(px,py,15,0,Math.PI*2);
+  ctx.fillStyle='rgba(201,169,110,0.3)';ctx.fill();
+  ctx.strokeStyle='rgba(201,169,110,0.6)';ctx.stroke();
+}
+
+function drawEscapeWheel(){
+  const r=80,teeth=15;
+  ctx.save();ctx.translate(cx,cy-60);ctx.rotate(wheelAngle);
+  for(let i=0;i<teeth;i++){
+    const a=(i/teeth)*Math.PI*2;
+    ctx.beginPath();ctx.moveTo(Math.cos(a)*r*0.6,Math.sin(a)*r*0.6);
+    ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);
+    ctx.strokeStyle='rgba(201,169,110,0.5)';ctx.lineWidth=2;ctx.stroke();
+  }
+  ctx.beginPath();ctx.arc(0,0,r*0.6,0,Math.PI*2);ctx.strokeStyle='rgba(201,169,110,0.2)';ctx.stroke();
+  ctx.restore();
+}
+
+let time=0;
+function animate(){
+  ctx.fillStyle='rgba(10,10,15,0.1)';ctx.fillRect(0,0,W,H);
+  time+=0.016;wound=Math.max(0.1,wound-0.001);
+  
+  // Physics
+  pendulumVel+=-0.001*Math.sin(pendulumAngle)*wound;
+  pendulumVel*=0.999;pendulumAngle+=pendulumVel*wound;
+  wheelAngle+=0.005*wound;
+  
+  tickTimer+=0.016*wound;
+  if(tickTimer>2){tickTimer=0;showThought(thoughts[tickIdx%thoughts.length]);tickIdx++}
+  
+  // Draw gears
+  gears.forEach((g,i)=>{
+    g.angle+=g.speed*0.01*wound;
+    const gx=cx+(i-2)*120;const gy=cy-60+Math.sin(i)*40;
+    drawGear(gx,gy,g.r,g.teeth,g.angle,g.color);
+  });
+  
+  drawEscapeWheel();drawPendulum();
+  
+  // Sparks
+  sparks.forEach((s,i)=>{s.x+=s.vx;s.y+=s.vy;s.life-=0.02;s.vy+=0.05;
+    if(s.life>0){ctx.fillStyle=`rgba(201,169,110,${s.life})`;ctx.beginPath();ctx.arc(s.x,s.y,2*s.life,0,Math.PI*2);ctx.fill()}
+  });
+  for(let i=sparks.length-1;i>=0;i--)if(sparks[i].life<=0)sparks.splice(i,1);
+  
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

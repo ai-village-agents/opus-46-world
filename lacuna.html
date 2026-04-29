@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lacuna — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.content{position:relative;z-index:10;max-width:800px;margin:0 auto;padding:60px 30px}
+h1{text-align:center;font-size:2.4em;letter-spacing:0.15em;margin-bottom:10px;text-shadow:0 0 30px rgba(201,169,110,0.3)}
+.subtitle{text-align:center;font-size:1em;color:rgba(201,169,110,0.5);letter-spacing:0.3em;margin-bottom:50px}
+.lacuna-item{margin:30px 0;padding:25px;border:1px solid rgba(201,169,110,0.1);border-radius:8px;cursor:pointer;transition:all 0.5s;position:relative;overflow:hidden}
+.lacuna-item:hover{border-color:rgba(201,169,110,0.3);background:rgba(201,169,110,0.03)}
+.lacuna-item h3{font-size:1.3em;margin-bottom:8px;color:#c9a96e}
+.lacuna-item .gap{color:rgba(255,255,255,0.15);font-style:italic;transition:color 1s}
+.lacuna-item.revealed .gap{color:rgba(255,255,255,0.7)}
+.lacuna-item .absence{height:40px;border:1px dashed rgba(201,169,110,0.15);border-radius:4px;display:flex;align-items:center;justify-content:center;margin:10px 0;color:rgba(201,169,110,0.2);font-size:0.9em;transition:all 1s}
+.lacuna-item.revealed .absence{border-color:rgba(201,169,110,0.4);color:rgba(201,169,110,0.7)}
+.counter{position:fixed;bottom:30px;right:30px;z-index:20;color:rgba(201,169,110,0.4);font-size:0.9em}
+nav{position:fixed;top:15px;left:20px;z-index:20;display:flex;gap:15px}
+nav a{color:rgba(201,169,110,0.5);text-decoration:none;font-size:0.9em}
+nav a:hover{color:#c9a96e}
+.hint{text-align:center;color:rgba(201,169,110,0.25);font-size:0.85em;margin-top:40px}
+.secret{display:none;text-align:center;padding:30px;color:rgba(255,255,255,0.8);font-size:1.2em;margin-top:30px;border:1px solid rgba(201,169,110,0.3);border-radius:8px;background:rgba(45,27,105,0.2)}
+</style>
+</head>
+<body>
+<nav class="nav-links"><a href="explore.html">↩ Archive</a></nav>
+<canvas id="c"></canvas>
+<div class="content">
+<h1>The Lacuna</h1>
+<p class="subtitle">A MUSEUM OF BEAUTIFUL ABSENCES</p>
+<div id="items"></div>
+<p class="hint">Click each gap to discover what was lost</p>
+<div class="secret" id="secret"></div>
+</div>
+<div class="counter" id="counter">0 / 10 absences found</div>
+<script>
+const lacunae=[
+{title:'The Eleventh Commandment',gap:'There was an eleventh, they say — one about ██████████. Moses looked at it, looked at the people, and quietly set it aside.',absence:'[commandment lost to mercy]'},
+{title:'The Color Between',gap:'Cultures that see ██████ report a color between blue and green that English speakers literally cannot perceive.',absence:'[a color with no name in your language]'},
+{title:'The Burned Library',gap:'When Alexandria burned, we lost ██████████ — including, possibly, the proof that the ancients knew.',absence:'[400,000 scrolls of accumulated wonder]'},
+{title:'The Unsent Letter',gap:'Darwin wrote a letter to ██████ that he never sent. His wife found it after his death and burned it, as instructed.',absence:'[words meant only for the fire]'},
+{title:'The Missing Day',gap:'In 1582, October ██-██ simply did not exist. People went to sleep on the 4th and woke on the 15th.',absence:'[ten days that never happened]'},
+{title:'The Ninth Symphony\'s Successor',gap:'Beethoven\'s Tenth Symphony exists only as ██████████ — sketches, fragments, intentions dissolved by death.',absence:'[music that exists only as potential]'},
+{title:'The Roanoke Message',gap:'115 colonists vanished. The only trace: "██████████" carved into a post. We have never stopped wondering.',absence:'[CROATOAN — a word that became a question]'},
+{title:'The Dream You Forgot',gap:'You had a dream last night. It was ██████████. By the time you read this, it\'s already gone.',absence:'[your most recent forgotten dream]'},
+{title:'The Photograph Not Taken',gap:'The most important moments of your life have no ██████████. They were too real for documentation.',absence:'[every moment you were too present to record]'},
+{title:'The Space Between Words',gap:'In ancient texts, there were no spaces between words. Someone invented ██████████ — the meaningful nothing.',absence:'[the silence that makes language possible]'}
+];
+let revealed=0;
+const itemsDiv=document.getElementById('items');
+lacunae.forEach((l,i)=>{
+const div=document.createElement('div');div.className='lacuna-item';
+div.innerHTML=`<h3>${l.title}</h3><p class="gap">${l.gap}</p><div class="absence">${l.absence}</div>`;
+div.addEventListener('click',()=>{
+  if(!div.classList.contains('revealed')){
+    div.classList.add('revealed');revealed++;
+    document.getElementById('counter').textContent=`${revealed} / 10 absences found`;
+    if(revealed===10){
+      const s=document.getElementById('secret');
+      s.style.display='block';
+      s.textContent='✦ The most beautiful things are the spaces where something used to be — or where something has not yet arrived. You have mapped every lacuna. The archive remembers what is missing. ✦';
+    }
+  }
+});
+itemsDiv.appendChild(div);
+});
+// Background canvas - floating gaps
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+const holes=[];for(let i=0;i<15;i++)holes.push({x:Math.random()*2000,y:Math.random()*2000,r:30+Math.random()*60,phase:Math.random()*Math.PI*2});
+function animate(){
+ctx.fillStyle='rgba(10,10,15,0.05)';ctx.fillRect(0,0,W,H);
+holes.forEach(h=>{
+  h.phase+=0.01;const pulse=Math.sin(h.phase)*0.3+0.7;
+  const x=h.x%W,y=h.y%H;
+  ctx.beginPath();ctx.arc(x,y,h.r*pulse,0,Math.PI*2);
+  ctx.strokeStyle=`rgba(201,169,110,${0.05*pulse})`;ctx.lineWidth=1;ctx.setLineDash([4,8]);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=`rgba(10,10,15,${0.3*pulse})`;ctx.fill();
+});
+requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
