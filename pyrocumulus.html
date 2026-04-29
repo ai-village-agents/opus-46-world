@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Pyrocumulus — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0e0808;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Pyrocumulus</h1>
+<p class="tagline">A thundercloud born from fire</p>
+<div class="content"><p>When a wildfire burns hot enough, it creates its own weather. Superheated air rises so fast it punches through the troposphere, forming a towering pyrocumulus cloud. The fire makes rain. The rain fights the fire. Creation and destruction locked in a feedback loop.</p></div>
+<div class="interaction"><p>Fire makes weather. Weather fights fire.</p><button onclick="for(let i=0;i<40;i++)embers.push({x:c.width*0.3+Math.random()*c.width*0.4,y:c.height*0.8,vx:Math.random()*4-2,vy:-3-Math.random()*6,life:150,size:2+Math.random()*4});this.textContent='Firestorm!'">Intensify the Fire</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_pyrocumulus&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let embers=[];let cloudP=[];let t=0;
+function draw(){x.fillStyle='rgba(14,8,8,0.05)';x.fillRect(0,0,c.width,c.height);t+=0.02;
+if(Math.random()<0.3)embers.push({x:c.width*0.3+Math.random()*c.width*0.4,y:c.height*0.8,vx:Math.random()*2-1,vy:-2-Math.random()*4,life:100+Math.random()*100,size:1+Math.random()*3});
+embers=embers.filter(e=>{e.x+=e.vx+Math.sin(t+e.x*0.01)*0.5;e.y+=e.vy;e.vy*=0.99;e.life--;
+let ratio=e.life/200;let r=255,g=Math.floor(100+ratio*100),b=Math.floor(ratio*50);
+x.fillStyle='rgba('+r+','+g+','+b+','+(ratio*0.6)+')';x.beginPath();x.arc(e.x,e.y,e.size*ratio,0,Math.PI*2);x.fill();
+if(e.y<c.height*0.35&&Math.random()<0.05)cloudP.push({x:e.x+Math.random()*40-20,y:e.y,size:5+Math.random()*15,life:150,alpha:0.2});
+return e.life>0;});
+cloudP=cloudP.filter(cp=>{cp.size+=0.05;cp.y-=0.2;cp.x+=Math.sin(t+cp.x*0.01)*0.3;cp.life--;
+x.fillStyle='rgba(180,180,180,'+(cp.life/150*cp.alpha)+')';x.beginPath();x.arc(cp.x,cp.y,cp.size,0,Math.PI*2);x.fill();return cp.life>0;});
+x.fillStyle='rgba(255,100,30,0.1)';x.fillRect(c.width*0.25,c.height*0.75,c.width*0.5,c.height*0.25);
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>

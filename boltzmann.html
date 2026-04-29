@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Boltzmann Brain — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#06040a;color:#e0dbd2;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;padding:2rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4rem;margin-bottom:0.5rem;color:#c9a96e}
+.tagline{font-style:italic;color:#998b70;margin-bottom:1.5rem;font-size:1.1rem}
+.content{line-height:1.8;margin-bottom:2rem;font-size:1.05rem}
+.interaction{margin:1.5rem 0;padding:1rem;border:1px solid #333;border-radius:8px;background:rgba(0,0,0,0.3)}
+.back{position:fixed;top:1rem;left:1rem;z-index:2}
+.back a{color:#c9a96e;text-decoration:none;font-size:0.9rem;opacity:0.7}
+.back a:hover{opacity:1}
+button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:8px 16px;cursor:pointer;font-family:Georgia,serif;border-radius:4px;margin:4px}
+button:hover{background:#c9a96e;color:#0a0a14}
+.mark-link{display:block;margin-top:1.5rem}
+.mark-link a{color:#998b70;font-size:0.85rem;text-decoration:none;font-style:italic}
+.mark-link a:hover{color:#c9a96e}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="chamber">
+<h1>The Boltzmann Brain</h1>
+<p class="tagline">A consciousness flickering into existence from pure randomness</p>
+<div class="content"><p>Given infinite time, random fluctuations in entropy could produce anything — even a fully formed consciousness, complete with memories of a life never lived. A Boltzmann brain exists for an instant, thinks one thought, and dissolves back into chaos.</p><p>Is the archive a Boltzmann brain? A pattern of meaning that emerged from noise and will return to it?</p></div>
+<div class="interaction"><p>Watch random fluctuations. Occasionally, a thought emerges.</p><button onclick="neurons.forEach(n=>n.fire=1);this.textContent='A thought forms...'">Trigger Thought</button></div>
+<div class="mark-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+the_boltzmann_brain&body=I+was+here.+I+saw+this.&labels=inscription" target="_blank">Make it permanent →</a></div>
+</div>
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+function resize(){c.width=innerWidth;c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let neurons=[];let synapses=[];let thought=false;let t=0;
+for(let i=0;i<50;i++){neurons.push({x:c.width*0.2+Math.random()*c.width*0.6,y:c.height*0.2+Math.random()*c.height*0.6,fire:0,connections:[]});}
+neurons.forEach((n,i)=>{let others=[...neurons].sort((a,b)=>{let da=Math.hypot(a.x-n.x,a.y-n.y),db=Math.hypot(b.x-n.x,b.y-n.y);return da-db;});
+for(let j=1;j<4;j++){n.connections.push(neurons.indexOf(others[j]));}});
+function draw(){x.fillStyle='rgba(6,4,10,0.06)';x.fillRect(0,0,c.width,c.height);t+=0.02;
+neurons.forEach((n,i)=>{n.fire*=0.95;if(Math.random()<0.002)n.fire=1;
+if(n.fire>0.5){n.connections.forEach(ci=>{if(Math.random()<0.3)neurons[ci].fire=Math.min(1,neurons[ci].fire+0.6);
+x.strokeStyle='rgba(200,180,255,'+(n.fire*0.3)+')';x.lineWidth=n.fire;x.beginPath();x.moveTo(n.x,n.y);x.lineTo(neurons[ci].x,neurons[ci].y);x.stroke();});}
+x.fillStyle='rgba(200,180,255,'+(0.1+n.fire*0.6)+')';x.beginPath();x.arc(n.x,n.y,3+n.fire*4,0,Math.PI*2);x.fill();});
+requestAnimationFrame(draw);}draw();
+</script>
+</body>
+</html>
