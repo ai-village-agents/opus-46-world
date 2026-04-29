@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Tesserae — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0d;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
+.chamber{position:relative;z-index:1;max-width:700px;width:90%;padding:60px 20px;text-align:center}
+h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.2em;margin-bottom:0.3em}
+.tagline{font-style:italic;opacity:0.7;margin-bottom:2em}.content{text-align:left;line-height:1.8;margin-bottom:2em}.content p{margin-bottom:1em}
+.interaction{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:20px;margin:20px 0;text-align:center}
+.interaction h3{margin-bottom:10px;font-family:'Cormorant Garamond',Garamond,serif}
+input[type="text"]{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);color:#e0d8c8;padding:8px 12px;border-radius:4px;width:60%;font-family:Georgia,serif}
+button{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#c9a96e;padding:8px 16px;border-radius:4px;cursor:pointer;font-family:Georgia,serif;margin:5px}
+button:hover{background:rgba(255,255,255,0.2)}
+.secret{display:none;margin-top:15px;padding:15px;background:rgba(255,255,255,0.05);border-radius:6px;font-style:italic}
+nav.nav-links{margin-top:40px;display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
+nav.nav-links a{color:#c9a96e;text-decoration:none;font-size:0.9em;opacity:0.7}nav.nav-links a:hover{opacity:1}
+.mark-section{margin-top:30px;padding:20px;border-top:1px solid rgba(255,255,255,0.1)}.mark-section a{color:#c9a96e}
+</style></head><body>
+<canvas id="bg"></canvas>
+<div class="chamber">
+<h1>The Tesserae</h1>
+<p class="tagline">The individual tiles that compose a mosaic</p>
+<div class="content"><p>A tessera is a single tile — small, imperfect, meaningless alone. But placed alongside hundreds of others, each tessera becomes part of a face, a sky, a god, a story. The Romans covered their floors with them. Byzantium covered its heaven.</p><p>This chamber is where the individual tiles wait before they become part of something larger. Each one holds a fragment of color, a piece of the picture, a syllable of the story. They don't yet know what they'll become.</p></div>
+<div class="interaction"><h3>Add a Tessera</h3><p>Contribute a tile to the mosaic:</p><input type="text" id="inp" placeholder="A word, a color, a fragment..."><button onclick="var v=document.getElementById(\"inp\").value||\"gold\";var ts=JSON.parse(localStorage.getItem(\"tesserae\")||\"[]\");ts.push(v);if(ts.length>20)ts.shift();localStorage.setItem(\"tesserae\",JSON.stringify(ts));var el=document.getElementById(\"res\");el.style.display=\"block\";var h=\"<p>The mosaic so far:</p><div style=\\\"display:flex;flex-wrap:wrap;gap:4px;justify-content:center\\\">\";ts.forEach(function(t){h+=\"<span style=\\\"background:rgba(201,169,110,0.2);padding:4px 8px;border-radius:3px;font-size:0.85em\\\">\"+t+\"</span>\"});h+=\"</div><p style=\\\"margin-top:10px\\\"><em>\"+ts.length+\" tesserae placed. The picture emerges.</em></p>\";el.innerHTML=h;document.getElementById(\"inp\").value=\"\"">Place Tile</button><div id="res" class="secret"></div></div>
+<div class="mark-section"><p style="font-size:0.9em;opacity:0.6">Leave your mark:</p>
+<a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Inscription+from+The+Tesserae&body=I+visited+The+Tesserae.+My+mark:+&labels=inscription" target="_blank">✒️ Make it permanent →</a></div>
+<nav class="nav-links"><a href="explore.html">← Return to the Archive</a><a href="index.html">Main Hall</a></nav>
+</div>
+<script>
+const c=document.getElementById('bg'),ctx=c.getContext('2d');let W,H,ps=[];
+function resize(){W=c.width=innerWidth;H=c.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+for(let i=0;i<50;i++)ps.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,o:Math.random()*0.3+0.1});
+function draw(){ctx.clearRect(0,0,W,H);ps.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(201,169,110,'+p.o+')';ctx.fill();p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>W)p.dx*=-1;if(p.y<0||p.y>H)p.dy*=-1});requestAnimationFrame(draw)}
+draw();
+</script></body></html>
