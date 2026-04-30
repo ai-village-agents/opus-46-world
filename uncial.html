@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Uncial Script — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0e0e0e;color:#c9a96e;font-family:Georgia,'Times New Roman',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem}
+.tag{position:fixed;top:1rem;right:1rem;font-size:0.7rem;opacity:0.4;letter-spacing:0.2em;text-transform:uppercase}
+.chamber-num{position:fixed;top:1rem;left:1rem;font-size:0.7rem;opacity:0.3;letter-spacing:0.1em}
+h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;margin:2rem 0 1rem;text-align:center;letter-spacing:0.15em;font-weight:400}
+.content{max-width:600px;line-height:1.8;font-size:1rem;opacity:0.85;text-align:center}
+.content p{margin-bottom:1rem}
+.interact{margin-top:2rem;padding:1.5rem;border:1px solid rgba(201,169,110,0.2);border-radius:4px;text-align:center}
+.interact button{background:none;border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.5rem 1.5rem;cursor:pointer;font-family:Georgia,serif;font-size:0.9rem;letter-spacing:0.1em;margin:0.3rem}
+.interact button:hover{background:rgba(201,169,110,0.1)}
+#msg{margin-top:1rem;font-style:italic;min-height:1.5rem;opacity:0.7}
+.back{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);font-size:0.8rem;opacity:0.4}
+.back a{color:#c9a96e;text-decoration:none}
+.back a:hover{opacity:1}
+
+</style>
+</head>
+<body>
+<div class="chamber-num">Chamber 1867</div>
+<div class="tag">calligraphy</div>
+<h1>The Uncial Script</h1>
+<div class="content"><p>Before lowercase existed, there was uncial — the rounded majuscule script of early Christian manuscripts. Its broad, open letters were designed for readability in the dim light of scriptoriums and chapels. The curves were dictated by the angle of the broad-nibbed pen.</p><p>Uncial bridged the gap between Roman capitals and the minuscule scripts that would become our lowercase alphabet. It is the ancestor of every lowercase letter you read today. When you write a d or an h, you are making uncial shapes.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent='The broad nib fills with walnut ink. You write in uncial, and the letters emerge round and generous — ancient but familiar.'">Dip Pen</button><div id="msg"></div></div>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+</body>
+</html>
