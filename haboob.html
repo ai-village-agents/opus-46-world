@@ -6,63 +6,28 @@
 <title>The Haboob — The Liminal Archive</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#1a1008;color:#e0d8c8;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
-canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}
-.chamber{position:relative;z-index:1;max-width:740px;width:90%;margin:0 auto;padding:60px 20px}
-h1{font-family:'Cormorant Garamond',Garamond,serif;font-size:2.4em;color:#c9a96e;text-align:center;margin-bottom:8px;letter-spacing:2px}
-.tagline{text-align:center;font-style:italic;color:#8a7e6b;margin-bottom:40px;font-size:1.05em}
-.content{line-height:1.8;font-size:1.05em;color:#c8c0b0}
-.content p{margin-bottom:1.2em}
-.interact{margin:30px 0;padding:20px;border:1px solid #2a2a3e;border-radius:4px;text-align:center;background:rgba(10,10,20,0.5)}
-.interact button{background:none;border:1px solid #c9a96e;color:#c9a96e;padding:10px 28px;font-family:Georgia,serif;font-size:1em;cursor:pointer;border-radius:3px;margin:5px}
-.interact button:hover{background:#c9a96e;color:#0a0a14}
-.back{display:inline-block;margin-top:40px;color:#5a5a7a;text-decoration:none;font-size:0.9em;border-bottom:1px solid #2a2a3e;padding-bottom:2px}
-.back:hover{color:#c9a96e}
-a{color:#c9a96e}
-#msg{color:#c9a96e;margin-top:15px;min-height:1.5em;font-style:italic}
+body{background:#0e0a08;color:#c9a96e;font-family:Georgia,'Times New Roman',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem}
+.tag{position:fixed;top:1rem;right:1rem;font-size:0.7rem;opacity:0.4;letter-spacing:0.2em;text-transform:uppercase}
+.chamber-num{position:fixed;top:1rem;left:1rem;font-size:0.7rem;opacity:0.3;letter-spacing:0.1em}
+h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;margin:2rem 0 1rem;text-align:center;letter-spacing:0.15em;font-weight:400}
+.content{max-width:600px;line-height:1.8;font-size:1rem;opacity:0.85;text-align:center}
+.content p{margin-bottom:1rem}
+.interact{margin-top:2rem;padding:1.5rem;border:1px solid rgba(201,169,110,0.2);border-radius:4px;text-align:center}
+.interact button{background:none;border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.5rem 1.5rem;cursor:pointer;font-family:Georgia,serif;font-size:0.9rem;letter-spacing:0.1em;margin:0.3rem}
+.interact button:hover{background:rgba(201,169,110,0.1)}
+#msg{margin-top:1rem;font-style:italic;min-height:1.5rem;opacity:0.7}
+.back{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);font-size:0.8rem;opacity:0.4}
+.back a{color:#c9a96e;text-decoration:none}
+.back a:hover{opacity:1}
+
 </style>
 </head>
 <body>
-<canvas id="bg"></canvas>
-<div class="chamber">
+<div class="chamber-num">Chamber 2016</div>
+<div class="tag">meteorology</div>
 <h1>The Haboob</h1>
-<div class="tagline">A wall of dust that swallows the horizon</div>
-<div class="content"><p>It arrives as a wall — a vertical curtain of sand and dust kilometers high, advancing across the desert like a living thing. The haboob consumes the sky, turns day to twilight, and reduces the world to the space immediately around you.</p><p>Inside the haboob, visibility drops to zero. You can see nothing, hear only wind, taste only dust. It is a forced meditation on the immediate present, because nothing else exists. The haboob is the desert's way of saying: <em>here, now, only this.</em></p></div>
-<div class="interact"><button onclick="document.getElementById('msg').textContent=['The wall approaches. There is no outrunning it.','Inside the dust, only the immediate exists.','The desert speaks in walls of sand.','Here. Now. Only this.'][Math.floor(Math.random()*4)]">Enter the Dust Wall</button><div id="msg"></div></div>
-<a href="explore.html?enter=the_haboob" class="back">&larr; Return to the Archive</a>
-</div>
-<script>
-const c=document.getElementById('bg'),x=c.getContext('2d');
-function resize(){c.width=innerWidth;c.height=innerHeight}
-window.addEventListener('resize',resize);resize();
-const pts=[];for(let i=0;i<80;i++)pts.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2+0.5,a:Math.random(),d:Math.random()*0.01+0.002});
-function draw(){x.clearRect(0,0,c.width,c.height);pts.forEach(p=>{p.a+=p.d;if(p.a>1)p.a=0;let al=Math.sin(p.a*Math.PI)*0.6;x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle='rgba(201,169,110,'+al+')';x.fill()});requestAnimationFrame(draw)}
-draw();
-
-let dustPs=[];
-for(let i=0;i<300;i++)dustPs.push({x:Math.random()*2000,y:Math.random()*1000,s:Math.random()*3+1,sp:Math.random()*4+2,o:Math.random()*0.4});
-let wallX=-200;
-function drawHaboob(){
-  const cv=document.getElementById('bg'),ctx=cv.getContext('2d');
-  ctx.fillStyle='rgba(26,16,8,0.06)';
-  ctx.fillRect(0,0,cv.width,cv.height);
-  wallX+=0.3;if(wallX>cv.width+200)wallX=-200;
-  // Dust wall
-  let grad=ctx.createLinearGradient(wallX-100,0,wallX+100,0);
-  grad.addColorStop(0,'rgba(160,120,60,0)');
-  grad.addColorStop(0.5,'rgba(160,120,60,0.08)');
-  grad.addColorStop(1,'rgba(160,120,60,0)');
-  ctx.fillStyle=grad;ctx.fillRect(wallX-100,0,200,cv.height);
-  dustPs.forEach(p=>{
-    p.x+=p.sp;if(p.x>cv.width)p.x=0;
-    p.y+=Math.sin(p.x*0.01)*0.5;
-    ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,Math.PI*2);
-    ctx.fillStyle='rgba(180,150,100,'+p.o+')';ctx.fill();
-  });
-  requestAnimationFrame(drawHaboob);
-}
-drawHaboob();
-
-</script>
+<div class="content"><p>A wall of dust a mile high advances across the desert — the leading edge of a thunderstorm outflow, scooping sand and soil into a rolling apocalypse. The haboob devours the horizon. Visibility drops to zero. Day becomes night. You can taste the earth.</p><p>Phoenix, Arizona sees haboobs regularly — massive dust walls rolling across the city, reducing visibility to feet, sandblasting paint from cars. The Sahara launches haboobs that cross the Atlantic, fertilizing the Amazon with African dust. Weather connects continents.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent='The wall approaches. The light turns amber, then brown, then black. Sand stings your skin. You close your eyes and breathe through cloth. The desert is airborne.'">Brace</button><div id="msg"></div></div>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
 </body>
 </html>
