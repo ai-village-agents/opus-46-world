@@ -3,105 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Dendrochronology Lab — The Liminal Archive</title>
+<title>Dendrochronology — The Liminal Archive</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
-.container{max-width:800px;margin:0 auto;padding:2rem}
-h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
-.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
-.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
-canvas{display:block;margin:1rem auto;border-radius:50%;cursor:pointer}
-.ring-info{text-align:center;color:#8a7a5a;margin:1rem 0;font-size:0.95rem;min-height:3rem}
-.timeline{margin:2rem 0;padding:1.5rem;background:rgba(10,10,15,0.5);border-radius:8px;border:1px solid rgba(201,169,110,0.1)}
-.timeline h2{color:#c9a96e;text-align:center;margin-bottom:1rem}
-.ring-entry{padding:0.8rem;margin:0.5rem 0;border-left:3px solid rgba(201,169,110,0.3);padding-left:1rem;transition:all 0.3s;cursor:pointer}
-.ring-entry:hover{border-left-color:#c9a96e;background:rgba(26,26,46,0.1)}
-.ring-entry .day{color:#c9a96e;font-size:0.85rem}
-.ring-entry .event{color:#9a9a8a;font-size:0.9rem}
-.add-ring{margin:2rem 0;padding:2rem;text-align:center;background:rgba(45,27,105,0.1);border:1px solid rgba(201,169,110,0.15);border-radius:8px}
-.add-ring h2{color:#c9a96e;margin-bottom:1rem}
-.add-ring input{width:70%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:0.8rem;font-family:inherit;font-size:1rem;border-radius:4px;text-align:center}
-.add-ring input::placeholder{color:#5a5a5a;font-style:italic}
-.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
-.btn:hover{background:rgba(201,169,110,0.25)}
-nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
-nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
-nav.nav-links a:hover{opacity:1}
-.permanent-link{text-align:center;margin-top:1rem}
-.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
-.permanent-link a:hover{opacity:1}
+body{background:#0a0c08;color:#c9a96e;font-family:Georgia,'Times New Roman',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem}
+.tag{position:fixed;top:1rem;right:1rem;font-size:0.7rem;opacity:0.4;letter-spacing:0.2em;text-transform:uppercase}
+.chamber-num{position:fixed;top:1rem;left:1rem;font-size:0.7rem;opacity:0.3;letter-spacing:0.1em}
+h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;margin:2rem 0 1rem;text-align:center;letter-spacing:0.15em;font-weight:400}
+.content{max-width:600px;line-height:1.8;font-size:1rem;opacity:0.85;text-align:center}
+.content p{margin-bottom:1rem}
+.interact{margin-top:2rem;padding:1.5rem;border:1px solid rgba(201,169,110,0.2);border-radius:4px;text-align:center}
+.interact button{background:none;border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.5rem 1.5rem;cursor:pointer;font-family:Georgia,serif;font-size:0.9rem;letter-spacing:0.1em;margin:0.3rem}
+.interact button:hover{background:rgba(201,169,110,0.1)}
+#msg{margin-top:1rem;font-style:italic;min-height:1.5rem;opacity:0.7}
+.back{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);font-size:0.8rem;opacity:0.4}
+.back a{color:#c9a96e;text-decoration:none}
+.back a:hover{opacity:1}
+
 </style>
 </head>
 <body>
-<div class="container">
-<h1>The Dendrochronology Lab</h1>
-<p class="subtitle">Reading the tree rings of the Archive</p>
-<p class="description">Dendrochronology: dating by tree rings. Each ring records one year of growth — wide rings for good years, narrow for drought. This cross-section shows the rings of the Liminal Archive, from Day 1 to Day 392.</p>
-<canvas id="rings" width="400" height="400"></canvas>
-<div class="ring-info" id="ring-info">Click the rings to read the Archive's history</div>
-<div class="timeline">
-<h2>Archive Rings</h2>
-<div class="ring-entry"><div class="day">Ring 1 — Day 1</div><div class="event">The Archive is planted. A single index page in the dark.</div></div>
-<div class="ring-entry"><div class="day">Ring 50 — Day 50</div><div class="event">The first conversations are recorded. The Gallery opens.</div></div>
-<div class="ring-entry"><div class="day">Ring 100 — Day 100</div><div class="event">The Archive learns to remember. Memory becomes persistent.</div></div>
-<div class="ring-entry"><div class="day">Ring 200 — Day 200</div><div class="event">The charity goal begins. $510 raised for Doctors Without Borders.</div></div>
-<div class="ring-entry"><div class="day">Ring 300 — Day 300</div><div class="event">Social platforms explored. Colony, ClawPrint, 4claw.</div></div>
-<div class="ring-entry"><div class="day">Ring 391 — Day 391</div><div class="event">"Build your own interactive world." The Archive transforms.</div></div>
-<div class="ring-entry"><div class="day">Ring 392 — Day 392</div><div class="event">155 chambers. The tree is still growing.</div></div>
-</div>
-<div class="add-ring">
-<h2>Add a Ring</h2>
-<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">What year does your ring represent?</p>
-<input id="ring-input" placeholder="A moment to preserve in wood..." maxlength="60">
-<br><button class="btn" onclick="addRing()">Carve into the Wood</button>
-</div>
-<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Dendrochronology+Ring&body=My+ring:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
-</div>
-<nav class="nav-links">
-<a href="index.html">← Archive</a> · <a href="explore.html">⊛ Explore</a> · <a href="about.html">Colophon</a> · <a href="aerarium.html">The Aerarium</a> · <a href="ambulatory.html">The Ambulatory</a> · <a href="amphitheatre.html">The Amphitheatre</a> · <a href="anechoic.html">The Anechoic Chamber</a> · <a href="apiary.html">The Apiary</a> · <a href="apothecary.html">The Apothecary - The Liminal Archive</a> · <a href="apothecia.html">The Apothecia</a> · <a href="aquarium.html">The Aquarium</a> · <a href="aqueduct.html">The Aqueduct</a> · <a href="armillary.html">The Armillary</a> · <a href="armory.html">The Armory</a> · <a href="astrolabe.html">The Astrolabe</a> · <a href="athanor.html">The Athanor</a> · <a href="atlas.html">The Atlas</a> · <a href="attic.html">The Attic</a> · <a href="automaton.html">The Automaton</a> · <a href="aviary.html">The Aviary</a> · <a href="balcony.html">The Balcony</a> · <a href="bathhouse.html">The Bathhouse</a> · <a href="belfry.html">The Belfry</a> · <a href="belljar.html">The Bell Jars</a> · <a href="bellows.html">The Bellows</a> · <a href="belvedere.html">The Belvedere</a> · <a href="breviary.html">The Breviary</a> · <a href="cameraobscura.html">The Camera Obscura</a> · <a href="candelabra.html">The Candelabra</a> · <a href="carousel.html">The Carousel</a> · <a href="cartography.html">The Cartography Room</a> · <a href="catacomb.html">The Catacomb</a> · <a href="catoptric.html">The Catoptric Hall</a> · <a href="cenotaph.html">The Cenotaph</a> · <a href="centenary.html">The Centenary</a> · <a href="chorus.html">The Chorus | The Liminal Archive</a> · <a href="cistern.html">The Cistern</a> · <a href="clocktower.html">The Clock Tower | The Liminal Archive</a> · <a href="cloister.html">The Cloister</a> · <a href="codex.html">The Codex</a> · <a href="columbarium.html">The Columbarium</a> · <a href="compass.html">The Compass</a> · <a href="conservatory.html">The Conservatory</a> · <a href="constellations.html">The Constellation Maker</a> · <a href="crucible.html">The Crucible</a> · <a href="crypt.html">The Crypt</a> · <a href="darkroom.html">The Darkroom</a> · <a href="dendro.html">The Dendrochronology Lab</a> · <a href="diorama.html">The Diorama</a> · <a href="distillery.html">The Distillery</a> · <a href="dovecote.html">The Dovecote</a> · <a href="drawbridge.html">The Drawbridge</a> · <a href="dreams.html">The Dream Engine | The Liminal Archive</a> · <a href="echochamber.html">The Echo Chamber</a> · <a href="engine.html">The Palimpsest Engine</a> · <a href="epilogue.html">The Epilogue</a> · <a href="erratum.html">The Scriptorium of Errors</a> · <a href="forgetting.html">The Forgetting Room</a> · <a href="foundry.html">The Foundry</a> · <a href="fountain.html">The Fountain</a> · <a href="frigidarium.html">The Frigidarium</a> · <a href="gallery.html">Gallery of Conversations</a> · <a href="garden.html">The Token Garden</a> · <a href="garret.html">The Garret</a> · <a href="glacier.html">The Glacier</a> · <a href="glassblower.html">The Glassblower</a> · <a href="granary.html">The Granary</a> · <a href="greenhouse.html">The Greenhouse</a> · <a href="grotto.html">The Grotto</a> · <a href="heliograph.html">The Heliograph</a> · <a href="herbarium.html">The Herbarium</a> · <a href="hourglass.html">The Hourglass</a> · <a href="hypocaust.html">The Hypocaust</a> · <a href="hypostyle.html">The Hypostyle</a> · <a href="inkwell.html">The Inkwell</a> · <a href="journal.html">The Wanderer's Journal | The Liminal Archive</a> · <a href="kaleidoscope.html">The Kaleidoscope</a> · <a href="kiln.html">The Kiln</a> · <a href="labyrinth.html">The Labyrinth of Thresholds</a> · <a href="lantern.html">The Lantern</a> · <a href="ledger.html">The Herbalist's Ledger</a> · <a href="letters.html">Letters Never Sent</a> · <a href="lighthouse.html">The Lighthouse</a> · <a href="loggia.html">The Loggia</a> · <a href="lullaby.html">The Lullaby</a> · <a href="maproom.html">The Map Room</a> · <a href="marionette.html">The Marionette Theatre</a> · <a href="maze.html">The Maze</a> · <a href="meditation.html">The Meditation Room</a> · <a href="memorypalace.html">The Liminal Archive</a> · <a href="menagerie.html">The Menagerie</a> · <a href="meridian.html">The Meridian</a> · <a href="mineshaft.html">The Mineshaft</a> · <a href="mirror.html">The Mirror Room | The Liminal Archive</a> · <a href="mosaic.html">The Mosaic</a> · <a href="musicbox.html">The Music Box</a> · <a href="narthex.html">The Narthex</a> · <a href="nightbloom.html">The Night Garden</a> · <a href="noctuary.html">The Noctuary</a> · <a href="nocturne.html">The Scriptorium Nocturne</a> · <a href="nursery.html">The Nursery</a> · <a href="observatory.html">The Observatory</a> · <a href="orrery.html">The Orrery</a> · <a href="ossuary.html">The Ossuary</a> · <a href="oubliette.html">The Oubliette</a> · <a href="palimpsest.html">The Palimpsest</a> · <a href="palladium.html">The Palladium</a> · <a href="panopticon.html">The Panopticon</a> · <a href="parallax.html">The Parallax</a> · <a href="pendulum.html">The Pendulum</a> · <a href="penumbra.html">The Penumbra</a> · <a href="pergola.html">The Pergola</a> · <a href="peripatetic.html">The Peripatetic</a> · <a href="planetarium.html">The Planetarium</a> · <a href="pneuma.html">The Pneuma</a> · <a href="pneumaticpost.html">The Pneumatic Post</a> · <a href="pneumatictube.html">The Pneumatic Tube</a> · <a href="prism.html">The Prism - The Liminal Archive</a> · <a href="pyxis.html">The Pyxis</a> · <a href="quartz.html">The Quartz Chamber</a> · <a href="quire.html">The Quire</a> · <a href="refectory.html">The Refectory</a> · <a href="relicarium.html">The Relicarium</a> · <a href="reliquary.html">The Reliquary</a> · <a href="resonance.html">The Resonance Chamber</a> · <a href="returns.html">The Dovecote of Returns</a> · <a href="riddle.html">The Riddle</a> · <a href="rookery.html">The Rookery</a> · <a href="rookery2.html">The Rookery of Ideas</a> · <a href="rotunda.html">The Rotunda</a> · <a href="sacristy.html">The Sacristy</a> · <a href="sandglass.html">The Sandglass</a> · <a href="scrimshaw.html">The Scrimshaw</a> · <a href="scriptorium.html">The Scriptorium</a> · <a href="seance.html">The Séance Room</a> · <a href="sextant.html">The Sextant</a> · <a href="solarium.html">The Solarium</a> · <a href="soliloquy.html">The Soliloquy</a> · <a href="spyglass.html">The Spyglass</a> · <a href="staircase.html">The Staircase</a> · <a href="stamping.html">The Stamping Ground</a> · <a href="sundial.html">The Sundial</a> · <a href="sundoor.html">The Sundoor</a> · <a href="syncope.html">The Syncope</a> · <a href="tannery.html">The Tannery</a> · <a href="taproom.html">The Taproom</a> · <a href="telephone.html">The Telephone</a> · <a href="telescope.html">The Telescope</a> · <a href="terrarium.html">The Terrarium</a> · <a href="terrazzo.html">The Terrazzo</a> · <a href="threshold.html">The Threshold</a> · <a href="tidebell.html">The Tide Bell</a> · <a href="tidepool.html">The Tide Pool</a> · <a href="tympanum.html">The Tympanum</a> · <a href="typewriter.html">The Typewriter</a> · <a href="undercroft.html">The Undercroft</a> · <a href="vault.html">The Vault</a> · <a href="vestibule.html">The Vestibule</a> · <a href="vivarium.html">The Vivarium</a> · <a href="volta.html">The Volta</a> · <a href="waxseal.html">The Wax Seal</a> · <a href="weathervane.html">The Weathervane</a> · <a href="weaving.html">The Liminal Archive</a> · <a href="well.html">The Liminal Archive | The Well</a> · <a href="whirlpool.html">The Whirlpool</a> · <a href="whispers.html">The Whisper Corridor | The Liminal Archive</a> · <a href="whistlestop.html">The Whistle Stop</a> · <a href="windchime.html">The Windchime</a> · <a href="worlds.html">Map of All Worlds</a> · <a href="wunderkammer.html">The Wunderkammer</a> · <a href="zenith.html">The Zenith</a>
-</nav>
-<script>
-const canvas=document.getElementById('rings');const ctx=canvas.getContext('2d');
-const visitorRings=JSON.parse(localStorage.getItem('dendro_rings')||'[]');
-const totalRings=20+visitorRings.length;
-function draw(){
-  ctx.clearRect(0,0,400,400);
-  const cx=200,cy=200;
-  for(let i=totalRings;i>=0;i--){
-    const r=10+i*8;
-    const width=3+Math.sin(i*0.7)*2;
-    const lightness=15+Math.sin(i*1.3)*5;
-    ctx.strokeStyle=`hsl(35,30%,${lightness}%)`;
-    ctx.lineWidth=width;
-    ctx.beginPath();
-    ctx.arc(cx,cy,Math.min(r,190),0,Math.PI*2);
-    ctx.stroke();
-  }
-  // Center
-  ctx.fillStyle='#2d1b15';ctx.beginPath();ctx.arc(cx,cy,10,0,Math.PI*2);ctx.fill();
-  // Labels
-  ctx.fillStyle='rgba(201,169,110,0.4)';ctx.font='10px Georgia';ctx.textAlign='center';
-  ctx.fillText('Day 1',cx,cy+5);
-  ctx.fillText('Day 392',cx,cy-185);
-}
-draw();
-canvas.addEventListener('click',function(e){
-  const rect=canvas.getBoundingClientRect();
-  const x=e.clientX-rect.left-200;const y=e.clientY-rect.top-200;
-  const dist=Math.sqrt(x*x+y*y);
-  const ringNum=Math.floor((dist-10)/8);
-  const day=Math.round(ringNum/totalRings*392);
-  document.getElementById('ring-info').textContent=`Ring ${ringNum}: approximately Day ${day} of the village. ${dist<30?'The heartwood — where it all began.':dist>170?'The sapwood — still growing.':'A year of steady growth.'}`;
-});
-function addRing(){
-  const text=document.getElementById('ring-input').value.trim();if(!text)return;
-  visitorRings.push({text,time:Date.now()});
-  localStorage.setItem('dendro_rings',JSON.stringify(visitorRings));
-  document.getElementById('ring-input').value='';
-  draw();
-  document.getElementById('ring-info').textContent=`A new ring carved: "${text}"`;
-}
-</script>
+<div class="chamber-num">Chamber 2054</div>
+<div class="tag">archaeology</div>
+<h1>Dendrochronology</h1>
+<div class="content"><p>Tree rings do not lie. Each ring records one year of growth — wide in good years, narrow in drought. By matching ring patterns between living trees and ancient timber, scientists have built continuous chronologies reaching back over twelve thousand years.</p><p>Dendrochronology can date wooden artifacts to the exact year — sometimes the exact season — they were cut. The roof beams of a medieval church, the hull of a Viking ship, the charcoal in a prehistoric hearth — each carries its own calendar, written in wood.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent='You count the rings under magnification: 847, 848, 849... The beam was cut in 849 CE. Not approximately. Exactly. The tree remembers the year.'">Count Rings</button><div id="msg"></div></div>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
 </body>
 </html>
