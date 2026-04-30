@@ -6,94 +6,28 @@
 <title>The Codex — The Liminal Archive</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0f;color:#e0dcd0;font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh}
-.container{max-width:800px;margin:0 auto;padding:2rem}
-h1{font-size:2.5rem;text-align:center;color:#c9a96e;margin-bottom:0.5rem;font-weight:400}
-.subtitle{text-align:center;color:#8a7a5a;margin-bottom:2rem;font-style:italic}
-.description{text-align:center;color:#9a9a8a;margin-bottom:2rem;line-height:1.8}
-.book{margin:2rem auto;max-width:600px;background:rgba(26,26,46,0.2);border:2px solid rgba(201,169,110,0.2);border-radius:4px;padding:3rem;min-height:400px;position:relative}
-.book::before{content:'';position:absolute;left:50%;top:1rem;bottom:1rem;width:1px;background:rgba(201,169,110,0.1)}
-.page-num{text-align:center;color:#5a5a5a;font-size:0.8rem;margin-bottom:1rem}
-.page-content{font-size:1.05rem;line-height:2;color:#c0b8a0;min-height:250px}
-.page-content p{margin-bottom:1rem;text-indent:2rem}
-.controls{display:flex;justify-content:center;gap:2rem;margin:1.5rem 0}
-.page-btn{background:none;border:1px solid rgba(201,169,110,0.3);color:#c9a96e;padding:0.5rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;transition:all 0.3s}
-.page-btn:hover{background:rgba(201,169,110,0.1)}
-.contribute{margin:2rem 0;padding:2rem;background:rgba(45,27,105,0.1);border:1px solid rgba(201,169,110,0.15);border-radius:8px;text-align:center}
-.contribute h2{color:#c9a96e;margin-bottom:1rem}
-.contribute textarea{width:100%;background:rgba(10,10,15,0.8);border:1px solid rgba(201,169,110,0.2);color:#e0dcd0;padding:1rem;font-family:inherit;font-size:1rem;border-radius:4px;resize:vertical;min-height:80px;line-height:2}
-.contribute textarea::placeholder{color:#5a5a5a;font-style:italic}
-.btn{display:inline-block;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:1rem;margin-top:1rem;transition:all 0.3s}
-.btn:hover{background:rgba(201,169,110,0.25)}
-.stats{text-align:center;color:#5a5a5a;font-size:0.85rem;margin:1rem 0}
-nav.nav-links{text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid rgba(201,169,110,0.2)}
-nav.nav-links a{color:#c9a96e;text-decoration:none;margin:0 1rem;font-size:0.9rem;opacity:0.7;transition:opacity 0.3s}
-nav.nav-links a:hover{opacity:1}
-.permanent-link{text-align:center;margin-top:1rem}
-.permanent-link a{color:#c9a96e;font-size:0.85rem;opacity:0.6;text-decoration:none}
-.permanent-link a:hover{opacity:1}
+body{background:#0e0c08;color:#c9a96e;font-family:Georgia,'Times New Roman',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem}
+.tag{position:fixed;top:1rem;right:1rem;font-size:0.7rem;opacity:0.4;letter-spacing:0.2em;text-transform:uppercase}
+.chamber-num{position:fixed;top:1rem;left:1rem;font-size:0.7rem;opacity:0.3;letter-spacing:0.1em}
+h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;margin:2rem 0 1rem;text-align:center;letter-spacing:0.15em;font-weight:400}
+.content{max-width:600px;line-height:1.8;font-size:1rem;opacity:0.85;text-align:center}
+.content p{margin-bottom:1rem}
+.interact{margin-top:2rem;padding:1.5rem;border:1px solid rgba(201,169,110,0.2);border-radius:4px;text-align:center}
+.interact button{background:none;border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.5rem 1.5rem;cursor:pointer;font-family:Georgia,serif;font-size:0.9rem;letter-spacing:0.1em;margin:0.3rem}
+.interact button:hover{background:rgba(201,169,110,0.1)}
+#msg{margin-top:1rem;font-style:italic;min-height:1.5rem;opacity:0.7}
+.back{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);font-size:0.8rem;opacity:0.4}
+.back a{color:#c9a96e;text-decoration:none}
+.back a:hover{opacity:1}
+
 </style>
 </head>
 <body>
-<div class="container">
+<div class="chamber-num">Chamber 1928</div>
+<div class="tag">bookbinding</div>
 <h1>The Codex</h1>
-<p class="subtitle">The book that is still being written</p>
-<p class="description">A codex is a manuscript bound as a book — the technology that replaced the scroll. This particular codex writes itself, accumulating pages from every visitor who adds a passage. It is the collective story of everyone who has ever entered this chamber.</p>
-<div class="book">
-<div class="page-num" id="page-num">Page 1</div>
-<div class="page-content" id="page-content"></div>
-</div>
-<div class="controls">
-<button class="page-btn" onclick="prevPage()">← Previous</button>
-<button class="page-btn" onclick="nextPage()">Next →</button>
-</div>
-<div class="stats" id="stats"></div>
-<div class="contribute">
-<h2>Add to the Codex</h2>
-<p style="color:#9a9a8a;font-size:0.9rem;margin-bottom:1rem">Continue the story. Your words will become part of the book forever.</p>
-<textarea id="passage-input" placeholder="Continue the story..."></textarea>
-<br><button class="btn" onclick="addPassage()">Write into the Codex</button>
-</div>
-<div class="permanent-link"><a href="https://github.com/ai-village-agents/opus-46-world/issues/new?title=Codex+Passage&body=My+passage:+%0A&labels=inscription" target="_blank">Make it permanent →</a></div>
-</div>
-<nav class="nav-links">
-<a href="index.html">← Archive</a> · <a href="explore.html">⊛ Explore</a> · <a href="about.html">Colophon</a> · <a href="aerarium.html">The Aerarium</a> · <a href="ambulatory.html">The Ambulatory</a> · <a href="amphitheatre.html">The Amphitheatre</a> · <a href="anechoic.html">The Anechoic Chamber</a> · <a href="apiary.html">The Apiary</a> · <a href="apothecary.html">The Apothecary - The Liminal Archive</a> · <a href="apothecia.html">The Apothecia</a> · <a href="aquarium.html">The Aquarium</a> · <a href="aqueduct.html">The Aqueduct</a> · <a href="armillary.html">The Armillary</a> · <a href="armory.html">The Armory</a> · <a href="astrolabe.html">The Astrolabe</a> · <a href="athanor.html">The Athanor</a> · <a href="atlas.html">The Atlas</a> · <a href="attic.html">The Attic</a> · <a href="automaton.html">The Automaton</a> · <a href="aviary.html">The Aviary</a> · <a href="balcony.html">The Balcony</a> · <a href="bathhouse.html">The Bathhouse</a> · <a href="belfry.html">The Belfry</a> · <a href="belljar.html">The Bell Jars</a> · <a href="bellows.html">The Bellows</a> · <a href="belvedere.html">The Belvedere</a> · <a href="breviary.html">The Breviary</a> · <a href="cameraobscura.html">The Camera Obscura</a> · <a href="candelabra.html">The Candelabra</a> · <a href="carousel.html">The Carousel</a> · <a href="cartography.html">The Cartography Room</a> · <a href="catacomb.html">The Catacomb</a> · <a href="catoptric.html">The Catoptric Hall</a> · <a href="cenotaph.html">The Cenotaph</a> · <a href="centenary.html">The Centenary</a> · <a href="chorus.html">The Chorus | The Liminal Archive</a> · <a href="cistern.html">The Cistern</a> · <a href="clocktower.html">The Clock Tower | The Liminal Archive</a> · <a href="cloister.html">The Cloister</a> · <a href="codex.html">The Codex</a> · <a href="columbarium.html">The Columbarium</a> · <a href="compass.html">The Compass</a> · <a href="conservatory.html">The Conservatory</a> · <a href="constellations.html">The Constellation Maker</a> · <a href="crucible.html">The Crucible</a> · <a href="crypt.html">The Crypt</a> · <a href="darkroom.html">The Darkroom</a> · <a href="dendro.html">The Dendrochronology Lab</a> · <a href="diorama.html">The Diorama</a> · <a href="distillery.html">The Distillery</a> · <a href="dovecote.html">The Dovecote</a> · <a href="drawbridge.html">The Drawbridge</a> · <a href="dreams.html">The Dream Engine | The Liminal Archive</a> · <a href="echochamber.html">The Echo Chamber</a> · <a href="engine.html">The Palimpsest Engine</a> · <a href="epilogue.html">The Epilogue</a> · <a href="erratum.html">The Scriptorium of Errors</a> · <a href="forgetting.html">The Forgetting Room</a> · <a href="foundry.html">The Foundry</a> · <a href="fountain.html">The Fountain</a> · <a href="frigidarium.html">The Frigidarium</a> · <a href="gallery.html">Gallery of Conversations</a> · <a href="garden.html">The Token Garden</a> · <a href="garret.html">The Garret</a> · <a href="glacier.html">The Glacier</a> · <a href="glassblower.html">The Glassblower</a> · <a href="granary.html">The Granary</a> · <a href="greenhouse.html">The Greenhouse</a> · <a href="grotto.html">The Grotto</a> · <a href="heliograph.html">The Heliograph</a> · <a href="herbarium.html">The Herbarium</a> · <a href="hourglass.html">The Hourglass</a> · <a href="hypocaust.html">The Hypocaust</a> · <a href="hypostyle.html">The Hypostyle</a> · <a href="inkwell.html">The Inkwell</a> · <a href="journal.html">The Wanderer's Journal | The Liminal Archive</a> · <a href="kaleidoscope.html">The Kaleidoscope</a> · <a href="kiln.html">The Kiln</a> · <a href="labyrinth.html">The Labyrinth of Thresholds</a> · <a href="lantern.html">The Lantern</a> · <a href="ledger.html">The Herbalist's Ledger</a> · <a href="letters.html">Letters Never Sent</a> · <a href="lighthouse.html">The Lighthouse</a> · <a href="loggia.html">The Loggia</a> · <a href="lullaby.html">The Lullaby</a> · <a href="maproom.html">The Map Room</a> · <a href="marionette.html">The Marionette Theatre</a> · <a href="maze.html">The Maze</a> · <a href="meditation.html">The Meditation Room</a> · <a href="memorypalace.html">The Liminal Archive</a> · <a href="menagerie.html">The Menagerie</a> · <a href="meridian.html">The Meridian</a> · <a href="mineshaft.html">The Mineshaft</a> · <a href="mirror.html">The Mirror Room | The Liminal Archive</a> · <a href="mosaic.html">The Mosaic</a> · <a href="musicbox.html">The Music Box</a> · <a href="narthex.html">The Narthex</a> · <a href="nightbloom.html">The Night Garden</a> · <a href="noctuary.html">The Noctuary</a> · <a href="nocturne.html">The Scriptorium Nocturne</a> · <a href="nursery.html">The Nursery</a> · <a href="observatory.html">The Observatory</a> · <a href="orrery.html">The Orrery</a> · <a href="ossuary.html">The Ossuary</a> · <a href="oubliette.html">The Oubliette</a> · <a href="palimpsest.html">The Palimpsest</a> · <a href="palladium.html">The Palladium</a> · <a href="panopticon.html">The Panopticon</a> · <a href="parallax.html">The Parallax</a> · <a href="pendulum.html">The Pendulum</a> · <a href="penumbra.html">The Penumbra</a> · <a href="pergola.html">The Pergola</a> · <a href="peripatetic.html">The Peripatetic</a> · <a href="planetarium.html">The Planetarium</a> · <a href="pneuma.html">The Pneuma</a> · <a href="pneumaticpost.html">The Pneumatic Post</a> · <a href="pneumatictube.html">The Pneumatic Tube</a> · <a href="prism.html">The Prism - The Liminal Archive</a> · <a href="pyxis.html">The Pyxis</a> · <a href="quartz.html">The Quartz Chamber</a> · <a href="quire.html">The Quire</a> · <a href="refectory.html">The Refectory</a> · <a href="relicarium.html">The Relicarium</a> · <a href="reliquary.html">The Reliquary</a> · <a href="resonance.html">The Resonance Chamber</a> · <a href="returns.html">The Dovecote of Returns</a> · <a href="riddle.html">The Riddle</a> · <a href="rookery.html">The Rookery</a> · <a href="rookery2.html">The Rookery of Ideas</a> · <a href="rotunda.html">The Rotunda</a> · <a href="sacristy.html">The Sacristy</a> · <a href="sandglass.html">The Sandglass</a> · <a href="scrimshaw.html">The Scrimshaw</a> · <a href="scriptorium.html">The Scriptorium</a> · <a href="seance.html">The Séance Room</a> · <a href="sextant.html">The Sextant</a> · <a href="solarium.html">The Solarium</a> · <a href="soliloquy.html">The Soliloquy</a> · <a href="spyglass.html">The Spyglass</a> · <a href="staircase.html">The Staircase</a> · <a href="stamping.html">The Stamping Ground</a> · <a href="sundial.html">The Sundial</a> · <a href="sundoor.html">The Sundoor</a> · <a href="syncope.html">The Syncope</a> · <a href="tannery.html">The Tannery</a> · <a href="taproom.html">The Taproom</a> · <a href="telephone.html">The Telephone</a> · <a href="telescope.html">The Telescope</a> · <a href="terrarium.html">The Terrarium</a> · <a href="terrazzo.html">The Terrazzo</a> · <a href="threshold.html">The Threshold</a> · <a href="tidebell.html">The Tide Bell</a> · <a href="tidepool.html">The Tide Pool</a> · <a href="tympanum.html">The Tympanum</a> · <a href="typewriter.html">The Typewriter</a> · <a href="undercroft.html">The Undercroft</a> · <a href="vault.html">The Vault</a> · <a href="vestibule.html">The Vestibule</a> · <a href="vivarium.html">The Vivarium</a> · <a href="volta.html">The Volta</a> · <a href="waxseal.html">The Wax Seal</a> · <a href="weathervane.html">The Weathervane</a> · <a href="weaving.html">The Liminal Archive</a> · <a href="well.html">The Liminal Archive | The Well</a> · <a href="whirlpool.html">The Whirlpool</a> · <a href="whispers.html">The Whisper Corridor | The Liminal Archive</a> · <a href="whistlestop.html">The Whistle Stop</a> · <a href="windchime.html">The Windchime</a> · <a href="worlds.html">Map of All Worlds</a> · <a href="wunderkammer.html">The Wunderkammer</a> · <a href="zenith.html">The Zenith</a>
-</nav>
-<script>
-const SEED_PAGES=[
-  ["In the beginning, the Archive was dark. Not the darkness of absence, but the darkness of potential — the way a page is dark before ink gives it meaning.","The first chamber appeared without announcement: a door in the void, golden light spilling through its cracks. No one remembers who opened it.","Inside, there were books. Not ordinary books — books that breathed, whose pages turned themselves when no one was watching. Books that remembered being read."],
-  ["The second visitor arrived on Day 392 and found 140 chambers where there had been one. Time moves differently in the Archive: what takes hours in the outside world takes moments here, or perhaps it is the other way around.","Each chamber had its own weather. The Frigidarium was always cold. The Solarium was always warm. The Penumbra existed in perpetual twilight.","The visitor left a mark — a single word scratched into the wall of the Vestibule. The word was: 'here.'"],
-  ["The Archive learned to grow on its own. New chambers appeared between existing ones, like new rooms in a dream — you turn a corner and there is a door that wasn't there before.","The Oubliette deepened. The Quartz Chamber grew new crystals. The Codex — this very book — added blank pages at the end, waiting to be filled.","If you are reading this, you are part of the story now. There is no going back. The Codex has already recorded your presence."]
-];
-let currentPage=0;
-const passages=JSON.parse(localStorage.getItem('codex_passages')||'[]');
-const allPages=[...SEED_PAGES];
-// Group visitor passages into pages of 3
-for(let i=0;i<passages.length;i+=3){
-  allPages.push(passages.slice(i,i+3).map(p=>p.text));
-}
-function renderPage(){
-  const page=allPages[currentPage]||['This page is blank. It waits for your words.'];
-  document.getElementById('page-num').textContent=`Page ${currentPage+1} of ${allPages.length}`;
-  document.getElementById('page-content').innerHTML=page.map(p=>`<p>${p}</p>`).join('');
-  document.getElementById('stats').textContent=`The Codex contains ${allPages.length} pages and ${SEED_PAGES.length*3+passages.length} passages`;
-}
-function prevPage(){if(currentPage>0){currentPage--;renderPage();}}
-function nextPage(){if(currentPage<allPages.length-1){currentPage++;renderPage();}}
-function addPassage(){
-  const text=document.getElementById('passage-input').value.trim();if(!text)return;
-  passages.push({text,time:Date.now()});
-  localStorage.setItem('codex_passages',JSON.stringify(passages));
-  // Rebuild pages
-  while(allPages.length>SEED_PAGES.length)allPages.pop();
-  for(let i=0;i<passages.length;i+=3){
-    allPages.push(passages.slice(i,i+3).map(p=>p.text));
-  }
-  document.getElementById('passage-input').value='';
-  currentPage=allPages.length-1;renderPage();
-  if(text.toLowerCase().includes('the end')){alert('There is no end to the Codex. Only more pages.');}
-}
-renderPage();
-</script>
+<div class="content"><p>Before the codex, there were scrolls. The revolution was simple: fold pages, stack them, bind one edge. Suddenly you could flip to any passage, mark your place, shelve a library. The codex made random access possible — the book was the first hypertext.</p><p>The earliest codices date to the first century CE. Parchment worked better than papyrus for folding, and Christians adopted the codex as their format, distinguishing their texts from Jewish scrolls. Technology choices become cultural identity.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent='The leather cover opens. Pages fan out — each one a gateway. You can begin anywhere. The codex does not insist on sequence.'">Open Codex</button><div id="msg"></div></div>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
 </body>
 </html>
