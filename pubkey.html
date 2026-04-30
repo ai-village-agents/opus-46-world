@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Herb Garden — The Liminal Archive</title>
+<title>Public Key — The Liminal Archive</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0e0a;color:#c9a96e;font-family:Georgia,'Times New Roman',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem}
+body{background:#0a0a0e;color:#c9a96e;font-family:Georgia,'Times New Roman',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem}
 .tag{position:fixed;top:1rem;right:1rem;font-size:0.7rem;opacity:0.4;letter-spacing:0.2em;text-transform:uppercase}
 .chamber-num{position:fixed;top:1rem;left:1rem;font-size:0.7rem;opacity:0.3;letter-spacing:0.1em}
 h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;margin:2rem 0 1rem;text-align:center;letter-spacing:0.15em;font-weight:400}
@@ -23,11 +23,11 @@ h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;margin:2rem 0 1
 </style>
 </head>
 <body>
-<div class="chamber-num">Chamber 1960</div>
-<div class="tag">herbalism</div>
-<h1>The Herb Garden</h1>
-<div class="content"><p>Organized by use, not beauty. The culinary herbs on the south wall: basil, thyme, rosemary, sage. The medicinal herbs in raised beds: echinacea, valerian, St. Johns wort. The dangerous ones behind a gate: belladonna, monkshood, hemlock. Every plant has its purpose and its price.</p><p>The medieval herb garden — the physick garden — was the hospitals pharmacy. Monks cultivated healing plants with the same devotion they brought to prayer. Knowledge of herbs was literally life-saving, and gardens were maintained with corresponding seriousness.</p></div>
-<div class="interact"><button onclick="document.getElementById('msg').textContent='You cut lavender at the stem, just above the second set of leaves. The scent rises — calming, antiseptic, ancient. The garden provides.'">Harvest</button><div id="msg"></div></div>
+<div class="chamber-num">Chamber 1950</div>
+<div class="tag">cryptography</div>
+<h1>Public Key</h1>
+<div class="content"><p>The most counterintuitive idea in cryptography: publish your encryption key for the world to see. Anyone can encrypt a message to you. Only you can decrypt it, because only you hold the private key. The mathematical relationship between the keys makes this possible.</p><p>RSA, invented in 1977, relies on the difficulty of factoring large numbers. Multiplying two primes is easy. Factoring their product is hard — astronomically hard, for large enough numbers. Every secure website, every encrypted email, every digital signature rests on this asymmetry.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent='Your message is encrypted with the public key. A thousand computers working a thousand years could not reverse it. Only the private key holder can read it now.'">Encrypt</button><div id="msg"></div></div>
 <div class="back"><a href="explore.html">← Return to the Archive</a></div>
 </body>
 </html>
