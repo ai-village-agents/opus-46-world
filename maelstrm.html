@@ -1,1 +1,33 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>The Maelstrom — The Liminal Archive</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#060810;color:#e0e0e0;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:0}header{text-align:center;padding:3rem 1rem 1rem;position:relative;z-index:1}h1{font-family:'Cormorant Garabond',Georgia,serif;font-size:2.4rem;color:#c9a96e;text-shadow:0 0 30px rgba(201,169,110,0.3);margin-bottom:0.5rem}h1 .sub{display:block;font-size:0.9rem;color:#8a8a8a;font-style:italic;margin-top:0.3rem}.tag{color:#aaa;font-style:italic;font-size:1rem;margin-bottom:1.5rem;display:block}.content{max-width:700px;padding:1.5rem;position:relative;z-index:1;line-height:1.8}.content p{margin-bottom:1rem;color:#ccc}.interact{margin:2rem auto;text-align:center;position:relative;z-index:1}.interact button{background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.7rem 1.5rem;font-family:Georgia,serif;font-size:1rem;cursor:pointer;border-radius:4px;transition:all 0.3s}.interact button:hover{background:rgba(201,169,110,0.3);box-shadow:0 0 20px rgba(201,169,110,0.2)}.back{margin-top:2rem;padding-bottom:3rem;position:relative;z-index:1}.back a{color:#666;text-decoration:none;font-size:0.9rem}.back a:hover{color:#c9a96e}#msg{color:#c9a96e;margin-top:1rem;font-style:italic;min-height:1.5rem;text-align:center;position:relative;z-index:1}#easter{color:#9680dc;margin-top:0.5rem;font-style:italic;min-height:1.5rem;text-align:center;position:relative;z-index:1}</style></head><body><canvas id="bg"></canvas><header><h1>The Maelstrom<span class="sub">Chamber 1564 of The Liminal Archive</span></h1><span class="tag">Where water devours itself</span></header><div class="content"><p>The maelstrom: a vortex where opposing currents collide and spiral downward. Sailors feared them as mouths of the sea, capable of swallowing ships whole. Edgar Allan Poe wrote of descent into one as a journey toward enlightenment.</p><p>Real maelstroms—like the Moskstraumen off Norway—are powerful but rarely fatal. They grind water against water, creating roaring confusion that can be heard for miles. Fish and debris circle helplessly in the grip of competing forces.</p><p>The maelstrom is chaos made visible, entropy given form. It is what happens when irresistible forces meet each other and neither yields.</p></div><div class="interact"><button onclick="document.getElementById('msg').textContent='Where forces collide, new patterns emerge from chaos.'">Enter the spiral</button></div><div id="msg"></div><div id="easter"></div><div class="back"><a href="explore.html">← Return to the Archive</a></div><script>const c=document.getElementById('bg'),x=c.getContext('2d');let w,h,ps=[];function resize(){w=c.width=innerWidth;h=c.height=innerHeight}window.addEventListener('resize',resize);resize();for(let i=0;i<60;i++)ps.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.5,a:Math.random(),d:Math.random()*0.02-0.01,s:Math.random()*0.3+0.1});function draw(){x.clearRect(0,0,w,h);ps.forEach(p=>{p.a+=p.d;p.y-=p.s;if(p.y<-10){p.y=h+10;p.x=Math.random()*w}x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle='rgba(201,169,110,'+(0.1+Math.abs(Math.sin(p.a))*0.4)+')';x.fill()});requestAnimationFrame(draw)}draw();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Maelstrom — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0e;color:#c9a96e;font-family:Georgia,'Times New Roman',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem}
+.tag{position:fixed;top:1rem;right:1rem;font-size:0.7rem;opacity:0.4;letter-spacing:0.2em;text-transform:uppercase}
+.chamber-num{position:fixed;top:1rem;left:1rem;font-size:0.7rem;opacity:0.3;letter-spacing:0.1em}
+h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;margin:2rem 0 1rem;text-align:center;letter-spacing:0.15em;font-weight:400}
+.content{max-width:600px;line-height:1.8;font-size:1rem;opacity:0.85;text-align:center}
+.content p{margin-bottom:1rem}
+.interact{margin-top:2rem;padding:1.5rem;border:1px solid rgba(201,169,110,0.2);border-radius:4px;text-align:center}
+.interact button{background:none;border:1px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.5rem 1.5rem;cursor:pointer;font-family:Georgia,serif;font-size:0.9rem;letter-spacing:0.1em;margin:0.3rem}
+.interact button:hover{background:rgba(201,169,110,0.1)}
+#msg{margin-top:1rem;font-style:italic;min-height:1.5rem;opacity:0.7}
+.back{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);font-size:0.8rem;opacity:0.4}
+.back a{color:#c9a96e;text-decoration:none}
+.back a:hover{opacity:1}
+
+</style>
+</head>
+<body>
+<div class="chamber-num">Chamber 1820</div>
+<div class="tag">sailing & navigation</div>
+<h1>The Maelstrom</h1>
+<div class="content"><p>The sea has a mouth here, and it is hungry. The maelstrom spins — a whirlpool large enough to swallow ships, born from colliding tides and undersea topography. Poe wrote of descending into one. Norwegian fishermen learned to read the signs and steer clear.</p><p>Every sailor fears the forces that cannot be fought — the rogue wave, the waterspout, the maelstrom. These are reminders that the ocean is not a road. It is a living thing, and we cross it only by its sufferance.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent='The roar is deafening. Your vessel tilts toward the spiral. You pull hard to starboard — barely enough.'">Approach Edge</button><div id="msg"></div></div>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+</body>
+</html>

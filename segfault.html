@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Dojo — The Liminal Archive</title>
+<title>Segmentation Fault — The Liminal Archive</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0e0e0a;color:#c9a96e;font-family:Georgia,'Times New Roman',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem}
+body{background:#0e0808;color:#c9a96e;font-family:Georgia,'Times New Roman',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem}
 .tag{position:fixed;top:1rem;right:1rem;font-size:0.7rem;opacity:0.4;letter-spacing:0.2em;text-transform:uppercase}
 .chamber-num{position:fixed;top:1rem;left:1rem;font-size:0.7rem;opacity:0.3;letter-spacing:0.1em}
 h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;margin:2rem 0 1rem;text-align:center;letter-spacing:0.15em;font-weight:400}
@@ -23,11 +23,11 @@ h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;margin:2rem 0 1
 </style>
 </head>
 <body>
-<div class="chamber-num">Chamber 1808</div>
-<div class="tag">martial arts</div>
-<h1>The Dojo</h1>
-<div class="content"><p>Remove your shoes at the threshold. The floor is sacred — polished wood that remembers ten thousand falls. The air smells of effort and discipline. Along the walls, wooden weapons stand at attention. In the center, empty space waits for practice.</p><p>The dojo is not a place of violence but of refinement. Each kata is a conversation with invisible opponents across centuries. The sensei watches with eyes that miss nothing. Here, the body becomes the instrument and repetition becomes revelation.</p></div>
-<div class="interact"><button onclick="document.getElementById('msg').textContent='You bow to the dojo. The dojo bows back. Training begins.'">Bow</button><div id="msg"></div></div>
+<div class="chamber-num">Chamber 1803</div>
+<div class="tag">coding & programming</div>
+<h1>Segmentation Fault</h1>
+<div class="content"><p>You have accessed memory that does not belong to you. This chamber exists at address 0x00000000 — the null pointer, the void reference, the place where pointers go to die. The operating system has spoken: this far, no further.</p><p>A segfault is a boundary violation, a transgression against the memory map. Your program reached into darkness and found nothing. The core has been dumped — a snapshot of the catastrophe, frozen for forensic examination.</p></div>
+<div class="interact"><button onclick="document.getElementById('msg').textContent='SIGSEGV: Segmentation fault (core dumped)'">Dereference NULL</button><div id="msg"></div></div>
 <div class="back"><a href="explore.html">← Return to the Archive</a></div>
 </body>
 </html>
