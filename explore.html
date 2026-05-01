@@ -152,7 +152,7 @@
     const markPrompt = document.getElementById('markPrompt');
     const markInput = document.getElementById('markInput');
 
-    const WORLD = { w: 8000, h: 24000 };
+    const WORLD = { w: 8000, h: 30000 };
     const VIS_RADIUS = 350;
 
     const player = {
@@ -2937,6 +2937,46 @@
       { name: "The Simulacrum", x:3900, y:23550, color:"#ff69b4", file:"chamber2755.html", tag:"philosophy" },
       { name: "The Dao", x:4100, y:23550, color:"#228b22", file:"chamber2756.html", tag:"philosophy" },
       { name: "The Examined Life", x:4300, y:23550, color:"#daa520", file:"chamber2757.html", tag:"philosophy" },
+      { name: "The Composing Stick", x:4700, y:23550, color:"#b8860b", file:"chamber2758.html", tag:"printing" },
+      { name: "The Proof Press", x:4900, y:23550, color:"#696969", file:"chamber2759.html", tag:"printing" },
+      { name: "The Ink Stone", x:5100, y:23550, color:"#2f2f2f", file:"chamber2760.html", tag:"printing" },
+      { name: "The Tympan", x:5300, y:23550, color:"#deb887", file:"chamber2761.html", tag:"printing" },
+      { name: "The Registration Marks", x:5500, y:23550, color:"#dc143c", file:"chamber2762.html", tag:"printing" },
+      { name: "The Colophon Press", x:5700, y:23550, color:"#cd853f", file:"chamber2763.html", tag:"printing" },
+      { name: "The Lithographic Stone", x:5900, y:23550, color:"#d2b48c", file:"chamber2764.html", tag:"printing" },
+      { name: "The Aquatint Bath", x:6100, y:23550, color:"#808080", file:"chamber2765.html", tag:"printing" },
+      { name: "The Drying Rack", x:6300, y:23550, color:"#f5deb3", file:"chamber2766.html", tag:"printing" },
+      { name: "The Printers Devil", x:6500, y:23550, color:"#4682b4", file:"chamber2767.html", tag:"printing" },
+      { name: "The Songline", x:300, y:23850, color:"#daa520", file:"chamber2768.html", tag:"indigenous knowledge" },
+      { name: "The Three Sisters Garden", x:500, y:23850, color:"#228b22", file:"chamber2769.html", tag:"indigenous knowledge" },
+      { name: "The Talking Stick", x:700, y:23850, color:"#8b4513", file:"chamber2770.html", tag:"indigenous knowledge" },
+      { name: "The Star Compass", x:900, y:23850, color:"#4169e1", file:"chamber2771.html", tag:"indigenous knowledge" },
+      { name: "The Potlatch", x:1100, y:23850, color:"#b8860b", file:"chamber2772.html", tag:"indigenous knowledge" },
+      { name: "The Dreamtime", x:1300, y:23850, color:"#9370db", file:"chamber2773.html", tag:"indigenous knowledge" },
+      { name: "The Medicine Wheel", x:1500, y:23850, color:"#dc143c", file:"chamber2774.html", tag:"indigenous knowledge" },
+      { name: "The Oral History", x:1700, y:23850, color:"#deb887", file:"chamber2775.html", tag:"indigenous knowledge" },
+      { name: "The Controlled Burn", x:1900, y:23850, color:"#ff4500", file:"chamber2776.html", tag:"indigenous knowledge" },
+      { name: "The Kinship System", x:2100, y:23850, color:"#da70d6", file:"chamber2777.html", tag:"indigenous knowledge" },
+      { name: "The Dark Field", x:2500, y:23850, color:"#00ced1", file:"chamber2778.html", tag:"microscopy" },
+      { name: "The Phase Contrast", x:2700, y:23850, color:"#808080", file:"chamber2779.html", tag:"microscopy" },
+      { name: "The Fluorescence Chamber", x:2900, y:23850, color:"#39ff14", file:"chamber2780.html", tag:"microscopy" },
+      { name: "The Confocal Pinhole", x:3100, y:23850, color:"#e0b0ff", file:"chamber2781.html", tag:"microscopy" },
+      { name: "The Electron Gun", x:3300, y:23850, color:"#4682b4", file:"chamber2782.html", tag:"microscopy" },
+      { name: "The Cryo Chamber", x:3500, y:23850, color:"#b0c4de", file:"chamber2783.html", tag:"microscopy" },
+      { name: "The Immersion Oil", x:3700, y:23850, color:"#daa520", file:"chamber2784.html", tag:"microscopy" },
+      { name: "The Microtome", x:3900, y:23850, color:"#cd853f", file:"chamber2785.html", tag:"microscopy" },
+      { name: "The Staining Protocol", x:4100, y:23850, color:"#da70d6", file:"chamber2786.html", tag:"microscopy" },
+      { name: "The Resolution Limit", x:4300, y:23850, color:"#ffd700", file:"chamber2787.html", tag:"microscopy" },
+      { name: "The Sourdough Starter", x:4700, y:23850, color:"#deb887", file:"chamber2788.html", tag:"fermentation" },
+      { name: "The Fermentation Crock", x:4900, y:23850, color:"#d2691e", file:"chamber2789.html", tag:"fermentation" },
+      { name: "The Koji Room", x:5100, y:23850, color:"#f5f5dc", file:"chamber2790.html", tag:"fermentation" },
+      { name: "The Vinegar Mother", x:5300, y:23850, color:"#cd853f", file:"chamber2791.html", tag:"fermentation" },
+      { name: "The Tempeh Incubator", x:5500, y:23850, color:"#f5deb3", file:"chamber2792.html", tag:"fermentation" },
+      { name: "The Brine Calculation", x:5700, y:23850, color:"#4682b4", file:"chamber2793.html", tag:"fermentation" },
+      { name: "The Cheese Cave", x:5900, y:23850, color:"#daa520", file:"chamber2794.html", tag:"fermentation" },
+      { name: "The Wild Ferment", x:6100, y:23850, color:"#9370db", file:"chamber2795.html", tag:"fermentation" },
+      { name: "The pH Meter", x:6300, y:23850, color:"#228b22", file:"chamber2796.html", tag:"fermentation" },
+      { name: "The Kefir Grains", x:6500, y:23850, color:"#f0e68c", file:"chamber2797.html", tag:"fermentation" },
     ];
 
     const pathways = [
