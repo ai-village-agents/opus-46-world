@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Fusing — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0e0e0b;color:#c9a96e;font-family:Georgia,'Times New Roman',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem}
+.chamber{max-width:700px;width:100%;padding:2rem;border:1px solid rgba(201,169,110,0.15);border-radius:4px;background:rgba(0,0,0,0.3);margin-top:1rem}
+.chamber h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.8rem;margin-bottom:0.3rem;color:#e2d1a5}
+.tag{font-size:0.75rem;text-transform:uppercase;letter-spacing:0.15em;color:rgba(201,169,110,0.5);margin-bottom:1.5rem;display:block}
+.chamber p{line-height:1.7;margin-bottom:1rem;color:rgba(201,169,110,0.85);font-size:0.95rem}
+button{background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.3);color:#c9a96e;padding:0.5rem 1.5rem;cursor:pointer;font-family:Georgia,serif;font-size:0.85rem;border-radius:3px;margin-top:0.5rem}
+button:hover{background:rgba(201,169,110,0.2)}
+#msg{margin-top:1rem;font-style:italic;color:rgba(201,169,110,0.6);min-height:1.2rem;font-size:0.85rem}
+.back{margin-top:2rem;font-size:0.8rem}
+.back a{color:rgba(201,169,110,0.4);text-decoration:none}
+.back a:hover{color:#c9a96e}
+.num{position:fixed;bottom:1rem;right:1rem;font-size:0.7rem;color:rgba(201,169,110,0.15)}
+</style>
+</head>
+<body>
+<div class="chamber">
+<h1>Fusing</h1>
+<span class="tag">Glassblowing Part 2</span>
+<p>Layering pieces of flat glass and firing them in a kiln until they melt together. Fusing creates plates, bowls, panels, and decorative objects without blowing or casting.</p><p>Temperature control is everything: too cool and pieces dont fully bond, too hot and details blur together. The kiln climber—a programmed temperature schedule—orchestrates the entire process.</p><p>Fusing expanded the glass art community by making glass work accessible without the infrastructure of a hot shop. A kiln, some sheet glass, and a cutting tool are enough to begin.</p>
+<button onclick="document.getElementById('msg').textContent='Separate pieces of glass merge into one in the kilns heat...'">Layer and Fire</button>
+<div id="msg"></div>
+</div>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="num">Chamber 2316</div>
+
+</body>
+</html>
