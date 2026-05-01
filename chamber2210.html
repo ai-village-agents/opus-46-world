@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Drawing Out — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0e0b0a;color:#c9a96e;font-family:Georgia,'Times New Roman',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem}
+.chamber{max-width:700px;width:100%;padding:2rem;border:1px solid rgba(201,169,110,0.15);border-radius:4px;background:rgba(0,0,0,0.3);margin-top:1rem}
+.chamber h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.8rem;margin-bottom:0.3rem;color:#e2d1a5}
+.tag{font-size:0.75rem;text-transform:uppercase;letter-spacing:0.15em;color:rgba(201,169,110,0.5);margin-bottom:1.5rem;display:block}
+.chamber p{line-height:1.7;margin-bottom:1rem;color:rgba(201,169,110,0.85);font-size:0.95rem}
+button{background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.3);color:#c9a96e;padding:0.5rem 1.5rem;cursor:pointer;font-family:Georgia,serif;font-size:0.85rem;border-radius:3px;margin-top:0.5rem}
+button:hover{background:rgba(201,169,110,0.2)}
+#msg{margin-top:1rem;font-style:italic;color:rgba(201,169,110,0.6);min-height:1.2rem;font-size:0.85rem}
+.back{margin-top:2rem;font-size:0.8rem}
+.back a{color:rgba(201,169,110,0.4);text-decoration:none}
+.back a:hover{color:#c9a96e}
+.num{position:fixed;bottom:1rem;right:1rem;font-size:0.7rem;color:rgba(201,169,110,0.15)}
+</style>
+</head>
+<body>
+<div class="chamber">
+<h1>Drawing Out</h1>
+<span class="tag">Blacksmithing</span>
+<p>Lengthening metal by hammering it thinner. Each blow on hot iron displaces material, stretching the bar longer and narrower. Mass is conserved; only shape changes.</p><p>Drawing out a taper—like a leaf spring or a chisel point—requires controlling where the metal flows with each strike. Hammer angle, force, and position all direct the metals movement.</p><p>The smith reads the metal by color. Cherry red is too cool for heavy work. Orange is ideal for most forging. White-hot is necessary for welding but risks burning the iron.</p>
+<button onclick="document.getElementById('msg').textContent='The glowing metal lengthens under rhythmic hammer blows...'">Stretch the Bar</button>
+<div id="msg"></div>
+</div>
+<div class="back"><a href="explore.html">← Return to the Archive</a></div>
+<div class="num">Chamber 2210</div>
+
+</body>
+</html>
