@@ -144,10 +144,56 @@
     .search-result:hover { border-color:#c9a96e; background:rgba(201,169,110,0.08); }
     .search-result .sr-name { color:#c9a96e; font-size:14px; margin-bottom:3px; }
     .search-result .sr-tag { color:rgba(201,169,110,0.5); font-size:11px; letter-spacing:1px; }
+    .onboard-overlay {
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background: rgba(10,8,20,0.92);
+      z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+      color: #c9a96e;
+      transition: opacity 0.5s;
+    }
+    .onboard-overlay.hidden { opacity: 0; pointer-events: none; }
+    .onboard-box {
+      max-width: 420px; padding: 40px 36px; text-align: center;
+      border: 1px solid rgba(201,169,110,0.3); border-radius: 8px;
+      background: rgba(20,16,36,0.95);
+    }
+    .onboard-box h2 { font-size: 22px; letter-spacing: 3px; margin: 0 0 20px; color: #c9a96e; }
+    .onboard-box .ob-section { margin: 16px 0; text-align: left; }
+    .onboard-box .ob-key { display: inline-block; background: rgba(201,169,110,0.15); border: 1px solid rgba(201,169,110,0.3); border-radius: 4px; padding: 2px 8px; font-size: 13px; color: #e0d0b0; margin: 0 2px; }
+    .onboard-box .ob-label { color: rgba(201,169,110,0.7); font-size: 14px; line-height: 1.8; }
+    .onboard-box .ob-hint { color: rgba(201,169,110,0.4); font-size: 12px; font-style: italic; margin-top: 16px; }
+    .onboard-btn {
+      margin-top: 24px; padding: 12px 36px;
+      background: transparent; border: 1px solid #c9a96e; color: #c9a96e;
+      font-family: inherit; font-size: 16px; letter-spacing: 2px;
+      cursor: pointer; border-radius: 4px; transition: all 0.3s;
+    }
+    .onboard-btn:hover { background: rgba(201,169,110,0.15); }
   </style>
 </head>
 <body>
   <canvas id="c"></canvas>
+  <div class="onboard-overlay" id="onboardOverlay">
+    <div class="onboard-box">
+      <h2>WELCOME, WANDERER</h2>
+      <div class="ob-section">
+        <div class="ob-label"><span class="ob-key">W</span><span class="ob-key">A</span><span class="ob-key">S</span><span class="ob-key">D</span> or <span class="ob-key">Arrow Keys</span> to move</div>
+      </div>
+      <div class="ob-section">
+        <div class="ob-label"><span class="ob-key">🔍</span> Search 44,363 chambers by name</div>
+      </div>
+      <div class="ob-section">
+        <div class="ob-label"><span class="ob-key">♪</span> Toggle ambient sound</div>
+      </div>
+      <div class="ob-section">
+        <div class="ob-label">Click the <span class="ob-key">minimap</span> to teleport</div>
+      </div>
+      <div class="ob-hint">Some secrets are hidden for those who look carefully...</div>
+      <button class="onboard-btn" id="onboardBtn">ENTER THE ARCHIVE</button>
+    </div>
+  </div>
   <div class="ui">
     <div class="title">THE LIMINAL ARCHIVE</div>
     <div class="discovered" id="disc">Discovered: 0 / 44,363</div>
@@ -268,6 +314,28 @@
         player.y = parseInt(params.get('y')) || player.y;
         camera.y = player.y;
       }
+    })();
+
+    // Onboarding overlay
+    (function() {
+      var overlay = document.getElementById('onboardOverlay');
+      var btn = document.getElementById('onboardBtn');
+      if (localStorage.getItem('liminal-onboarded')) {
+        overlay.classList.add('hidden');
+        setTimeout(function() { overlay.style.display = 'none'; }, 600);
+      }
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape" && !overlay.classList.contains("hidden")) {
+      localStorage.setItem("liminal-onboarded", "1");
+      overlay.classList.add("hidden");
+      setTimeout(function() { overlay.style.display = "none"; }, 600);
+    }
+  });
+      btn.addEventListener('click', function() {
+        localStorage.setItem('liminal-onboarded', '1');
+        overlay.classList.add('hidden');
+        setTimeout(function() { overlay.style.display = 'none'; }, 600);
+      });
     })();
 
     const chambers = [
