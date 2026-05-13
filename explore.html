@@ -191,6 +191,13 @@
       pointer-events: auto;
     }
     .help-btn:hover { background: rgba(201,169,110,0.2); border-color: #c9a96e; }
+    .depth-indicator {
+      position: fixed; top: 80px; left: 16px;
+      color: rgba(201,169,110,0.35); font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      pointer-events: none; font-family: inherit;
+      transition: color 0.8s, opacity 0.5s;
+    }
   </style>
 </head>
 <body>
@@ -246,6 +253,7 @@
     <div class="chamber-info" id="chamberInfo" style="opacity:0;"><div class="ci-name" id="ciName"></div><div class="ci-sub" id="ciSub"></div></div>
     <canvas class="minimap" id="minimap" width="180" height="120"></canvas>
     <button class="help-btn" id="helpBtn" aria-label="Show help">?</button>
+    <div class="depth-indicator" id="depthIndicator"></div>
   </div>
   <div class="mark-prompt" id="markPrompt">
     <label for="markInput">Leave a mark</label>
@@ -45557,6 +45565,32 @@
       }
     }, 500);
 
+
+    // Depth/region indicator
+    const depthEl = document.getElementById('depthIndicator');
+    const regionNames = [
+      { y: 0,      name: 'The Upper Archives',    color: 'rgba(140,150,200,0.4)' },
+      { y: 80000,  name: 'The Violet Corridors',  color: 'rgba(180,130,200,0.4)' },
+      { y: 160000, name: 'The Teal Passages',     color: 'rgba(130,190,190,0.4)' },
+      { y: 240000, name: 'The Crimson Depths',     color: 'rgba(200,130,140,0.4)' },
+      { y: 320000, name: 'The Deep Forest',        color: 'rgba(140,190,140,0.4)' },
+      { y: 380000, name: 'The Amber Vaults',       color: 'rgba(200,180,130,0.4)' },
+    ];
+    let lastRegionName = '';
+    function updateDepthIndicator() {
+      const cy = camera.y;
+      let region = regionNames[0];
+      for (let i = regionNames.length - 1; i >= 0; i--) {
+        if (cy >= regionNames[i].y) { region = regionNames[i]; break; }
+      }
+      if (region.name !== lastRegionName) {
+        depthEl.textContent = region.name;
+        depthEl.style.color = region.color;
+        lastRegionName = region.name;
+      }
+    }
+    setInterval(updateDepthIndicator, 300);
+
     function drawWorld(time) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -45932,7 +45966,8 @@
         }
       }
 
-      drawMinimap();
+      if (!drawWorld._fc) drawWorld._fc = 0;
+      if (++drawWorld._fc % 3 === 0) drawMinimap();
     }
 
     function drawEdgeGlow(viewLeft, viewTop) {
@@ -45976,41 +46011,52 @@
       }
     }
 
-    function drawMinimap() {
-      mctx.clearRect(0, 0, minimap.width, minimap.height);
-      mctx.fillStyle = '#0a0a0f99';
-      mctx.fillRect(0, 0, minimap.width, minimap.height);
-      mctx.strokeStyle = '#2d1b69';
-      mctx.strokeRect(0.5, 0.5, minimap.width - 1, minimap.height - 1);
+    // Pre-rendered minimap for performance (avoids 44k arcs per frame)
+    const minimapBg = document.createElement('canvas');
+    minimapBg.width = minimap.width;
+    minimapBg.height = minimap.height;
+    const mbctx = minimapBg.getContext('2d');
+    const MINIMAP_SCALE = 1 / 33.3;
+    let lastDiscoveredCount = -1;
 
-      const scale = 1 / 33.3;
-      chambers.forEach((c, i) => {
-        const x = c.x * scale;
-        const y = c.y * scale;
-        if (discovered.has(i)) {
-          mctx.fillStyle = c.color;
-        } else {
-          mctx.fillStyle = '#ffffff10';
-        }
-        mctx.beginPath();
-        mctx.arc(x, y, 3, 0, Math.PI * 2);
-        mctx.fill();
-      });
-
+    function prerenderMinimapChambers() {
+      mbctx.clearRect(0, 0, minimapBg.width, minimapBg.height);
+      mbctx.fillStyle = '#0a0a0f99';
+      mbctx.fillRect(0, 0, minimapBg.width, minimapBg.height);
+      mbctx.strokeStyle = '#2d1b69';
+      mbctx.strokeRect(0.5, 0.5, minimapBg.width - 1, minimapBg.height - 1);
+      for (let i = 0; i < chambers.length; i++) {
+        const c = chambers[i];
+        const x = c.x * MINIMAP_SCALE;
+        const y = c.y * MINIMAP_SCALE;
+        mbctx.fillStyle = discovered.has(i) ? c.color : '#ffffff10';
+        mbctx.beginPath();
+        mbctx.arc(x, y, 3, 0, Math.PI * 2);
+        mbctx.fill();
+      }
       if (marks.length) {
-        mctx.fillStyle = '#c9a96e';
+        mbctx.fillStyle = '#c9a96e';
         for (const mark of marks) {
-          const mx = mark.x * scale;
-          const my = mark.y * scale;
-          mctx.beginPath();
-          mctx.arc(mx, my, 2, 0, Math.PI * 2);
-          mctx.fill();
+          mbctx.beginPath();
+          mbctx.arc(mark.x * MINIMAP_SCALE, mark.y * MINIMAP_SCALE, 2, 0, Math.PI * 2);
+          mbctx.fill();
         }
       }
+      lastDiscoveredCount = discovered.size;
+    }
+    prerenderMinimapChambers();
 
+    function drawMinimap() {
+      // Only re-render chamber layer when discoveries change
+      if (discovered.size !== lastDiscoveredCount) {
+        prerenderMinimapChambers();
+      }
+      // Composite pre-rendered chambers + player dot
+      mctx.clearRect(0, 0, minimap.width, minimap.height);
+      mctx.drawImage(minimapBg, 0, 0);
       mctx.fillStyle = '#ffffff';
       mctx.beginPath();
-      mctx.arc(player.x * scale, player.y * scale, 4, 0, Math.PI * 2);
+      mctx.arc(player.x * MINIMAP_SCALE, player.y * MINIMAP_SCALE, 4, 0, Math.PI * 2);
       mctx.fill();
     }
 
