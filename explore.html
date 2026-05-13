@@ -45456,6 +45456,12 @@
     }
 
     
+    
+    // Movement trail
+    const trail = [];
+    const TRAIL_MAX = 300;
+    let lastTrailX = player.x, lastTrailY = player.y;
+
     // Random Chamber Teleport
     const randomBtn = document.getElementById('randomBtn');
     randomBtn.addEventListener('click', () => {
@@ -45599,6 +45605,29 @@
           }
         });
       });
+
+      // Player movement trail
+      if (Math.abs(player.x - lastTrailX) > 8 || Math.abs(player.y - lastTrailY) > 8) {
+        trail.push({x: player.x, y: player.y, t: time});
+        lastTrailX = player.x;
+        lastTrailY = player.y;
+        if (trail.length > TRAIL_MAX) trail.shift();
+      }
+      if (trail.length > 1) {
+        for (let i = 1; i < trail.length; i++) {
+          const age = (time - trail[i].t) / 1000;
+          const alpha = Math.max(0, 0.25 - age * 0.003);
+          if (alpha <= 0) continue;
+          const sx = trail[i-1].x - viewLeft, sy = trail[i-1].y - viewTop;
+          const ex = trail[i].x - viewLeft, ey = trail[i].y - viewTop;
+          ctx.beginPath();
+          ctx.moveTo(sx, sy);
+          ctx.lineTo(ex, ey);
+          ctx.strokeStyle = 'rgba(201,169,110,' + alpha + ')';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+      }
 
       // Pathways (viewport-culled)
       for (const [a, b] of pathways) {
