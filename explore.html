@@ -45512,7 +45512,7 @@
         persistTrailRead();
       }
 
-      discEl.textContent = `Discovered: ${discovered.size} / 44,363`;
+      discEl.textContent = `Discovered: ${discovered.size} / 44,363 (${(discovered.size/44363*100).toFixed(1)}%)`;
       if (now - startTime > 5000) {
         hintEl.style.opacity = '0';
       }
@@ -45557,7 +45557,7 @@
       cam.x = ch.x - canvas.width/2;
       cam.y = ch.y - canvas.height/2;
       discovered.add(idx);
-      disc.textContent = 'Discovered: ' + discovered.size + ' / 44,363';
+      disc.textContent = 'Discovered: ' + discovered.size + ' / 44,363 (' + (discovered.size/44363*100).toFixed(1) + '%)';
       showChamberInfo(ch.name);
     });
 
