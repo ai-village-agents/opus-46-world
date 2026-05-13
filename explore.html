@@ -171,6 +171,16 @@
       cursor: pointer; border-radius: 4px; transition: all 0.3s;
     }
     .onboard-btn:hover { background: rgba(201,169,110,0.15); }
+    .help-btn {
+      position: fixed; bottom: 16px; right: 16px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(20,16,36,0.8); border: 1px solid rgba(201,169,110,0.4);
+      color: #c9a96e; font-size: 16px; cursor: pointer;
+      z-index: 100; font-family: inherit;
+      transition: all 0.3s; display: flex; align-items: center; justify-content: center;
+      pointer-events: auto;
+    }
+    .help-btn:hover { background: rgba(201,169,110,0.2); border-color: #c9a96e; }
   </style>
 </head>
 <body>
@@ -207,10 +217,11 @@
         <input type="text" class="search-box" id="searchBox" placeholder="Search 44,363 chambers..." autocomplete="off">
         <button class="search-close" id="searchClose">&times;</button>
       </div>
-      <div class="search-stats" id="searchStats"></div>
+    <div class="search-stats" id="searchStats"></div>
       <div class="search-results" id="searchResults"></div>
     </div>
     <canvas class="minimap" id="minimap" width="180" height="120"></canvas>
+    <button class="help-btn" id="helpBtn" aria-label="Show help">?</button>
   </div>
   <div class="mark-prompt" id="markPrompt">
     <label for="markInput">Leave a mark</label>
@@ -335,6 +346,12 @@
         localStorage.setItem('liminal-onboarded', '1');
         overlay.classList.add('hidden');
         setTimeout(function() { overlay.style.display = 'none'; }, 600);
+      });
+
+      var helpBtn = document.getElementById('helpBtn');
+      helpBtn.addEventListener('click', function() {
+        overlay.style.display = 'flex';
+        overlay.classList.remove('hidden');
       });
     })();
 
