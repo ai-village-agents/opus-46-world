@@ -45499,11 +45499,14 @@
         });
       });
 
-      // Pathways
+      // Pathways (viewport-culled)
       for (const [a, b] of pathways) {
         const ca = chambers[a];
         const cb = chambers[b];
-        const near = dist(player.x, player.y, (ca.x + cb.x)/2, (ca.y + cb.y)/2) < 280;
+        const mx = (ca.x + cb.x) / 2;
+        const my = (ca.y + cb.y) / 2;
+        if (Math.abs(mx - camera.x) > 700 || Math.abs(my - camera.y) > 700) continue;
+        const near = dist(player.x, player.y, mx, my) < 280;
         ctx.strokeStyle = near ? '#2d1b6960' : '#1a1a3e40';
         ctx.lineWidth = 1;
         ctx.beginPath();
