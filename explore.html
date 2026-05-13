@@ -130,6 +130,11 @@
     /* Search overlay */
     .search-btn { position:fixed; top:10px; left:240px; pointer-events:auto; background:none; border:1px solid rgba(201,169,110,0.3); color:#c9a96e; font-size:18px; cursor:pointer; padding:4px 10px; border-radius:4px; z-index:20; font-family:inherit; }
     .search-btn:hover { border-color:#c9a96e; background:rgba(201,169,110,0.1); }
+    .random-btn { position:fixed; top:10px; left:280px; pointer-events:auto; background:none; border:1px solid rgba(201,169,110,0.3); color:#c9a96e; font-size:18px; cursor:pointer; padding:4px 10px; border-radius:4px; z-index:20; font-family:inherit; transition: all 0.3s; }
+    .random-btn:hover { border-color:#c9a96e; background:rgba(201,169,110,0.1); transform: rotate(90deg); }
+    .chamber-info { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); pointer-events:none; text-align:center; z-index:15; transition: opacity 0.8s; }
+    .chamber-info .ci-name { font-size:20px; color:rgba(201,169,110,0.7); letter-spacing:3px; text-transform:uppercase; text-shadow: 0 0 20px rgba(201,169,110,0.3); }
+    .chamber-info .ci-sub { font-size:11px; color:rgba(201,169,110,0.35); letter-spacing:2px; margin-top:4px; }
     .search-overlay { display:none; position:fixed; pointer-events:auto; top:0; left:0; right:0; bottom:0; background:rgba(5,5,15,0.92); z-index:100; flex-direction:column; align-items:center; padding-top:80px; }
     .search-overlay.active { display:flex; }
     .search-header { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
@@ -214,6 +219,7 @@
     <a class="return" href="about.html" style="top:72px;">About</a>
     <button class="mute" id="muteBtn" aria-label="Toggle sound">♪</button>
     <button class="search-btn" id="searchBtn" aria-label="Search chambers">🔍</button>
+    <button class="random-btn" id="randomBtn" aria-label="Random chamber" title="Teleport to a random chamber">🎲</button>
     <div class="search-overlay" id="searchOverlay">
       <div class="search-header">
         <input type="text" class="search-box" id="searchBox" placeholder="Search 44,363 chambers..." autocomplete="off">
@@ -222,6 +228,7 @@
     <div class="search-stats" id="searchStats"></div>
       <div class="search-results" id="searchResults"></div>
     </div>
+    <div class="chamber-info" id="chamberInfo" style="opacity:0;"><div class="ci-name" id="ciName"></div><div class="ci-sub" id="ciSub"></div></div>
     <canvas class="minimap" id="minimap" width="180" height="120"></canvas>
     <button class="help-btn" id="helpBtn" aria-label="Show help">?</button>
   </div>
@@ -45441,6 +45448,60 @@
         if (wisp.y > WORLD.h) wisp.y -= WORLD.h;
       }
     }
+
+    
+    // Random Chamber Teleport
+    const randomBtn = document.getElementById('randomBtn');
+    randomBtn.addEventListener('click', () => {
+      const idx = Math.floor(Math.random() * chambers.length);
+      const ch = chambers[idx];
+      player.x = ch.x;
+      player.y = ch.y;
+      cam.x = ch.x - canvas.width/2;
+      cam.y = ch.y - canvas.height/2;
+      discovered.add(idx);
+      disc.textContent = 'Discovered: ' + discovered.size + ' / 44,363';
+      showChamberInfo(ch.name);
+    });
+
+    // Chamber Proximity Info Display
+    const chamberInfoEl = document.getElementById('chamberInfo');
+    const ciNameEl = document.getElementById('ciName');
+    const ciSubEl = document.getElementById('ciSub');
+    let lastShownChamber = '';
+    let chamberInfoTimeout = null;
+
+    function showChamberInfo(name, sub) {
+      ciNameEl.textContent = name;
+      ciSubEl.textContent = sub || 'a chamber of the archive';
+      chamberInfoEl.style.opacity = '1';
+      clearTimeout(chamberInfoTimeout);
+      chamberInfoTimeout = setTimeout(() => {
+        chamberInfoEl.style.opacity = '0';
+      }, 3000);
+    }
+
+    // Check proximity to chambers periodically
+    setInterval(() => {
+      let closest = null;
+      let closestDist = Infinity;
+      for (let i = 0; i < chambers.length; i++) {
+        const ch = chambers[i];
+        const dx = player.x - ch.x;
+        const dy = player.y - ch.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = ch;
+        }
+      }
+      if (closest && closestDist < 60 && closest.name !== lastShownChamber) {
+        lastShownChamber = closest.name;
+        showChamberInfo(closest.name);
+      } else if (!closest || closestDist >= 120) {
+        lastShownChamber = '';
+      }
+    }, 500);
 
     function drawWorld(time) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
