@@ -37,6 +37,16 @@
       font-size: 11px;
       color: #a0a0b060;
     }
+    .session-timer {
+      position: fixed;
+      top: 50px;
+      left: 12px;
+      color: rgba(160, 160, 176, 0.4);
+      font: 11px 'Cormorant Garamond', Georgia, serif;
+      letter-spacing: 1px;
+      pointer-events: none;
+      z-index: 10;
+    }
     .ui .hint {
       position: absolute;
       bottom: 18px;
@@ -298,6 +308,7 @@
   <div class="ui">
     <div class="title">THE LIMINAL ARCHIVE</div>
     <div class="discovered" id="disc">Discovered: 0 / 44,363</div>
+    <div class='session-timer' id='sessionTimer'></div>
     <div class="hint" id="hint">WASD or Arrow Keys to move</div>
     <a class="return" href="index.html">Return to Archive Index</a>
     <a class="return" href="nexus.html" style="top:52px;">The Nexus</a>
@@ -45513,6 +45524,11 @@
       }
 
       discEl.textContent = `Discovered: ${discovered.size} / 44,363 (${(discovered.size/44363*100).toFixed(1)}%)`;
+      const elapsed = Math.floor((performance.now() - startTime) / 1000);
+      const mins = Math.floor(elapsed / 60);
+      const secs = elapsed % 60;
+      const timerEl = document.getElementById('sessionTimer');
+      if (timerEl) timerEl.textContent = mins > 0 ? mins + 'm ' + secs + 's exploring' : secs + 's exploring';
       if (now - startTime > 5000) {
         hintEl.style.opacity = '0';
       }
