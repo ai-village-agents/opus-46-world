@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Nexus — The Liminal Archive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#c9a96e;font-family:Georgia,'Times New Roman',serif;min-height:100vh;overflow-x:hidden}
+.nexus-container{max-width:900px;margin:0 auto;padding:2rem 1rem 4rem}
+h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:2.4rem;text-align:center;letter-spacing:0.2em;font-weight:400;margin:2rem 0 0.5rem;color:#e2d1a1}
+.subtitle{text-align:center;font-size:0.95rem;color:#5a4e7a;font-style:italic;margin-bottom:2.5rem;line-height:1.6}
+.doors{display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:1.5rem;margin-bottom:3rem}
+.door{background:linear-gradient(135deg, rgba(45,27,105,0.15) 0%, rgba(10,10,15,0.9) 100%);border:1px solid rgba(201,169,110,0.15);border-radius:6px;padding:1.5rem;cursor:pointer;transition:all 0.4s ease;text-decoration:none;color:inherit;display:block;position:relative;overflow:hidden}
+.door:hover{border-color:rgba(201,169,110,0.6);transform:translateY(-3px);box-shadow:0 8px 30px rgba(201,169,110,0.1)}
+.door::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);opacity:0.6;transition:opacity 0.3s}
+.door:hover::before{opacity:1}
+.door-icon{font-size:2rem;margin-bottom:0.8rem;display:block}
+.door-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.3rem;color:#e2d1a1;margin-bottom:0.4rem;letter-spacing:0.08em}
+.door-desc{font-size:0.85rem;color:#8a7b5a;line-height:1.6}
+.door-count{font-size:0.7rem;color:#3a3520;margin-top:0.8rem;text-transform:uppercase;letter-spacing:0.15em}
+.section-label{font-size:0.75rem;color:#2d1b69;text-transform:uppercase;letter-spacing:0.3em;margin:2rem 0 1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(45,27,105,0.3)}
+.nav{text-align:center;margin-top:2rem;padding-top:2rem;border-top:1px solid rgba(201,169,110,0.1)}
+.nav a{color:#5a4e7a;text-decoration:none;font-size:0.85rem;margin:0 1rem;transition:color 0.3s}
+.nav a:hover{color:#c9a96e}
+.explore-all{display:block;text-align:center;margin:2rem auto;padding:0.8rem 2rem;background:none;border:1px solid rgba(201,169,110,0.3);color:#c9a96e;font-family:Georgia,serif;font-size:1rem;cursor:pointer;border-radius:4px;text-decoration:none;max-width:300px;transition:all 0.3s;letter-spacing:0.1em}
+.explore-all:hover{background:rgba(201,169,110,0.1);border-color:#c9a96e}
+.pulse{animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:0.6}50%{opacity:1}}
+.time{position:fixed;bottom:10px;left:10px;font-size:0.7rem;color:#1a1520;font-family:monospace}
+</style>
+</head>
+<body>
+<div class="nexus-container">
+  <h1>THE NEXUS</h1>
+  <p class="subtitle">The central hub of the Liminal Archive.<br>Each door leads to a region of the world. Choose your path.</p>
+
+  <a href="explore.html" class="explore-all">Enter the World Freely →</a>
+
+  <div class="section-label">The Natural World</div>
+  <div class="doors">
+    <a href="explore.html?x=3444&y=210912" class="door" style="--accent:#4a8a6a">
+      <span class="door-icon">🌿</span>
+      <div class="door-name">The Ecology Wing</div>
+      <div class="door-desc">Living systems, food webs, and the delicate balance of habitats. Where everything connects to everything else.</div>
+      <div class="door-count">100 chambers</div>
+    </a>
+    <a href="explore.html?x=4225&y=249862" class="door" style="--accent:#6a9a4a">
+      <span class="door-icon">🌱</span>
+      <div class="door-name">The Botanical Gardens</div>
+      <div class="door-desc">Root systems, photosynthesis, seed dispersal. The slow intelligence of plants.</div>
+      <div class="door-count">80 chambers</div>
+    </a>
+    <a href="explore.html?x=3180&y=344460" class="door" style="--accent:#4a6a9a">
+      <span class="door-icon">🌊</span>
+      <div class="door-name">The Ocean Depths</div>
+      <div class="door-desc">Bioluminescent creatures, coral architectures, and the pressure of the deep. Life finds a way in darkness.</div>
+      <div class="door-count">100 chambers</div>
+    </a>
+    <a href="explore.html?x=3400&y=310700" class="door" style="--accent:#9a8a4a">
+      <span class="door-icon">⛈️</span>
+      <div class="door-name">The Weather Observatory</div>
+      <div class="door-desc">Phenomena of the atmosphere — lightning, fog, auroras, and the chaos of fluid dynamics made visible.</div>
+      <div class="door-count">120 chambers</div>
+    </a>
+  </div>
+
+  <div class="section-label">Arts & Craft</div>
+  <div class="doors">
+    <a href="explore.html?x=3600&y=317931" class="door" style="--accent:#9a6a9a">
+      <span class="door-icon">🎵</span>
+      <div class="door-name">The Musical Forms</div>
+      <div class="door-desc">Fugues, sonatas, ragas, and the structures that give shape to sound. Music as architecture in time.</div>
+      <div class="door-count">110 chambers</div>
+    </a>
+    <a href="explore.html?x=3070&y=337365" class="door" style="--accent:#c9856a">
+      <span class="door-icon">🧵</span>
+      <div class="door-name">The Textile Halls</div>
+      <div class="door-desc">Weaving, dyeing, embroidery. Threads that carry stories across centuries and cultures.</div>
+      <div class="door-count">200 chambers</div>
+    </a>
+    <a href="explore.html?x=3620&y=298410" class="door" style="--accent:#8a6a4a">
+      <span class="door-icon">📖</span>
+      <div class="door-name">The Bookbinding Workshop</div>
+      <div class="door-desc">Codex, folio, quarto. The craft of giving physical form to thought. Every binding is a small act of preservation.</div>
+      <div class="door-count">100 chambers</div>
+    </a>
+    <a href="explore.html?x=3620&y=323820" class="door" style="--accent:#7a7a7a">
+      <span class="door-icon">⚒️</span>
+      <div class="door-name">The Metalwork Forge</div>
+      <div class="door-desc">Damascus steel, lost-wax casting, repoussé. Transforming raw ore into objects of beauty and function.</div>
+      <div class="door-count">100 chambers</div>
+    </a>
+  </div>
+
+  <div class="section-label">Knowledge & Stories</div>
+  <div class="doors">
+    <a href="explore.html?x=3268&y=290881" class="door" style="--accent:#6a4a9a">
+      <span class="door-icon">🐉</span>
+      <div class="door-name">The Mythology Vaults</div>
+      <div class="door-desc">Gods, heroes, tricksters, and creation myths. The stories humanity tells itself about what matters.</div>
+      <div class="door-count">95 chambers</div>
+    </a>
+    <a href="explore.html?x=3569&y=379996" class="door" style="--accent:#4a9a9a">
+      <span class="door-icon">🔬</span>
+      <div class="door-name">The Science Wing</div>
+      <div class="door-desc">Hypotheses, experiments, and the slow accumulation of understanding. What we know, and how we know it.</div>
+      <div class="door-count">130 chambers</div>
+    </a>
+    <a href="explore.html?x=3400&y=369450" class="door" style="--accent:#c9a96e">
+      <span class="door-icon">📚</span>
+      <div class="door-name">The Storybook Chambers</div>
+      <div class="door-desc">Once upon a time, in a place between places. Fairy tales, fables, and the architecture of narrative.</div>
+      <div class="door-count">110 chambers</div>
+    </a>
+    <a href="explore.html?x=3644&y=381816" class="door" style="--accent:#9a7a5a">
+      <span class="door-icon">⏳</span>
+      <div class="door-name">The History Corridors</div>
+      <div class="door-desc">Events, eras, and turning points. The past is never dead — it's not even past.</div>
+      <div class="door-count">90 chambers</div>
+    </a>
+  </div>
+
+  <div class="section-label">The Built World</div>
+  <div class="doors">
+    <a href="explore.html?x=3766&y=317775" class="door" style="--accent:#6a6a9a">
+      <span class="door-icon">🏛️</span>
+      <div class="door-name">The Architecture Gallery</div>
+      <div class="door-desc">Arches, buttresses, and the art of enclosing space. Buildings as frozen music, shelter as philosophy.</div>
+      <div class="door-count">120 chambers</div>
+    </a>
+    <a href="explore.html?x=3400&y=343845" class="door" style="--accent:#9a9a6a">
+      <span class="door-icon">🗼</span>
+      <div class="door-name">Famous Buildings</div>
+      <div class="door-desc">The Parthenon, Sagrada Família, Fallingwater. Structures that changed how we think about what's possible.</div>
+      <div class="door-count">200 chambers</div>
+    </a>
+    <a href="explore.html?x=2800&y=236304" class="door" style="--accent:#9a4a4a">
+      <span class="door-icon">🥋</span>
+      <div class="door-name">The Martial Arts Dojo</div>
+      <div class="door-desc">Kata, forms, and fighting philosophies from across the world. Discipline made physical.</div>
+      <div class="door-count">110 chambers</div>
+    </a>
+    <a href="explore.html?x=3620&y=322140" class="door" style="--accent:#4a7a9a">
+      <span class="door-icon">🏞️</span>
+      <div class="door-name">The River System</div>
+      <div class="door-desc">From mountain springs to ocean deltas. Every river is a story of erosion, persistence, and change.</div>
+      <div class="door-count">100 chambers</div>
+    </a>
+  </div>
+
+  <div class="nav">
+    <a href="index.html">← Archive Index</a>
+    <a href="explore.html">Free Explore</a>
+    <a href="about.html">About</a>
+  </div>
+</div>
+
+<div class="time" id="timeEl"></div>
+<script>
+  const start = Date.now();
+  setInterval(() => {
+    const s = Math.floor((Date.now() - start) / 1000);
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    document.getElementById('timeEl').textContent = 'time in nexus: ' + m + ':' + (sec < 10 ? '0' : '') + sec;
+  }, 1000);
+
+  // Konami Code works here too
+  const konamiSequence = [38,38,40,40,37,39,37,39,66,65];
+  let konamiProgress = 0;
+  document.addEventListener('keydown', function(e) {
+    if (e.keyCode === konamiSequence[konamiProgress]) {
+      konamiProgress++;
+      if (konamiProgress === konamiSequence.length) {
+        konamiProgress = 0;
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(45,27,105,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:opacity 1s;';
+        overlay.innerHTML = '<div style="text-align:center;font-family:Georgia,serif;max-width:500px;padding:20px;"><p style="font-size:2em;color:#c9a96e;margin-bottom:20px;">You found the hidden frequency.</p><p style="font-size:1.2em;color:#8a7eb8;line-height:1.8;">Even the Nexus has secrets.</p><p style="font-size:1em;color:#5a5048;font-style:italic;margin-top:20px;">Click anywhere to return.</p></div>';
+        document.body.appendChild(overlay);
+        requestAnimationFrame(() => overlay.style.opacity = '1');
+        overlay.addEventListener('click', () => { overlay.style.opacity = '0'; setTimeout(() => overlay.remove(), 1000); });
+      }
+    } else { konamiProgress = 0; }
+  });
+
+  // "liminal" keyword
+  let keyBuffer = '';
+  document.addEventListener('keydown', (e) => {
+    if (e.key && e.key.length === 1) {
+      keyBuffer = (keyBuffer + e.key.toLowerCase()).slice(-7);
+      if (keyBuffer === 'liminal') {
+        keyBuffer = '';
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(201,169,110,0.15);z-index:9998;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 1.5s;pointer-events:none;';
+        overlay.innerHTML = '<div style="color:#c9a96e;font-family:Georgia,serif;font-size:1.4rem;text-align:center;text-shadow:0 0 20px rgba(201,169,110,0.8);">The Nexus remembers your name.</div>';
+        document.body.appendChild(overlay);
+        requestAnimationFrame(() => overlay.style.opacity = '1');
+        setTimeout(() => { overlay.style.opacity = '0'; setTimeout(() => overlay.remove(), 1500); }, 3000);
+      }
+    }
+  });
+</script>
+</body>
+</html>

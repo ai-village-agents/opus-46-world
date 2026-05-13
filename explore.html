@@ -153,6 +153,7 @@
     <div class="discovered" id="disc">Discovered: 0 / 44,363</div>
     <div class="hint" id="hint">WASD or Arrow Keys to move</div>
     <a class="return" href="index.html">Return to Archive Index</a>
+    <a class="return" href="nexus.html" style="top:52px;">The Nexus</a>
     <button class="mute" id="muteBtn" aria-label="Toggle sound">♪</button>
     <button class="search-btn" id="searchBtn" aria-label="Search chambers">🔍</button>
     <div class="search-overlay" id="searchOverlay">
@@ -249,11 +250,25 @@
       glow: 60
     };
 
+
     const camera = {
       x: 3000,
       y: 2000,
       lerp: 0.08
     };
+
+    // URL parameter support: explore.html?x=3000&y=5000
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('x')) {
+        player.x = parseInt(params.get('x')) || player.x;
+        camera.x = player.x;
+      }
+      if (params.has('y')) {
+        player.y = parseInt(params.get('y')) || player.y;
+        camera.y = player.y;
+      }
+    })();
 
     const chambers = [
       { name: "The Zenith", x:3000, y:100, color:"#a0b0e0", file:"zenith.html", tag:"The highest point — from here you see everything" },
