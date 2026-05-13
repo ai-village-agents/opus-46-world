@@ -45560,6 +45560,34 @@
     function drawWorld(time) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // Ambient color zones - background shifts by world region
+      function getRegionColor(y) {
+        const zones = [
+          { y: 0,      r: 10, g: 8,  b: 20 },   // midnight blue
+          { y: 80000,  r: 18, g: 8,  b: 26 },   // deep purple
+          { y: 160000, r: 8,  g: 16, b: 22 },   // deep teal
+          { y: 240000, r: 22, g: 8,  b: 14 },   // deep wine
+          { y: 320000, r: 10, g: 16, b: 10 },   // deep forest
+          { y: 400000, r: 16, g: 12, b: 8  },   // deep amber
+        ];
+        const cy = Math.max(0, Math.min(y, 400000));
+        let i = 0;
+        while (i < zones.length - 1 && zones[i + 1].y <= cy) i++;
+        if (i >= zones.length - 1) return zones[zones.length - 1];
+        const t = (cy - zones[i].y) / (zones[i + 1].y - zones[i].y);
+        const s = t * t * (3 - 2 * t); // smoothstep
+        return {
+          r: Math.round(zones[i].r + (zones[i + 1].r - zones[i].r) * s),
+          g: Math.round(zones[i].g + (zones[i + 1].g - zones[i].g) * s),
+          b: Math.round(zones[i].b + (zones[i + 1].b - zones[i].b) * s),
+        };
+      }
+
+      // Draw region-tinted background
+      const regionBg = getRegionColor(camera.y);
+      ctx.fillStyle = "rgb(" + regionBg.r + "," + regionBg.g + "," + regionBg.b + ")";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
       const viewLeft = camera.x - canvas.width / 2;
       const viewTop = camera.y - canvas.height / 2;
       const trailTexts = [];
@@ -45844,10 +45872,11 @@
         ctx.stroke();
       }
 
-      // Fog of war
+      // Fog of war (region-tinted)
+      const fogBg = getRegionColor(camera.y);
       const fog = ctx.createRadialGradient(px, py, VIS_RADIUS * 0.6, px, py, VIS_RADIUS);
-      fog.addColorStop(0, 'rgba(10,10,15,0)');
-      fog.addColorStop(1, '#0a0a0f');
+      fog.addColorStop(0, 'rgba(' + fogBg.r + ',' + fogBg.g + ',' + fogBg.b + ',0)');
+      fog.addColorStop(1, 'rgb(' + fogBg.r + ',' + fogBg.g + ',' + fogBg.b + ')');
       ctx.fillStyle = fog;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
