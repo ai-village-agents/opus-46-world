@@ -216,6 +216,9 @@
       <div class="ob-section">
         <div class="ob-label">Click <span class="ob-key">📋</span> to share your location</div>
       </div>
+      <div class="ob-section">
+        <div class="ob-label">Hold <span class="ob-key">Shift</span> to sprint</div>
+      </div>
       <div class="ob-hint">Some secrets are hidden for those who look carefully...</div>
       <button class="onboard-btn" id="onboardBtn">ENTER THE ARCHIVE</button>
     </div>
@@ -45306,7 +45309,7 @@
     }
 
     function update(dt, time) {
-      const accel = player.speed;
+      const accel = keys.has("shift") ? player.speed * 2.5 : player.speed;
       let ax = 0, ay = 0;
       if (!markPromptOpen) {
         if (keys.has('w') || keys.has('arrowup')) ay -= accel;
@@ -45468,7 +45471,6 @@
     const TRAIL_MAX = 300;
     let lastTrailX = player.x, lastTrailY = player.y;
 
-    // Random Chamber Teleport
     const randomBtn = document.getElementById('randomBtn');
     randomBtn.addEventListener('click', () => {
       const idx = Math.floor(Math.random() * chambers.length);
