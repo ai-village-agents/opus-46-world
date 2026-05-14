@@ -46222,6 +46222,10 @@
       if ((e.key === "n" || e.key === "N") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { toggleNearby(); }
       if ((e.key === "h" || e.key === "H") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleHistory === "function") toggleHistory(); }
       if ((e.key === "l" || e.key === "L") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleLensPanel === "function") toggleLensPanel(); }
+      if ((e.key === "i" || e.key === "I") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleStats === "function") toggleStats(); }
+      if ((e.key === "f" || e.key === "F") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleFavNearby === "function") toggleFavNearby(); }
+      if ((e.key === "v" || e.key === "V") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleFavPanel === "function") toggleFavPanel(); }
+      if ((e.key === "g" || e.key === "G") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleAmbient === "function") toggleAmbient(); }
     });
 
     // Chamber Proximity Info Display
@@ -47557,7 +47561,7 @@
       regionDefs.forEach(function(r){ regionCounts[r.name] = 0; });
       discovered.forEach(function(idx) {
         if (idx >= 0 && idx < chambers.length) {
-          var cy = chambers[idx][1];
+          var cy = chambers[idx].y;
           for (var ri = 0; ri < regionDefs.length; ri++) {
             var r = regionDefs[ri];
             var inRegion = true;
@@ -47648,8 +47652,8 @@
       // Find nearest chamber
       var nearIdx = -1, nearDist = Infinity;
       for (var i = 0; i < chambers.length; i++) {
-        var dx = chambers[i][0] - player.x;
-        var dy = chambers[i][1] - player.y;
+        var dx = chambers[i].x - player.x;
+        var dy = chambers[i].y - player.y;
         var d = Math.sqrt(dx*dx + dy*dy);
         if (d < nearDist) { nearDist = d; nearIdx = i; }
       }
@@ -47661,11 +47665,11 @@
       if (idx >= 0) {
         favorites.splice(idx, 1);
         saveFavorites();
-        showFavToast("⭐ Removed from favorites: " + chambers[nearIdx][2]);
+        showFavToast("⭐ Removed from favorites: " + chambers[nearIdx].name);
       } else {
         favorites.push(nearIdx);
         saveFavorites();
-        showFavToast("⭐ Added to favorites: " + chambers[nearIdx][2]);
+        showFavToast("⭐ Added to favorites: " + chambers[nearIdx].name);
       }
       if (favoritesOpen) renderFavList();
     }
@@ -47688,7 +47692,7 @@
       favorites.forEach(function(idx, fi) {
         if (idx >= 0 && idx < chambers.length) {
           var ch = chambers[idx];
-          var region = getRegionName(ch[1]);
+          var region = getRegionName(ch.y);
           var catIcon = "";
           if (typeof chamberCategories !== "undefined" && typeof lensCategories !== "undefined") {
             var cat = chamberCategories[idx];
@@ -47697,7 +47701,7 @@
             }
           }
           html += '<div class="fav-item" data-idx="' + idx + '" data-fi="' + fi + '">';
-          html += '<div><div class="fav-item-name">' + catIcon + ch[2] + '</div>';
+          html += '<div><div class="fav-item-name">' + catIcon + ch.name + '</div>';
           html += '<div class="fav-item-region">' + region + '</div></div>';
           html += '<button class="fav-item-remove" data-fi="' + fi + '" title="Remove">&times;</button>';
           html += '</div>';
@@ -47712,10 +47716,10 @@
           var cIdx = parseInt(el.getAttribute("data-idx"));
           if (cIdx >= 0 && cIdx < chambers.length) {
             if (typeof smoothTeleport === "function") {
-              smoothTeleport(chambers[cIdx][0], chambers[cIdx][1]);
+              smoothTeleport(chambers[cIdx].x, chambers[cIdx].y);
             } else {
-              player.x = chambers[cIdx][0];
-              player.y = chambers[cIdx][1];
+              player.x = chambers[cIdx].x;
+              player.y = chambers[cIdx].y;
               camera.x = player.x;
               camera.y = player.y;
             }
@@ -47728,7 +47732,7 @@
         btn.addEventListener("click", function(e) {
           e.stopPropagation();
           var fi = parseInt(btn.getAttribute("data-fi"));
-          var name = favorites[fi] >= 0 && favorites[fi] < chambers.length ? chambers[favorites[fi]][2] : "chamber";
+          var name = favorites[fi] >= 0 && favorites[fi] < chambers.length ? chambers[favorites[fi]].name : "chamber";
           favorites.splice(fi, 1);
           saveFavorites();
           showFavToast("Removed: " + name);
@@ -47816,7 +47820,7 @@
 
     function updateAmbientDest() {
       if (ambientTarget !== null && ambientTarget >= 0 && ambientTarget < chambers.length) {
-        document.getElementById("ambientDest").textContent = "→ " + chambers[ambientTarget][2];
+        document.getElementById("ambientDest").textContent = "→ " + chambers[ambientTarget].name;
       } else {
         document.getElementById("ambientDest").textContent = "Drifting...";
       }
@@ -47826,8 +47830,8 @@
       if (!ambientMode || ambientTarget === null) return;
       if (Date.now() < ambientPauseUntil) return;
 
-      var tx = chambers[ambientTarget][0];
-      var ty = chambers[ambientTarget][1];
+      var tx = chambers[ambientTarget].x;
+      var ty = chambers[ambientTarget].y;
       var dx = tx - player.x;
       var dy = ty - player.y;
       var dist = Math.sqrt(dx * dx + dy * dy);
