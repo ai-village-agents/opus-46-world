@@ -47266,6 +47266,20 @@
       // Feature 92: Ambient Constellation Rotation
       drawConstellationRotation92(viewLeft55, viewTop55, time);
 
+
+      // Feature 93: Depth-of-Field Blur Hint
+      drawDepthBlurHint93(viewLeft55, viewTop55);
+
+      // Feature 94: Player Position Echo
+      updatePositionEchoes94();
+      drawPositionEchoes94(viewLeft55, viewTop55);
+
+      // Feature 95: Chamber Orbit Dots
+      drawChamberOrbits95(viewLeft55, viewTop55, time);
+
+      // Feature 96: Ambient Grid Lines
+      drawAmbientGrid96(viewLeft55, viewTop55);
+
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -48651,6 +48665,117 @@
         ctx.beginPath();
         ctx.moveTo(ax92, ay92);
         ctx.quadraticCurveTo(mx92 + offset92, my92 + offset92, bx92, by92);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+
+
+    // ===== Feature 93: Depth-of-Field Blur Hint =====
+    function drawDepthBlurHint93(viewLeft, viewTop) {
+      if (typeof discovered === "undefined") return;
+      ctx.save();
+      // Draw distant discovered chambers with a blur-like halo
+      for (var db93 = 0; db93 < chambers.length; db93 += 5) {
+        if (!discovered.has(db93)) continue;
+        var ch93 = chambers[db93];
+        var dist93 = Math.sqrt(Math.pow(ch93.x - player.x, 2) + Math.pow(ch93.y - player.y, 2));
+        if (dist93 < 300 || dist93 > 600) continue;
+        var sx93 = ch93.x - viewLeft;
+        var sy93 = ch93.y - viewTop;
+        if (sx93 < -30 || sx93 > canvas.width+30 || sy93 < -30 || sy93 > canvas.height+30) continue;
+        var blur93 = (dist93 - 300) / 300;
+        ctx.globalAlpha = blur93 * 0.05;
+        ctx.fillStyle = ch93.color || '#8888aa';
+        ctx.beginPath();
+        ctx.arc(sx93, sy93, 12 + blur93 * 8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 94: Player Position Echo =====
+    var positionEchoes94 = [];
+    function updatePositionEchoes94() {
+      if (typeof positionEchoes94 === "undefined") return;
+      if (typeof player === "undefined") return;
+      var speed94 = Math.sqrt((player.vx||0)*(player.vx||0) + (player.vy||0)*(player.vy||0));
+      if (speed94 > 2 && Math.random() < 0.1) {
+        positionEchoes94.push({
+          x: player.x, y: player.y,
+          alpha: 0.15, decay: 0.003
+        });
+      }
+      for (var pe94 = positionEchoes94.length - 1; pe94 >= 0; pe94--) {
+        positionEchoes94[pe94].alpha -= positionEchoes94[pe94].decay;
+        if (positionEchoes94[pe94].alpha <= 0) positionEchoes94.splice(pe94, 1);
+      }
+      if (positionEchoes94.length > 30) positionEchoes94.splice(0, positionEchoes94.length - 30);
+    }
+    function drawPositionEchoes94(viewLeft, viewTop) {
+      if (typeof positionEchoes94 === "undefined") return;
+      ctx.save();
+      for (var de94 = 0; de94 < positionEchoes94.length; de94++) {
+        var echo = positionEchoes94[de94];
+        var sx94 = echo.x - viewLeft;
+        var sy94 = echo.y - viewTop;
+        ctx.globalAlpha = echo.alpha;
+        ctx.strokeStyle = '#88aadd';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(sx94, sy94, 8, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 95: Chamber Orbit Dots =====
+    function drawChamberOrbits95(viewLeft, viewTop, time) {
+      if (typeof discovered === "undefined") return;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var co95 = 0; co95 < chambers.length; co95 += 13) {
+        if (!discovered.has(co95)) continue;
+        var ch95 = chambers[co95];
+        var sx95 = ch95.x - viewLeft;
+        var sy95 = ch95.y - viewTop;
+        if (sx95 < -40 || sx95 > canvas.width+40 || sy95 < -40 || sy95 > canvas.height+40) continue;
+        var dist95 = Math.sqrt(Math.pow(ch95.x - player.x, 2) + Math.pow(ch95.y - player.y, 2));
+        if (dist95 > 300) continue;
+        var angle95 = time * 0.002 + co95;
+        var ox95 = sx95 + Math.cos(angle95) * 18;
+        var oy95 = sy95 + Math.sin(angle95) * 18;
+        ctx.fillStyle = ch95.color || '#aaaacc';
+        ctx.beginPath();
+        ctx.arc(ox95, oy95, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 96: Ambient Grid Lines =====
+    function drawAmbientGrid96(viewLeft, viewTop) {
+      if (typeof ctx === "undefined") return;
+      ctx.save();
+      ctx.globalAlpha = 0.015;
+      ctx.strokeStyle = '#4466aa';
+      ctx.lineWidth = 0.5;
+      var gridSize96 = 500;
+      var startX96 = Math.floor(viewLeft / gridSize96) * gridSize96;
+      var startY96 = Math.floor(viewTop / gridSize96) * gridSize96;
+      for (var gx96 = startX96; gx96 < viewLeft + canvas.width + gridSize96; gx96 += gridSize96) {
+        var lx96 = gx96 - viewLeft;
+        ctx.beginPath();
+        ctx.moveTo(lx96, 0);
+        ctx.lineTo(lx96, canvas.height);
+        ctx.stroke();
+      }
+      for (var gy96 = startY96; gy96 < viewTop + canvas.height + gridSize96; gy96 += gridSize96) {
+        var ly96 = gy96 - viewTop;
+        ctx.beginPath();
+        ctx.moveTo(0, ly96);
+        ctx.lineTo(canvas.width, ly96);
         ctx.stroke();
       }
       ctx.restore();
