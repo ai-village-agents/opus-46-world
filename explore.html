@@ -616,6 +616,57 @@
       transition: opacity 0.3s;
     }
     .fav-toast.show { opacity: 1; }
+  
+    /* Ambient Mode */
+    .ambient-btn {
+      position: absolute;
+      bottom: 252px;
+      left: 14px;
+      font-size: 20px;
+      background: #0a0a0fcc;
+      border: 1px solid #2d1b69;
+      color: #c9a96e;
+      padding: 4px 8px;
+      border-radius: 12px;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: opacity 0.3s ease, border-color 0.3s ease;
+    }
+    .ambient-btn:hover { opacity: 0.8; border-color: #c9a96e70; }
+    .ambient-indicator {
+      position: fixed;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0c0c14e0;
+      border: 1px solid #6ec9c960;
+      border-radius: 20px;
+      color: #6ec9c9;
+      padding: 8px 20px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      z-index: 25;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s;
+      text-align: center;
+    }
+    .ambient-indicator.active { opacity: 1; }
+    .ambient-indicator .dest-name {
+      font-size: 10px;
+      color: #6ec9c9a0;
+      margin-top: 3px;
+    }
+    .ambient-vignette {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 1s;
+      box-shadow: inset 0 0 120px 40px rgba(10, 10, 15, 0.6);
+    }
+    .ambient-vignette.active { opacity: 1; }
   </style>
 </head>
 <body>
@@ -688,6 +739,14 @@
 
     
     
+    
+    <button class="ambient-btn" id="ambientBtn" aria-label="Ambient mode" title="Ambient drift mode (G)">☁️</button>
+    <div class="ambient-indicator" id="ambientIndicator">
+      <div>☁️ AMBIENT MODE</div>
+      <div class="dest-name" id="ambientDest">Drifting...</div>
+      <div style="font-size:9px;margin-top:4px;color:#6ec9c970;">Press any movement key to exit</div>
+    </div>
+    <div class="ambient-vignette" id="ambientVignette"></div>
     <button class="fav-btn" id="favBtn" aria-label="Favorites" title="Favorites (F to star, V to view)">⭐</button>
     <div class="fav-panel" id="favPanel">
       <div class="fav-panel-header">
@@ -47700,6 +47759,114 @@
     });
     document.getElementById("favPanel").addEventListener("mousedown", function(e) { e.stopPropagation(); });
     document.getElementById("favPanel").addEventListener("click", function(e) { e.stopPropagation(); });
+
+    
+    // === Ambient Mode ===
+    var ambientMode = false;
+    var ambientTarget = null;
+    var ambientSpeed = 1.8;
+    var ambientPauseUntil = 0;
+    var ambientVisited = [];
+
+    function pickAmbientTarget() {
+      // Pick a random chamber, preferring undiscovered ones
+      var candidates = [];
+      for (var i = 0; i < chambers.length; i++) {
+        if (!discovered.has(i) && ambientVisited.indexOf(i) < 0) candidates.push(i);
+      }
+      if (candidates.length === 0) {
+        // Fall back to any chamber not recently visited
+        for (var i = 0; i < chambers.length; i++) {
+          if (ambientVisited.indexOf(i) < 0) candidates.push(i);
+        }
+      }
+      if (candidates.length === 0) {
+        ambientVisited = [];
+        candidates = [];
+        for (var i = 0; i < chambers.length; i++) candidates.push(i);
+      }
+      var idx = candidates[Math.floor(Math.random() * candidates.length)];
+      ambientVisited.push(idx);
+      if (ambientVisited.length > 50) ambientVisited.shift();
+      return idx;
+    }
+
+    function startAmbient() {
+      ambientMode = true;
+      ambientTarget = pickAmbientTarget();
+      ambientPauseUntil = 0;
+      document.getElementById("ambientIndicator").classList.add("active");
+      document.getElementById("ambientVignette").classList.add("active");
+      document.getElementById("ambientBtn").style.borderColor = "#6ec9c9";
+      updateAmbientDest();
+    }
+
+    function stopAmbient() {
+      ambientMode = false;
+      ambientTarget = null;
+      document.getElementById("ambientIndicator").classList.remove("active");
+      document.getElementById("ambientVignette").classList.remove("active");
+      document.getElementById("ambientBtn").style.borderColor = "";
+    }
+
+    function toggleAmbient() {
+      if (ambientMode) stopAmbient();
+      else startAmbient();
+    }
+
+    function updateAmbientDest() {
+      if (ambientTarget !== null && ambientTarget >= 0 && ambientTarget < chambers.length) {
+        document.getElementById("ambientDest").textContent = "→ " + chambers[ambientTarget][2];
+      } else {
+        document.getElementById("ambientDest").textContent = "Drifting...";
+      }
+    }
+
+    function updateAmbient() {
+      if (!ambientMode || ambientTarget === null) return;
+      if (Date.now() < ambientPauseUntil) return;
+
+      var tx = chambers[ambientTarget][0];
+      var ty = chambers[ambientTarget][1];
+      var dx = tx - player.x;
+      var dy = ty - player.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < 60) {
+        // Arrived - pause then pick new target
+        ambientPauseUntil = Date.now() + 1500 + Math.random() * 2000;
+        ambientTarget = pickAmbientTarget();
+        updateAmbientDest();
+        return;
+      }
+
+      // Move toward target
+      var speed = ambientSpeed;
+      // Slow down near target
+      if (dist < 200) speed = ambientSpeed * (dist / 200);
+      speed = Math.max(speed, 0.5);
+
+      player.x += (dx / dist) * speed;
+      player.y += (dy / dist) * speed;
+    }
+
+    // Hook into game loop
+    var _ambientInterval = setInterval(updateAmbient, 16);
+
+    // Stop ambient on movement keys
+    var _origKeydownForAmbient = null;
+    document.addEventListener("keydown", function(e) {
+      if (!ambientMode) return;
+      var movementKeys = ["KeyW","KeyA","KeyS","KeyD","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"];
+      if (movementKeys.indexOf(e.code) >= 0) {
+        stopAmbient();
+      }
+    }, true);
+
+    document.getElementById("ambientBtn").addEventListener("click", function(e) {
+      e.stopPropagation();
+      toggleAmbient();
+    });
 
     // Konami Code: Up Up Down Down Left Right Left Right B A
     const konamiSequence = [38,38,40,40,37,39,37,39,66,65];
