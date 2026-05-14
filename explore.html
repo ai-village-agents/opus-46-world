@@ -46410,6 +46410,7 @@
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
           checkMilestone(discovered.size);
           spawnCelebration(chambers[i].x, chambers[i].y, chambers[i].color);
+          if (typeof triggerDiscCounterAnim75 === 'function') triggerDiscCounterAnim75(discovered.size);
           updateStreak(true);
           if (typeof recordVisit === 'function') recordVisit(i);
         }
@@ -47199,6 +47200,20 @@
 
       // Feature 70: Trail Color Gradient
       drawTrailGradient(viewLeft55, viewTop55);
+
+
+      // Feature 73: Chamber Connection Lines
+      drawConnectionLines73(viewLeft55, viewTop55);
+
+      // Feature 74: Ambient Light Rays
+      updateLightRays74();
+      drawLightRays74(viewLeft55, viewTop55);
+
+      // Feature 75: Discovery Counter Animation
+      drawDiscCounterAnim75();
+
+      // Feature 76: Region Boundary Visualization
+      drawRegionBoundaries76(viewLeft55, viewTop55);
 
       drawCompassRose(time);
 
@@ -48024,6 +48039,172 @@
       'Mythology': '⚡', 'Literature': '📚', 'Architecture': '🏛️',
       'Craft': '🔨', 'Food & Drink': '🍃', 'History': '📜'
     };
+
+
+
+    // ===== Feature 73: Chamber Connection Lines =====
+    function drawConnectionLines73(viewLeft, viewTop) {
+      if (typeof chamberCategories === "undefined") return;
+      if (typeof discovered === "undefined") return;
+      ctx.save();
+      ctx.globalAlpha = 0.08;
+      ctx.lineWidth = 0.5;
+      var discArr73 = [];
+      discovered.forEach(function(idx) {
+        if (idx < chambers.length) discArr73.push(idx);
+      });
+      // Sample up to 200 for performance
+      var sample73 = discArr73.length > 200 ? discArr73.slice(discArr73.length - 200) : discArr73;
+      for (var a73 = 0; a73 < sample73.length; a73++) {
+        var ca73 = chambers[sample73[a73]];
+        var sx73a = ca73.x - viewLeft;
+        var sy73a = ca73.y - viewTop;
+        if (sx73a < -100 || sx73a > canvas.width+100 || sy73a < -100 || sy73a > canvas.height+100) continue;
+        var catA73 = chamberCategories[sample73[a73]];
+        if (!catA73) continue;
+        for (var b73 = a73 + 1; b73 < sample73.length; b73++) {
+          var cb73 = chambers[sample73[b73]];
+          var catB73 = chamberCategories[sample73[b73]];
+          if (catB73 !== catA73) continue;
+          var dx73 = ca73.x - cb73.x;
+          var dy73 = ca73.y - cb73.y;
+          var dist73 = Math.sqrt(dx73*dx73 + dy73*dy73);
+          if (dist73 < 400) {
+            var sx73b = cb73.x - viewLeft;
+            var sy73b = cb73.y - viewTop;
+            ctx.strokeStyle = ca73.color || '#4488aa';
+            ctx.beginPath();
+            ctx.moveTo(sx73a, sy73a);
+            ctx.lineTo(sx73b, sy73b);
+            ctx.stroke();
+          }
+        }
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 74: Ambient Light Rays =====
+    var lightRays74 = [];
+    function updateLightRays74() {
+      if (typeof discovered === "undefined") return;
+      if (typeof lightRays74 === "undefined") return;
+      // Refresh rays occasionally
+      if (lightRays74.length === 0 || Math.random() < 0.005) {
+        lightRays74 = [];
+        var discArr74 = [];
+        discovered.forEach(function(idx) { discArr74.push(idx); });
+        // Pick up to 5 nearby discovered chambers to emit rays
+        var nearby74 = [];
+        for (var r74 = 0; r74 < discArr74.length; r74++) {
+          var ch74 = chambers[discArr74[r74]];
+          var dr74 = Math.sqrt(Math.pow(ch74.x - player.x, 2) + Math.pow(ch74.y - player.y, 2));
+          if (dr74 < 500) nearby74.push(discArr74[r74]);
+        }
+        nearby74 = nearby74.slice(0, 5);
+        for (var n74 = 0; n74 < nearby74.length; n74++) {
+          var ch74b = chambers[nearby74[n74]];
+          var angle74 = Math.random() * Math.PI * 2;
+          lightRays74.push({
+            x: ch74b.x, y: ch74b.y,
+            angle: angle74,
+            length: 60 + Math.random() * 80,
+            width: 1 + Math.random() * 3,
+            alpha: 0.03 + Math.random() * 0.05,
+            color: ch74b.color || '#ffffff',
+            speed: 0.002 + Math.random() * 0.003
+          });
+        }
+      }
+      // Rotate rays slowly
+      for (var lr74 = 0; lr74 < lightRays74.length; lr74++) {
+        lightRays74[lr74].angle += lightRays74[lr74].speed;
+      }
+    }
+    function drawLightRays74(viewLeft, viewTop) {
+      if (typeof lightRays74 === "undefined") return;
+      ctx.save();
+      for (var d74 = 0; d74 < lightRays74.length; d74++) {
+        var ray = lightRays74[d74];
+        var rx = ray.x - viewLeft;
+        var ry = ray.y - viewTop;
+        if (rx < -150 || rx > canvas.width+150 || ry < -150 || ry > canvas.height+150) continue;
+        var ex = rx + Math.cos(ray.angle) * ray.length;
+        var ey = ry + Math.sin(ray.angle) * ray.length;
+        ctx.globalAlpha = ray.alpha;
+        ctx.strokeStyle = ray.color;
+        ctx.lineWidth = ray.width;
+        ctx.beginPath();
+        ctx.moveTo(rx, ry);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 75: Discovery Counter Animation =====
+    var discCounterAnim75 = [];
+    function triggerDiscCounterAnim75(count) {
+      if (typeof discCounterAnim75 === "undefined") return;
+      discCounterAnim75.push({
+        count: count,
+        x: canvas.width / 2,
+        y: canvas.height / 2 - 60,
+        alpha: 1.0,
+        scale: 2.0,
+        life: 60
+      });
+    }
+    function drawDiscCounterAnim75() {
+      if (typeof discCounterAnim75 === "undefined") return;
+      ctx.save();
+      for (var dc75 = discCounterAnim75.length - 1; dc75 >= 0; dc75--) {
+        var anim = discCounterAnim75[dc75];
+        anim.life--;
+        anim.alpha = anim.life / 60;
+        anim.y -= 0.5;
+        anim.scale = 1.5 + (1 - anim.life / 60) * 0.5;
+        if (anim.life <= 0) {
+          discCounterAnim75.splice(dc75, 1);
+          continue;
+        }
+        ctx.globalAlpha = anim.alpha;
+        ctx.font = "bold " + Math.round(18 * anim.scale) + "px monospace";
+        ctx.fillStyle = "#ffd700";
+        ctx.textAlign = "center";
+        ctx.shadowColor = "#ffd700";
+        ctx.shadowBlur = 10;
+        ctx.fillText("#" + anim.count, anim.x, anim.y);
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 76: Region Boundary Visualization =====
+    function drawRegionBoundaries76(viewLeft, viewTop) {
+      if (typeof regionColors === "undefined") return;
+      ctx.save();
+      ctx.globalAlpha = 0.04;
+      ctx.lineWidth = 2;
+      // Draw concentric rings at region boundaries
+      var regionBounds76 = [
+        {radius: 5000, color: '#4488ff'},
+        {radius: 15000, color: '#44ff88'},
+        {radius: 30000, color: '#ff8844'},
+        {radius: 60000, color: '#ff44aa'},
+        {radius: 100000, color: '#aa44ff'}
+      ];
+      var cx76 = 3500 - viewLeft;
+      var cy76 = 3500 - viewTop;
+      for (var rb76 = 0; rb76 < regionBounds76.length; rb76++) {
+        var bound = regionBounds76[rb76];
+        ctx.strokeStyle = bound.color;
+        ctx.setLineDash([10, 20]);
+        ctx.beginPath();
+        ctx.arc(cx76, cy76, bound.radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
 
 
     document.body.appendChild(autoWalkIndicator);
