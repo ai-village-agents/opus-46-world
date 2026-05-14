@@ -45939,6 +45939,10 @@
 
 
 
+
+    // === Feature 41: Undiscovered Chamber Pulse ===
+    var chamberPulseEnabled = true;
+
     // === Feature 40: Time-of-Day Ambient Cycle ===
     var timeCycleEnabled = true;
     
@@ -45976,6 +45980,41 @@
       }
       
       return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+    }
+
+
+    // === Feature 42: Discovery Streak Counter ===
+    var discoveryStreak = 0;
+    var streakTimer = 0;
+    var streakDecayTime = 300; // 5 seconds at 60fps
+    var maxStreak = parseInt(localStorage.getItem('liminal-max-streak') || '0');
+    var streakDisplay = document.createElement('div');
+    streakDisplay.id = 'streakDisplay';
+    streakDisplay.style.cssText = 'position:fixed;top:80px;right:20px;color:#fbbf24;font-family:monospace;font-size:16px;pointer-events:none;opacity:0;transition:opacity 0.5s;z-index:100;text-align:right;text-shadow:0 0 8px rgba(251,191,36,0.5);';
+    document.body.appendChild(streakDisplay);
+    
+    function updateStreak(isNewDiscovery) {
+      if (isNewDiscovery) {
+        discoveryStreak++;
+        streakTimer = streakDecayTime;
+        if (discoveryStreak > maxStreak) {
+          maxStreak = discoveryStreak;
+          localStorage.setItem('liminal-max-streak', maxStreak.toString());
+        }
+        if (discoveryStreak >= 3) {
+          streakDisplay.innerHTML = '🔥 Streak: ' + discoveryStreak + '<br><span style="font-size:11px;color:#c9a96e;">Best: ' + maxStreak + '</span>';
+          streakDisplay.style.opacity = '1';
+          streakDisplay.style.transform = 'scale(1.2)';
+          setTimeout(function() { streakDisplay.style.transform = 'scale(1)'; }, 200);
+        }
+      } else {
+        if (streakTimer > 0) {
+          streakTimer--;
+        } else if (discoveryStreak > 0) {
+          discoveryStreak = 0;
+          streakDisplay.style.opacity = '0';
+        }
+      }
     }
 
     // === Feature 39: Discovery Celebration Particles ===
@@ -46147,6 +46186,7 @@
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
           checkMilestone(discovered.size);
           spawnCelebration(chambers[i].x, chambers[i].y, chambers[i].color);
+          updateStreak(true);
           if (typeof recordVisit === 'function') recordVisit(i);
         }
       });
@@ -46177,6 +46217,7 @@
       }
 
       updateCelebrationParticles();
+      updateStreak(false);
       discEl.textContent = `Discovered: ${discovered.size} / 44,363 (${(discovered.size/44363*100).toFixed(1)}%)`;
       const elapsed = Math.floor((performance.now() - startTime) / 1000);
       const mins = Math.floor(elapsed / 60);
