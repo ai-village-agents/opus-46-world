@@ -47225,6 +47225,20 @@
       // Feature 80: Ambient Breathing Effect
       drawAmbientBreathing80(time);
 
+
+      // Feature 81: Floating Chamber Names
+      drawFloatingNames81(viewLeft55, viewTop55, time);
+
+      // Feature 82: Discovery Sparkle Trail
+      updateSparkles82();
+      drawSparkles82(viewLeft55, viewTop55);
+
+      // Feature 83: Exploration Radius Ring
+      drawExplorationRadius83(viewLeft55, viewTop55);
+
+      // Feature 84: Chamber Color Harmonics
+      drawColorHarmonics84(viewLeft55, viewTop55, time);
+
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -48310,6 +48324,111 @@
       grad80.addColorStop(1, 'transparent');
       ctx.fillStyle = grad80;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
+
+
+
+    // ===== Feature 81: Floating Chamber Names =====
+    function drawFloatingNames81(viewLeft, viewTop, time) {
+      if (typeof discovered === "undefined") return;
+      ctx.save();
+      ctx.font = '9px monospace';
+      ctx.textAlign = 'center';
+      for (var fn81 = 0; fn81 < chambers.length; fn81++) {
+        if (!discovered.has(fn81)) continue;
+        var ch81 = chambers[fn81];
+        var sx81 = ch81.x - viewLeft;
+        var sy81 = ch81.y - viewTop;
+        if (sx81 < -80 || sx81 > canvas.width+80 || sy81 < -50 || sy81 > canvas.height+50) continue;
+        var dist81 = Math.sqrt(Math.pow(ch81.x - player.x, 2) + Math.pow(ch81.y - player.y, 2));
+        if (dist81 > 250) continue;
+        var alpha81 = Math.max(0, 1 - dist81 / 250) * 0.3;
+        var bob81 = Math.sin(time * 0.002 + fn81 * 0.5) * 3;
+        ctx.globalAlpha = alpha81;
+        ctx.fillStyle = '#aabbcc';
+        ctx.fillText(ch81.name.substring(0, 20), sx81, sy81 - 22 + bob81);
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 82: Discovery Sparkle Trail =====
+    var sparkles82 = [];
+    function updateSparkles82() {
+      if (typeof sparkles82 === "undefined") return;
+      // Spawn sparkles when moving
+      if (typeof player === "undefined") return;
+      var speed82 = Math.sqrt((player.vx||0)*(player.vx||0) + (player.vy||0)*(player.vy||0));
+      if (speed82 > 1 && Math.random() < 0.15) {
+        sparkles82.push({
+          x: player.x + (Math.random()-0.5) * 10,
+          y: player.y + (Math.random()-0.5) * 10,
+          size: 1 + Math.random() * 2,
+          life: 30 + Math.random() * 30,
+          maxLife: 30 + Math.random() * 30,
+          color: Math.random() < 0.5 ? '#ffd700' : '#88ccff'
+        });
+      }
+      for (var s82 = sparkles82.length - 1; s82 >= 0; s82--) {
+        sparkles82[s82].life--;
+        sparkles82[s82].y -= 0.3;
+        if (sparkles82[s82].life <= 0) sparkles82.splice(s82, 1);
+      }
+      if (sparkles82.length > 50) sparkles82.splice(0, sparkles82.length - 50);
+    }
+    function drawSparkles82(viewLeft, viewTop) {
+      if (typeof sparkles82 === "undefined") return;
+      ctx.save();
+      for (var ds82 = 0; ds82 < sparkles82.length; ds82++) {
+        var sp = sparkles82[ds82];
+        var sx82 = sp.x - viewLeft;
+        var sy82 = sp.y - viewTop;
+        ctx.globalAlpha = (sp.life / sp.maxLife) * 0.6;
+        ctx.fillStyle = sp.color;
+        // Draw tiny star shape
+        ctx.beginPath();
+        ctx.arc(sx82, sy82, sp.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 83: Exploration Radius Ring =====
+    function drawExplorationRadius83(viewLeft, viewTop) {
+      if (typeof player === "undefined") return;
+      ctx.save();
+      var px83 = player.x - viewLeft;
+      var py83 = player.y - viewTop;
+      ctx.globalAlpha = 0.06;
+      ctx.strokeStyle = '#6688cc';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 8]);
+      ctx.beginPath();
+      ctx.arc(px83, py83, 200, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    // ===== Feature 84: Chamber Color Harmonics =====
+    function drawColorHarmonics84(viewLeft, viewTop, time) {
+      if (typeof discovered === "undefined") return;
+      ctx.save();
+      var discArr84 = [];
+      discovered.forEach(function(idx) { if (idx < chambers.length) discArr84.push(idx); });
+      var sample84 = discArr84.slice(Math.max(0, discArr84.length - 30));
+      for (var h84 = 0; h84 < sample84.length; h84++) {
+        var ch84 = chambers[sample84[h84]];
+        var sx84 = ch84.x - viewLeft;
+        var sy84 = ch84.y - viewTop;
+        if (sx84 < -40 || sx84 > canvas.width+40 || sy84 < -40 || sy84 > canvas.height+40) continue;
+        var wave84 = Math.sin(time * 0.001 + h84 * 0.8) * 0.5 + 0.5;
+        ctx.globalAlpha = wave84 * 0.04;
+        ctx.beginPath();
+        ctx.arc(sx84, sy84, 25 + wave84 * 15, 0, Math.PI * 2);
+        ctx.fillStyle = ch84.color || '#6688aa';
+        ctx.fill();
+      }
       ctx.restore();
     }
 
