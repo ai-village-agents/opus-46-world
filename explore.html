@@ -46405,7 +46405,7 @@
           nearestIndex = i;
         }
         if (d <= 200 && !discovered.has(i)) {
-          discovered.add(i);
+          discovered.add(i); trackVisit(i);
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
           checkMilestone(discovered.size);
           spawnCelebration(chambers[i].x, chambers[i].y, chambers[i].color);
@@ -46615,6 +46615,9 @@
       if ((e.key === "q" || e.key === "Q") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { quickStatsActive = !quickStatsActive; quickStatsHUD.style.display = quickStatsActive ? "block" : "none"; }
 
       if ((e.key === "e" || e.key === "E") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { heatmapActive = !heatmapActive; heatmapIndicator.style.display = heatmapActive ? "block" : "none"; }
+      if ((e.key === "o" || e.key === "O") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { compassRoseActive = !compassRoseActive; compassRoseIndicator.style.display = compassRoseActive ? "block" : "none"; }
+      if ((e.key === "u" || e.key === "U") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { fogOfWarActive = !fogOfWarActive; fogOfWarIndicator.style.display = fogOfWarActive ? "block" : "none"; }
+      if ((e.key === "z" || e.key === "Z") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { canvasTrailActive = !canvasTrailActive; canvasTrailIndicator.style.display = canvasTrailActive ? "block" : "none"; }
       // Feature 47: Quick Nexus Teleport (1-9)
       if (e.key >= "1" && e.key <= "9" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) {
         var nIdx = parseInt(e.key) - 1;
@@ -47118,6 +47121,12 @@
       var viewTop55 = camera.y - canvas.height/2;
       drawDust(viewLeft55, viewTop55);
 
+      // Feature 60: Canvas Breadcrumb Trail
+      drawCanvasTrail(viewLeft55, viewTop55);
+
+      // Feature 57: Compass Rose
+      drawCompassRose(time);
+
       // Feature 53: Night Mode overlay
       if (nightModeActive) {
         ctx.save();
@@ -47235,7 +47244,7 @@
 
     function drawMinimap() {
       // Only re-render chamber layer when discoveries change
-      if (discovered.size !== lastDiscoveredCount || heatmapActive) {
+      if (discovered.size !== lastDiscoveredCount || heatmapActive || fogOfWarActive) {
         prerenderMinimapChambers();
       }
       // Composite pre-rendered chambers + player dot
@@ -47462,6 +47471,129 @@
     heatmapIndicator.textContent = '🔥 Heatmap';
     document.body.appendChild(heatmapIndicator);
 
+    // Feature 57: Compass Rose (O key toggle)
+    var compassRoseActive = false;
+    var compassRoseIndicator = document.createElement('div');
+    compassRoseIndicator.id = 'compassRoseIndicator';
+    compassRoseIndicator.style.cssText = 'display:none;position:fixed;top:146px;right:20px;background:rgba(10,20,40,0.85);color:#66aaff;padding:8px 16px;border-radius:12px;font-size:13px;z-index:1000;border:1px solid rgba(80,140,220,0.4);pointer-events:none;';
+    compassRoseIndicator.textContent = '🧭 Compass';
+    document.body.appendChild(compassRoseIndicator);
+    function drawCompassRose(time) {
+      if (!compassRoseActive) return;
+      var cx = canvas.width - 80;
+      var cy = canvas.height - 80;
+      var r = 35;
+      ctx.save();
+      ctx.globalAlpha = 0.8;
+      ctx.fillStyle = 'rgba(10,8,25,0.7)';
+      ctx.beginPath();
+      ctx.arc(cx, cy, r + 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(200,170,100,0.5)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.font = 'bold 14px Georgia, serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#ff6644';
+      ctx.fillText('N', cx, cy - r + 2);
+      ctx.fillStyle = '#aaaacc';
+      ctx.fillText('S', cx, cy + r - 2);
+      ctx.fillStyle = '#aaaacc';
+      ctx.fillText('E', cx + r - 2, cy);
+      ctx.fillStyle = '#aaaacc';
+      ctx.fillText('W', cx - r + 2, cy);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - 12);
+      ctx.lineTo(cx + 5, cy + 4);
+      ctx.lineTo(cx, cy);
+      ctx.lineTo(cx - 5, cy + 4);
+      ctx.closePath();
+      ctx.fillStyle = '#ff4422';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy + 12);
+      ctx.lineTo(cx + 5, cy - 4);
+      ctx.lineTo(cx, cy);
+      ctx.lineTo(cx - 5, cy - 4);
+      ctx.closePath();
+      ctx.fillStyle = '#444466';
+      ctx.fill();
+      var wcx = 3500;
+      var wcy = 200000;
+      var dx = wcx - player.x;
+      var dy = wcy - player.y;
+      var dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist > 0) {
+        var nx = dx / dist;
+        var ny = dy / dist;
+        ctx.strokeStyle = 'rgba(255,215,0,0.6)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(cx + nx * 10, cy + ny * 10);
+        ctx.lineTo(cx + nx * (r - 8), cy + ny * (r - 8));
+        ctx.stroke();
+        ctx.fillStyle = '#ffd700';
+        ctx.beginPath();
+        ctx.arc(cx + nx * (r - 6), cy + ny * (r - 6), 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.font = '9px Georgia, serif';
+      ctx.fillStyle = '#888';
+      ctx.fillText((dist/1000).toFixed(0) + 'K', cx, cy + r + 14);
+      ctx.restore();
+    }
+
+    // Feature 58: Chamber Visit Counter
+    var visitCounts = {};
+    function trackVisit(chamberIndex) {
+      if (!visitCounts[chamberIndex]) visitCounts[chamberIndex] = 0;
+      visitCounts[chamberIndex]++;
+    }
+
+    // Feature 59: Fog of War on minimap (U key toggle)
+    var fogOfWarActive = false;
+    var fogOfWarIndicator = document.createElement('div');
+    fogOfWarIndicator.id = 'fogOfWarIndicator';
+    fogOfWarIndicator.style.cssText = 'display:none;position:fixed;top:174px;right:20px;background:rgba(15,15,30,0.85);color:#8866aa;padding:8px 16px;border-radius:12px;font-size:13px;z-index:1000;border:1px solid rgba(120,80,180,0.4);pointer-events:none;';
+    fogOfWarIndicator.textContent = '🌫️ Fog of War';
+    document.body.appendChild(fogOfWarIndicator);
+
+    // Feature 60: Canvas Breadcrumb Trail (Z key toggle)
+    var canvasTrailActive = false;
+    var canvasTrailPoints = [];
+    var CANVAS_TRAIL_MAX = 200;
+    var canvasTrailTimer = 0;
+    var canvasTrailIndicator = document.createElement('div');
+    canvasTrailIndicator.id = 'canvasTrailIndicator';
+    canvasTrailIndicator.style.cssText = 'display:none;position:fixed;top:202px;right:20px;background:rgba(30,20,10,0.85);color:#c9a96e;padding:8px 16px;border-radius:12px;font-size:13px;z-index:1000;border:1px solid rgba(200,170,100,0.4);pointer-events:none;';
+    canvasTrailIndicator.textContent = '🔗 Trail';
+    document.body.appendChild(canvasTrailIndicator);
+    function updateCanvasTrail() {
+      if (!canvasTrailActive) return;
+      canvasTrailTimer++;
+      if (canvasTrailTimer % 8 === 0) {
+        canvasTrailPoints.push({x: player.x, y: player.y});
+        if (canvasTrailPoints.length > CANVAS_TRAIL_MAX) canvasTrailPoints.shift();
+      }
+    }
+    function drawCanvasTrail(viewLeft, viewTop) {
+      if (!canvasTrailActive || canvasTrailPoints.length < 2) return;
+      ctx.save();
+      for (var ti = 1; ti < canvasTrailPoints.length; ti++) {
+        var p0 = canvasTrailPoints[ti - 1];
+        var p1 = canvasTrailPoints[ti];
+        var alpha = (ti / canvasTrailPoints.length) * 0.5;
+        ctx.strokeStyle = 'rgba(200,170,100,' + alpha + ')';
+        ctx.lineWidth = 1.5 + (ti / canvasTrailPoints.length) * 1.5;
+        ctx.beginPath();
+        ctx.moveTo(p0.x - viewLeft, p0.y - viewTop);
+        ctx.lineTo(p1.x - viewLeft, p1.y - viewTop);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
     document.body.appendChild(autoWalkIndicator);
 
 
@@ -47492,6 +47624,7 @@
         spawnDust();
         updateDust();
         updateQuickStats();
+        updateCanvasTrail();
         drawWorld(time);
       }
       updateTourMovement();
