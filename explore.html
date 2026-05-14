@@ -46405,7 +46405,8 @@
           nearestIndex = i;
         }
         if (d <= 200 && !discovered.has(i)) {
-          discovered.add(i); trackVisit(i); spawnDiscoveryRipple(chambers[i].x, chambers[i].y, chambers[i].color);
+          discovered.add(i);
+            if (typeof triggerScreenShake === 'function') triggerScreenShake(4, 12); trackVisit(i); spawnDiscoveryRipple(chambers[i].x, chambers[i].y, chambers[i].color);
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
           checkMilestone(discovered.size);
           spawnCelebration(chambers[i].x, chambers[i].y, chambers[i].color);
@@ -46446,6 +46447,7 @@
       updateWeatherParticles();
       updateEdgeGlow();
       updateAuraParticles();
+      updateScreenShake();
       updateStreak(false);
       if (typeof updateCompass === "function" && compassEnabled) updateCompass();
       discEl.textContent = `Discovered: ${discovered.size} / 44,363 (${(discovered.size/44363*100).toFixed(1)}%)`;
@@ -47129,6 +47131,26 @@
       // Feature 61: Discovery Ripple Waves
       drawRipples(viewLeft55, viewTop55);
 
+      
+      // Feature 72: Chamber Category Icons
+      if (typeof categoryEmojis72 !== "undefined" && typeof chamberCategories !== "undefined") {
+        ctx.save();
+        ctx.font = '12px serif';
+        ctx.globalAlpha = 0.6;
+        for (var ci72 = 0; ci72 < chambers.length; ci72++) {
+          if (!discovered.has(ci72)) continue;
+          var cc72 = chambers[ci72];
+          var csx72 = cc72.x - viewLeft55;
+          var csy72 = cc72.y - viewTop55;
+          if (csx72 < -50 || csx72 > canvas.width+50 || csy72 < -50 || csy72 > canvas.height+50) continue;
+          var cat72 = chamberCategories[ci72];
+          if (cat72 && categoryEmojis72[cat72]) {
+            ctx.fillText(categoryEmojis72[cat72], csx72 + 18, csy72 - 12);
+          }
+        }
+        ctx.restore();
+      }
+
       // Feature 63: Chamber Silhouettes at Distance
       if (silhouettesEnabled) {
         ctx.save();
@@ -47171,6 +47193,12 @@
 
       // Feature 68: Ambient Fog Layers
       drawFogLayers(time, viewLeft55, viewTop55);
+
+      // Feature 69: Parallax Background Layers
+      drawParallaxLayers(viewLeft55, viewTop55);
+
+      // Feature 70: Trail Color Gradient
+      drawTrailGradient(viewLeft55, viewTop55);
 
       drawCompassRose(time);
 
@@ -47907,6 +47935,95 @@
       }
       ctx.restore();
     }
+
+    // ===== Feature 69: Parallax Background Layers =====
+    var parallaxLayers69 = [];
+    (function initParallax() {
+      for (var i = 0; i < 3; i++) {
+        var dots = [];
+        for (var j = 0; j < 30; j++) {
+          dots.push({
+            x: Math.random() * 4000 - 2000,
+            y: Math.random() * 4000 - 2000,
+            size: 1 + Math.random() * 2,
+            alpha: 0.1 + Math.random() * 0.15
+          });
+        }
+        parallaxLayers69.push({depth: 0.2 + i * 0.3, dots: dots});
+      }
+    })();
+    function drawParallaxLayers(viewLeft, viewTop) {
+      if (typeof parallaxLayers69 === "undefined") return;
+      ctx.save();
+      for (var i = 0; i < parallaxLayers69.length; i++) {
+        var layer = parallaxLayers69[i];
+        var d = layer.depth;
+        for (var j = 0; j < layer.dots.length; j++) {
+          var dot = layer.dots[j];
+          var sx = ((dot.x - viewLeft * d) % canvas.width + canvas.width) % canvas.width;
+          var sy = ((dot.y - viewTop * d) % canvas.height + canvas.height) % canvas.height;
+          ctx.globalAlpha = dot.alpha;
+          ctx.fillStyle = '#8866aa';
+          ctx.beginPath();
+          ctx.arc(sx, sy, dot.size, 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 70: Trail Color Gradient =====
+    var trailGradientPoints70 = [];
+    var trailGradientTimer70 = 0;
+    function drawTrailGradient(viewLeft, viewTop) {
+      if (typeof trailGradientPoints70 === "undefined") return;
+      trailGradientTimer70++;
+      if (trailGradientTimer70 % 3 === 0 && (Math.abs(player.vx) > 0.5 || Math.abs(player.vy) > 0.5)) {
+        trailGradientPoints70.push({x: camera.x, y: camera.y, age: 0});
+        if (trailGradientPoints70.length > 150) trailGradientPoints70.shift();
+      }
+      if (trailGradientPoints70.length < 2) return;
+      ctx.save();
+      for (var i = 1; i < trailGradientPoints70.length; i++) {
+        var p0 = trailGradientPoints70[i-1];
+        var p1 = trailGradientPoints70[i];
+        var t = i / trailGradientPoints70.length;
+        var hue = (t * 60 + 200) % 360;
+        ctx.strokeStyle = 'hsla(' + hue + ',70%,60%,' + (t * 0.3) + ')';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(p0.x - viewLeft, p0.y - viewTop);
+        ctx.lineTo(p1.x - viewLeft, p1.y - viewTop);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 71: Screen Shake on Milestone Discovery =====
+    var screenShake71 = {intensity: 0, duration: 0};
+    function triggerScreenShake(intensity, duration) {
+      screenShake71.intensity = intensity || 5;
+      screenShake71.duration = duration || 15;
+    }
+    function updateScreenShake() {
+      if (typeof screenShake71 === "undefined") return;
+      if (screenShake71.duration > 0) {
+        screenShake71.duration--;
+        var shakeX = (Math.random() - 0.5) * screenShake71.intensity * (screenShake71.duration / 15);
+        var shakeY = (Math.random() - 0.5) * screenShake71.intensity * (screenShake71.duration / 15);
+        canvas.style.transform = 'translate(' + shakeX + 'px,' + shakeY + 'px)';
+        if (screenShake71.duration <= 0) {
+          canvas.style.transform = 'none';
+        }
+      }
+    }
+
+    // ===== Feature 72: Chamber Category Icons =====
+    var categoryEmojis72 = {
+      'Nature': '🌿', 'Music': '🎵', 'Science': '🔬', 'Art': '🎨',
+      'Mythology': '⚡', 'Literature': '📚', 'Architecture': '🏛️',
+      'Craft': '🔨', 'Food & Drink': '🍃', 'History': '📜'
+    };
 
 
     document.body.appendChild(autoWalkIndicator);
