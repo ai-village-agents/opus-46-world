@@ -46815,6 +46815,41 @@
       mctx.beginPath();
       mctx.arc(player.x * MINIMAP_SCALE, player.y * MINIMAP_SCALE, 4, 0, Math.PI * 2);
       mctx.fill();
+      // Draw favorites as golden stars on minimap
+      if (typeof favorites !== 'undefined' && favorites.length > 0) {
+        mctx.fillStyle = '#fbbf24';
+        mctx.font = '6px serif';
+        mctx.textAlign = 'center';
+        for (var fi = 0; fi < favorites.length; fi++) {
+          var fIdx = favorites[fi];
+          if (fIdx >= 0 && fIdx < chambers.length) {
+            var fc = chambers[fIdx];
+            var fx = fc.x * MINIMAP_SCALE;
+            var fy = fc.y * MINIMAP_SCALE;
+            mctx.globalAlpha = 0.85;
+            mctx.fillText('★', fx, fy + 2);
+          }
+        }
+        mctx.globalAlpha = 1.0;
+        mctx.textAlign = 'left';
+      }
+      // Draw bookmarked chambers on minimap
+      if (typeof bookmarks !== 'undefined' && bookmarks.size > 0) {
+        mctx.fillStyle = '#c9a96e';
+        mctx.font = '5px serif';
+        mctx.textAlign = 'center';
+        bookmarks.forEach(function(bIdx) {
+          if (bIdx >= 0 && bIdx < chambers.length) {
+            var bc = chambers[bIdx];
+            var bx = bc.x * MINIMAP_SCALE;
+            var by = bc.y * MINIMAP_SCALE;
+            mctx.globalAlpha = 0.6;
+            mctx.fillText('◆', bx, by + 2);
+          }
+        });
+        mctx.globalAlpha = 1.0;
+        mctx.textAlign = 'left';
+      }
       // Lens-aware minimap border glow + label
       if (activeLens && lensCategories) {
         var _lensCol = null;
