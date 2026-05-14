@@ -164,6 +164,30 @@
     .nearby-item-dist { font-size:10px; color:rgba(201,169,110,0.4); letter-spacing:1px; white-space:nowrap; }
     .nearby-item-visited { color:rgba(201,169,110,0.6); }
     .nearby-item .visited-dot { display:inline-block; width:5px; height:5px; background:#c9a96e; border-radius:50%; margin-right:6px; opacity:0.5; }
+
+    .history-btn { position:fixed; top:140px; left:16px; width:36px; height:36px; border-radius:50%; background:rgba(20,16,36,0.75); border:1px solid rgba(201,169,110,0.2); color:#c9a96e; font-size:18px; cursor:pointer; z-index:90; display:flex; align-items:center; justify-content:center; transition:all 0.3s; backdrop-filter:blur(4px); }
+    .history-btn:hover { background:rgba(201,169,110,0.15); border-color:rgba(201,169,110,0.5); transform:scale(1.1); }
+    .history-panel { position:fixed; top:60px; left:16px; width:280px; max-height:450px; background:rgba(20,16,36,0.92); border:1px solid rgba(201,169,110,0.25); border-radius:8px; padding:0; z-index:95; display:none; overflow:hidden; backdrop-filter:blur(8px); }
+    .history-panel.visible { display:block; animation: histFadeIn 0.3s ease; }
+    @keyframes histFadeIn { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:translateX(0); } }
+    .history-header { padding:12px 14px 8px; border-bottom:1px solid rgba(201,169,110,0.15); display:flex; justify-content:space-between; align-items:center; }
+    .history-header h3 { margin:0; font-size:13px; letter-spacing:2px; color:#c9a96e; text-transform:uppercase; }
+    .history-header span { font-size:11px; color:rgba(201,169,110,0.4); }
+    .history-tabs { display:flex; border-bottom:1px solid rgba(201,169,110,0.1); }
+    .history-tab { flex:1; padding:8px; text-align:center; font-size:11px; letter-spacing:1px; color:rgba(201,169,110,0.4); cursor:pointer; transition:all 0.2s; border-bottom:2px solid transparent; text-transform:uppercase; background:none; border-left:none; border-right:none; border-top:none; font-family:Georgia,serif; }
+    .history-tab.active { color:#c9a96e; border-bottom-color:#c9a96e; }
+    .history-tab:hover { color:rgba(201,169,110,0.7); }
+    .history-list { max-height:340px; overflow-y:auto; padding:4px 0; }
+    .history-list::-webkit-scrollbar { width:4px; }
+    .history-list::-webkit-scrollbar-thumb { background:rgba(201,169,110,0.2); border-radius:2px; }
+    .history-entry { padding:8px 14px; cursor:pointer; transition:background 0.2s; border-bottom:1px solid rgba(201,169,110,0.06); }
+    .history-entry:hover { background:rgba(201,169,110,0.08); }
+    .history-entry-name { font-size:12px; color:rgba(220,210,190,0.85); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .history-entry-meta { font-size:10px; color:rgba(201,169,110,0.35); margin-top:2px; display:flex; justify-content:space-between; }
+    .history-empty { padding:20px; text-align:center; color:rgba(201,169,110,0.3); font-size:12px; font-style:italic; }
+    .history-clear { padding:8px 14px; text-align:center; border-top:1px solid rgba(201,169,110,0.1); }
+    .history-clear button { background:none; border:1px solid rgba(201,169,110,0.15); color:rgba(201,169,110,0.4); font-size:10px; padding:4px 12px; border-radius:4px; cursor:pointer; font-family:Georgia,serif; letter-spacing:1px; transition:all 0.2s; }
+    .history-clear button:hover { border-color:rgba(201,169,110,0.4); color:rgba(201,169,110,0.7); }
     .tour-btn.active { background:rgba(201,169,110,0.2); border-color:#c9a96e; box-shadow:0 0 12px rgba(201,169,110,0.3); }
     .tour-panel { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); pointer-events:auto; background:rgba(14,10,26,0.92); border:1px solid rgba(201,169,110,0.4); border-radius:8px; padding:16px 24px; z-index:30; font-family:Georgia,serif; max-width:500px; min-width:320px; display:none; backdrop-filter:blur(8px); box-shadow:0 4px 24px rgba(0,0,0,0.5); }
     .tour-panel.visible { display:block; animation: tourFadeIn 0.4s ease; }
@@ -355,6 +379,16 @@
     <button class="random-btn" id="randomBtn" aria-label="Random chamber" title="Teleport to a random chamber">🎲</button>
     <button class="share-btn" id="shareBtn" aria-label="Share location" title="Copy link to this location">📋</button>
     <button class="tour-btn" id="tourBtn" aria-label="Guided tour" title="Start a guided tour of the Archive">🗺️</button>
+    <button class="history-btn" id="historyBtn" aria-label="Visit history" title="Visit history (H)">📜</button>
+    <div class="history-panel" id="historyPanel">
+      <div class="history-header"><h3>Visit History</h3><span id="historyCount"></span></div>
+      <div class="history-tabs">
+        <button class="history-tab active" data-tab="recent">Recent</button>
+        <button class="history-tab" data-tab="frequent">Most Visited</button>
+      </div>
+      <div class="history-list" id="historyList"></div>
+      <div class="history-clear"><button id="historyClearBtn">Clear History</button></div>
+    </div>
     <button class="nearby-btn" id="nearbyBtn" aria-label="Nearby chambers" title="Show nearby chambers (N)">📍</button>
     <div class="nearby-panel" id="nearbyPanel">
       <div class="nearby-header"><h3>Nearby Chambers</h3><span id="nearbyCount"></span></div>
@@ -45560,6 +45594,7 @@
           discovered.add(i);
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
           checkMilestone(discovered.size);
+          if (typeof recordVisit === 'function') recordVisit(i);
         }
       });
 
@@ -45744,6 +45779,7 @@
         }
       }
       if ((e.key === "n" || e.key === "N") && document.activeElement.tagName !== "INPUT" && !document.getElementById("searchOverlay").classList.contains("visible")) { toggleNearby(); }
+      if ((e.key === "h" || e.key === "H") && document.activeElement.tagName !== "INPUT" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleHistory === "function") toggleHistory(); }
     });
 
     // Chamber Proximity Info Display
@@ -46525,7 +46561,124 @@
       showChamberInfo(ch.name);
       localStorage.setItem('liminal_player_x', player.x);
       localStorage.setItem('liminal_player_y', player.y);
+      if (typeof recordVisit === 'function') recordVisit(idx);
       updateNearbyList();
+    });
+
+
+    // ── Visit History Panel (H key) ──
+    let historyOpen = false;
+    let historyTab = 'recent';
+    const historyBtnEl = document.getElementById('historyBtn');
+    const historyPanelEl = document.getElementById('historyPanel');
+    const historyListEl = document.getElementById('historyList');
+    const historyCountEl = document.getElementById('historyCount');
+    const historyClearBtnEl = document.getElementById('historyClearBtn');
+
+    // Load visit history from localStorage: [{idx, name, x, y, time, count}]
+    let visitHistory = [];
+    try {
+      visitHistory = JSON.parse(localStorage.getItem('liminal-visit-history') || '[]');
+    } catch (e) { visitHistory = []; }
+
+    function recordVisit(idx) {
+      const ch = chambers[idx];
+      if (!ch) return;
+      const now = Date.now();
+      const existing = visitHistory.find(v => v.idx === idx);
+      if (existing) {
+        existing.count = (existing.count || 1) + 1;
+        existing.time = now;
+      } else {
+        visitHistory.unshift({ idx: idx, name: ch.name, x: ch.x, y: ch.y, time: now, count: 1 });
+      }
+      // Keep max 200 entries
+      if (visitHistory.length > 200) visitHistory = visitHistory.slice(0, 200);
+      localStorage.setItem('liminal-visit-history', JSON.stringify(visitHistory));
+    }
+
+    function formatTimeAgo(ts) {
+      const diff = Date.now() - ts;
+      if (diff < 60000) return 'just now';
+      if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+      if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+      return Math.floor(diff / 86400000) + 'd ago';
+    }
+
+    function updateHistoryList() {
+      let entries = visitHistory.slice();
+      if (historyTab === 'recent') {
+        entries.sort(function(a, b) { return b.time - a.time; });
+      } else {
+        entries.sort(function(a, b) { return b.count - a.count; });
+      }
+      historyCountEl.textContent = entries.length + ' chambers';
+      if (entries.length === 0) {
+        historyListEl.innerHTML = '<div class="history-empty">No chambers visited yet.<br>Explore to build your history!</div>';
+        return;
+      }
+      var html = '';
+      var shown = Math.min(entries.length, 50);
+      for (var i = 0; i < shown; i++) {
+        var e = entries[i];
+        var d = dist(player.x, player.y, e.x, e.y);
+        var distStr = d < 1000 ? Math.round(d) + 'u' : (d / 1000).toFixed(1) + 'ku';
+        html += '<div class="history-entry" data-idx="' + e.idx + '">';
+        html += '<div class="history-entry-name">' + e.name + '</div>';
+        html += '<div class="history-entry-meta"><span>' + formatTimeAgo(e.time) + (e.count > 1 ? ' · ' + e.count + 'x' : '') + '</span><span>' + distStr + '</span></div>';
+        html += '</div>';
+      }
+      historyListEl.innerHTML = html;
+    }
+
+    function toggleHistory() {
+      historyOpen = !historyOpen;
+      historyPanelEl.classList.toggle('visible', historyOpen);
+      if (historyOpen) {
+        // Close nearby panel if open
+        nearbyOpen = false;
+        nearbyPanelEl.classList.remove('visible');
+        updateHistoryList();
+      }
+    }
+
+    historyBtnEl.addEventListener('click', function(e) { e.stopPropagation(); toggleHistory(); });
+
+    // Tab switching
+    document.querySelectorAll('.history-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.history-tab').forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        historyTab = tab.dataset.tab;
+        updateHistoryList();
+      });
+    });
+
+    // Click to teleport
+    historyListEl.addEventListener('click', function(e) {
+      var entry = e.target.closest('.history-entry');
+      if (!entry) return;
+      var idx = parseInt(entry.dataset.idx);
+      if (isNaN(idx)) return;
+      var ch = chambers[idx];
+      player.x = ch.x;
+      player.y = ch.y;
+      camera.x = ch.x - canvas.width / 2;
+      camera.y = ch.y - canvas.height / 2;
+      discovered.add(idx);
+      disc.textContent = 'Discovered: ' + discovered.size + ' / 44,363 (' + (discovered.size / 44363 * 100).toFixed(1) + '%)';
+      showChamberInfo(ch.name);
+      localStorage.setItem('liminal_player_x', player.x);
+      localStorage.setItem('liminal_player_y', player.y);
+      recordVisit(idx);
+      updateHistoryList();
+    });
+
+    // Clear history
+    historyClearBtnEl.addEventListener('click', function() {
+      visitHistory = [];
+      localStorage.removeItem('liminal-visit-history');
+      updateHistoryList();
     });
 
     nearbyBtnEl.addEventListener('click', toggleNearby);
