@@ -45937,6 +45937,109 @@
       scheduleAtmosphericEvent(now);
     }
 
+
+
+    // === Feature 40: Time-of-Day Ambient Cycle ===
+    var timeCycleEnabled = true;
+    
+    function getTimeOfDayOverlay() {
+      var hour = new Date().getHours();
+      var minute = new Date().getMinutes();
+      var t = hour + minute / 60;
+      
+      // Dawn (5-8): warm golden
+      // Day (8-17): neutral/bright
+      // Dusk (17-20): warm orange/purple
+      // Night (20-5): deep blue/purple
+      
+      var r = 0, g = 0, b = 0, a = 0;
+      
+      if (t >= 5 && t < 8) {
+        // Dawn - golden warmth
+        var p = (t - 5) / 3;
+        r = 255; g = 200; b = 100;
+        a = 0.06 * (1 - p);
+      } else if (t >= 8 && t < 17) {
+        // Day - very subtle warm
+        a = 0;
+      } else if (t >= 17 && t < 20) {
+        // Dusk - orange to purple
+        var p = (t - 17) / 3;
+        r = Math.floor(200 + 55 * (1 - p));
+        g = Math.floor(100 * (1 - p));
+        b = Math.floor(50 + 150 * p);
+        a = 0.04 + 0.04 * p;
+      } else {
+        // Night - deep blue
+        r = 30; g = 20; b = 80;
+        a = 0.08;
+      }
+      
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+    }
+
+    // === Feature 39: Discovery Celebration Particles ===
+    var celebrationParticles = [];
+    
+    function spawnCelebration(x, y, color) {
+      var count = 24;
+      for (var p = 0; p < count; p++) {
+        var angle = (p / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+        var speed = 1.5 + Math.random() * 3;
+        var size = 2 + Math.random() * 4;
+        celebrationParticles.push({
+          x: x, y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: size,
+          color: color,
+          alpha: 1,
+          life: 60 + Math.floor(Math.random() * 40)
+        });
+      }
+      // Add a ring burst
+      for (var r = 0; r < 8; r++) {
+        var a2 = (r / 8) * Math.PI * 2;
+        celebrationParticles.push({
+          x: x, y: y,
+          vx: Math.cos(a2) * 0.8,
+          vy: Math.sin(a2) * 0.8,
+          size: 6 + Math.random() * 3,
+          color: '#ffffff',
+          alpha: 0.7,
+          life: 30 + Math.floor(Math.random() * 20)
+        });
+      }
+    }
+    
+    function updateCelebrationParticles() {
+      for (var i = celebrationParticles.length - 1; i >= 0; i--) {
+        var p = celebrationParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.97;
+        p.vy *= 0.97;
+        p.life--;
+        p.alpha = Math.max(0, p.life / 80);
+        p.size *= 0.99;
+        if (p.life <= 0) celebrationParticles.splice(i, 1);
+      }
+    }
+    
+    function drawCelebrationParticles(ctx, camX, camY) {
+      for (var i = 0; i < celebrationParticles.length; i++) {
+        var p = celebrationParticles[i];
+        var sx = p.x - camX;
+        var sy = p.y - camY;
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(sx, sy, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+
     function update(dt, time) {
       const accel = keys.has("shift") ? player.speed * 2.5 : player.speed;
       let ax = 0, ay = 0;
@@ -46043,6 +46146,7 @@
           discovered.add(i);
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
           checkMilestone(discovered.size);
+          spawnCelebration(chambers[i].x, chambers[i].y, chambers[i].color);
           if (typeof recordVisit === 'function') recordVisit(i);
         }
       });
@@ -46072,6 +46176,7 @@
         persistTrailRead();
       }
 
+      updateCelebrationParticles();
       discEl.textContent = `Discovered: ${discovered.size} / 44,363 (${(discovered.size/44363*100).toFixed(1)}%)`;
       const elapsed = Math.floor((performance.now() - startTime) / 1000);
       const mins = Math.floor(elapsed / 60);
@@ -46747,6 +46852,14 @@
         ctx.fillStyle = grad;
         ctx.fillRect(0, canvas.height - h, canvas.width, h);
       }
+    }
+
+    // Feature 39: Draw celebration particles
+    drawCelebrationParticles(ctx, camX, camY);
+    // Feature 40: Time-of-day overlay
+    if (timeCycleEnabled) {
+      ctx.fillStyle = getTimeOfDayOverlay();
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
     // Pre-rendered minimap for performance (avoids 44k arcs per frame)
