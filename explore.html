@@ -144,6 +144,21 @@
     .random-btn:hover { border-color:#c9a96e; background:rgba(201,169,110,0.1); transform: rotate(90deg); }
     .share-btn { position:fixed; top:10px; left:340px; pointer-events:auto; background:none; border:1px solid rgba(201,169,110,0.3); color:#c9a96e; font-size:18px; cursor:pointer; padding:4px 10px; border-radius:4px; z-index:20; font-family:inherit; transition: all 0.3s; }
     .share-btn:hover { border-color:#c9a96e; background:rgba(201,169,110,0.1); }
+    .tour-btn { position:fixed; top:10px; left:380px; pointer-events:auto; background:none; border:1px solid rgba(201,169,110,0.3); color:#c9a96e; font-size:18px; cursor:pointer; padding:4px 10px; border-radius:4px; z-index:20; font-family:inherit; transition: all 0.3s; }
+    .tour-btn:hover { border-color:#c9a96e; background:rgba(201,169,110,0.1); }
+    .tour-btn.active { background:rgba(201,169,110,0.2); border-color:#c9a96e; box-shadow:0 0 12px rgba(201,169,110,0.3); }
+    .tour-panel { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); pointer-events:auto; background:rgba(14,10,26,0.92); border:1px solid rgba(201,169,110,0.4); border-radius:8px; padding:16px 24px; z-index:30; font-family:Georgia,serif; max-width:500px; min-width:320px; display:none; backdrop-filter:blur(8px); box-shadow:0 4px 24px rgba(0,0,0,0.5); }
+    .tour-panel.visible { display:block; animation: tourFadeIn 0.4s ease; }
+    @keyframes tourFadeIn { from { opacity:0; transform:translateX(-50%) translateY(10px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+    .tour-stop-name { color:#c9a96e; font-size:1.2rem; margin-bottom:4px; text-shadow:0 0 10px rgba(201,169,110,0.3); }
+    .tour-stop-tag { color:#8a8a8a; font-style:italic; font-size:0.85rem; margin-bottom:8px; }
+    .tour-stop-desc { color:#ccc; font-size:0.9rem; line-height:1.5; margin-bottom:12px; }
+    .tour-progress { color:#666; font-size:0.75rem; margin-bottom:8px; }
+    .tour-nav { display:flex; gap:10px; justify-content:center; align-items:center; }
+    .tour-nav button { background:rgba(201,169,110,0.12); border:1px solid rgba(201,169,110,0.3); color:#c9a96e; padding:6px 14px; font-family:Georgia,serif; font-size:0.85rem; cursor:pointer; border-radius:4px; transition:all 0.3s; }
+    .tour-nav button:hover { background:rgba(201,169,110,0.25); border-color:#c9a96e; }
+    .tour-nav button:disabled { opacity:0.3; cursor:default; }
+    .tour-nav .tour-stop-num { color:#8a8a8a; font-size:0.8rem; min-width:60px; text-align:center; }
     .toast { position:fixed; bottom:140px; left:50%; transform:translateX(-50%); background:rgba(201,169,110,0.15); border:1px solid rgba(201,169,110,0.4); color:#c9a96e; padding:10px 24px; border-radius:6px; font-size:13px; letter-spacing:2px; pointer-events:none; z-index:50; opacity:0; transition:opacity 0.4s; }
     .toast.show { opacity:1; }
     .chamber-info { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); pointer-events:none; text-align:center; z-index:15; transition: opacity 0.8s; }
@@ -301,6 +316,9 @@
         <div class="ob-label">Hold <span class="ob-key">Shift</span> to sprint</div>
         <div class="ob-label">Press <span class="ob-key">B</span> near a chamber to bookmark it</div>
       </div>
+      <div class="ob-section">
+        <div class="ob-label">Press <span class="ob-key">T</span> or click <span class="ob-key">🗺️</span> for a guided tour</div>
+      </div>
       <div class="ob-hint">Some secrets are hidden for those who look carefully...</div>
       <button class="onboard-btn" id="onboardBtn">ENTER THE ARCHIVE</button>
     </div>
@@ -317,6 +335,19 @@
     <button class="search-btn" id="searchBtn" aria-label="Search chambers">🔍</button>
     <button class="random-btn" id="randomBtn" aria-label="Random chamber" title="Teleport to a random chamber">🎲</button>
     <button class="share-btn" id="shareBtn" aria-label="Share location" title="Copy link to this location">📋</button>
+    <button class="tour-btn" id="tourBtn" aria-label="Guided tour" title="Start a guided tour of the Archive">🗺️</button>
+    <div class="tour-panel" id="tourPanel">
+      <div class="tour-progress" id="tourProgress"></div>
+      <div class="tour-stop-name" id="tourStopName"></div>
+      <div class="tour-stop-tag" id="tourStopTag"></div>
+      <div class="tour-stop-desc" id="tourStopDesc"></div>
+      <div class="tour-nav">
+        <button id="tourPrev">← Prev</button>
+        <span class="tour-stop-num" id="tourStopNum"></span>
+        <button id="tourNext">Next →</button>
+        <button id="tourEnd" style="margin-left:8px;color:#aa6666;border-color:rgba(170,102,102,0.3);">✕ End</button>
+      </div>
+    </div>
     <div class="search-overlay" id="searchOverlay">
       <div class="search-header">
         <input type="text" class="search-box" id="searchBox" placeholder="Search 44,363 chambers..." autocomplete="off">
@@ -426,15 +457,22 @@
     };
 
     // URL parameter support: explore.html?x=3000&y=5000
+    // Falls back to localStorage saved position (from chamber visits)
     (function() {
       const params = new URLSearchParams(window.location.search);
       if (params.has('x')) {
         player.x = parseInt(params.get('x')) || player.x;
         camera.x = player.x;
+      } else {
+        const savedX = localStorage.getItem('liminal-last-x');
+        if (savedX) { player.x = parseInt(savedX); camera.x = player.x; }
       }
       if (params.has('y')) {
         player.y = parseInt(params.get('y')) || player.y;
         camera.y = player.y;
+      } else {
+        const savedY = localStorage.getItem('liminal-last-y');
+        if (savedY) { player.y = parseInt(savedY); camera.y = player.y; }
       }
     })();
 
@@ -45129,6 +45167,9 @@
       if (nearestIndex !== -1) {
         const c = chambers[nearestIndex];
         if (dist(player.x, player.y, c.x, c.y) <= 80) {
+          localStorage.setItem('liminal-last-x', Math.round(player.x));
+          localStorage.setItem('liminal-last-y', Math.round(player.y));
+          localStorage.setItem('liminal-last-chamber', c.name);
           window.location.href = c.file;
         }
       }
@@ -46270,6 +46311,7 @@
         update(dt, time);
         drawWorld(time);
       }
+      updateTourMovement();
       requestAnimationFrame(loop);
     }
 
@@ -46293,6 +46335,102 @@
         }
       }
     });
+
+
+    // === GUIDED TOUR ===
+    const tourStops = [
+      { name: "The Antechamber", desc: "Where every journey begins. The Antechamber is the room before all rooms — a threshold space where possibility hangs thick in the air.", x: 2750, y: 3680 },
+      { name: "The Planetarium", desc: "Look up. The dome above projects myths written in starlight — constellations that tell stories older than language itself.", x: 3444, y: 900 },
+      { name: "The Synesthesia Chamber", desc: "In this room, senses bleed into each other. Colors have sounds, textures have tastes. The boundaries between perception dissolve.", x: 4200, y: 900 },
+      { name: "The Mythology Vaults", desc: "Thousands of years of human storytelling, compressed into amber. Gods and monsters and the spaces between them.", x: 3268, y: 290881 },
+      { name: "The Textile Halls", desc: "Every thread tells a story. Silk roads and cotton fields, looms and spindles — the fabric of civilization, literally.", x: 3070, y: 337365 },
+      { name: "The Echo Chamber", desc: "Speak and listen. Your words come back transformed — not louder, but different. What did you really mean to say?", x: 4000, y: 1000 },
+      { name: "The Botanical Gardens", desc: "A vast greenhouse of impossible plants. Some bloom only in moonlight. Others whisper taxonomy to each other.", x: 4225, y: 249862 },
+      { name: "The Science Wing", desc: "Hypotheses crystallize on the walls. Every experiment ever attempted left a residue here — including the failed ones.", x: 3569, y: 379996 },
+      { name: "The Ocean Depths", desc: "Descend past the sunlit zone into abyssal darkness. Bioluminescent truths drift past like deep-sea creatures.", x: 3180, y: 344460 },
+      { name: "The Bookbinding Workshop", desc: "The smell of leather and glue. Here, knowledge is given physical form — pages stitched together by careful hands.", x: 3620, y: 298410 },
+      { name: "The Musical Forms", desc: "Every genre, every scale, every rhythm that humans ever devised echoes through these halls in layered harmony.", x: 3600, y: 317931 },
+      { name: "The Architecture Gallery", desc: "Blueprints for buildings that were never built hang alongside plans for structures that changed the world.", x: 3766, y: 317775 }
+    ];
+
+    let tourActive = false;
+    let tourIndex = 0;
+    let tourTarget = null;
+
+    const tourBtnEl = document.getElementById('tourBtn');
+    const tourPanel = document.getElementById('tourPanel');
+    const tourStopName = document.getElementById('tourStopName');
+    const tourStopTag = document.getElementById('tourStopTag');
+    const tourStopDesc = document.getElementById('tourStopDesc');
+    const tourProgress = document.getElementById('tourProgress');
+    const tourStopNum = document.getElementById('tourStopNum');
+    const tourPrevBtn = document.getElementById('tourPrev');
+    const tourNextBtn = document.getElementById('tourNext');
+    const tourEndBtn = document.getElementById('tourEnd');
+
+    function updateTourUI() {
+      const stop = tourStops[tourIndex];
+      tourStopName.textContent = stop.name;
+      tourStopDesc.textContent = stop.desc;
+      var match = chambers.find(function(c) { return c.name === stop.name; });
+      tourStopTag.textContent = match ? match.tag : '';
+      tourProgress.textContent = 'GUIDED TOUR — ' + tourStops.length + ' notable chambers';
+      tourStopNum.textContent = (tourIndex + 1) + ' / ' + tourStops.length;
+      tourPrevBtn.disabled = tourIndex === 0;
+      tourNextBtn.disabled = tourIndex === tourStops.length - 1;
+    }
+
+    function startTour() {
+      tourActive = true;
+      tourIndex = 0;
+      tourBtnEl.classList.add('active');
+      tourPanel.classList.add('visible');
+      navigateToStop(0);
+    }
+
+    function endTour() {
+      tourActive = false;
+      tourTarget = null;
+      tourBtnEl.classList.remove('active');
+      tourPanel.classList.remove('visible');
+    }
+
+    function navigateToStop(idx) {
+      tourIndex = idx;
+      updateTourUI();
+      var stop = tourStops[idx];
+      tourTarget = { x: stop.x, y: stop.y };
+    }
+
+    tourBtnEl.addEventListener('click', function() {
+      if (tourActive) { endTour(); } else { startTour(); }
+    });
+    tourPrevBtn.addEventListener('click', function() { if (tourIndex > 0) navigateToStop(tourIndex - 1); });
+    tourNextBtn.addEventListener('click', function() { if (tourIndex < tourStops.length - 1) navigateToStop(tourIndex + 1); });
+    tourEndBtn.addEventListener('click', endTour);
+
+    function updateTourMovement() {
+      if (!tourActive || !tourTarget) return;
+      var dx = tourTarget.x - player.x;
+      var dy = tourTarget.y - player.y;
+      var d = Math.hypot(dx, dy);
+      if (d < 5) {
+        tourTarget = null;
+        return;
+      }
+      var speed = Math.min(d * 0.03, 15);
+      player.x += (dx / d) * speed;
+      player.y += (dy / d) * speed;
+    }
+
+    // T key toggles tour
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 't' || e.key === 'T') {
+        if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
+        if (tourActive) { endTour(); } else { startTour(); }
+      }
+    });
+    // === END GUIDED TOUR ===
 
     // Konami Code: Up Up Down Down Left Right Left Right B A
     const konamiSequence = [38,38,40,40,37,39,37,39,66,65];
