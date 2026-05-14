@@ -46444,6 +46444,8 @@
       var isSprinting = keys.has("shift") || keys.has("Shift");
       updateSpeedLines(isSprinting, 16);
       updateWeatherParticles();
+      updateEdgeGlow();
+      updateAuraParticles();
       updateStreak(false);
       if (typeof updateCompass === "function" && compassEnabled) updateCompass();
       discEl.textContent = `Discovered: ${discovered.size} / 44,363 (${(discovered.size/44363*100).toFixed(1)}%)`;
@@ -47157,6 +47159,19 @@
       drawCanvasTrail(viewLeft55, viewTop55);
 
       // Feature 57: Compass Rose
+
+      // Feature 65: Screen Edge Discovery Glow
+      drawEdgeDiscoveryGlow();
+
+      // Feature 66: Chamber Aura Particles
+      drawAuraParticles(viewLeft55, viewTop55);
+
+      // Feature 67: Distance Milestone Markers
+      drawDistanceMilestones(viewLeft55, viewTop55);
+
+      // Feature 68: Ambient Fog Layers
+      drawFogLayers(time, viewLeft55, viewTop55);
+
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -47723,6 +47738,176 @@
       }
       ctx.restore();
     }
+
+    // ===== Feature 65: Screen Edge Discovery Glow =====
+    var edgeGlowIntensity = {top: 0, bottom: 0, left: 0, right: 0};
+    function updateEdgeGlow() {
+      if (typeof edgeGlowIntensity === "undefined") return;
+      edgeGlowIntensity = {top: 0, bottom: 0, left: 0, right: 0};
+      var viewL = camera.x - canvas.width/2;
+      var viewR = camera.x + canvas.width/2;
+      var viewT = camera.y - canvas.height/2;
+      var viewB = camera.y + canvas.height/2;
+      for (var ei = 0; ei < chambers.length; ei += 11) {
+        if (discovered.has(ei)) continue;
+        var c = chambers[ei];
+        var dx = c.x - camera.x;
+        var dy = c.y - camera.y;
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist > 500 || dist < 200) continue;
+        var intensity = (1 - (dist - 200) / 300) * 0.15;
+        if (c.x < viewL) edgeGlowIntensity.left = Math.max(edgeGlowIntensity.left, intensity);
+        else if (c.x > viewR) edgeGlowIntensity.right = Math.max(edgeGlowIntensity.right, intensity);
+        if (c.y < viewT) edgeGlowIntensity.top = Math.max(edgeGlowIntensity.top, intensity);
+        else if (c.y > viewB) edgeGlowIntensity.bottom = Math.max(edgeGlowIntensity.bottom, intensity);
+      }
+    }
+    function drawEdgeDiscoveryGlow() {
+      if (typeof edgeGlowIntensity === "undefined" || !edgeGlowIntensity) return;
+      ctx.save();
+      var glowW = 60;
+      if (edgeGlowIntensity.left > 0.01) {
+        var g = ctx.createLinearGradient(0, 0, glowW, 0);
+        g.addColorStop(0, 'rgba(100,180,255,' + edgeGlowIntensity.left + ')');
+        g.addColorStop(1, 'rgba(100,180,255,0)');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, glowW, canvas.height);
+      }
+      if (edgeGlowIntensity.right > 0.01) {
+        var g = ctx.createLinearGradient(canvas.width, 0, canvas.width - glowW, 0);
+        g.addColorStop(0, 'rgba(100,180,255,' + edgeGlowIntensity.right + ')');
+        g.addColorStop(1, 'rgba(100,180,255,0)');
+        ctx.fillStyle = g; ctx.fillRect(canvas.width - glowW, 0, glowW, canvas.height);
+      }
+      if (edgeGlowIntensity.top > 0.01) {
+        var g = ctx.createLinearGradient(0, 0, 0, glowW);
+        g.addColorStop(0, 'rgba(100,180,255,' + edgeGlowIntensity.top + ')');
+        g.addColorStop(1, 'rgba(100,180,255,0)');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, canvas.width, glowW);
+      }
+      if (edgeGlowIntensity.bottom > 0.01) {
+        var g = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - glowW);
+        g.addColorStop(0, 'rgba(100,180,255,' + edgeGlowIntensity.bottom + ')');
+        g.addColorStop(1, 'rgba(100,180,255,0)');
+        ctx.fillStyle = g; ctx.fillRect(0, canvas.height - glowW, canvas.width, glowW);
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 66: Chamber Aura Particles =====
+    var auraParticles = [];
+    var auraSpawnTimer66 = 0;
+    function updateAuraParticles() {
+      if (typeof auraParticles === "undefined") return;
+      auraSpawnTimer66++;
+      if (auraSpawnTimer66 % 20 === 0 && auraParticles.length < 40) {
+        var viewL = camera.x - canvas.width/2 - 100;
+        var viewR = camera.x + canvas.width/2 + 100;
+        var viewT = camera.y - canvas.height/2 - 100;
+        var viewB = camera.y + canvas.height/2 + 100;
+        for (var ai = 0; ai < chambers.length; ai += 7) {
+          if (!discovered.has(ai)) continue;
+          var c = chambers[ai];
+          if (c.x < viewL || c.x > viewR || c.y < viewT || c.y > viewB) continue;
+          if (Math.random() < 0.03 && auraParticles.length < 40) {
+            auraParticles.push({
+              x: c.x + (Math.random()-0.5)*60,
+              y: c.y + (Math.random()-0.5)*60,
+              vx: (Math.random()-0.5)*0.3,
+              vy: -Math.random()*0.5 - 0.2,
+              life: 1.0,
+              decay: 0.005 + Math.random()*0.005,
+              size: 2 + Math.random()*3,
+              color: c.color || '#c9a96e'
+            });
+          }
+          if (auraParticles.length >= 40) break;
+        }
+      }
+      for (var i = auraParticles.length - 1; i >= 0; i--) {
+        var p = auraParticles[i];
+        p.x += p.vx; p.y += p.vy;
+        p.life -= p.decay;
+        if (p.life <= 0) auraParticles.splice(i, 1);
+      }
+    }
+    function drawAuraParticles(viewLeft, viewTop) {
+      if (typeof auraParticles === "undefined") return;
+      ctx.save();
+      for (var i = 0; i < auraParticles.length; i++) {
+        var p = auraParticles[i];
+        var sx = p.x - viewLeft;
+        var sy = p.y - viewTop;
+        ctx.globalAlpha = p.life * 0.4;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(sx, sy, p.size, 0, Math.PI*2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 67: Distance Milestone Markers =====
+    var distanceMilestones = [];
+    var lastMilestoneCheck67 = 0;
+    function drawDistanceMilestones(viewLeft, viewTop) {
+      if (typeof distanceMilestones === "undefined") return;
+      if (typeof totalDistanceTraveled !== "undefined") {
+        var currentMilestone = Math.floor(totalDistanceTraveled / 10000);
+        if (currentMilestone > lastMilestoneCheck67 && typeof canvasTrailPoints !== "undefined") {
+          for (var m = lastMilestoneCheck67 + 1; m <= currentMilestone; m++) {
+            distanceMilestones.push({x: camera.x, y: camera.y, dist: m * 10000});
+          }
+          lastMilestoneCheck67 = currentMilestone;
+        }
+      }
+      ctx.save();
+      for (var i = 0; i < distanceMilestones.length; i++) {
+        var ms = distanceMilestones[i];
+        var sx = ms.x - viewLeft;
+        var sy = ms.y - viewTop;
+        if (sx < -50 || sx > canvas.width + 50 || sy < -50 || sy > canvas.height + 50) continue;
+        ctx.fillStyle = '#ffd700';
+        ctx.globalAlpha = 0.7;
+        ctx.beginPath();
+        ctx.arc(sx, sy, 6, 0, Math.PI*2);
+        ctx.fill();
+        ctx.globalAlpha = 0.5;
+        ctx.font = '10px monospace';
+        ctx.fillText((ms.dist/1000) + 'K', sx + 10, sy + 4);
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 68: Ambient Fog Layers =====
+    var fogLayers = [];
+    (function initFogLayers() {
+      for (var i = 0; i < 5; i++) {
+        fogLayers.push({
+          x: Math.random() * 2000 - 1000,
+          y: Math.random() * 2000 - 1000,
+          w: 600 + Math.random() * 400,
+          h: 200 + Math.random() * 200,
+          speed: 0.1 + Math.random() * 0.2,
+          alpha: 0.02 + Math.random() * 0.03
+        });
+      }
+    })();
+    function drawFogLayers(time, viewLeft, viewTop) {
+      if (typeof fogLayers === "undefined") return;
+      ctx.save();
+      for (var i = 0; i < fogLayers.length; i++) {
+        var f = fogLayers[i];
+        var fx = f.x + Math.sin(time * 0.0003 + i) * 100 - (viewLeft % 800);
+        var fy = f.y + Math.cos(time * 0.0002 + i * 1.5) * 50 - (viewTop % 600);
+        ctx.globalAlpha = f.alpha;
+        ctx.fillStyle = 'rgba(80,50,120,1)';
+        ctx.beginPath();
+        ctx.ellipse(fx, fy, f.w/2, f.h/2, 0, 0, Math.PI*2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
 
     document.body.appendChild(autoWalkIndicator);
 
