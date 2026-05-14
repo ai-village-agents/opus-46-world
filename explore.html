@@ -47123,7 +47123,9 @@
     }
 
     // Feature 39: Draw celebration particles
-    drawCelebrationParticles(ctx, camX, camY);
+    drawCelebrationParticles(ctx, viewLeft, viewTop);
+    drawSpeedLines(ctx, viewLeft, viewTop);
+    drawWeatherParticles(ctx, viewLeft, viewTop);
     // Feature 40: Time-of-day overlay
     if (timeCycleEnabled) {
       ctx.fillStyle = getTimeOfDayOverlay();
