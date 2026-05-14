@@ -46410,6 +46410,7 @@
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
           checkMilestone(discovered.size);
           spawnCelebration(chambers[i].x, chambers[i].y, chambers[i].color);
+          if (discovered.size % 50 === 0 && typeof triggerFireworks89 === 'function') triggerFireworks89(chambers[i].x, chambers[i].y);
           if (typeof triggerDiscCounterAnim75 === 'function') triggerDiscCounterAnim75(discovered.size);
           updateStreak(true);
           if (typeof recordVisit === 'function') recordVisit(i);
@@ -47251,6 +47252,19 @@
 
       // Feature 88: Dynamic Vignette
       drawDynamicVignette88(time);
+
+
+      // Feature 89: Discovery Milestone Fireworks
+      drawFireworks89(viewLeft55, viewTop55);
+
+      // Feature 90: Exploration Wake Effect
+      drawExplorationWake90(viewLeft55, viewTop55);
+
+      // Feature 91: Chamber Visit Frequency Glow
+      drawVisitFrequencyGlow91(viewLeft55, viewTop55);
+
+      // Feature 92: Ambient Constellation Rotation
+      drawConstellationRotation92(viewLeft55, viewTop55, time);
 
       drawCompassRose(time);
 
@@ -48510,6 +48524,135 @@
       grad88.addColorStop(1, 'rgba(0,0,10,' + vigStrength88.toFixed(3) + ')');
       ctx.fillStyle = grad88;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
+
+
+
+    // ===== Feature 89: Discovery Milestone Fireworks =====
+    var fireworks89 = [];
+    function triggerFireworks89(x, y) {
+      if (typeof fireworks89 === "undefined") return;
+      var colors89 = ['#ffd700', '#ff6644', '#44ff88', '#4488ff', '#ff44aa'];
+      for (var fw89 = 0; fw89 < 12; fw89++) {
+        var angle89 = (fw89 / 12) * Math.PI * 2;
+        fireworks89.push({
+          x: x, y: y,
+          vx: Math.cos(angle89) * (2 + Math.random() * 2),
+          vy: Math.sin(angle89) * (2 + Math.random() * 2),
+          life: 40 + Math.random() * 20,
+          maxLife: 60,
+          color: colors89[Math.floor(Math.random() * colors89.length)],
+          size: 2 + Math.random() * 2
+        });
+      }
+    }
+    function drawFireworks89(viewLeft, viewTop) {
+      if (typeof fireworks89 === "undefined") return;
+      ctx.save();
+      for (var df89 = fireworks89.length - 1; df89 >= 0; df89--) {
+        var p89 = fireworks89[df89];
+        p89.x += p89.vx;
+        p89.y += p89.vy;
+        p89.vy += 0.03;
+        p89.vx *= 0.98;
+        p89.life--;
+        if (p89.life <= 0) { fireworks89.splice(df89, 1); continue; }
+        var sx89 = p89.x - viewLeft;
+        var sy89 = p89.y - viewTop;
+        ctx.globalAlpha = (p89.life / p89.maxLife) * 0.7;
+        ctx.fillStyle = p89.color;
+        ctx.beginPath();
+        ctx.arc(sx89, sy89, p89.size * (p89.life / p89.maxLife), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      if (fireworks89.length > 100) fireworks89.splice(0, fireworks89.length - 100);
+      ctx.restore();
+    }
+
+    // ===== Feature 90: Exploration Wake Effect =====
+    function drawExplorationWake90(viewLeft, viewTop) {
+      if (typeof player === "undefined") return;
+      var speed90 = Math.sqrt((player.vx||0)*(player.vx||0) + (player.vy||0)*(player.vy||0));
+      if (speed90 < 1) return;
+      ctx.save();
+      var px90 = player.x - viewLeft;
+      var py90 = player.y - viewTop;
+      var angle90 = Math.atan2(-(player.vy||0), -(player.vx||0));
+      ctx.globalAlpha = Math.min(speed90 * 0.015, 0.08);
+      ctx.strokeStyle = '#6688bb';
+      ctx.lineWidth = 1;
+      for (var w90 = 0; w90 < 3; w90++) {
+        var spread90 = 0.3 + w90 * 0.15;
+        var len90 = 20 + w90 * 15;
+        ctx.beginPath();
+        ctx.moveTo(px90, py90);
+        ctx.lineTo(px90 + Math.cos(angle90 - spread90) * len90, py90 + Math.sin(angle90 - spread90) * len90);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(px90, py90);
+        ctx.lineTo(px90 + Math.cos(angle90 + spread90) * len90, py90 + Math.sin(angle90 + spread90) * len90);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 91: Chamber Visit Frequency Glow =====
+    function drawVisitFrequencyGlow91(viewLeft, viewTop) {
+      if (typeof visitCounts === "undefined") return;
+      ctx.save();
+      for (var vf91 = 0; vf91 < chambers.length; vf91++) {
+        var count91 = visitCounts[vf91] || 0;
+        if (count91 < 2) continue;
+        var ch91 = chambers[vf91];
+        var sx91 = ch91.x - viewLeft;
+        var sy91 = ch91.y - viewTop;
+        if (sx91 < -50 || sx91 > canvas.width+50 || sy91 < -50 || sy91 > canvas.height+50) continue;
+        var intensity91 = Math.min(count91 / 10, 1);
+        ctx.globalAlpha = intensity91 * 0.08;
+        ctx.fillStyle = '#ffdd44';
+        ctx.beginPath();
+        ctx.arc(sx91, sy91, 20 + intensity91 * 10, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 92: Ambient Constellation Rotation =====
+    function drawConstellationRotation92(viewLeft, viewTop, time) {
+      if (typeof discovered === "undefined") return;
+      ctx.save();
+      ctx.globalAlpha = 0.03;
+      ctx.strokeStyle = '#8888cc';
+      ctx.lineWidth = 0.5;
+      var center92x = player.x;
+      var center92y = player.y;
+      var rot92 = time * 0.0001;
+      var discArr92 = [];
+      discovered.forEach(function(idx) { discArr92.push(idx); });
+      var nearby92 = [];
+      for (var n92 = 0; n92 < discArr92.length; n92++) {
+        var ch92 = chambers[discArr92[n92]];
+        var d92 = Math.sqrt(Math.pow(ch92.x - player.x, 2) + Math.pow(ch92.y - player.y, 2));
+        if (d92 < 400) nearby92.push(discArr92[n92]);
+        if (nearby92.length >= 15) break;
+      }
+      for (var c92 = 0; c92 < nearby92.length - 1; c92++) {
+        var a92 = chambers[nearby92[c92]];
+        var b92 = chambers[nearby92[c92+1]];
+        var ax92 = a92.x - viewLeft;
+        var ay92 = a92.y - viewTop;
+        var bx92 = b92.x - viewLeft;
+        var by92 = b92.y - viewTop;
+        // Slight rotation effect
+        var mx92 = (ax92 + bx92) / 2;
+        var my92 = (ay92 + by92) / 2;
+        var offset92 = Math.sin(rot92 + c92) * 5;
+        ctx.beginPath();
+        ctx.moveTo(ax92, ay92);
+        ctx.quadraticCurveTo(mx92 + offset92, my92 + offset92, bx92, by92);
+        ctx.stroke();
+      }
       ctx.restore();
     }
 
