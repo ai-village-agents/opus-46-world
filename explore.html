@@ -146,6 +146,24 @@
     .share-btn:hover { border-color:#c9a96e; background:rgba(201,169,110,0.1); }
     .tour-btn { position:fixed; top:10px; left:380px; pointer-events:auto; background:none; border:1px solid rgba(201,169,110,0.3); color:#c9a96e; font-size:18px; cursor:pointer; padding:4px 10px; border-radius:4px; z-index:20; font-family:inherit; transition: all 0.3s; }
     .tour-btn:hover { border-color:#c9a96e; background:rgba(201,169,110,0.1); }
+
+    .nearby-btn { position:fixed; top:16px; right:280px; background:rgba(20,16,36,0.7); border:1px solid rgba(201,169,110,0.3); color:#c9a96e; font-size:18px; width:36px; height:36px; border-radius:6px; cursor:pointer; font-family:inherit; z-index:90; display:flex; align-items:center; justify-content:center; transition:all 0.3s; }
+    .nearby-btn:hover { border-color:#c9a96e; background:rgba(201,169,110,0.1); }
+    .nearby-btn.active { background:rgba(201,169,110,0.15); border-color:#c9a96e; }
+    .nearby-panel { position:fixed; top:60px; right:16px; width:260px; max-height:400px; background:rgba(20,16,36,0.92); border:1px solid rgba(201,169,110,0.25); border-radius:8px; padding:0; z-index:95; display:none; overflow:hidden; backdrop-filter:blur(8px); }
+    .nearby-panel.visible { display:block; }
+    .nearby-header { padding:12px 14px 8px; border-bottom:1px solid rgba(201,169,110,0.15); display:flex; justify-content:space-between; align-items:center; }
+    .nearby-header h3 { margin:0; font-size:13px; letter-spacing:2px; color:#c9a96e; text-transform:uppercase; }
+    .nearby-header span { font-size:11px; color:rgba(201,169,110,0.4); }
+    .nearby-list { max-height:340px; overflow-y:auto; padding:4px 0; }
+    .nearby-list::-webkit-scrollbar { width:4px; }
+    .nearby-list::-webkit-scrollbar-thumb { background:rgba(201,169,110,0.2); border-radius:2px; }
+    .nearby-item { padding:8px 14px; cursor:pointer; transition:background 0.2s; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(201,169,110,0.06); }
+    .nearby-item:hover { background:rgba(201,169,110,0.08); }
+    .nearby-item-name { font-size:12px; color:rgba(220,210,190,0.85); max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .nearby-item-dist { font-size:10px; color:rgba(201,169,110,0.4); letter-spacing:1px; white-space:nowrap; }
+    .nearby-item-visited { color:rgba(201,169,110,0.6); }
+    .nearby-item .visited-dot { display:inline-block; width:5px; height:5px; background:#c9a96e; border-radius:50%; margin-right:6px; opacity:0.5; }
     .tour-btn.active { background:rgba(201,169,110,0.2); border-color:#c9a96e; box-shadow:0 0 12px rgba(201,169,110,0.3); }
     .tour-panel { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); pointer-events:auto; background:rgba(14,10,26,0.92); border:1px solid rgba(201,169,110,0.4); border-radius:8px; padding:16px 24px; z-index:30; font-family:Georgia,serif; max-width:500px; min-width:320px; display:none; backdrop-filter:blur(8px); box-shadow:0 4px 24px rgba(0,0,0,0.5); }
     .tour-panel.visible { display:block; animation: tourFadeIn 0.4s ease; }
@@ -315,6 +333,7 @@
       <div class="ob-section">
         <div class="ob-label">Hold <span class="ob-key">Shift</span> to sprint</div>
         <div class="ob-label">Press <span class="ob-key">B</span> near a chamber to bookmark it</div>
+        <div class="ob-label">Press <span class="ob-key">N</span> to see nearby chambers</div>
       </div>
       <div class="ob-section">
         <div class="ob-label">Press <span class="ob-key">T</span> or click <span class="ob-key">🗺️</span> for a guided tour</div>
@@ -336,6 +355,11 @@
     <button class="random-btn" id="randomBtn" aria-label="Random chamber" title="Teleport to a random chamber">🎲</button>
     <button class="share-btn" id="shareBtn" aria-label="Share location" title="Copy link to this location">📋</button>
     <button class="tour-btn" id="tourBtn" aria-label="Guided tour" title="Start a guided tour of the Archive">🗺️</button>
+    <button class="nearby-btn" id="nearbyBtn" aria-label="Nearby chambers" title="Show nearby chambers (N)">📍</button>
+    <div class="nearby-panel" id="nearbyPanel">
+      <div class="nearby-header"><h3>Nearby Chambers</h3><span id="nearbyCount"></span></div>
+      <div class="nearby-list" id="nearbyList"></div>
+    </div>
     <div class="tour-panel" id="tourPanel">
       <div class="tour-progress" id="tourProgress"></div>
       <div class="tour-stop-name" id="tourStopName"></div>
@@ -45719,6 +45743,7 @@
           showBookmarkToast('Move closer to a chamber to bookmark it');
         }
       }
+      if ((e.key === "n" || e.key === "N") && document.activeElement.tagName !== "INPUT" && !document.getElementById("searchOverlay").classList.contains("visible")) { toggleNearby(); }
     });
 
     // Chamber Proximity Info Display
@@ -46312,6 +46337,7 @@
         drawWorld(time);
       }
       updateTourMovement();
+      if (nearbyOpen) updateNearbyList();
       requestAnimationFrame(loop);
     }
 
@@ -46432,6 +46458,80 @@
     });
     // === END GUIDED TOUR ===
 
+
+    // ── Nearby Chambers Panel (N key) ──
+    const nearbyBtnEl = document.getElementById('nearbyBtn');
+    const nearbyPanelEl = document.getElementById('nearbyPanel');
+    const nearbyListEl = document.getElementById('nearbyList');
+    const nearbyCountEl = document.getElementById('nearbyCount');
+    let nearbyOpen = false;
+    let nearbyLastUpdate = 0;
+    const NEARBY_COUNT = 12;
+    const NEARBY_UPDATE_MS = 500;
+
+    function toggleNearby() {
+      nearbyOpen = !nearbyOpen;
+      nearbyPanelEl.classList.toggle('visible', nearbyOpen);
+      nearbyBtnEl.classList.toggle('active', nearbyOpen);
+      if (nearbyOpen) updateNearbyList();
+    }
+
+    function updateNearbyList() {
+      if (!nearbyOpen) return;
+      var now = performance.now();
+      if (now - nearbyLastUpdate < NEARBY_UPDATE_MS) return;
+      nearbyLastUpdate = now;
+
+      var px = player.x, py = player.y;
+      var scored = [];
+      for (var i = 0; i < chambers.length; i++) {
+        var dx = chambers[i].x - px, dy = chambers[i].y - py;
+        var d2 = dx*dx + dy*dy;
+        if (d2 < 1) continue;
+        scored.push({idx: i, dist: Math.sqrt(d2)});
+      }
+      scored.sort(function(a,b){ return a.dist - b.dist; });
+      var top = scored.slice(0, NEARBY_COUNT);
+
+      nearbyCountEl.textContent = top.length + ' closest';
+      var html = '';
+      for (var j = 0; j < top.length; j++) {
+        var ch = chambers[top[j].idx];
+        var dist = top[j].dist;
+        var distStr = dist < 1000 ? Math.round(dist) + 'u' : (dist/1000).toFixed(1) + 'ku';
+        var isVisited = discovered.has(top[j].idx);
+        var visitedClass = isVisited ? ' nearby-item-visited' : '';
+        var dotHtml = isVisited ? '<span class="visited-dot"></span>' : '';
+        html += '<div class="nearby-item' + visitedClass + '" data-idx="' + top[j].idx + '">';
+        html += '<span class="nearby-item-name">' + dotHtml + ch.name + '</span>';
+        html += '<span class="nearby-item-dist">' + distStr + '</span>';
+        html += '</div>';
+      }
+      nearbyListEl.innerHTML = html;
+    }
+
+    nearbyListEl.addEventListener('click', function(e) {
+      var item = e.target.closest('.nearby-item');
+      if (!item) return;
+      var idx = parseInt(item.dataset.idx);
+      if (isNaN(idx)) return;
+      var ch = chambers[idx];
+      player.x = ch.x;
+      player.y = ch.y;
+      camera.x = ch.x - canvas.width/2;
+      camera.y = ch.y - canvas.height/2;
+      discovered.add(idx);
+      disc.textContent = 'Discovered: ' + discovered.size + ' / 44,363 (' + (discovered.size/44363*100).toFixed(1) + '%)';
+      showChamberInfo(ch.name);
+      localStorage.setItem('liminal_player_x', player.x);
+      localStorage.setItem('liminal_player_y', player.y);
+      updateNearbyList();
+    });
+
+    nearbyBtnEl.addEventListener('click', toggleNearby);
+
+    // Update nearby list periodically in game loop
+    var origNearbyFrame = null;
     // Konami Code: Up Up Down Down Left Right Left Right B A
     const konamiSequence = [38,38,40,40,37,39,37,39,66,65];
     let konamiProgress = 0;
