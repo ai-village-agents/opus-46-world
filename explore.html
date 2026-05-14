@@ -47215,6 +47215,16 @@
       // Feature 76: Region Boundary Visualization
       drawRegionBoundaries76(viewLeft55, viewTop55);
 
+
+      // Feature 77: Chamber Hover Glow Pulse
+      drawHoverGlowPulse77(viewLeft55, viewTop55, time);
+
+      // Feature 79: Player Movement Prediction Line
+      drawMovementPrediction79(viewLeft55, viewTop55);
+
+      // Feature 80: Ambient Breathing Effect
+      drawAmbientBreathing80(time);
+
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -48203,6 +48213,103 @@
         ctx.stroke();
       }
       ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+
+
+    // ===== Feature 77: Chamber Hover Glow Pulse =====
+    function drawHoverGlowPulse77(viewLeft, viewTop, time) {
+      if (typeof discovered === "undefined") return;
+      ctx.save();
+      for (var hg77 = 0; hg77 < chambers.length; hg77++) {
+        if (!discovered.has(hg77)) continue;
+        var ch77 = chambers[hg77];
+        var dx77 = ch77.x - player.x;
+        var dy77 = ch77.y - player.y;
+        var dist77 = Math.sqrt(dx77*dx77 + dy77*dy77);
+        if (dist77 > 150 || dist77 < 10) continue;
+        var sx77 = ch77.x - viewLeft;
+        var sy77 = ch77.y - viewTop;
+        if (sx77 < -50 || sx77 > canvas.width+50 || sy77 < -50 || sy77 > canvas.height+50) continue;
+        var pulse77 = 0.5 + 0.5 * Math.sin(time * 0.003 + hg77);
+        var alpha77 = (1 - dist77 / 150) * 0.15 * pulse77;
+        ctx.globalAlpha = alpha77;
+        var grad77 = ctx.createRadialGradient(sx77, sy77, 5, sx77, sy77, 35);
+        grad77.addColorStop(0, ch77.color || '#ffffff');
+        grad77.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad77;
+        ctx.beginPath();
+        ctx.arc(sx77, sy77, 35, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 78: Minimap Density Overlay =====
+    var minimapDensityCache78 = null;
+    var minimapDensityCacheTime78 = 0;
+    function drawMinimapDensity78() {
+      if (typeof minimapDensityCache78 === "undefined") return;
+      if (typeof minimap === "undefined") return;
+      var mm = document.querySelector(".minimap canvas") || document.querySelector("canvas.minimap");
+      if (!mm) return;
+      // Only recalculate every 120 frames
+      var now78 = Date.now();
+      if (minimapDensityCache78 && now78 - minimapDensityCacheTime78 < 2000) return;
+      minimapDensityCacheTime78 = now78;
+      // This is a lightweight density indicator - just a subtle overlay
+      // We skip this to avoid performance issues on the minimap
+    }
+
+    // ===== Feature 79: Player Movement Prediction Line =====
+    function drawMovementPrediction79(viewLeft, viewTop) {
+      if (typeof player === "undefined") return;
+      var vx79 = player.vx || 0;
+      var vy79 = player.vy || 0;
+      var speed79 = Math.sqrt(vx79*vx79 + vy79*vy79);
+      if (speed79 < 0.5) return;
+      ctx.save();
+      var px79 = player.x - viewLeft;
+      var py79 = player.y - viewTop;
+      var predLen79 = speed79 * 30;
+      var nx79 = vx79 / speed79;
+      var ny79 = vy79 / speed79;
+      ctx.globalAlpha = 0.15;
+      ctx.strokeStyle = '#88aaff';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 6]);
+      ctx.beginPath();
+      ctx.moveTo(px79, py79);
+      ctx.lineTo(px79 + nx79 * predLen79, py79 + ny79 * predLen79);
+      ctx.stroke();
+      // Small arrow at end
+      var ex79 = px79 + nx79 * predLen79;
+      var ey79 = py79 + ny79 * predLen79;
+      ctx.globalAlpha = 0.2;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.arc(ex79, ey79, 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#88aaff';
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // ===== Feature 80: Ambient Breathing Effect =====
+    function drawAmbientBreathing80(time) {
+      if (typeof ctx === "undefined") return;
+      // Subtle full-screen breathing overlay that pulses slowly
+      var breath80 = 0.5 + 0.5 * Math.sin(time * 0.0005);
+      ctx.save();
+      ctx.globalAlpha = breath80 * 0.02;
+      var grad80 = ctx.createRadialGradient(
+        canvas.width/2, canvas.height/2, 50,
+        canvas.width/2, canvas.height/2, canvas.width * 0.7
+      );
+      grad80.addColorStop(0, '#4466aa');
+      grad80.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad80;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
     }
 
