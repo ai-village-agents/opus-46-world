@@ -205,6 +205,36 @@
     .lens-category-count { font-size:10px; color:rgba(201,169,110,0.3); }
     .lens-indicator { position:fixed; top:220px; left:16px; background:rgba(20,16,36,0.85); border:1px solid rgba(201,169,110,0.3); border-radius:16px; padding:4px 12px; z-index:89; display:none; font-size:11px; color:#c9a96e; letter-spacing:1px; backdrop-filter:blur(4px); }
     .lens-indicator.visible { display:block; }
+
+    /* ── Exploration Journal ── */
+    .journal-btn { position:fixed; top:260px; left:16px; pointer-events:auto; width:36px; height:36px; border-radius:50%; background:rgba(20,16,36,0.75); border:1px solid rgba(201,169,110,0.2); color:#c9a96e; font-size:18px; cursor:pointer; z-index:90; display:flex; align-items:center; justify-content:center; transition:all 0.3s; backdrop-filter:blur(4px); }
+    .journal-btn:hover { background:rgba(201,169,110,0.15); border-color:rgba(201,169,110,0.5); transform:scale(1.1); }
+    .journal-btn.active { background:rgba(201,169,110,0.2); border-color:#c9a96e; box-shadow:0 0 12px rgba(201,169,110,0.3); }
+    .journal-btn.has-note { box-shadow:0 0 8px rgba(201,169,110,0.4); border-color:rgba(201,169,110,0.5); }
+    .journal-panel { position:fixed; top:60px; left:60px; width:320px; max-height:480px; background:rgba(20,16,36,0.94); border:1px solid rgba(201,169,110,0.3); border-radius:8px; z-index:95; display:none; overflow:hidden; backdrop-filter:blur(10px); box-shadow:0 4px 24px rgba(0,0,0,0.5); }
+    .journal-panel.visible { display:flex; flex-direction:column; animation: journalFadeIn 0.3s ease; }
+    @keyframes journalFadeIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+    .journal-header { padding:12px 14px 8px; border-bottom:1px solid rgba(201,169,110,0.15); }
+    .journal-title { color:#c9a96e; font-size:13px; letter-spacing:2px; text-transform:uppercase; margin-bottom:4px; }
+    .journal-chamber-name { color:rgba(220,210,190,0.8); font-size:15px; font-style:italic; margin-bottom:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .journal-tabs { display:flex; gap:0; border-bottom:1px solid rgba(201,169,110,0.1); }
+    .journal-tab { flex:1; padding:8px; text-align:center; cursor:pointer; color:rgba(201,169,110,0.4); font-size:11px; letter-spacing:1px; text-transform:uppercase; border-bottom:2px solid transparent; transition:all 0.2s; }
+    .journal-tab:hover { color:rgba(201,169,110,0.7); }
+    .journal-tab.active { color:#c9a96e; border-bottom-color:#c9a96e; }
+    .journal-editor { padding:12px 14px; flex:1; display:flex; flex-direction:column; }
+    .journal-textarea { width:100%; min-height:120px; max-height:200px; background:rgba(10,8,20,0.6); border:1px solid rgba(201,169,110,0.15); border-radius:4px; color:rgba(220,210,190,0.85); font-family:Georgia,serif; font-size:13px; line-height:1.6; padding:10px; resize:vertical; outline:none; transition:border-color 0.3s; box-sizing:border-box; }
+    .journal-textarea:focus { border-color:rgba(201,169,110,0.4); }
+    .journal-textarea::placeholder { color:rgba(201,169,110,0.2); font-style:italic; }
+    .journal-save-hint { color:rgba(201,169,110,0.25); font-size:10px; margin-top:6px; text-align:right; letter-spacing:1px; }
+    .journal-list { flex:1; overflow-y:auto; max-height:360px; padding:4px 0; }
+    .journal-list::-webkit-scrollbar { width:4px; } .journal-list::-webkit-scrollbar-thumb { background:rgba(201,169,110,0.2); border-radius:2px; }
+    .journal-entry { padding:10px 14px; cursor:pointer; border-bottom:1px solid rgba(201,169,110,0.06); transition:background 0.2s; }
+    .journal-entry:hover { background:rgba(201,169,110,0.08); }
+    .journal-entry-name { color:rgba(220,210,190,0.7); font-size:12px; margin-bottom:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .journal-entry-preview { color:rgba(201,169,110,0.35); font-size:11px; font-style:italic; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .journal-entry-date { color:rgba(201,169,110,0.2); font-size:9px; margin-top:2px; }
+    .journal-empty { padding:20px; text-align:center; color:rgba(201,169,110,0.25); font-style:italic; font-size:12px; }
+    .journal-count { color:rgba(201,169,110,0.3); font-size:10px; padding:8px 14px; text-align:center; border-top:1px solid rgba(201,169,110,0.1); }
     .tour-btn.active { background:rgba(201,169,110,0.2); border-color:#c9a96e; box-shadow:0 0 12px rgba(201,169,110,0.3); }
     .tour-panel { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); pointer-events:auto; background:rgba(14,10,26,0.92); border:1px solid rgba(201,169,110,0.4); border-radius:8px; padding:16px 24px; z-index:30; font-family:Georgia,serif; max-width:500px; min-width:320px; display:none; backdrop-filter:blur(8px); box-shadow:0 4px 24px rgba(0,0,0,0.5); }
     .tour-panel.visible { display:block; animation: tourFadeIn 0.4s ease; }
@@ -415,6 +445,24 @@
     </div>
     <div class="lens-indicator" id="lensIndicator"></div>
     <button class="nearby-btn" id="nearbyBtn" aria-label="Nearby chambers" title="Show nearby chambers (N)">📍</button>
+
+    <button class="journal-btn" id="journalBtn" aria-label="Exploration journal" title="Exploration journal (J)">📝</button>
+    <div class="journal-panel" id="journalPanel">
+      <div class="journal-header">
+        <div class="journal-title">Exploration Journal</div>
+        <div class="journal-chamber-name" id="journalChamberName">No chamber nearby</div>
+      </div>
+      <div class="journal-tabs">
+        <div class="journal-tab active" id="journalTabWrite" data-tab="write">Write</div>
+        <div class="journal-tab" id="journalTabAll" data-tab="all">All Notes</div>
+      </div>
+      <div class="journal-editor" id="journalEditor">
+        <textarea class="journal-textarea" id="journalTextarea" placeholder="Write your thoughts about this chamber..." maxlength="500"></textarea>
+        <div class="journal-save-hint">Auto-saves as you type</div>
+      </div>
+      <div class="journal-list" id="journalList" style="display:none;"></div>
+      <div class="journal-count" id="journalCount"></div>
+    </div>
     <div class="nearby-panel" id="nearbyPanel">
       <div class="nearby-header"><h3>Nearby Chambers</h3><span id="nearbyCount"></span></div>
       <div class="nearby-list" id="nearbyList"></div>
@@ -46885,6 +46933,196 @@
 
     // Update nearby list periodically in game loop
     var origNearbyFrame = null;
+
+    // ── Exploration Journal (J key) ──
+    var journalOpen = false;
+    var journalTab = 'write';
+    var journalData = {};
+    var journalBtnEl = document.getElementById('journalBtn');
+    var journalPanelEl = document.getElementById('journalPanel');
+    var journalChamberNameEl = document.getElementById('journalChamberName');
+    var journalTextareaEl = document.getElementById('journalTextarea');
+    var journalListEl = document.getElementById('journalList');
+    var journalEditorEl = document.getElementById('journalEditor');
+    var journalCountEl = document.getElementById('journalCount');
+    var journalTabWriteEl = document.getElementById('journalTabWrite');
+    var journalTabAllEl = document.getElementById('journalTabAll');
+    var currentJournalChamberIdx = -1;
+
+    // Load journal from localStorage
+    try {
+      var savedJournal = localStorage.getItem('liminal-journal');
+      if (savedJournal) journalData = JSON.parse(savedJournal);
+    } catch(e) {}
+
+    function saveJournal() {
+      try { localStorage.setItem('liminal-journal', JSON.stringify(journalData)); } catch(e) {}
+    }
+
+    function getJournalNoteCount() {
+      return Object.keys(journalData).filter(function(k) { return journalData[k] && journalData[k].text && journalData[k].text.trim().length > 0; }).length;
+    }
+
+    function findNearestChamberForJournal() {
+      var bestIdx = -1, bestDist = Infinity;
+      for (var i = 0; i < chambers.length; i++) {
+        var dx = chambers[i].x - player.x;
+        var dy = chambers[i].y - player.y;
+        var d = dx*dx + dy*dy;
+        if (d < bestDist) { bestDist = d; bestIdx = i; }
+      }
+      return bestDist < 200*200 ? bestIdx : -1;
+    }
+
+    function updateJournalUI() {
+      var idx = findNearestChamberForJournal();
+      currentJournalChamberIdx = idx;
+      if (idx >= 0) {
+        journalChamberNameEl.textContent = chambers[idx].name;
+        var note = journalData[idx];
+        journalTextareaEl.value = note ? note.text : '';
+        journalTextareaEl.disabled = false;
+        journalTextareaEl.placeholder = 'Write your thoughts about this chamber...';
+      } else {
+        journalChamberNameEl.textContent = 'Move closer to a chamber...';
+        journalTextareaEl.value = '';
+        journalTextareaEl.disabled = true;
+        journalTextareaEl.placeholder = 'Get within range of a chamber to write notes';
+      }
+      if (idx >= 0 && journalData[idx] && journalData[idx].text && journalData[idx].text.trim().length > 0) {
+        journalBtnEl.classList.add('has-note');
+      } else {
+        journalBtnEl.classList.remove('has-note');
+      }
+      updateJournalCount();
+    }
+
+    function updateJournalCount() {
+      var count = getJournalNoteCount();
+      journalCountEl.textContent = count + ' note' + (count !== 1 ? 's' : '') + ' in journal';
+    }
+
+    function updateJournalList() {
+      var entries = [];
+      for (var k in journalData) {
+        if (journalData[k] && journalData[k].text && journalData[k].text.trim().length > 0) {
+          entries.push({ idx: parseInt(k), text: journalData[k].text, time: journalData[k].time || 0 });
+        }
+      }
+      entries.sort(function(a, b) { return b.time - a.time; });
+      if (entries.length === 0) {
+        journalListEl.innerHTML = '<div class="journal-empty">No notes yet. Visit chambers and write your thoughts!</div>';
+        return;
+      }
+      var html = '';
+      for (var i = 0; i < Math.min(entries.length, 50); i++) {
+        var e = entries[i];
+        var name = (e.idx >= 0 && e.idx < chambers.length) ? chambers[e.idx].name : 'Unknown';
+        var preview = e.text.substring(0, 60) + (e.text.length > 60 ? '...' : '');
+        var dateStr = e.time ? new Date(e.time).toLocaleDateString() : '';
+        html += '<div class="journal-entry" data-idx="' + e.idx + '">';
+        html += '<div class="journal-entry-name">' + name + '</div>';
+        html += '<div class="journal-entry-preview">' + preview + '</div>';
+        if (dateStr) html += '<div class="journal-entry-date">' + dateStr + '</div>';
+        html += '</div>';
+      }
+      journalListEl.innerHTML = html;
+    }
+
+    function toggleJournal() {
+      journalOpen = !journalOpen;
+      journalPanelEl.classList.toggle('visible', journalOpen);
+      journalBtnEl.classList.toggle('active', journalOpen);
+      if (journalOpen) {
+        updateJournalUI();
+        if (journalTab === 'all') updateJournalList();
+      }
+    }
+
+    journalBtnEl.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleJournal();
+    });
+
+    journalTabWriteEl.addEventListener('click', function(e) {
+      e.stopPropagation();
+      journalTab = 'write';
+      journalTabWriteEl.classList.add('active');
+      journalTabAllEl.classList.remove('active');
+      journalEditorEl.style.display = 'flex';
+      journalListEl.style.display = 'none';
+      updateJournalUI();
+    });
+
+    journalTabAllEl.addEventListener('click', function(e) {
+      e.stopPropagation();
+      journalTab = 'all';
+      journalTabAllEl.classList.add('active');
+      journalTabWriteEl.classList.remove('active');
+      journalEditorEl.style.display = 'none';
+      journalListEl.style.display = 'block';
+      updateJournalList();
+    });
+
+    journalTextareaEl.addEventListener('input', function() {
+      if (currentJournalChamberIdx < 0) return;
+      journalData[currentJournalChamberIdx] = {
+        text: journalTextareaEl.value,
+        time: Date.now()
+      };
+      saveJournal();
+      updateJournalCount();
+      if (journalTextareaEl.value.trim().length > 0) {
+        journalBtnEl.classList.add('has-note');
+      } else {
+        journalBtnEl.classList.remove('has-note');
+      }
+    });
+
+    journalListEl.addEventListener('click', function(e) {
+      var entry = e.target.closest('.journal-entry');
+      if (!entry) return;
+      var idx = parseInt(entry.dataset.idx);
+      if (isNaN(idx) || idx < 0 || idx >= chambers.length) return;
+      var ch = chambers[idx];
+      smoothTeleport(ch.x, ch.y);
+      discovered.add(idx);
+      disc.textContent = 'Discovered: ' + discovered.size + ' / 44,363 (' + (discovered.size / 44363 * 100).toFixed(1) + '%)';
+      showChamberInfo(ch.name);
+      localStorage.setItem('liminal_player_x', player.x);
+      localStorage.setItem('liminal_player_y', player.y);
+      if (typeof recordVisit === 'function') recordVisit(idx);
+      journalTab = 'write';
+      journalTabWriteEl.classList.add('active');
+      journalTabAllEl.classList.remove('active');
+      journalEditorEl.style.display = 'flex';
+      journalListEl.style.display = 'none';
+      setTimeout(function() { updateJournalUI(); }, 100);
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'j' || e.key === 'J') {
+        if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
+        toggleJournal();
+      }
+    });
+
+    setInterval(function() {
+      if (journalOpen && journalTab === 'write') {
+        var newIdx = findNearestChamberForJournal();
+        if (newIdx !== currentJournalChamberIdx) {
+          updateJournalUI();
+        }
+      }
+      var nearIdx = findNearestChamberForJournal();
+      if (nearIdx >= 0 && journalData[nearIdx] && journalData[nearIdx].text && journalData[nearIdx].text.trim().length > 0) {
+        journalBtnEl.classList.add('has-note');
+      } else {
+        journalBtnEl.classList.remove('has-note');
+      }
+    }, 2000);
+    // ── End Exploration Journal ──
+
     // Konami Code: Up Up Down Down Left Right Left Right B A
     const konamiSequence = [38,38,40,40,37,39,37,39,66,65];
     let konamiProgress = 0;
