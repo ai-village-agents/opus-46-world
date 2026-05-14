@@ -505,8 +505,7 @@
       if (result) {
         const tx = parseFloat(result.dataset.x);
         const ty = parseFloat(result.dataset.y);
-        player.x = tx; player.y = ty;
-        camera.x = tx; camera.y = ty;
+        smoothTeleport(tx, ty);
         closeSearch();
       }
     });
@@ -538,6 +537,25 @@
       y: 2000,
       lerp: 0.08
     };
+
+    // ── Smooth Camera Transition System ──
+    var teleportAnimating = false;
+    var teleportLerp = 0.12; // boosted lerp during teleport
+    var normalLerp = 0.08;
+
+    function smoothTeleport(targetX, targetY) {
+      player.x = targetX;
+      player.y = targetY;
+      teleportAnimating = true;
+      // Add warp visual effect
+      var warp = document.createElement('div');
+      warp.style.cssText = 'position:fixed;inset:0;z-index:9990;pointer-events:none;opacity:1;transition:opacity 0.6s ease-out;';
+      warp.innerHTML = '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 30%,rgba(201,169,110,0.12) 70%,rgba(30,20,40,0.3) 100%);"></div>';
+      document.body.appendChild(warp);
+      requestAnimationFrame(function() { warp.style.opacity = '0'; });
+      setTimeout(function() { warp.remove(); }, 700);
+    }
+    // ── End Smooth Camera Transition System ──
 
     // URL parameter support: explore.html?x=3000&y=5000
     // Falls back to localStorage saved position (from chamber visits)
@@ -45564,8 +45582,14 @@
         }
       }
 
-      camera.x += (player.x - camera.x) * camera.lerp;
-      camera.y += (player.y - camera.y) * camera.lerp;
+      var currentLerp = teleportAnimating ? teleportLerp : normalLerp;
+      camera.x += (player.x - camera.x) * currentLerp;
+      camera.y += (player.y - camera.y) * currentLerp;
+      // End teleport animation when camera is close enough
+      if (teleportAnimating) {
+        var camDist = Math.hypot(player.x - camera.x, player.y - camera.y);
+        if (camDist < 3) teleportAnimating = false;
+      }
 
       const halfW = canvas.width / 2;
       const halfH = canvas.height / 2;
@@ -45693,10 +45717,7 @@
     randomBtn.addEventListener('click', () => {
       const idx = Math.floor(Math.random() * chambers.length);
       const ch = chambers[idx];
-      player.x = ch.x;
-      player.y = ch.y;
-      camera.x = ch.x - canvas.width/2;
-      camera.y = ch.y - canvas.height/2;
+      smoothTeleport(ch.x, ch.y);
       discovered.add(idx);
       disc.textContent = 'Discovered: ' + discovered.size + ' / 44,363 (' + (discovered.size/44363*100).toFixed(1) + '%)';
       showChamberInfo(ch.name);
@@ -46624,10 +46645,7 @@
       var idx = parseInt(item.dataset.idx);
       if (isNaN(idx)) return;
       var ch = chambers[idx];
-      player.x = ch.x;
-      player.y = ch.y;
-      camera.x = ch.x - canvas.width/2;
-      camera.y = ch.y - canvas.height/2;
+      smoothTeleport(ch.x, ch.y);
       discovered.add(idx);
       disc.textContent = 'Discovered: ' + discovered.size + ' / 44,363 (' + (discovered.size/44363*100).toFixed(1) + '%)';
       showChamberInfo(ch.name);
@@ -46733,10 +46751,7 @@
       var idx = parseInt(entry.dataset.idx);
       if (isNaN(idx)) return;
       var ch = chambers[idx];
-      player.x = ch.x;
-      player.y = ch.y;
-      camera.x = ch.x - canvas.width / 2;
-      camera.y = ch.y - canvas.height / 2;
+      smoothTeleport(ch.x, ch.y);
       discovered.add(idx);
       disc.textContent = 'Discovered: ' + discovered.size + ' / 44,363 (' + (discovered.size / 44363 * 100).toFixed(1) + '%)';
       showChamberInfo(ch.name);
@@ -46916,17 +46931,8 @@
       const my = (e.clientY - rect.top) / minimap.height;
       const worldX = mx * WORLD.w;
       const worldY = my * WORLD.h;
-      player.x = worldX;
-      player.y = worldY;
-      camera.x = worldX;
-      camera.y = worldY;
+      smoothTeleport(worldX, worldY);
       moveTarget = null;
-      // Visual feedback
-      const flash = document.createElement('div');
-      flash.style.cssText = 'position:fixed;inset:0;background:rgba(201,169,110,0.08);z-index:9990;pointer-events:none;opacity:1;transition:opacity 0.5s;';
-      document.body.appendChild(flash);
-      requestAnimationFrame(() => flash.style.opacity = '0');
-      setTimeout(() => flash.remove(), 600);
     });
 
     const startTime = performance.now();
