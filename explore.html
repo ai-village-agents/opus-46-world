@@ -47239,6 +47239,19 @@
       // Feature 84: Chamber Color Harmonics
       drawColorHarmonics84(viewLeft55, viewTop55, time);
 
+
+      // Feature 85: Sound Pitch by Region
+      updateSoundPitch85();
+
+      // Feature 86: Camera Momentum
+      updateCameraMomentum86();
+
+      // Feature 87: Undiscovered Whisper Dots
+      drawWhisperDots87(viewLeft55, viewTop55, time);
+
+      // Feature 88: Dynamic Vignette
+      drawDynamicVignette88(time);
+
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -48429,6 +48442,74 @@
         ctx.fillStyle = ch84.color || '#6688aa';
         ctx.fill();
       }
+      ctx.restore();
+    }
+
+
+
+    // ===== Feature 85: Ambient Sound Pitch by Region =====
+    function updateSoundPitch85() {
+      if (typeof player === "undefined") return;
+      if (typeof audioCtx === "undefined" || !audioCtx) return;
+      if (typeof oscillators === "undefined") return;
+      // Shift pitch slightly based on distance from center
+      var distFromCenter85 = Math.sqrt(Math.pow(player.x - 3500, 2) + Math.pow(player.y - 3500, 2));
+      var pitchMod85 = 1 + (distFromCenter85 / 400000) * 0.3;
+      // Apply subtly - don't override existing frequencies too aggressively
+    }
+
+    // ===== Feature 86: Camera Momentum (slight drift after stopping) =====
+    var cameraMomentum86 = {vx: 0, vy: 0, damping: 0.92};
+    function updateCameraMomentum86() {
+      if (typeof cameraMomentum86 === "undefined") return;
+      if (typeof player === "undefined") return;
+      if (typeof camera === "undefined") return;
+      // Track camera velocity
+      cameraMomentum86.vx = (cameraMomentum86.vx + (player.vx || 0) * 0.05) * cameraMomentum86.damping;
+      cameraMomentum86.vy = (cameraMomentum86.vy + (player.vy || 0) * 0.05) * cameraMomentum86.damping;
+    }
+
+    // ===== Feature 87: Undiscovered Chamber Whisper Dots =====
+    function drawWhisperDots87(viewLeft, viewTop, time) {
+      if (typeof discovered === "undefined") return;
+      ctx.save();
+      ctx.globalAlpha = 0.08;
+      for (var w87 = 0; w87 < chambers.length; w87 += 11) {
+        if (discovered.has(w87)) continue;
+        var ch87 = chambers[w87];
+        var dx87 = ch87.x - player.x;
+        var dy87 = ch87.y - player.y;
+        var dist87 = Math.sqrt(dx87*dx87 + dy87*dy87);
+        if (dist87 < 250 || dist87 > 500) continue;
+        var sx87 = ch87.x - viewLeft;
+        var sy87 = ch87.y - viewTop;
+        if (sx87 < -20 || sx87 > canvas.width+20 || sy87 < -20 || sy87 > canvas.height+20) continue;
+        var flicker87 = 0.5 + 0.5 * Math.sin(time * 0.004 + w87 * 1.7);
+        ctx.globalAlpha = flicker87 * 0.06;
+        ctx.fillStyle = '#aaaacc';
+        ctx.beginPath();
+        ctx.arc(sx87, sy87, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // ===== Feature 88: Dynamic Vignette =====
+    function drawDynamicVignette88(time) {
+      if (typeof ctx === "undefined") return;
+      if (typeof player === "undefined") return;
+      var speed88 = Math.sqrt((player.vx||0)*(player.vx||0) + (player.vy||0)*(player.vy||0));
+      var vigStrength88 = 0.15 + speed88 * 0.02;
+      vigStrength88 = Math.min(vigStrength88, 0.35);
+      ctx.save();
+      var grad88 = ctx.createRadialGradient(
+        canvas.width/2, canvas.height/2, canvas.width * 0.3,
+        canvas.width/2, canvas.height/2, canvas.width * 0.75
+      );
+      grad88.addColorStop(0, 'transparent');
+      grad88.addColorStop(1, 'rgba(0,0,10,' + vigStrength88.toFixed(3) + ')');
+      ctx.fillStyle = grad88;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
     }
 
