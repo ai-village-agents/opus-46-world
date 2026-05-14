@@ -667,6 +667,10 @@
       box-shadow: inset 0 0 120px 40px rgba(10, 10, 15, 0.6);
     }
     .ambient-vignette.active { opacity: 1; }
+  
+    .constellation-btn { position:fixed; left:12px; bottom:132px; width:36px; height:36px; border-radius:50%; background:rgba(201,169,110,0.13); border:1px solid rgba(201,169,110,0.3); color:#c9a96e; font-size:18px; cursor:pointer; z-index:100; display:flex; align-items:center; justify-content:center; transition:background 0.3s,box-shadow 0.3s; pointer-events:auto; }
+    .constellation-btn:hover { background:rgba(201,169,110,0.25); }
+    .constellation-btn.active { background:rgba(201,169,110,0.3); box-shadow:0 0 12px rgba(201,169,110,0.4); }
   </style>
 </head>
 <body>
@@ -759,6 +763,7 @@
     </div>
     <div class="fav-toast" id="favToast"></div>
     <button class="stats-btn" id="statsBtn" aria-label="Statistics dashboard" title="Statistics dashboard (I)">📊</button>
+    <button class="constellation-btn" id="constellationBtn" aria-label="Constellation lines" title="Constellation lines (C)" onclick="event.stopPropagation();if(typeof toggleConstellations==='function')toggleConstellations()">✦</button>
     <div class="stats-panel" id="statsPanel">
       <div class="stats-header">
         <h3>📊 Statistics</h3>
@@ -46201,7 +46206,8 @@
         if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
         // Find nearest chamber within 80px
         let nearest = -1, nearDist = Infinity;
-        for (let i = 0; i < chambers.length; i++) {
+        drawConstellationLines(ctx, camera.x, camera.y, canvas.width, canvas.height);
+      for (let i = 0; i < chambers.length; i++) {
           const d = Math.sqrt((player.x - chambers[i].x)**2 + (player.y - chambers[i].y)**2);
           if (d <= 80 && d < nearDist) { nearest = i; nearDist = d; }
         }
@@ -46226,6 +46232,7 @@
       if ((e.key === "f" || e.key === "F") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleFavNearby === "function") toggleFavNearby(); }
       if ((e.key === "v" || e.key === "V") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleFavPanel === "function") toggleFavPanel(); }
       if ((e.key === "g" || e.key === "G") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleAmbient === "function") toggleAmbient(); }
+      if ((e.key === "c" || e.key === "C") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleConstellations === "function") toggleConstellations(); }
     });
 
     // Chamber Proximity Info Display
@@ -47924,6 +47931,65 @@
 
     const startTime = performance.now();
     requestAnimationFrame(loop);
-  </script>
+  
+    // === FEATURE 37: CONSTELLATION LINES ===
+    var constellationMode = false;
+
+    function toggleConstellations() {
+      constellationMode = !constellationMode;
+      var btn = document.getElementById("constellationBtn");
+      if (btn) btn.classList.toggle("active", constellationMode);
+    }
+
+    function drawConstellationLines(ctx, camX, camY, vw, vh) {
+      if (!constellationMode) return;
+      var margin = 100;
+      var left = camX - margin;
+      var right = camX + vw + margin;
+      var top2 = camY - margin;
+      var bottom2 = camY + vh + margin;
+      
+      var visible = [];
+      for (var ci = 0; ci < chambers.length; ci++) {
+        var ch = chambers[ci];
+        if (ch.x >= left && ch.x <= right && ch.y >= top2 && ch.y <= bottom2) {
+          visible.push(ci);
+        }
+      }
+      
+      var maxDist = 350;
+      var catColors = {"Nature":"#4ade80","Music":"#a78bfa","Science":"#60a5fa","Art":"#f472b6","Mythology":"#fbbf24","Literature":"#34d399","Architecture":"#fb923c","Craft":"#f87171","Food & Drink":"#a3e635","History":"#e879f9"};
+      ctx.save();
+      ctx.lineWidth = 0.8;
+      
+      for (var a = 0; a < visible.length; a++) {
+        var ca = chambers[visible[a]];
+        var catA = typeof chamberCategories !== "undefined" ? chamberCategories[visible[a]] : null;
+        for (var b = a + 1; b < visible.length; b++) {
+          var cb = chambers[visible[b]];
+          var dx = ca.x - cb.x;
+          var dy = ca.y - cb.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist > maxDist) continue;
+          var catB = typeof chamberCategories !== "undefined" ? chamberCategories[visible[b]] : null;
+          if (catA && catB && catA === catB) {
+            ctx.strokeStyle = catColors[catA] || "rgba(201,169,110,0.5)";
+            ctx.globalAlpha = 0.18 * (1 - dist / maxDist);
+          } else if (dist < 180) {
+            ctx.strokeStyle = "rgba(201,169,110,0.4)";
+            ctx.globalAlpha = 0.05 * (1 - dist / 180);
+          } else {
+            continue;
+          }
+          ctx.beginPath();
+          ctx.moveTo(ca.x - camX, ca.y - camY);
+          ctx.lineTo(cb.x - camX, cb.y - camY);
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+
+    </script>
 </body>
 </html>
