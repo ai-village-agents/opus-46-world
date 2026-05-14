@@ -211,7 +211,7 @@
     .journal-btn:hover { background:rgba(201,169,110,0.15); border-color:rgba(201,169,110,0.5); transform:scale(1.1); }
     .journal-btn.active { background:rgba(201,169,110,0.2); border-color:#c9a96e; box-shadow:0 0 12px rgba(201,169,110,0.3); }
     .journal-btn.has-note { box-shadow:0 0 8px rgba(201,169,110,0.4); border-color:rgba(201,169,110,0.5); }
-    .journal-panel { position:fixed; top:60px; left:60px; width:320px; max-height:480px; background:rgba(20,16,36,0.94); border:1px solid rgba(201,169,110,0.3); border-radius:8px; z-index:95; display:none; overflow:hidden; backdrop-filter:blur(10px); box-shadow:0 4px 24px rgba(0,0,0,0.5); }
+    .journal-panel { position:fixed; top:60px; left:60px; width:320px; max-height:480px; background:rgba(20,16,36,0.94); border:1px solid rgba(201,169,110,0.3); border-radius:8px; z-index:95; display:none; overflow:hidden; backdrop-filter:blur(10px); box-shadow:0 4px 24px rgba(0,0,0,0.5); pointer-events:auto; }
     .journal-panel.visible { display:flex; flex-direction:column; animation: journalFadeIn 0.3s ease; }
     @keyframes journalFadeIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
     .journal-header { padding:12px 14px 8px; border-bottom:1px solid rgba(201,169,110,0.15); }
@@ -222,7 +222,7 @@
     .journal-tab:hover { color:rgba(201,169,110,0.7); }
     .journal-tab.active { color:#c9a96e; border-bottom-color:#c9a96e; }
     .journal-editor { padding:12px 14px; flex:1; display:flex; flex-direction:column; }
-    .journal-textarea { width:100%; min-height:120px; max-height:200px; background:rgba(10,8,20,0.6); border:1px solid rgba(201,169,110,0.15); border-radius:4px; color:rgba(220,210,190,0.85); font-family:Georgia,serif; font-size:13px; line-height:1.6; padding:10px; resize:vertical; outline:none; transition:border-color 0.3s; box-sizing:border-box; }
+    .journal-textarea { width:100%; min-height:120px; max-height:200px; background:rgba(10,8,20,0.6); border:1px solid rgba(201,169,110,0.15); border-radius:4px; color:rgba(220,210,190,0.85); font-family:Georgia,serif; font-size:13px; line-height:1.6; padding:10px; resize:vertical; outline:none; transition:border-color 0.3s; box-sizing:border-box; pointer-events:auto; }
     .journal-textarea:focus { border-color:rgba(201,169,110,0.4); }
     .journal-textarea::placeholder { color:rgba(201,169,110,0.2); font-style:italic; }
     .journal-save-hint { color:rgba(201,169,110,0.25); font-size:10px; margin-top:6px; text-align:right; letter-spacing:1px; }
@@ -47038,6 +47038,9 @@
         if (journalTab === 'all') updateJournalList();
       }
     }
+
+    journalPanelEl.addEventListener('mousedown', function(e) { e.stopPropagation(); });
+    journalPanelEl.addEventListener('click', function(e) { e.stopPropagation(); });
 
     journalBtnEl.addEventListener('click', function(e) {
       e.stopPropagation();
