@@ -46609,6 +46609,12 @@
       if ((e.key === "p" || e.key === "P") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof togglePhotoMode === "function") togglePhotoMode(); }
       // Feature 50: Auto-walk toggle (X key)
       if ((e.key === "x" || e.key === "X") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { autoWalkActive = !autoWalkActive; if (autoWalkActive) { if (player.vx !== 0 || player.vy !== 0) { var mag = Math.sqrt(player.vx*player.vx + player.vy*player.vy); autoWalkDir.x = player.vx / (mag || 1); autoWalkDir.y = player.vy / (mag || 1); } else { autoWalkDir.x = 0; autoWalkDir.y = 1; } autoWalkIndicator.style.display = "block"; } else { autoWalkIndicator.style.display = "none"; } }
+
+      if ((e.key === "k" || e.key === "K") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { nightModeActive = !nightModeActive; nightModeIndicator.style.display = nightModeActive ? "block" : "none"; }
+
+      if ((e.key === "q" || e.key === "Q") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { quickStatsActive = !quickStatsActive; quickStatsHUD.style.display = quickStatsActive ? "block" : "none"; }
+
+      if ((e.key === "e" || e.key === "E") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { heatmapActive = !heatmapActive; heatmapIndicator.style.display = heatmapActive ? "block" : "none"; }
       // Feature 47: Quick Nexus Teleport (1-9)
       if (e.key >= "1" && e.key <= "9" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) {
         var nIdx = parseInt(e.key) - 1;
@@ -47106,6 +47112,19 @@
       }
 
       if (!drawWorld._fc) drawWorld._fc = 0;
+
+      // Feature 55: Draw footstep dust
+      var viewLeft55 = camera.x - canvas.width/2;
+      var viewTop55 = camera.y - canvas.height/2;
+      drawDust(viewLeft55, viewTop55);
+
+      // Feature 53: Night Mode overlay
+      if (nightModeActive) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(5, 2, 15, 0.55)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+      }
       if (++drawWorld._fc % 3 === 0) drawMinimap();
     }
 
@@ -47216,7 +47235,7 @@
 
     function drawMinimap() {
       // Only re-render chamber layer when discoveries change
-      if (discovered.size !== lastDiscoveredCount) {
+      if (discovered.size !== lastDiscoveredCount || heatmapActive) {
         prerenderMinimapChambers();
       }
       // Composite pre-rendered chambers + player dot
@@ -47226,6 +47245,34 @@
       mctx.beginPath();
       mctx.arc(player.x * MINIMAP_SCALE, player.y * MINIMAP_SCALE, 4, 0, Math.PI * 2);
       mctx.fill();
+
+      // Feature 56: Exploration Heatmap overlay on minimap
+      if (heatmapActive) {
+        var pxm = player.x * MINIMAP_SCALE;
+        var pym = player.y * MINIMAP_SCALE;
+        var maxDist = 400;
+        for (var hi = 0; hi < chambers.length; hi += 3) {
+          if (!discovered.has(hi)) continue;
+          var hc = chambers[hi];
+          var hx = hc.x * MINIMAP_SCALE;
+          var hy = hc.y * MINIMAP_SCALE;
+          var hdx = hx - pxm;
+          var hdy = hy - pym;
+          var hd = Math.sqrt(hdx*hdx + hdy*hdy);
+          var ht = Math.min(hd / maxDist, 1.0);
+          var hr, hg, hb;
+          if (ht < 0.33) { hr = 255; hg = Math.round(255 * ht / 0.33); hb = 0; }
+          else if (ht < 0.66) { hr = Math.round(255 * (1 - (ht - 0.33) / 0.33)); hg = 255; hb = 0; }
+          else { hr = 0; hg = Math.round(255 * (1 - (ht - 0.66) / 0.34)); hb = Math.round(200 * (ht - 0.66) / 0.34); }
+          mctx.globalAlpha = 0.6 * (1 - ht * 0.5);
+          mctx.fillStyle = 'rgb(' + hr + ',' + hg + ',' + hb + ')';
+          mctx.beginPath();
+          mctx.arc(hx, hy, 3 + (1 - ht) * 3, 0, Math.PI * 2);
+          mctx.fill();
+        }
+        mctx.globalAlpha = 1.0;
+      }
+
       // Draw favorites as golden stars on minimap
       if (typeof favorites !== 'undefined' && favorites.length > 0) {
         mctx.fillStyle = '#fbbf24';
@@ -47329,6 +47376,92 @@
     autoWalkIndicator.id = 'autoWalkIndicator';
     autoWalkIndicator.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(20,15,40,0.9);border:1px solid #c9a96e;border-radius:4px;padding:4px 12px;color:#c9a96e;font-family:Georgia,serif;font-size:0.85rem;z-index:9400;display:none;pointer-events:none;';
     autoWalkIndicator.textContent = '🚶 AUTO-WALK';
+
+    // Feature 53: Night Mode Toggle
+    var nightModeActive = false;
+    var nightModeIndicator = document.createElement('div');
+    nightModeIndicator.id = 'nightModeIndicator';
+    nightModeIndicator.style.cssText = 'display:none;position:fixed;top:90px;right:20px;background:rgba(20,10,40,0.85);color:#8888cc;padding:8px 16px;border-radius:12px;font-size:13px;z-index:1000;border:1px solid rgba(100,80,160,0.4);pointer-events:none;';
+    nightModeIndicator.textContent = '🌙 Night Mode';
+    document.body.appendChild(nightModeIndicator);
+
+    // Feature 54: Quick Stats HUD
+    var quickStatsActive = false;
+    var quickStatsHUD = document.createElement('div');
+    quickStatsHUD.id = 'quickStatsHUD';
+    quickStatsHUD.style.cssText = 'display:none;position:fixed;bottom:80px;left:20px;background:rgba(10,8,20,0.85);color:#e0d0a0;padding:10px 16px;border-radius:12px;font-size:12px;z-index:900;border:1px solid rgba(200,170,100,0.3);line-height:1.6;pointer-events:none;';
+    quickStatsHUD.innerHTML = '<div style="font-weight:bold;color:#ffd700;margin-bottom:4px;">📊 Quick Stats</div><div id="qsDiscovered">Discovered: 0</div><div id="qsBookmarks">Bookmarks: 0</div><div id="qsFavorites">Favorites: 0</div><div id="qsDistance">Distance: 0</div>';
+    document.body.appendChild(quickStatsHUD);
+    var qsDiscovered = document.getElementById('qsDiscovered');
+    var qsBookmarks = document.getElementById('qsBookmarks');
+    var qsFavorites = document.getElementById('qsFavorites');
+    var qsDistance = document.getElementById('qsDistance');
+    var totalDistanceTraveled = 0;
+    var lastPlayerX = 0;
+    var lastPlayerY = 0;
+    function updateQuickStats() {
+      if (!quickStatsActive) return;
+      var dx = player.x - lastPlayerX;
+      var dy = player.y - lastPlayerY;
+      totalDistanceTraveled += Math.sqrt(dx*dx + dy*dy);
+      lastPlayerX = player.x;
+      lastPlayerY = player.y;
+      qsDiscovered.textContent = 'Discovered: ' + discovered.size + ' / 44,363';
+      qsBookmarks.textContent = 'Bookmarks: ' + bookmarks.size;
+      qsFavorites.textContent = 'Favorites: ' + (typeof favorites !== 'undefined' && favorites ? favorites.length : 0);
+      qsDistance.textContent = 'Distance: ' + (totalDistanceTraveled/1000).toFixed(1) + 'K px';
+    }
+
+    // Feature 55: Footstep Dust Particles
+    var dustParticles = [];
+    var dustSpawnTimer = 0;
+    function spawnDust() {
+      if (Math.abs(player.vx) < 0.5 && Math.abs(player.vy) < 0.5) return;
+      dustSpawnTimer++;
+      if (dustSpawnTimer % 5 !== 0) return;
+      for (var di = 0; di < 2; di++) {
+        dustParticles.push({
+          x: player.x + (Math.random() - 0.5) * 10,
+          y: player.y + 8 + Math.random() * 4,
+          vx: (Math.random() - 0.5) * 0.8 - player.vx * 0.1,
+          vy: -Math.random() * 0.5 - 0.2,
+          life: 1.0,
+          size: 1.5 + Math.random() * 2.5
+        });
+      }
+      if (dustParticles.length > 60) dustParticles.splice(0, dustParticles.length - 60);
+    }
+    function updateDust() {
+      for (var di = dustParticles.length - 1; di >= 0; di--) {
+        var dp = dustParticles[di];
+        dp.x += dp.vx;
+        dp.y += dp.vy;
+        dp.life -= 0.025;
+        dp.size *= 1.01;
+        if (dp.life <= 0) dustParticles.splice(di, 1);
+      }
+    }
+    function drawDust(viewLeft, viewTop) {
+      for (var di = 0; di < dustParticles.length; di++) {
+        var dp = dustParticles[di];
+        ctx.save();
+        ctx.globalAlpha = dp.life * 0.4;
+        ctx.fillStyle = '#c8b888';
+        ctx.beginPath();
+        ctx.arc(dp.x - viewLeft, dp.y - viewTop, dp.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // Feature 56: Exploration Heatmap on minimap
+    var heatmapActive = false;
+    var heatmapIndicator = document.createElement('div');
+    heatmapIndicator.id = 'heatmapIndicator';
+    heatmapIndicator.style.cssText = 'display:none;position:fixed;top:118px;right:20px;background:rgba(40,10,10,0.85);color:#ff8844;padding:8px 16px;border-radius:12px;font-size:13px;z-index:1000;border:1px solid rgba(200,100,50,0.4);pointer-events:none;';
+    heatmapIndicator.textContent = '🔥 Heatmap';
+    document.body.appendChild(heatmapIndicator);
+
     document.body.appendChild(autoWalkIndicator);
 
 
@@ -47356,6 +47489,9 @@
         drawIntro(time);
       } else {
         update(dt, time);
+        spawnDust();
+        updateDust();
+        updateQuickStats();
         drawWorld(time);
       }
       updateTourMovement();
