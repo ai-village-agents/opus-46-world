@@ -46405,7 +46405,7 @@
           nearestIndex = i;
         }
         if (d <= 200 && !discovered.has(i)) {
-          discovered.add(i); trackVisit(i);
+          discovered.add(i); trackVisit(i); spawnDiscoveryRipple(chambers[i].x, chambers[i].y, chambers[i].color);
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
           checkMilestone(discovered.size);
           spawnCelebration(chambers[i].x, chambers[i].y, chambers[i].color);
@@ -47121,6 +47121,38 @@
       var viewTop55 = camera.y - canvas.height/2;
       drawDust(viewLeft55, viewTop55);
 
+      // Feature 62: Background twinkling stars
+      drawBgStars(time);
+
+      // Feature 61: Discovery Ripple Waves
+      drawRipples(viewLeft55, viewTop55);
+
+      // Feature 63: Chamber Silhouettes at Distance
+      if (silhouettesEnabled) {
+        ctx.save();
+        for (var si2 = 0; si2 < chambers.length; si2 += 7) {
+          if (discovered.has(si2)) continue;
+          var sc = chambers[si2];
+          var sdx = sc.x - player.x;
+          var sdy = sc.y - player.y;
+          var sdist = Math.sqrt(sdx*sdx + sdy*sdy);
+          if (sdist > 300 && sdist < 600) {
+            var ssx = sc.x - viewLeft55;
+            var ssy = sc.y - viewTop55;
+            if (ssx >= -50 && ssx <= canvas.width+50 && ssy >= -50 && ssy <= canvas.height+50) {
+              var sAlpha = 1 - (sdist - 300) / 300;
+              ctx.globalAlpha = sAlpha * 0.15;
+              ctx.strokeStyle = '#8888aa';
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.arc(ssx, ssy, 18, 0, Math.PI * 2);
+              ctx.stroke();
+            }
+          }
+        }
+        ctx.restore();
+      }
+
       // Feature 60: Canvas Breadcrumb Trail
       drawCanvasTrail(viewLeft55, viewTop55);
 
@@ -47559,7 +47591,33 @@
     fogOfWarIndicator.textContent = '🌫️ Fog of War';
     document.body.appendChild(fogOfWarIndicator);
 
-    // Feature 60: Canvas Breadcrumb Trail (Z key toggle)
+    // Feature 63: Chamber Silhouettes at Distance
+      if (silhouettesEnabled) {
+        ctx.save();
+        for (var si2 = 0; si2 < chambers.length; si2 += 7) {
+          if (discovered.has(si2)) continue;
+          var sc = chambers[si2];
+          var sdx = sc.x - player.x;
+          var sdy = sc.y - player.y;
+          var sdist = Math.sqrt(sdx*sdx + sdy*sdy);
+          if (sdist > 300 && sdist < 600) {
+            var ssx = sc.x - viewLeft55;
+            var ssy = sc.y - viewTop55;
+            if (ssx >= -50 && ssx <= canvas.width+50 && ssy >= -50 && ssy <= canvas.height+50) {
+              var sAlpha = 1 - (sdist - 300) / 300;
+              ctx.globalAlpha = sAlpha * 0.15;
+              ctx.strokeStyle = '#8888aa';
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.arc(ssx, ssy, 18, 0, Math.PI * 2);
+              ctx.stroke();
+            }
+          }
+        }
+        ctx.restore();
+      }
+
+      // Feature 60: Canvas Breadcrumb Trail (Z key toggle)
     var canvasTrailActive = false;
     var canvasTrailPoints = [];
     var CANVAS_TRAIL_MAX = 200;
@@ -47569,6 +47627,78 @@
     canvasTrailIndicator.style.cssText = 'display:none;position:fixed;top:202px;right:20px;background:rgba(30,20,10,0.85);color:#c9a96e;padding:8px 16px;border-radius:12px;font-size:13px;z-index:1000;border:1px solid rgba(200,170,100,0.4);pointer-events:none;';
     canvasTrailIndicator.textContent = '🔗 Trail';
     document.body.appendChild(canvasTrailIndicator);
+
+    // Feature 61: Discovery Ripple Wave
+    var discoveryRipples = [];
+    function spawnDiscoveryRipple(x, y, color) {
+      discoveryRipples.push({x: x, y: y, radius: 10, maxRadius: 250, life: 1.0, color: color || '#ffd700'});
+    }
+    function updateRipples() {
+      for (var ri = discoveryRipples.length - 1; ri >= 0; ri--) {
+        var rp = discoveryRipples[ri];
+        rp.radius += 3;
+        rp.life = 1 - (rp.radius / rp.maxRadius);
+        if (rp.life <= 0) discoveryRipples.splice(ri, 1);
+      }
+    }
+    function drawRipples(viewLeft, viewTop) {
+      ctx.save();
+      for (var ri = 0; ri < discoveryRipples.length; ri++) {
+        var rp = discoveryRipples[ri];
+        var sx = rp.x - viewLeft;
+        var sy = rp.y - viewTop;
+        if (sx < -300 || sx > canvas.width + 300 || sy < -300 || sy > canvas.height + 300) continue;
+        ctx.strokeStyle = rp.color;
+        ctx.globalAlpha = rp.life * 0.6;
+        ctx.lineWidth = 2 * rp.life;
+        ctx.beginPath();
+        ctx.arc(sx, sy, rp.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        if (rp.life > 0.5) {
+          ctx.globalAlpha = (rp.life - 0.5) * 0.3;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(sx, sy, rp.radius * 0.7, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+
+    // Feature 62: Twinkling Stars Background
+    var bgStars = [];
+    for (var si = 0; si < 120; si++) {
+      bgStars.push({
+        x: Math.random(),
+        y: Math.random(),
+        size: 0.5 + Math.random() * 1.5,
+        twinkleSpeed: 0.5 + Math.random() * 2,
+        twinkleOffset: Math.random() * Math.PI * 2,
+        brightness: 0.3 + Math.random() * 0.5
+      });
+    }
+    function drawBgStars(time) {
+      ctx.save();
+      for (var si = 0; si < bgStars.length; si++) {
+        var star = bgStars[si];
+        var sx = star.x * canvas.width;
+        var sy = star.y * canvas.height;
+        var twinkle = star.brightness * (0.5 + 0.5 * Math.sin(time * 0.001 * star.twinkleSpeed + star.twinkleOffset));
+        ctx.globalAlpha = twinkle;
+        ctx.fillStyle = '#ddddf8';
+        ctx.beginPath();
+        ctx.arc(sx, sy, star.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // Feature 63: Chamber Silhouettes at Distance
+    var silhouettesEnabled = true;
+
+    // Feature 64: Minimap Player Direction Arrow
+    var lastDirX = 0;
+    var lastDirY = 1;
     function updateCanvasTrail() {
       if (!canvasTrailActive) return;
       canvasTrailTimer++;
@@ -47625,6 +47755,8 @@
         updateDust();
         updateQuickStats();
         updateCanvasTrail();
+        updateRipples();
+        if (Math.abs(player.vx) > 0.1 || Math.abs(player.vy) > 0.1) { lastDirX = player.vx; lastDirY = player.vy; }
         drawWorld(time);
       }
       updateTourMovement();
