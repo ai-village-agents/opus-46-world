@@ -45940,6 +45940,84 @@
 
 
 
+
+    // === Feature 43: Compass to Nearest Undiscovered ===
+    var compassEnabled = true;
+    var compassDiv = document.createElement('div');
+    compassDiv.id = 'compass';
+    compassDiv.style.cssText = 'position:fixed;bottom:80px;right:20px;width:50px;height:50px;pointer-events:none;z-index:90;opacity:0.7;';
+    compassDiv.innerHTML = '<svg viewBox="0 0 50 50" width="50" height="50"><circle cx="25" cy="25" r="23" fill="rgba(10,10,15,0.6)" stroke="#c9a96e" stroke-width="1"/><polygon id="compassNeedle" points="25,6 28,22 25,20 22,22" fill="#fbbf24" stroke="none"/><circle cx="25" cy="25" r="3" fill="#c9a96e"/><text x="25" y="48" text-anchor="middle" fill="#c9a96e88" font-size="7" font-family="monospace">UNDISCOVERED</text></svg>';
+    document.body.appendChild(compassDiv);
+    
+    var compassNeedle = null;
+    setTimeout(function() { compassNeedle = document.getElementById('compassNeedle'); }, 100);
+    
+    function updateCompass() {
+      if (!compassEnabled || !compassNeedle) return;
+      // Find nearest undiscovered chamber
+      var nearestDist = Infinity;
+      var nearestAngle = 0;
+      var px = player.x || player.wx || 0;
+      var py = player.y || player.wy || 0;
+      // Sample every 50th chamber for performance
+      for (var i = 0; i < chambers.length; i += 50) {
+        if (discovered.has(i)) continue;
+        var dx = chambers[i].x - px;
+        var dy = chambers[i].y - py;
+        var dist = dx * dx + dy * dy;
+        if (dist < nearestDist) {
+          nearestDist = dist;
+          nearestAngle = Math.atan2(dy, dx);
+        }
+      }
+      // Also check nearby chambers more thoroughly
+      for (var i = 0; i < chambers.length; i++) {
+        if (discovered.has(i)) continue;
+        var dx = chambers[i].x - px;
+        var dy = chambers[i].y - py;
+        var dist = dx * dx + dy * dy;
+        if (dist < 1000000) { // within 1000px
+          if (dist < nearestDist) {
+            nearestDist = dist;
+            nearestAngle = Math.atan2(dy, dx);
+          }
+        }
+      }
+      // Rotate needle (SVG rotation, -90 to adjust for north=up)
+      var deg = (nearestAngle * 180 / Math.PI) - 90;
+      compassNeedle.setAttribute('transform', 'rotate(' + deg + ' 25 25)');
+      compassDiv.style.opacity = nearestDist < Infinity ? '0.7' : '0.2';
+    }
+
+
+    // === Feature 44: Photo Mode (P key) ===
+    var photoMode = false;
+    var photoElements = [];
+    
+    function togglePhotoMode() {
+      photoMode = !photoMode;
+      // Hide/show all UI elements
+      var selectors = ['.ui', '.minimap', '#streakDisplay', '#compass', '#depthIndicator', '#disc', '.toolbar-left', '#onboarding'];
+      for (var s = 0; s < selectors.length; s++) {
+        var els = document.querySelectorAll(selectors[s]);
+        for (var e = 0; e < els.length; e++) {
+          els[e].style.display = photoMode ? 'none' : '';
+        }
+      }
+      // Show a subtle indicator
+      if (photoMode) {
+        var toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:#c9a96e44;font-family:monospace;font-size:12px;z-index:200;pointer-events:none;';
+        toast.textContent = '📷 Photo Mode — press P to exit';
+        toast.id = 'photoToast';
+        document.body.appendChild(toast);
+        setTimeout(function() { toast.style.opacity = '0'; toast.style.transition = 'opacity 2s'; }, 2000);
+      } else {
+        var t = document.getElementById('photoToast');
+        if (t) t.remove();
+      }
+    }
+
     // === Feature 41: Undiscovered Chamber Pulse ===
     var chamberPulseEnabled = true;
 
@@ -46218,6 +46296,7 @@
 
       updateCelebrationParticles();
       updateStreak(false);
+      if (typeof updateCompass === "function" && compassEnabled) updateCompass();
       discEl.textContent = `Discovered: ${discovered.size} / 44,363 (${(discovered.size/44363*100).toFixed(1)}%)`;
       const elapsed = Math.floor((performance.now() - startTime) / 1000);
       const mins = Math.floor(elapsed / 60);
@@ -46378,6 +46457,7 @@
       if ((e.key === "f" || e.key === "F") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleFavNearby === "function") toggleFavNearby(); }
       if ((e.key === "v" || e.key === "V") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleFavPanel === "function") toggleFavPanel(); }
       if ((e.key === "g" || e.key === "G") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleAmbient === "function") toggleAmbient(); }
+      if ((e.key === "p" || e.key === "P") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof togglePhotoMode === "function") togglePhotoMode(); }
       if ((e.key === "c" || e.key === "C") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleConstellations === "function") toggleConstellations(); }
     });
 
