@@ -46328,7 +46328,7 @@
     minimapBg.height = minimap.height;
     const mbctx = minimapBg.getContext('2d');
     const MINIMAP_SCALE = 1 / 33.3;
-    let lastDiscoveredCount = -1;
+    var lastDiscoveredCount = -1;
 
     function prerenderMinimapChambers() {
       mbctx.clearRect(0, 0, minimapBg.width, minimapBg.height);
@@ -46340,9 +46340,28 @@
         const c = chambers[i];
         const x = c.x * MINIMAP_SCALE;
         const y = c.y * MINIMAP_SCALE;
-        mbctx.fillStyle = bookmarks.has(i) ? '#c9a96e' : (discovered.has(i) ? c.color : '#ffffff10');
+        // Lens-aware minimap coloring
+        if (activeLens && chamberCategories && chamberCategories[i]) {
+          var _isMatch = chamberCategories[i].indexOf(activeLens) !== -1;
+          if (_isMatch) {
+            // Find the lens color for matching category
+            var _lc = null;
+            for (var _li = 0; _li < (lensCategories ? lensCategories.length : 0); _li++) {
+              if (lensCategories[_li].id === activeLens) { _lc = lensCategories[_li].color; break; }
+            }
+            mbctx.fillStyle = _lc || c.color;
+          } else {
+            mbctx.fillStyle = '#ffffff06';
+          }
+        } else {
+          mbctx.fillStyle = bookmarks.has(i) ? '#c9a96e' : (discovered.has(i) ? c.color : '#ffffff10');
+        }
         mbctx.beginPath();
-        mbctx.arc(x, y, 3, 0, Math.PI * 2);
+        var _mmRad = 3;
+        if (activeLens && chamberCategories && chamberCategories[i]) {
+          _mmRad = chamberCategories[i].indexOf(activeLens) !== -1 ? 4 : 1;
+        }
+        mbctx.arc(x, y, _mmRad, 0, Math.PI * 2);
         mbctx.fill();
       }
       if (marks.length) {
@@ -46369,6 +46388,30 @@
       mctx.beginPath();
       mctx.arc(player.x * MINIMAP_SCALE, player.y * MINIMAP_SCALE, 4, 0, Math.PI * 2);
       mctx.fill();
+      // Lens-aware minimap border glow + label
+      if (activeLens && lensCategories) {
+        var _lensCol = null;
+        var _lensName = '';
+        for (var _i = 0; _i < lensCategories.length; _i++) {
+          if (lensCategories[_i].id === activeLens) {
+            _lensCol = lensCategories[_i].color;
+            _lensName = lensCategories[_i].name;
+            break;
+          }
+        }
+        if (_lensCol) {
+          mctx.strokeStyle = _lensCol;
+          mctx.lineWidth = 2;
+          mctx.strokeRect(1, 1, minimap.width - 2, minimap.height - 2);
+          mctx.lineWidth = 1;
+          // Small label at bottom of minimap
+          mctx.font = '9px monospace';
+          mctx.fillStyle = _lensCol;
+          mctx.textAlign = 'center';
+          mctx.fillText(_lensName, minimap.width / 2, minimap.height - 4);
+          mctx.textAlign = 'left';
+        }
+      }
     }
 
     function hexToRgba(hex, a) {
@@ -46712,13 +46755,13 @@
 
     // ── Category Lens (L key) ──
     let lensOpen = false;
-    let activeLens = null; // null = no filter
+    var activeLens = null; // null = no filter
     const lensBtnEl = document.getElementById('lensBtn');
     const lensPanelEl = document.getElementById('lensPanel');
     const lensListEl = document.getElementById('lensList');
     const lensIndicatorEl = document.getElementById('lensIndicator');
 
-    const lensCategories = [
+    var lensCategories = [
       { id: 'all', name: 'All Chambers', color: '#c9a96e', keywords: null },
       { id: 'nature', name: '🌿 Nature', color: '#4CAF50', keywords: ['garden','botanical','ecology','forest','tree','flower','ocean','sea','river','lake','mountain','meadow','wilderness','coral','reef','bird','insect','animal','fish','butterfly','fern','moss','fungus','mushroom'] },
       { id: 'music', name: '🎵 Music', color: '#E91E63', keywords: ['music','sound','rhythm','melody','harmony','instrument','symphony','acoustic','song','choir','opera','piano','violin','drum','flute','guitar','jazz','concert','orchestr','compose'] },
@@ -46733,7 +46776,7 @@
     ];
 
     // Pre-compute category membership for each chamber (using lowercase matching)
-    const chamberCategories = new Array(chambers.length);
+    var chamberCategories = new Array(chambers.length);
     for (var ci = 0; ci < chambers.length; ci++) {
       var nameLower = chambers[ci].name.toLowerCase();
       var cats = [];
@@ -46779,10 +46822,12 @@
     function setLens(catId) {
       if (catId === 'all') {
         activeLens = null;
+        lastDiscoveredCount = -1; // force minimap re-render
         lensIndicatorEl.classList.remove('visible');
         lensBtnEl.classList.remove('active');
       } else {
         activeLens = catId;
+        lastDiscoveredCount = -1; // force minimap re-render
         var catObj = lensCategories.find(function(c) { return c.id === catId; });
         lensIndicatorEl.textContent = catObj ? catObj.name : catId;
         lensIndicatorEl.classList.add('visible');
