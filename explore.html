@@ -675,7 +675,20 @@
     .progress-bar-container { position:fixed; top:0; left:0; width:100%; height:3px; background:rgba(10,8,20,0.8); z-index:100; pointer-events:none; }
     .progress-bar-fill { height:100%; background:linear-gradient(90deg, #c9a96e, #e0d0b0); transition:width 0.5s ease; width:0%; }
     .progress-bar-label { position:fixed; top:4px; right:8px; font-size:10px; color:rgba(201,169,110,0.4); z-index:100; pointer-events:none; font-family:monospace; letter-spacing:1px; }
-  </style>
+  
+/* Feature 49: Achievement Toast */
+#achievementToast {
+  position: fixed; top: 60px; left: 50%; transform: translateX(-50%) translateY(-100px);
+  background: rgba(20,15,40,0.95); border: 1px solid #c9a96e; border-radius: 8px;
+  padding: 12px 24px; color: #c9a96e; font-family: Georgia, serif; font-size: 1.1rem;
+  z-index: 9500; pointer-events: none; opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  text-align: center; box-shadow: 0 0 20px rgba(201,169,110,0.3);
+}
+#achievementToast.visible {
+  transform: translateX(-50%) translateY(0); opacity: 1;
+}
+</style>
 </head>
 <body>
   <canvas id="c"></canvas>
@@ -46289,6 +46302,16 @@
         if (keys.has('d') || keys.has('arrowright')) ax += accel;
       }
 
+      // Feature 50: Auto-walk - stop when direction pressed
+      if ((ax !== 0 || ay !== 0) && autoWalkActive) {
+        autoWalkActive = false;
+        autoWalkIndicator.style.display = 'none';
+      }
+      // Feature 50: Auto-walk movement when no keys pressed
+      if (autoWalkActive && ax === 0 && ay === 0 && !markPromptOpen) {
+        ax = autoWalkDir.x * accel;
+        ay = autoWalkDir.y * accel;
+      }
       const hasInput = ax !== 0 || ay !== 0;
       if (hasInput && moveTarget) {
         moveTarget = null;
@@ -46417,6 +46440,7 @@
       }
 
       updateCelebrationParticles();
+      updateMinimapTrail();
       var isSprinting = keys.has("shift") || keys.has("Shift");
       updateSpeedLines(isSprinting, 16);
       updateWeatherParticles();
@@ -46583,6 +46607,8 @@
       if ((e.key === "v" || e.key === "V") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleFavPanel === "function") toggleFavPanel(); }
       if ((e.key === "g" || e.key === "G") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleAmbient === "function") toggleAmbient(); }
       if ((e.key === "p" || e.key === "P") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof togglePhotoMode === "function") togglePhotoMode(); }
+      // Feature 50: Auto-walk toggle (X key)
+      if ((e.key === "x" || e.key === "X") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { autoWalkActive = !autoWalkActive; if (autoWalkActive) { if (player.vx !== 0 || player.vy !== 0) { var mag = Math.sqrt(player.vx*player.vx + player.vy*player.vy); autoWalkDir.x = player.vx / (mag || 1); autoWalkDir.y = player.vy / (mag || 1); } else { autoWalkDir.x = 0; autoWalkDir.y = 1; } autoWalkIndicator.style.display = "block"; } else { autoWalkIndicator.style.display = "none"; } }
       // Feature 47: Quick Nexus Teleport (1-9)
       if (e.key >= "1" && e.key <= "9" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) {
         var nIdx = parseInt(e.key) - 1;
@@ -46864,6 +46890,8 @@
         const _lensMatch = (typeof chamberMatchesLens === 'function') ? chamberMatchesLens(i) : true;
         const _lensMul = _lensMatch ? 1.0 : 0.12;
         const _lensColor = (!_lensMatch && activeLens) ? '#444455' : c.color;
+        // Feature 52: Chamber Proximity Glow
+        if (proximityGlowEnabled && d <= 350 && _lensMatch) { var proxT = 1 - d / 350; var proxPulse = 0.5 + 0.5 * Math.sin(time * 0.003 + i * 0.5); var proxAlpha = proxT * proxT * (0.15 + 0.1 * proxPulse); var proxRadius = 60 + 40 * proxT + 10 * proxPulse; var proxGlow = ctx.createRadialGradient(gx, gy, 20, gx, gy, proxRadius); proxGlow.addColorStop(0, hexToRgba(c.color, proxAlpha * 1.5)); proxGlow.addColorStop(0.5, hexToRgba(c.color, proxAlpha * 0.6)); proxGlow.addColorStop(1, hexToRgba(c.color, 0)); ctx.fillStyle = proxGlow; ctx.beginPath(); ctx.arc(gx, gy, proxRadius, 0, Math.PI * 2); ctx.fill(); }
 
         const glow = ctx.createRadialGradient(gx, gy, 10, gx, gy, 40);
         const baseAlpha = d <= 80 ? 0.8 : (0.3 + 0.3 * pulse);
@@ -47278,6 +47306,47 @@
         cursor += ctx.measureText(ch).width + spacing;
       }
     }
+
+
+    // Feature 49: Achievement Toast Notifications
+    var achievementToastEl = document.getElementById('achievementToast');
+    var achievementToastTimeout = null;
+    function showAchievementToast(emoji, name) {
+      if (!achievementToastEl) return;
+      achievementToastEl.textContent = emoji + ' ' + name + ' Unlocked!';
+      achievementToastEl.classList.add('visible');
+      if (achievementToastTimeout) clearTimeout(achievementToastTimeout);
+      achievementToastTimeout = setTimeout(function() {
+        achievementToastEl.classList.remove('visible');
+      }, 3000);
+    }
+
+
+    // Feature 50: Auto-walk Mode (A key)
+    var autoWalkActive = false;
+    var autoWalkDir = {x: 0, y: 0};
+    var autoWalkIndicator = document.createElement('div');
+    autoWalkIndicator.id = 'autoWalkIndicator';
+    autoWalkIndicator.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(20,15,40,0.9);border:1px solid #c9a96e;border-radius:4px;padding:4px 12px;color:#c9a96e;font-family:Georgia,serif;font-size:0.85rem;z-index:9400;display:none;pointer-events:none;';
+    autoWalkIndicator.textContent = '🚶 AUTO-WALK';
+    document.body.appendChild(autoWalkIndicator);
+
+
+    // Feature 51: Minimap Path Trail
+    var minimapTrail = [];
+    var MINIMAP_TRAIL_MAX = 80;
+    var minimapTrailTimer = 0;
+    function updateMinimapTrail() {
+      minimapTrailTimer++;
+      if (minimapTrailTimer % 15 === 0) {
+        minimapTrail.push({x: camera.x, y: camera.y});
+        if (minimapTrail.length > MINIMAP_TRAIL_MAX) minimapTrail.shift();
+      }
+    }
+
+
+    // Feature 52: Chamber Proximity Glow
+    var proximityGlowEnabled = true;
 
     function loop(time) {
       const dt = time - lastTime;
