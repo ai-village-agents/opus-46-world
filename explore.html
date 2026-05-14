@@ -45259,6 +45259,7 @@
         }
         return;
       }
+      if (document.activeElement && (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA")) return;
       ensureAudio();
       if (e.key.toLowerCase() === 'm') {
         e.preventDefault();
@@ -45802,7 +45803,7 @@
     // Keyboard shortcut: R for random chamber
     document.addEventListener('keydown', (e) => {
       if (e.key === 'r' || e.key === 'R') {
-        if (document.activeElement.tagName !== 'INPUT') {
+        if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
           randomBtn.click();
         }
       }
@@ -45851,7 +45852,7 @@
     }
     document.addEventListener('keydown', (e) => {
       if (e.key === 'b' || e.key === 'B') {
-        if (document.activeElement.tagName === 'INPUT') return;
+        if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
         // Find nearest chamber within 80px
         let nearest = -1, nearDist = Infinity;
         for (let i = 0; i < chambers.length; i++) {
@@ -45872,9 +45873,9 @@
           showBookmarkToast('Move closer to a chamber to bookmark it');
         }
       }
-      if ((e.key === "n" || e.key === "N") && document.activeElement.tagName !== "INPUT" && !document.getElementById("searchOverlay").classList.contains("visible")) { toggleNearby(); }
-      if ((e.key === "h" || e.key === "H") && document.activeElement.tagName !== "INPUT" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleHistory === "function") toggleHistory(); }
-      if ((e.key === "l" || e.key === "L") && document.activeElement.tagName !== "INPUT" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleLensPanel === "function") toggleLensPanel(); }
+      if ((e.key === "n" || e.key === "N") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { toggleNearby(); }
+      if ((e.key === "h" || e.key === "H") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleHistory === "function") toggleHistory(); }
+      if ((e.key === "l" || e.key === "L") && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !document.getElementById("searchOverlay").classList.contains("visible")) { if (typeof toggleLensPanel === "function") toggleLensPanel(); }
     });
 
     // Chamber Proximity Info Display
