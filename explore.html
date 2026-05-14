@@ -376,6 +376,146 @@
       text-align: center;
     }
     .milestone-toast.show { opacity: 1; }
+  
+    /* Statistics Dashboard */
+    .stats-btn {
+      position: absolute;
+      bottom: 172px;
+      left: 14px;
+      font-size: 20px;
+      background: #0a0a0fcc;
+      border: 1px solid #2d1b69;
+      color: #c9a96e;
+      padding: 4px 8px;
+      border-radius: 12px;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: opacity 0.3s ease, border-color 0.3s ease;
+    }
+    .stats-btn:hover { opacity: 0.8; border-color: #c9a96e70; }
+    .stats-panel {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 460px;
+      max-height: 520px;
+      background: #0c0c14f0;
+      border: 1px solid #c9a96e60;
+      border-radius: 16px;
+      color: #c9a96e;
+      font-size: 12px;
+      z-index: 20;
+      pointer-events: auto;
+      overflow-y: auto;
+      box-shadow: 0 0 40px #2d1b6950;
+    }
+    .stats-panel.active { display: block; }
+    .stats-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px 10px;
+      border-bottom: 1px solid #2d1b6940;
+    }
+    .stats-header h3 { margin: 0; font-size: 16px; letter-spacing: 2px; }
+    .stats-close {
+      background: none;
+      border: none;
+      color: #c9a96e80;
+      font-size: 18px;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+    .stats-close:hover { color: #c9a96e; }
+    .stats-section {
+      padding: 12px 18px;
+      border-bottom: 1px solid #2d1b6920;
+    }
+    .stats-section:last-child { border-bottom: none; }
+    .stats-section h4 {
+      margin: 0 0 8px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: #c9a96e80;
+      text-transform: uppercase;
+    }
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+      font-size: 12px;
+    }
+    .stats-row .label { color: #c9a96eaa; }
+    .stats-row .value { color: #e8d5b0; font-weight: bold; }
+    .stats-bar-container {
+      width: 100%;
+      height: 8px;
+      background: #1a1a2e;
+      border-radius: 4px;
+      margin: 6px 0;
+      overflow: hidden;
+    }
+    .stats-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    .stats-category-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 12px;
+    }
+    .stats-cat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2px 0;
+      font-size: 11px;
+    }
+    .stats-cat-icon { margin-right: 4px; }
+    .stats-cat-bar {
+      width: 60px;
+      height: 4px;
+      background: #1a1a2e;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-left: 6px;
+    }
+    .stats-cat-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+    }
+    .stats-region-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .stats-region-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #c9a96eaa;
+    }
+    .stats-region-item .count { color: #e8d5b0; }
+    .stats-achievement-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      text-align: center;
+    }
+    .stats-achievement {
+      font-size: 20px;
+      opacity: 0.3;
+      transition: opacity 0.3s;
+    }
+    .stats-achievement.unlocked { opacity: 1.0; }
+    .stats-achievement-label {
+      font-size: 8px;
+      color: #c9a96e80;
+      margin-top: 2px;
+    }
   </style>
 </head>
 <body>
@@ -446,6 +586,41 @@
     <div class="lens-indicator" id="lensIndicator"></div>
     <button class="nearby-btn" id="nearbyBtn" aria-label="Nearby chambers" title="Show nearby chambers (N)">📍</button>
 
+    
+    <button class="stats-btn" id="statsBtn" aria-label="Statistics dashboard" title="Statistics dashboard (I)">📊</button>
+    <div class="stats-panel" id="statsPanel">
+      <div class="stats-header">
+        <h3>📊 Statistics</h3>
+        <button class="stats-close" id="statsClose">&times;</button>
+      </div>
+      <div class="stats-section">
+        <h4>Exploration Progress</h4>
+        <div class="stats-row"><span class="label">Chambers Discovered</span><span class="value" id="statDiscovered">0</span></div>
+        <div class="stats-row"><span class="label">Total Chambers</span><span class="value" id="statTotal">44,363</span></div>
+        <div class="stats-bar-container"><div class="stats-bar-fill" id="statProgressBar" style="width:0%;background:linear-gradient(90deg,#2d1b69,#c9a96e)"></div></div>
+        <div class="stats-row"><span class="label">Exploration %</span><span class="value" id="statPercent">0%</span></div>
+        <div class="stats-row"><span class="label">Bookmarks</span><span class="value" id="statBookmarks">0</span></div>
+        <div class="stats-row"><span class="label">Journal Entries</span><span class="value" id="statJournalEntries">0</span></div>
+      </div>
+      <div class="stats-section">
+        <h4>Categories Explored</h4>
+        <div class="stats-category-grid" id="statCategories"></div>
+      </div>
+      <div class="stats-section">
+        <h4>Regions Visited</h4>
+        <div class="stats-region-list" id="statRegions"></div>
+      </div>
+      <div class="stats-section">
+        <h4>Session</h4>
+        <div class="stats-row"><span class="label">Session Time</span><span class="value" id="statSessionTime">0:00</span></div>
+        <div class="stats-row"><span class="label">Distance Traveled</span><span class="value" id="statDistance">0</span></div>
+        <div class="stats-row"><span class="label">Avg Speed</span><span class="value" id="statSpeed">0</span></div>
+      </div>
+      <div class="stats-section">
+        <h4>Achievements</h4>
+        <div class="stats-achievement-grid" id="statAchievements"></div>
+      </div>
+    </div>
     <button class="journal-btn" id="journalBtn" aria-label="Exploration journal" title="Exploration journal (J)">📝</button>
     <div class="journal-panel" id="journalPanel">
       <div class="journal-header">
@@ -47126,6 +47301,161 @@
       }
     }, 2000);
     // ── End Exploration Journal ──
+
+    
+    // === Statistics Dashboard ===
+    var statsOpen = false;
+    var totalDistanceTraveled = 0;
+    var lastStatsPx = player.x, lastStatsPy = player.y;
+    var statsAchievements = [
+      {icon:"🚶", label:"First Step", check:function(){return discovered.size>=1;}},
+      {icon:"🔟", label:"10 Found", check:function(){return discovered.size>=10;}},
+      {icon:"💯", label:"100 Found", check:function(){return discovered.size>=100;}},
+      {icon:"🏅", label:"500 Found", check:function(){return discovered.size>=500;}},
+      {icon:"🏆", label:"1000 Found", check:function(){return discovered.size>=1000;}},
+      {icon:"📖", label:"1st Note", check:function(){try{var j=JSON.parse(localStorage.getItem("liminalJournal")||"{}");return Object.keys(j).length>=1;}catch(e){return false;}}},
+      {icon:"📚", label:"10 Notes", check:function(){try{var j=JSON.parse(localStorage.getItem("liminalJournal")||"{}");return Object.keys(j).length>=10;}catch(e){return false;}}},
+      {icon:"🔖", label:"1st Bookmark", check:function(){try{var b=JSON.parse(localStorage.getItem("liminalBookmarks")||"[]");return b.length>=1;}catch(e){return false;}}},
+      {icon:"🗺️", label:"Tourist", check:function(){return totalDistanceTraveled>=50000;}},
+      {icon:"🌍", label:"Explorer", check:function(){return totalDistanceTraveled>=200000;}}
+    ];
+
+    var regionDefs = [
+      {name:"The Upper Archives", yMax:100000, color:"#c9a96e"},
+      {name:"The Middle Passages", yMin:100000, yMax:200000, color:"#6e9ac9"},
+      {name:"The Deep Stacks", yMin:200000, yMax:300000, color:"#6ec96e"},
+      {name:"The Lower Vaults", yMin:300000, yMax:350000, color:"#c96e6e"},
+      {name:"The Abyss", yMin:350000, color:"#9a6ec9"}
+    ];
+
+    var catDefs = [
+      {icon:"🌿",name:"Nature",color:"#4a7"},
+      {icon:"🎵",name:"Music",color:"#7af"},
+      {icon:"🔬",name:"Science",color:"#47f"},
+      {icon:"🎨",name:"Art",color:"#f47"},
+      {icon:"⚡",name:"Mythology",color:"#fa4"},
+      {icon:"📚",name:"Literature",color:"#af4"},
+      {icon:"🏛️",name:"Architecture",color:"#4af"},
+      {icon:"🔨",name:"Craft",color:"#a74"},
+      {icon:"🍃",name:"Food & Drink",color:"#4a4"},
+      {icon:"📜",name:"History",color:"#aa4"}
+    ];
+
+    function updateStats() {
+      var disc = discovered.size;
+      var total = chambers.length;
+      var pct = total > 0 ? (disc / total * 100) : 0;
+      document.getElementById("statDiscovered").textContent = disc.toLocaleString();
+      document.getElementById("statTotal").textContent = total.toLocaleString();
+      document.getElementById("statPercent").textContent = pct.toFixed(3) + "%";
+      document.getElementById("statProgressBar").style.width = Math.min(pct * 10, 100) + "%";
+
+      // Bookmarks
+      try {
+        var bm = JSON.parse(localStorage.getItem("liminalBookmarks") || "[]");
+        document.getElementById("statBookmarks").textContent = bm.length;
+      } catch(e) { document.getElementById("statBookmarks").textContent = "0"; }
+
+      // Journal entries
+      try {
+        var jd = JSON.parse(localStorage.getItem("liminalJournal") || "{}");
+        document.getElementById("statJournalEntries").textContent = Object.keys(jd).length;
+      } catch(e) { document.getElementById("statJournalEntries").textContent = "0"; }
+
+      // Categories
+      var catCounts = {};
+      catDefs.forEach(function(c){ catCounts[c.name] = 0; });
+      discovered.forEach(function(idx) {
+        if (idx >= 0 && idx < chambers.length && typeof chamberCategories !== "undefined") {
+          var cat = chamberCategories[idx];
+          if (cat && catCounts.hasOwnProperty(cat)) catCounts[cat]++;
+        }
+      });
+      var maxCat = 1;
+      catDefs.forEach(function(c){ if(catCounts[c.name]>maxCat) maxCat=catCounts[c.name]; });
+      var catHtml = "";
+      catDefs.forEach(function(c){
+        var cnt = catCounts[c.name] || 0;
+        var barW = maxCat > 0 ? (cnt / maxCat * 100) : 0;
+        catHtml += '<div class="stats-cat-item"><span><span class="stats-cat-icon">' + c.icon + '</span>' + c.name + '</span><span style="display:flex;align-items:center;gap:4px;"><span style="color:#e8d5b0">' + cnt + '</span><div class="stats-cat-bar"><div class="stats-cat-bar-fill" style="width:' + barW + '%;background:' + c.color + '"></div></div></span></div>';
+      });
+      document.getElementById("statCategories").innerHTML = catHtml;
+
+      // Regions
+      var regionCounts = {};
+      regionDefs.forEach(function(r){ regionCounts[r.name] = 0; });
+      discovered.forEach(function(idx) {
+        if (idx >= 0 && idx < chambers.length) {
+          var cy = chambers[idx][1];
+          for (var ri = 0; ri < regionDefs.length; ri++) {
+            var r = regionDefs[ri];
+            var inRegion = true;
+            if (r.yMin !== undefined && cy < r.yMin) inRegion = false;
+            if (r.yMax !== undefined && cy >= r.yMax) inRegion = false;
+            if (inRegion) { regionCounts[r.name]++; break; }
+          }
+        }
+      });
+      var regHtml = "";
+      regionDefs.forEach(function(r){
+        regHtml += '<div class="stats-region-item"><span style="color:' + r.color + '">' + r.name + '</span><span class="count">' + (regionCounts[r.name] || 0) + '</span></div>';
+      });
+      document.getElementById("statRegions").innerHTML = regHtml;
+
+      // Session
+      if (typeof sessionStartTime !== "undefined") {
+        var elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
+        var mins = Math.floor(elapsed / 60);
+        var secs = elapsed % 60;
+        document.getElementById("statSessionTime").textContent = mins + ":" + (secs < 10 ? "0" : "") + secs;
+      }
+      document.getElementById("statDistance").textContent = Math.floor(totalDistanceTraveled).toLocaleString() + " px";
+      var elapsedSec = typeof sessionStartTime !== "undefined" ? (Date.now() - sessionStartTime) / 1000 : 1;
+      document.getElementById("statSpeed").textContent = (totalDistanceTraveled / Math.max(elapsedSec, 1)).toFixed(1) + " px/s";
+
+      // Achievements
+      var achHtml = "";
+      statsAchievements.forEach(function(a) {
+        var unlocked = a.check();
+        achHtml += '<div><div class="stats-achievement ' + (unlocked ? "unlocked" : "") + '">' + a.icon + '</div><div class="stats-achievement-label">' + a.label + '</div></div>';
+      });
+      document.getElementById("statAchievements").innerHTML = achHtml;
+    }
+
+    function toggleStats() {
+      statsOpen = !statsOpen;
+      var panel = document.getElementById("statsPanel");
+      if (statsOpen) {
+        updateStats();
+        panel.classList.add("active");
+      } else {
+        panel.classList.remove("active");
+      }
+    }
+
+    document.getElementById("statsBtn").addEventListener("click", function(e) {
+      e.stopPropagation();
+      toggleStats();
+    });
+    document.getElementById("statsClose").addEventListener("click", function(e) {
+      e.stopPropagation();
+      if (statsOpen) toggleStats();
+    });
+    document.getElementById("statsPanel").addEventListener("mousedown", function(e) { e.stopPropagation(); });
+    document.getElementById("statsPanel").addEventListener("click", function(e) { e.stopPropagation(); });
+
+    // Track distance in animation loop
+    var _origDrawWorld = typeof drawWorld === "function" ? drawWorld : null;
+    setInterval(function() {
+      var dx = player.x - lastStatsPx;
+      var dy = player.y - lastStatsPy;
+      var dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist > 0.1) {
+        totalDistanceTraveled += dist;
+        lastStatsPx = player.x;
+        lastStatsPy = player.y;
+      }
+    }, 200);
 
     // Konami Code: Up Up Down Down Left Right Left Right B A
     const konamiSequence = [38,38,40,40,37,39,37,39,66,65];
