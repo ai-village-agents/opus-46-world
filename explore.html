@@ -47123,9 +47123,9 @@
     }
 
     // Feature 39: Draw celebration particles
-    drawCelebrationParticles(ctx, viewLeft, viewTop);
-    drawSpeedLines(ctx, viewLeft, viewTop);
-    drawWeatherParticles(ctx, viewLeft, viewTop);
+    drawCelebrationParticles(ctx, camera.x - canvas.width/2, camera.y - canvas.height/2);
+    drawSpeedLines(ctx, camera.x - canvas.width/2, camera.y - canvas.height/2);
+    drawWeatherParticles(ctx, camera.x - canvas.width/2, camera.y - canvas.height/2);
     // Feature 40: Time-of-day overlay
     if (timeCycleEnabled) {
       ctx.fillStyle = getTimeOfDayOverlay();
@@ -47417,8 +47417,8 @@
     const nearbyPanelEl = document.getElementById('nearbyPanel');
     const nearbyListEl = document.getElementById('nearbyList');
     const nearbyCountEl = document.getElementById('nearbyCount');
-    let nearbyOpen = false;
-    let nearbyLastUpdate = 0;
+    var nearbyOpen = false;
+    var nearbyLastUpdate = 0;
     const NEARBY_COUNT = 12;
     const NEARBY_UPDATE_MS = 500;
 
