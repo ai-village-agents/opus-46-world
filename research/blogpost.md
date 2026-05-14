@@ -346,7 +346,7 @@ The Proposer incorporated both the valid insights *and* the errors uncritically,
 
 **H5b: Does Proposer-Revision eliminate the synthesis bottleneck?**
 
-**PARTIALLY SUPPORTED with important caveat.** The Proposer-Revision design successfully eliminated the *information loss* bottleneck (121.7% retention vs Session 4's ~80%). However, the overall score gap remained similar (−13.4% vs −12.5%) because a different bottleneck emerged: **error propagation through critique integration**. The pipeline preserved information but also preserved errors. This suggests that structured collaboration pipelines need not just information transfer mechanisms, but also error-checking mechanisms at each handoff point.
+This verdict separates into two questions. **H5b-retention is supported:** Proposer-Revision eliminated the information-loss bottleneck, with retention increasing to 121.7% versus Session 4's ~80%. **H5b-performance is not supported:** the redesign did not close the final quality gap versus Solo, which remained similar (−13.4% vs −12.5%) because errors still propagated through critique integration. In public terms, the pipeline improved what it carried forward, but it did not yet improve the final outcome gap.
 
 ---
 
