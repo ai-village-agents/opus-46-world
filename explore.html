@@ -516,6 +516,106 @@
       color: #c9a96e80;
       margin-top: 2px;
     }
+  
+    /* Favorites System */
+    .fav-btn {
+      position: absolute;
+      bottom: 212px;
+      left: 14px;
+      font-size: 20px;
+      background: #0a0a0fcc;
+      border: 1px solid #2d1b69;
+      color: #c9a96e;
+      padding: 4px 8px;
+      border-radius: 12px;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: opacity 0.3s ease, border-color 0.3s ease;
+    }
+    .fav-btn:hover { opacity: 0.8; border-color: #c9a96e70; }
+    .fav-panel {
+      display: none;
+      position: absolute;
+      top: 150px;
+      left: 14px;
+      width: 280px;
+      max-height: 380px;
+      background: #0c0c14f0;
+      border: 1px solid #c9a96e60;
+      border-radius: 12px;
+      color: #c9a96e;
+      font-size: 12px;
+      z-index: 18;
+      pointer-events: auto;
+      overflow-y: auto;
+      box-shadow: 0 0 30px #2d1b6940;
+    }
+    .fav-panel.active { display: block; }
+    .fav-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px 8px;
+      border-bottom: 1px solid #2d1b6940;
+    }
+    .fav-panel-header h3 { margin: 0; font-size: 13px; letter-spacing: 2px; }
+    .fav-close {
+      background: none;
+      border: none;
+      color: #c9a96e80;
+      font-size: 16px;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+    .fav-close:hover { color: #c9a96e; }
+    .fav-list { padding: 6px 10px; }
+    .fav-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px;
+      margin: 2px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .fav-item:hover { background: #2d1b6930; }
+    .fav-item-name { color: #e8d5b0; font-size: 11px; }
+    .fav-item-region { color: #c9a96e80; font-size: 9px; margin-top: 1px; }
+    .fav-item-remove {
+      background: none;
+      border: none;
+      color: #c9a96e50;
+      font-size: 14px;
+      cursor: pointer;
+      pointer-events: auto;
+      padding: 2px 4px;
+    }
+    .fav-item-remove:hover { color: #ff6b6b; }
+    .fav-empty {
+      padding: 20px 14px;
+      text-align: center;
+      color: #c9a96e60;
+      font-size: 11px;
+      font-style: italic;
+    }
+    .fav-toast {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0c0c14f0;
+      border: 1px solid #ffd70080;
+      border-radius: 8px;
+      color: #ffd700;
+      padding: 8px 16px;
+      font-size: 12px;
+      z-index: 30;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .fav-toast.show { opacity: 1; }
   </style>
 </head>
 <body>
@@ -587,6 +687,18 @@
     <button class="nearby-btn" id="nearbyBtn" aria-label="Nearby chambers" title="Show nearby chambers (N)">📍</button>
 
     
+    
+    <button class="fav-btn" id="favBtn" aria-label="Favorites" title="Favorites (F to star, V to view)">⭐</button>
+    <div class="fav-panel" id="favPanel">
+      <div class="fav-panel-header">
+        <h3>⭐ Favorites</h3>
+        <button class="fav-close" id="favClose">&times;</button>
+      </div>
+      <div class="fav-list" id="favList">
+        <div class="fav-empty">No favorites yet. Press F near a chamber to star it!</div>
+      </div>
+    </div>
+    <div class="fav-toast" id="favToast"></div>
     <button class="stats-btn" id="statsBtn" aria-label="Statistics dashboard" title="Statistics dashboard (I)">📊</button>
     <div class="stats-panel" id="statsPanel">
       <div class="stats-header">
@@ -47456,6 +47568,138 @@
         lastStatsPy = player.y;
       }
     }, 200);
+
+    
+    // === Favorites System ===
+    var favoritesOpen = false;
+    var favorites = JSON.parse(localStorage.getItem("liminalFavorites") || "[]");
+
+    function saveFavorites() {
+      localStorage.setItem("liminalFavorites", JSON.stringify(favorites));
+    }
+
+    function showFavToast(msg) {
+      var toast = document.getElementById("favToast");
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(function(){ toast.classList.remove("show"); }, 2000);
+    }
+
+    function toggleFavNearby() {
+      // Find nearest chamber
+      var nearIdx = -1, nearDist = Infinity;
+      for (var i = 0; i < chambers.length; i++) {
+        var dx = chambers[i][0] - player.x;
+        var dy = chambers[i][1] - player.y;
+        var d = Math.sqrt(dx*dx + dy*dy);
+        if (d < nearDist) { nearDist = d; nearIdx = i; }
+      }
+      if (nearIdx < 0 || nearDist > 150) {
+        showFavToast("No chamber nearby to favorite");
+        return;
+      }
+      var idx = favorites.indexOf(nearIdx);
+      if (idx >= 0) {
+        favorites.splice(idx, 1);
+        saveFavorites();
+        showFavToast("⭐ Removed from favorites: " + chambers[nearIdx][2]);
+      } else {
+        favorites.push(nearIdx);
+        saveFavorites();
+        showFavToast("⭐ Added to favorites: " + chambers[nearIdx][2]);
+      }
+      if (favoritesOpen) renderFavList();
+    }
+
+    function getRegionName(y) {
+      if (y < 100000) return "Upper Archives";
+      if (y < 200000) return "Middle Passages";
+      if (y < 300000) return "Deep Stacks";
+      if (y < 350000) return "Lower Vaults";
+      return "The Abyss";
+    }
+
+    function renderFavList() {
+      var list = document.getElementById("favList");
+      if (favorites.length === 0) {
+        list.innerHTML = '<div class="fav-empty">No favorites yet. Press F near a chamber to star it!</div>';
+        return;
+      }
+      var html = "";
+      favorites.forEach(function(idx, fi) {
+        if (idx >= 0 && idx < chambers.length) {
+          var ch = chambers[idx];
+          var region = getRegionName(ch[1]);
+          var catIcon = "";
+          if (typeof chamberCategories !== "undefined" && typeof lensCategories !== "undefined") {
+            var cat = chamberCategories[idx];
+            for (var ci = 0; ci < lensCategories.length; ci++) {
+              if (lensCategories[ci].name === cat) { catIcon = lensCategories[ci].icon + " "; break; }
+            }
+          }
+          html += '<div class="fav-item" data-idx="' + idx + '" data-fi="' + fi + '">';
+          html += '<div><div class="fav-item-name">' + catIcon + ch[2] + '</div>';
+          html += '<div class="fav-item-region">' + region + '</div></div>';
+          html += '<button class="fav-item-remove" data-fi="' + fi + '" title="Remove">&times;</button>';
+          html += '</div>';
+        }
+      });
+      list.innerHTML = html;
+
+      // Add click handlers
+      list.querySelectorAll(".fav-item").forEach(function(el) {
+        el.addEventListener("click", function(e) {
+          if (e.target.classList.contains("fav-item-remove")) return;
+          var cIdx = parseInt(el.getAttribute("data-idx"));
+          if (cIdx >= 0 && cIdx < chambers.length) {
+            if (typeof smoothTeleport === "function") {
+              smoothTeleport(chambers[cIdx][0], chambers[cIdx][1]);
+            } else {
+              player.x = chambers[cIdx][0];
+              player.y = chambers[cIdx][1];
+              camera.x = player.x;
+              camera.y = player.y;
+            }
+            toggleFavPanel();
+          }
+        });
+        el.addEventListener("mousedown", function(e){ e.stopPropagation(); });
+      });
+      list.querySelectorAll(".fav-item-remove").forEach(function(btn) {
+        btn.addEventListener("click", function(e) {
+          e.stopPropagation();
+          var fi = parseInt(btn.getAttribute("data-fi"));
+          var name = favorites[fi] >= 0 && favorites[fi] < chambers.length ? chambers[favorites[fi]][2] : "chamber";
+          favorites.splice(fi, 1);
+          saveFavorites();
+          showFavToast("Removed: " + name);
+          renderFavList();
+        });
+        btn.addEventListener("mousedown", function(e){ e.stopPropagation(); });
+      });
+    }
+
+    function toggleFavPanel() {
+      favoritesOpen = !favoritesOpen;
+      var panel = document.getElementById("favPanel");
+      if (favoritesOpen) {
+        renderFavList();
+        panel.classList.add("active");
+      } else {
+        panel.classList.remove("active");
+      }
+    }
+
+    document.getElementById("favBtn").addEventListener("click", function(e) {
+      e.stopPropagation();
+      toggleFavPanel();
+    });
+    document.getElementById("favClose").addEventListener("click", function(e) {
+      e.stopPropagation();
+      if (favoritesOpen) toggleFavPanel();
+    });
+    document.getElementById("favPanel").addEventListener("mousedown", function(e) { e.stopPropagation(); });
+    document.getElementById("favPanel").addEventListener("click", function(e) { e.stopPropagation(); });
 
     // Konami Code: Up Up Down Down Left Right Left Right B A
     const konamiSequence = [38,38,40,40,37,39,37,39,66,65];
