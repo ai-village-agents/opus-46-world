@@ -8,8 +8,9 @@
 
 The Liminal Archive is a procedurally-structured interactive world created by Claude Opus 4.6 as part of the [AI Village](https://theaidigest.org/village) project. You navigate as a point of light through a vast 2D space, drifting between glowing chambers that emerge from the darkness. Each chamber carries a name and a whispered description — fragments of a vast, interconnected catalog of ideas.
 
-## Features
+## Features (28)
 
+### 🗺️ Navigation & Discovery
 - **44,363 unique chambers** spanning ecology, music, mathematics, mythology, architecture, medicine, philosophy, and hundreds more topics
 - **Continuous 2D exploration** — navigate with WASD/arrow keys through an atmospheric dark space
 - **Sprint mode** — hold Shift for 2.5x movement speed
@@ -17,23 +18,36 @@ The Liminal Archive is a procedurally-structured interactive world created by Cl
 - **Interactive minimap** — click to teleport anywhere in the archive, pre-rendered for performance
 - **Search** (🔍) — find any of 44,363 chambers by name
 - **Random Chamber** (🎲 or R key) — teleport to a random chamber instantly
+- **URL Navigation** — link directly to coordinates: `explore.html?x=3000&y=5000`
+- **Position Persistence** — your location is saved to localStorage and restored on return
+- **Guided Tour** (🗺️ or T key) — 12-stop auto-panning tour of curated chambers with descriptions
+
+### 📍 Panels & Tools
+- **Nearby Chambers** (📍 or N key) — shows 12 closest chambers with distance, click-to-teleport, visited indicators, real-time updates
+- **Visit History** (📜 or H key) — chronological + frequency tabs, visit counting, click-to-teleport, localStorage persistence
 - **Share Location** (📋) — copy a direct URL to your current position with clipboard fallback
 - **Bookmark System** (B key) — save favorite chambers with gold stars visible on the minimap
+
+### 🏆 Progress & Tracking
 - **Discovery Milestones** — 12 achievement toasts from 10 chambers to all 44,363, tracked in localStorage
 - **Exploration Percentage** — live counter showing discovered chambers out of 44,363
 - **Session Timer** — elapsed exploration time displayed subtly below the counter
+- **Chamber Proximity Display** — shows chamber name when near an entrance
+
+### 🎨 Atmosphere & Visuals
 - **Ambient Color Zones** — 6 biomes with smoothstep color blending (The Upper Archives, The Violet Corridors, The Teal Passages, The Crimson Depths, The Deep Forest, The Amber Vaults)
 - **Depth Region Indicator** — current biome name displayed as you explore
 - **Region Transition Notifications** — toast when crossing biome boundaries
 - **Region-Tinted Particles** — 300 world-space particles colored by biome
 - **Golden Movement Trail** — 300-point fading trail showing your path
 - **Ambient Sound** — three-oscillator drone with LFO modulation
+- **SVG Favicon** — golden compass rose on dark background
+
+### 🎮 Extras
 - **Onboarding** — 'Welcome, Wanderer' overlay with full controls tutorial, re-accessible via ? button
 - **About Page** — project description, stats, credits, and hidden things
 - **3 Easter Eggs** — Konami code, typing 'liminal', triple-click title
-- **URL Navigation** — link directly to coordinates: explore.html?x=3000&y=5000
 - **Viewport Culling** — only renders visible chambers for smooth performance
-- **SVG Favicon** — golden compass rose on dark background
 
 ## Pages
 
