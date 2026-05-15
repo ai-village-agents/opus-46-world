@@ -46458,6 +46458,9 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      updateInkDrops141();
+      updateShadowClone143();
+
       updateDiscoveryChain138();
       updateCrystalShards140();
 
@@ -47407,6 +47410,10 @@
       drawDiscoveryChain138();
       drawCompassPetals139(time);
       drawCrystalShards140();
+      drawInkDrops141();
+      drawHeartbeatPulse142(time);
+      drawShadowClone143();
+      drawNorthernCurtain144(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -50378,6 +50385,120 @@
         ctx.fill();
         ctx.restore();
       }
+    }
+
+
+    // Feature 141: Ambient Ink Drops
+    var inkDrops141 = [];
+    function updateInkDrops141() {
+      if (Math.random() < 0.004 && inkDrops141.length < 5) {
+        inkDrops141.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: 0,
+          maxRadius: 30 + Math.random() * 50,
+          alpha: 0.1,
+          hue: 240 + Math.random() * 40
+        });
+      }
+      for (var i = inkDrops141.length - 1; i >= 0; i--) {
+        inkDrops141[i].radius += 0.4;
+        if (inkDrops141[i].radius > inkDrops141[i].maxRadius * 0.7) {
+          inkDrops141[i].alpha -= 0.002;
+        }
+        if (inkDrops141[i].alpha <= 0 || inkDrops141[i].radius > inkDrops141[i].maxRadius) {
+          inkDrops141.splice(i, 1);
+        }
+      }
+    }
+    function drawInkDrops141() {
+      for (var i = 0; i < inkDrops141.length; i++) {
+        var d = inkDrops141[i];
+        var grad = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, d.radius);
+        grad.addColorStop(0, "hsla(" + d.hue + ",40%,15%," + d.alpha + ")");
+        grad.addColorStop(0.7, "hsla(" + d.hue + ",30%,10%," + (d.alpha * 0.5) + ")");
+        grad.addColorStop(1, "hsla(" + d.hue + ",20%,5%,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Feature 142: Chamber Heartbeat Pulse
+    function drawHeartbeatPulse142(time) {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      var px = player.x;
+      var py = player.y;
+      for (var i = 0; i < chambers.length; i++) {
+        var c = chambers[i];
+        var dx = c.x - px;
+        var dy = c.y - py;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 300 || dist < 20) continue;
+        var sx = c.x - vl;
+        var sy = c.y - vt;
+        if (sx < -30 || sx > canvas.width + 30 || sy < -30 || sy > canvas.height + 30) continue;
+        var beat = Math.abs(Math.sin(time * 0.004 + i * 0.5));
+        if (beat > 0.9) {
+          var pulseR = 12 + (1 - (dist / 300)) * 8;
+          ctx.strokeStyle = "rgba(255,100,100," + ((1 - dist / 300) * 0.15) + ")";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(sx, sy, pulseR, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Feature 143: Exploration Shadow Clone
+    var shadowClone143 = { positions: [], delay: 30, timer: 0 };
+    function updateShadowClone143() {
+      shadowClone143.timer++;
+      if (shadowClone143.timer % 3 === 0) {
+        shadowClone143.positions.push({ x: player.x, y: player.y });
+        if (shadowClone143.positions.length > shadowClone143.delay) {
+          shadowClone143.positions.shift();
+        }
+      }
+    }
+    function drawShadowClone143() {
+      if (shadowClone143.positions.length < shadowClone143.delay) return;
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      var ghost = shadowClone143.positions[0];
+      var sx = ghost.x - vl;
+      var sy = ghost.y - vt;
+      ctx.fillStyle = "rgba(150,150,255,0.08)";
+      ctx.beginPath();
+      ctx.arc(sx, sy, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(150,150,255,0.05)";
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 12, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Feature 144: Ambient Northern Lights Curtain
+    function drawNorthernCurtain144(time) {
+      ctx.save();
+      ctx.globalAlpha = 0.02;
+      for (var band = 0; band < 4; band++) {
+        var baseX = canvas.width * (0.2 + band * 0.2);
+        var sway = Math.sin(time * 0.0003 + band * 1.5) * 60;
+        var hue = (120 + band * 40 + time * 0.01) % 360;
+        ctx.strokeStyle = "hsla(" + hue + ",60%,50%,0.4)";
+        ctx.lineWidth = 20 + Math.sin(time * 0.001 + band) * 8;
+        ctx.beginPath();
+        for (var y = 0; y < canvas.height; y += 10) {
+          var x = baseX + sway + Math.sin(y * 0.008 + time * 0.0005 + band) * 30;
+          if (y === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+      ctx.restore();
     }
 
     document.body.appendChild(autoWalkIndicator);
