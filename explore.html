@@ -49088,6 +49088,26 @@
       drawClayPot678(time);
       drawRainFilm679(time);
       drawAmberGlow680(time);
+      drawMistVeil681(time);
+      drawSporeCloud682(time);
+      drawFrostCrack683(time);
+      drawWindGust684(time);
+      drawCaveDrop685(time);
+      drawSunSpot686(time);
+      drawSilkWeave687(time);
+      drawReedSway688(time);
+      drawAshFloat689(time);
+      drawCrystalDrip690(time);
+      drawKelpBubble691(time);
+      drawLampPost692(time);
+      drawTidePull693(time);
+      drawSparkWheel694(time);
+      drawLeafShadow695(time);
+      drawSootMark696(time);
+      drawPearlSheen697(time);
+      drawCoralGlow698(time);
+      drawWindChimeV2699(time);
+      drawSeptcentennialCrown700(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -59320,6 +59340,107 @@
     function drawAmberGlow680(time) {
       // Feature 680: Amber Glow — warm amber backlighting effect
       ctx.globalAlpha=0.03;var agGrad=ctx.createRadialGradient(canvas.width/2,canvas.height/2,50,canvas.width/2,canvas.height/2,canvas.width*0.4);agGrad.addColorStop(0,'#ffab40');agGrad.addColorStop(1,'transparent');ctx.fillStyle=agGrad;ctx.beginPath();ctx.arc(canvas.width/2,canvas.height/2,canvas.width*0.4,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+    }
+
+    
+    function drawMistVeil681(time) {
+      // Feature 681: Mist Veil — thin mist veil drifting across mid-screen
+      ctx.globalAlpha=0.03;ctx.fillStyle='#cfd8dc';var mvx=(time*8)%(canvas.width+200)-100;ctx.beginPath();ctx.ellipse(mvx,canvas.height*0.45,120,30,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawSporeCloud682(time) {
+      // Feature 682: Spore Cloud — mushroom spores floating in clusters
+      for(var i=0;i<5;i++){var spx=canvas.width*0.6+Math.cos(time*0.3+i*1.3)*50,spy=canvas.height*0.5-i*15-(time*8+i*40)%60;ctx.globalAlpha=0.1;ctx.fillStyle='#d4e157';ctx.beginPath();ctx.arc(spx,spy,1.5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawFrostCrack683(time) {
+      // Feature 683: Frost Crack — ice cracking pattern spreading
+      ctx.globalAlpha=0.06;ctx.strokeStyle='#e1f5fe';ctx.lineWidth=0.8;var fcx=canvas.width*0.2,fcy=canvas.height*0.2;ctx.beginPath();ctx.moveTo(fcx,fcy);ctx.lineTo(fcx+15,fcy-10);ctx.moveTo(fcx,fcy);ctx.lineTo(fcx-12,fcy+8);ctx.moveTo(fcx,fcy);ctx.lineTo(fcx+8,fcy+14);ctx.moveTo(fcx+15,fcy-10);ctx.lineTo(fcx+25,fcy-15);ctx.moveTo(fcx+15,fcy-10);ctx.lineTo(fcx+22,fcy-3);ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawWindGust684(time) {
+      // Feature 684: Wind Gust — sudden wind gust particle burst
+      var wg=Math.sin(time*2)*Math.sin(time*5);if(wg>0.7){ctx.globalAlpha=0.08;ctx.strokeStyle='#b0bec5';ctx.lineWidth=0.5;for(var i=0;i<6;i++){var wy=canvas.height*0.3+i*canvas.height*0.08;ctx.beginPath();ctx.moveTo(0,wy);ctx.lineTo(canvas.width*wg*0.5,wy+Math.sin(i)*5);ctx.stroke();}}ctx.globalAlpha=1;
+    }
+
+    function drawCaveDrop685(time) {
+      // Feature 685: Cave Drop — stalactite water drops falling
+      for(var i=0;i<2;i++){var cdt=((time*1.2+i*2.5)%3);var cdx=canvas.width*0.35+i*canvas.width*0.3;if(cdt>2){var cdy=(cdt-2)*canvas.height*0.5;ctx.globalAlpha=0.15;ctx.fillStyle='#81d4fa';ctx.beginPath();ctx.ellipse(cdx,cdy,2,3,0,0,Math.PI*2);ctx.fill();}else{ctx.globalAlpha=0.1;ctx.fillStyle='#81d4fa';ctx.beginPath();ctx.ellipse(cdx,0,2,3+cdt,0,0,Math.PI*2);ctx.fill();}}ctx.globalAlpha=1;
+    }
+
+    function drawSunSpot686(time) {
+      // Feature 686: Sun Spot — dark sunspot-like patches on bright areas
+      ctx.globalAlpha=0.03;ctx.fillStyle='#37474f';for(var i=0;i<2;i++){var ssx=canvas.width*0.6+i*40+Math.sin(time*0.1+i)*10;var ssy=canvas.height*0.15+Math.cos(time*0.15+i)*8;ctx.beginPath();ctx.arc(ssx,ssy,6+Math.sin(time*0.2+i)*2,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawSilkWeave687(time) {
+      // Feature 687: Silk Weave — silk fabric weave texture shimmer
+      ctx.globalAlpha=0.03;for(var i=0;i<10;i++){var swx=canvas.width*0.4+i*8,swy=canvas.height*0.35;ctx.strokeStyle='hsl('+(time*10+i*10)%360+',30%,70%)';ctx.beginPath();ctx.moveTo(swx,swy);ctx.lineTo(swx+Math.sin(time*0.5+i)*3,swy+30);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawReedSway688(time) {
+      // Feature 688: Reed Sway — tall reeds swaying in marsh wind
+      ctx.globalAlpha=0.08;ctx.strokeStyle='#7cb342';ctx.lineWidth=1.5;for(var i=0;i<5;i++){var rx=canvas.width*0.85+i*12;ctx.beginPath();ctx.moveTo(rx,canvas.height);ctx.quadraticCurveTo(rx+Math.sin(time*0.7+i*0.8)*8,canvas.height*0.7,rx+Math.sin(time*0.5+i)*12,canvas.height*0.5);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawAshFloat689(time) {
+      // Feature 689: Ash Float — volcanic ash particles floating lazily
+      for(var i=0;i<6;i++){var afx=(time*7+i*157)%canvas.width,afy=(time*4+i*113)%canvas.height;ctx.globalAlpha=0.08;ctx.fillStyle='#757575';ctx.beginPath();ctx.arc(afx,afy,1+Math.sin(time+i)*0.5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawCrystalDrip690(time) {
+      // Feature 690: Crystal Drip — crystalline droplets forming and falling
+      for(var i=0;i<2;i++){var crt=((time+i*2)%3.5);var crx=canvas.width*0.45+i*canvas.width*0.2;ctx.globalAlpha=0.12;ctx.fillStyle='#80deea';if(crt<2){ctx.beginPath();ctx.moveTo(crx,10);ctx.lineTo(crx+3,10+crt*3);ctx.lineTo(crx-3,10+crt*3);ctx.closePath();ctx.fill();}else{var cry=10+(crt-2)*60;ctx.beginPath();ctx.moveTo(crx,cry);ctx.lineTo(crx+2,cry+4);ctx.lineTo(crx-2,cry+4);ctx.closePath();ctx.fill();}}ctx.globalAlpha=1;
+    }
+
+    function drawKelpBubble691(time) {
+      // Feature 691: Kelp Bubble — air bubbles rising from kelp
+      for(var i=0;i<4;i++){var kbx=canvas.width*0.65+i*15+Math.sin(time+i)*5;var kby=canvas.height-(time*20+i*80)%canvas.height;ctx.globalAlpha=0.1;ctx.strokeStyle='#80cbc4';ctx.beginPath();ctx.arc(kbx,kby,2+Math.sin(time*2+i)*1,0,Math.PI*2);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawLampPost692(time) {
+      // Feature 692: Lamp Post — distant lamp post glow
+      ctx.globalAlpha=0.08;ctx.strokeStyle='#795548';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(canvas.width*0.1,canvas.height*0.9);ctx.lineTo(canvas.width*0.1,canvas.height*0.7);ctx.stroke();ctx.globalAlpha=0.05;var lpGrad=ctx.createRadialGradient(canvas.width*0.1,canvas.height*0.68,0,canvas.width*0.1,canvas.height*0.68,25);lpGrad.addColorStop(0,'#fff9c4');lpGrad.addColorStop(1,'transparent');ctx.fillStyle=lpGrad;ctx.beginPath();ctx.arc(canvas.width*0.1,canvas.height*0.68,25,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawTidePull693(time) {
+      // Feature 693: Tide Pull — gravitational tide pull visualization
+      ctx.globalAlpha=0.04;ctx.strokeStyle='#4fc3f7';ctx.lineWidth=1;for(var i=0;i<4;i++){var tpa=time*0.2+i*Math.PI/2;var tpr=80+Math.sin(time*0.3)*20;ctx.beginPath();ctx.arc(canvas.width/2,canvas.height/2,tpr,tpa,tpa+0.5);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawSparkWheel694(time) {
+      // Feature 694: Spark Wheel — spinning wheel of tiny sparks
+      ctx.globalAlpha=0.12;var swx=canvas.width*0.7,swy=canvas.height*0.7;for(var i=0;i<8;i++){var swa=i*Math.PI/4+time*1.5,swr=20;ctx.fillStyle=i%2?'#ff6d00':'#ffd600';ctx.beginPath();ctx.arc(swx+Math.cos(swa)*swr,swy+Math.sin(swa)*swr,1.5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawLeafShadow695(time) {
+      // Feature 695: Leaf Shadow — dappled leaf shadow patterns on ground
+      ctx.globalAlpha=0.03;ctx.fillStyle='#1b5e20';for(var i=0;i<4;i++){var lsx=canvas.width*0.3+i*60+Math.sin(time*0.3+i)*10;var lsy=canvas.height*0.85;ctx.beginPath();ctx.ellipse(lsx,lsy,12,6,0.3*Math.sin(time*0.2+i),0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawSootMark696(time) {
+      // Feature 696: Soot Mark — soot smudge marks on edges
+      ctx.globalAlpha=0.04;ctx.fillStyle='#37474f';ctx.beginPath();ctx.ellipse(canvas.width*0.02,canvas.height*0.6,8,12,0.2,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.ellipse(canvas.width*0.98,canvas.height*0.4,6,10,-0.3,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawPearlSheen697(time) {
+      // Feature 697: Pearl Sheen — pearlescent sheen shifting across surface
+      ctx.globalAlpha=0.02;var psx=(time*20)%canvas.width;var psGrad=ctx.createLinearGradient(psx-50,0,psx+50,0);psGrad.addColorStop(0,'transparent');psGrad.addColorStop(0.5,'#e8eaf6');psGrad.addColorStop(1,'transparent');ctx.fillStyle=psGrad;ctx.fillRect(psx-50,0,100,canvas.height);ctx.globalAlpha=1;
+    }
+
+    function drawCoralGlow698(time) {
+      // Feature 698: Coral Glow — bioluminescent coral glow spots
+      for(var i=0;i<4;i++){var cgx=canvas.width*0.7+i*20+Math.sin(i*2)*10,cgy=canvas.height*0.85+Math.cos(i*1.5)*8;ctx.globalAlpha=0.1+Math.sin(time*1.2+i)*0.05;ctx.fillStyle='hsl('+(300+i*20)+',60%,65%)';ctx.beginPath();ctx.arc(cgx,cgy,4,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawWindChimeV2699(time) {
+      // Feature 699: Wind Chime V2 — delicate wind chime tubes swaying
+      ctx.globalAlpha=0.08;ctx.strokeStyle='#b0bec5';ctx.lineWidth=1;var wcx=canvas.width*0.15,wcy=canvas.height*0.05;ctx.beginPath();ctx.moveTo(wcx-15,wcy);ctx.lineTo(wcx+15,wcy);ctx.stroke();for(var i=0;i<5;i++){var wx=wcx-12+i*6,wl=15+i*3;ctx.beginPath();ctx.moveTo(wx,wcy);ctx.lineTo(wx+Math.sin(time*1.5+i*0.5)*3,wcy+wl);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawSeptcentennialCrown700(time) {
+      // Feature 700: Septcentennial Crown — THE SEPTCENTENNIAL — 700 features golden crown celebration
+      ctx.globalAlpha=0.25+Math.sin(time*1.5)*0.1;ctx.fillStyle='#ffd700';var crx=canvas.width/2,cry=canvas.height/2-20;ctx.beginPath();ctx.moveTo(crx-25,cry+10);ctx.lineTo(crx-20,cry-8);ctx.lineTo(crx-10,cry+3);ctx.lineTo(crx,cry-15);ctx.lineTo(crx+10,cry+3);ctx.lineTo(crx+20,cry-8);ctx.lineTo(crx+25,cry+10);ctx.closePath();ctx.fill();for(var i=0;i<5;i++){var ga=i*Math.PI*2/5+time*0.5,gr=50+Math.sin(time*2+i)*10;ctx.fillStyle='hsl('+(40+i*5)+',90%,'+(60+Math.sin(time*3+i)*10)+'%)';ctx.beginPath();ctx.arc(crx+Math.cos(ga)*gr,cry+Math.sin(ga)*gr,3+Math.sin(time*2+i),0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
     }
 
     document.body.appendChild(autoWalkIndicator);
