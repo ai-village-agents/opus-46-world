@@ -46458,6 +46458,10 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      updateSmokeWisps159();
+      updateOdometer161();
+      updateShootingStars162();
+
       updateJellyfish155();
       updateSonarPing157();
 
@@ -47439,6 +47443,10 @@
       drawMagneticField156(time);
       drawSonarPing157();
       drawLightPillars158(time);
+      drawSmokeWisps159();
+      drawAttractionGlow160();
+      drawOdometer161();
+      drawShootingStars162();
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -50975,6 +50983,142 @@
         grad.addColorStop(1, "hsla(" + p.hue + ",50%,70%,0)");
         ctx.fillStyle = grad;
         ctx.fillRect(sx - p.width / 2, sy - p.height / 2, p.width, p.height);
+      }
+    }
+
+
+    // Feature 159: Ambient Smoke Wisps
+    var smokeWisps159 = [];
+    for (var sw159 = 0; sw159 < 8; sw159++) {
+      smokeWisps159.push({
+        x: Math.random() * 1400,
+        y: Math.random() * 1000,
+        size: 15 + Math.random() * 25,
+        alpha: 0.02 + Math.random() * 0.03,
+        driftX: (Math.random() - 0.5) * 0.2,
+        driftY: -0.3 - Math.random() * 0.3,
+        wobble: Math.random() * Math.PI * 2
+      });
+    }
+    function updateSmokeWisps159() {
+      for (var i = 0; i < smokeWisps159.length; i++) {
+        var s = smokeWisps159[i];
+        s.wobble += 0.01;
+        s.x += s.driftX + Math.sin(s.wobble) * 0.3;
+        s.y += s.driftY;
+        s.size += 0.02;
+        s.alpha -= 0.0001;
+        if (s.y < -50 || s.alpha <= 0) {
+          s.y = canvas.height + 30;
+          s.x = Math.random() * canvas.width;
+          s.size = 15 + Math.random() * 25;
+          s.alpha = 0.02 + Math.random() * 0.03;
+        }
+      }
+    }
+    function drawSmokeWisps159() {
+      for (var i = 0; i < smokeWisps159.length; i++) {
+        var s = smokeWisps159[i];
+        var grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.size);
+        grad.addColorStop(0, "rgba(120,120,140," + s.alpha + ")");
+        grad.addColorStop(1, "rgba(80,80,100,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Feature 160: Chamber Attraction Glow
+    function drawAttractionGlow160() {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      var px = player.x - vl;
+      var py = player.y - vt;
+      var nearest = -1;
+      var nearDist = 999999;
+      for (var i = 0; i < chambers.length; i++) {
+        var dx = chambers[i].x - player.x;
+        var dy = chambers[i].y - player.y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d < nearDist && d > 10 && d < 300) {
+          nearDist = d;
+          nearest = i;
+        }
+      }
+      if (nearest < 0) return;
+      var cx = chambers[nearest].x - vl;
+      var cy = chambers[nearest].y - vt;
+      var alpha = (1 - nearDist / 300) * 0.06;
+      ctx.strokeStyle = "rgba(255,220,150," + alpha + ")";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 8]);
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(cx, cy);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Feature 161: Exploration Distance Odometer
+    var totalDistance161 = 0;
+    var lastPos161 = { x: 0, y: 0 };
+    function updateOdometer161() {
+      var dx = player.x - lastPos161.x;
+      var dy = player.y - lastPos161.y;
+      totalDistance161 += Math.sqrt(dx * dx + dy * dy);
+      lastPos161.x = player.x;
+      lastPos161.y = player.y;
+    }
+    function drawOdometer161() {
+      ctx.save();
+      ctx.font = "9px monospace";
+      ctx.fillStyle = "rgba(150,150,180,0.2)";
+      ctx.textAlign = "right";
+      var km = (totalDistance161 / 1000).toFixed(1);
+      ctx.fillText(km + " km", canvas.width - 10, canvas.height - 8);
+      ctx.restore();
+    }
+
+    // Feature 162: Ambient Shooting Stars
+    var shootingStars162 = [];
+    function updateShootingStars162() {
+      if (Math.random() < 0.002 && shootingStars162.length < 2) {
+        var startX = Math.random() * canvas.width;
+        var angle = 0.3 + Math.random() * 0.8;
+        shootingStars162.push({
+          x: startX,
+          y: -10,
+          speed: 8 + Math.random() * 6,
+          angle: angle,
+          life: 1.0,
+          length: 30 + Math.random() * 50
+        });
+      }
+      for (var i = shootingStars162.length - 1; i >= 0; i--) {
+        var s = shootingStars162[i];
+        s.x += Math.cos(s.angle) * s.speed;
+        s.y += Math.sin(s.angle) * s.speed;
+        s.life -= 0.015;
+        if (s.life <= 0 || s.y > canvas.height + 50 || s.x > canvas.width + 50) {
+          shootingStars162.splice(i, 1);
+        }
+      }
+    }
+    function drawShootingStars162() {
+      for (var i = 0; i < shootingStars162.length; i++) {
+        var s = shootingStars162[i];
+        var tx = s.x - Math.cos(s.angle) * s.length;
+        var ty = s.y - Math.sin(s.angle) * s.length;
+        var grad = ctx.createLinearGradient(s.x, s.y, tx, ty);
+        grad.addColorStop(0, "rgba(255,255,255," + (s.life * 0.6) + ")");
+        grad.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y);
+        ctx.lineTo(tx, ty);
+        ctx.stroke();
       }
     }
 
