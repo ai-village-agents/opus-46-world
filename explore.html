@@ -49028,6 +49028,26 @@
       drawThermalRise618(time);
       drawShadowPlay619(time);
       drawTideBell620(time);
+      drawPixelMoth621(time);
+      drawLichenGlow622(time);
+      drawPaperPlane623(time);
+      drawRootNetwork624(time);
+      drawPrismBeam625(time);
+      drawClockHand626(time);
+      drawDandelionSeed627(time);
+      drawTideLine628(time);
+      drawMothDust629(time);
+      drawGemFacet630(time);
+      drawStardustTrail631(time);
+      drawThornVine632(time);
+      drawCloudWisp633(time);
+      drawCrystalGrid634(time);
+      drawSmokeSignal635(time);
+      drawRainDrop636(time);
+      drawPendulumSway637(time);
+      drawWaveCrest638(time);
+      drawMossGlow639(time);
+      drawOrbitTrace640(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -58957,6 +58977,107 @@
     function drawTideBell620(time) {
       // Feature 620: Tide Bell — gentle bell tone ripples synced to tide rhythm
       var tb=Math.sin(time*0.3);if(tb>0.9){for(var i=0;i<3;i++){var tbr=10+i*12+(1-tb)*100;ctx.globalAlpha=0.1*(1-i/3);ctx.strokeStyle='#ce93d8';ctx.lineWidth=1;ctx.beginPath();ctx.arc(canvas.width*0.7,canvas.height*0.3,tbr,0,Math.PI*2);ctx.stroke();}}ctx.globalAlpha=1;
+    }
+
+    
+    function drawPixelMoth621(time) {
+      // Feature 621: Pixel Moth — pixelated moth shapes drawn to bright areas
+      for(var i=0;i<3;i++){var ma=time*1.2+i*2.1,mr=70+Math.sin(time*2.5+i)*25;var mx=canvas.width/2+Math.cos(ma)*mr,my=canvas.height/2+Math.sin(ma)*mr;ctx.globalAlpha=0.15;ctx.fillStyle='#bcaaa4';ctx.save();ctx.translate(mx,my);ctx.rotate(ma);ctx.fillRect(-3,-1,6,2);ctx.fillRect(-1,-3,2,6);ctx.restore();}ctx.globalAlpha=1;
+    }
+
+    function drawLichenGlow622(time) {
+      // Feature 622: Lichen Glow — bioluminescent lichen patches on surfaces
+      for(var i=0;i<5;i++){var lx=canvas.width*0.05+i*canvas.width*0.22,ly=canvas.height*0.92+Math.sin(i*1.3)*10;ctx.globalAlpha=0.1+Math.sin(time*0.8+i)*0.05;ctx.fillStyle='#76ff03';ctx.beginPath();ctx.arc(lx,ly,5+Math.sin(time*0.5+i)*2,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawPaperPlane623(time) {
+      // Feature 623: Paper Plane — folded paper planes gliding across view
+      var ppa=time*0.3,ppx=(time*40)%canvas.width,ppy=canvas.height*0.3+Math.sin(time*0.5)*50;ctx.globalAlpha=0.15;ctx.fillStyle='#f5f5f5';ctx.save();ctx.translate(ppx,ppy);ctx.rotate(-0.2+Math.sin(time)*0.1);ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(-6,4);ctx.lineTo(-3,0);ctx.lineTo(-6,-4);ctx.closePath();ctx.fill();ctx.restore();ctx.globalAlpha=1;
+    }
+
+    function drawRootNetwork624(time) {
+      // Feature 624: Root Network — underground root system spreading pattern
+      ctx.globalAlpha=0.07;ctx.strokeStyle='#6d4c41';ctx.lineWidth=1;var rx=canvas.width*0.5,ry=canvas.height*0.95;ctx.beginPath();ctx.moveTo(rx,ry);for(var i=0;i<4;i++){var ra=Math.PI*0.5+Math.PI*0.3*(i-1.5);ctx.moveTo(rx,ry);ctx.lineTo(rx+Math.cos(ra)*50,ry+Math.sin(ra)*30);ctx.lineTo(rx+Math.cos(ra)*50+Math.cos(ra+0.3)*25,ry+Math.sin(ra)*30+15);}ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawPrismBeam625(time) {
+      // Feature 625: Prism Beam — narrow rainbow beam cutting diagonally
+      ctx.globalAlpha=0.06;var pbGrad=ctx.createLinearGradient(canvas.width*0.1,0,canvas.width*0.9,canvas.height);pbGrad.addColorStop(0,'#f44336');pbGrad.addColorStop(0.17,'#ff9800');pbGrad.addColorStop(0.33,'#ffeb3b');pbGrad.addColorStop(0.5,'#4caf50');pbGrad.addColorStop(0.67,'#2196f3');pbGrad.addColorStop(0.83,'#9c27b0');pbGrad.addColorStop(1,'#e91e63');ctx.fillStyle=pbGrad;ctx.save();ctx.translate(canvas.width*0.1,0);ctx.rotate(0.7+Math.sin(time*0.2)*0.1);ctx.fillRect(0,0,4,canvas.height*1.5);ctx.restore();ctx.globalAlpha=1;
+    }
+
+    function drawClockHand626(time) {
+      // Feature 626: Clock Hand — slow-moving clock hand sweeping
+      ctx.globalAlpha=0.1;ctx.strokeStyle='#ffd600';ctx.lineWidth=1.5;var chx=canvas.width*0.88,chy=canvas.height*0.12,cha=time*0.1;ctx.beginPath();ctx.moveTo(chx,chy);ctx.lineTo(chx+Math.cos(cha)*20,chy+Math.sin(cha)*20);ctx.stroke();ctx.beginPath();ctx.arc(chx,chy,2,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawDandelionSeed627(time) {
+      // Feature 627: Dandelion Seed — dandelion seeds floating on breeze
+      for(var i=0;i<3;i++){var dx=(time*15+i*250)%canvas.width,dy=canvas.height*0.2+Math.sin(time*0.4+i*2)*80+i*30;ctx.globalAlpha=0.15;ctx.strokeStyle='#e0e0e0';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(dx,dy);ctx.lineTo(dx,dy-6);for(var j=0;j<6;j++){var da=j*Math.PI/3;ctx.moveTo(dx,dy-6);ctx.lineTo(dx+Math.cos(da)*4,dy-6+Math.sin(da)*4);}ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawTideLine628(time) {
+      // Feature 628: Tide Line — wet tide line mark oscillating horizontally
+      ctx.globalAlpha=0.08;ctx.strokeStyle='#4db6ac';ctx.lineWidth=1;var tly=canvas.height*0.75+Math.sin(time*0.25)*20;ctx.setLineDash([8,4]);ctx.beginPath();ctx.moveTo(0,tly);ctx.lineTo(canvas.width,tly);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+    }
+
+    function drawMothDust629(time) {
+      // Feature 629: Moth Dust — sparkling dust shed from moth wings
+      for(var i=0;i<6;i++){var mdx=canvas.width*0.4+Math.cos(time*0.9+i)*80,mdy=canvas.height*0.5+Math.sin(time*0.7+i*1.1)*60+(time*5+i*20)%40;ctx.globalAlpha=0.12;ctx.fillStyle='#ffe082';ctx.fillRect(mdx,mdy,1,1);}ctx.globalAlpha=1;
+    }
+
+    function drawGemFacet630(time) {
+      // Feature 630: Gem Facet — geometric gem facet reflections
+      ctx.globalAlpha=0.1;var gx=canvas.width*0.75,gy=canvas.height*0.65;ctx.fillStyle='hsl('+(time*15%360)+',50%,70%)';ctx.beginPath();ctx.moveTo(gx,gy-12);ctx.lineTo(gx+10,gy);ctx.lineTo(gx+6,gy+8);ctx.lineTo(gx-6,gy+8);ctx.lineTo(gx-10,gy);ctx.closePath();ctx.fill();ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.beginPath();ctx.moveTo(gx,gy-12);ctx.lineTo(gx,gy+8);ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawStardustTrail631(time) {
+      // Feature 631: Stardust Trail — glittering trail following view movement
+      for(var i=0;i<8;i++){var stx=canvas.width/2+Math.cos(time*0.5+i*0.8)*100-Math.sin(time*0.3)*50,sty=canvas.height/2+Math.sin(time*0.4+i*0.8)*80;ctx.globalAlpha=0.1+Math.sin(time*2+i)*0.05;ctx.fillStyle='#e1bee7';ctx.fillRect(stx,sty,2,2);}ctx.globalAlpha=1;
+    }
+
+    function drawThornVine632(time) {
+      // Feature 632: Thorn Vine — thorny vine silhouettes along borders
+      ctx.globalAlpha=0.07;ctx.strokeStyle='#4e342e';ctx.lineWidth=1;ctx.beginPath();var tvy=canvas.height*0.02;for(var x=0;x<canvas.width;x+=20){ctx.lineTo(x,tvy+Math.sin(x*0.05+time*0.3)*3);if(x%40<20){ctx.moveTo(x,tvy);ctx.lineTo(x+3,tvy-5);ctx.moveTo(x,tvy);}}ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawCloudWisp633(time) {
+      // Feature 633: Cloud Wisp — thin wispy cloud formations drifting
+      ctx.globalAlpha=0.05;ctx.fillStyle='#eceff1';for(var i=0;i<2;i++){var cwx=(time*10+i*400)%canvas.width,cwy=canvas.height*0.1+i*30;ctx.beginPath();ctx.ellipse(cwx,cwy,40,8,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.ellipse(cwx+15,cwy-5,25,6,0,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawCrystalGrid634(time) {
+      // Feature 634: Crystal Grid — hexagonal crystal grid overlay
+      ctx.globalAlpha=0.04;ctx.strokeStyle='#80cbc4';var cgs=35;for(var row=0;row<3;row++){for(var col=0;col<4;col++){var cgx=canvas.width*0.5+col*cgs*1.5,cgy=canvas.height*0.3+row*cgs*1.7+(col%2)*cgs*0.85;ctx.beginPath();for(var s=0;s<6;s++){var sa=s*Math.PI/3;ctx.lineTo(cgx+Math.cos(sa)*cgs*0.5,cgy+Math.sin(sa)*cgs*0.5);}ctx.closePath();ctx.stroke();}}ctx.globalAlpha=1;
+    }
+
+    function drawSmokeSignal635(time) {
+      // Feature 635: Smoke Signal — rising smoke column with gentle sway
+      ctx.globalAlpha=0.06;ctx.fillStyle='#78909c';for(var i=0;i<5;i++){var ssx=canvas.width*0.4+Math.sin(time*0.5+i*0.5)*15,ssy=canvas.height*0.9-i*25;var ssr=5+i*3;ctx.beginPath();ctx.arc(ssx,ssy,ssr,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawRainDrop636(time) {
+      // Feature 636: Rain Drop — individual large raindrops with splash effect
+      for(var i=0;i<2;i++){var rdt=((time*2+i*1.7)%3);var rdx=canvas.width*0.3+i*canvas.width*0.4;if(rdt<2){var rdy=rdt*canvas.height*0.4;ctx.globalAlpha=0.15;ctx.fillStyle='#64b5f6';ctx.beginPath();ctx.ellipse(rdx,rdy,2,4,0,0,Math.PI*2);ctx.fill();}else{var spr=(rdt-2)*30;ctx.globalAlpha=0.1*(1-(rdt-2));ctx.strokeStyle='#64b5f6';ctx.beginPath();ctx.arc(rdx,canvas.height*0.8,spr,Math.PI,0);ctx.stroke();}}ctx.globalAlpha=1;
+    }
+
+    function drawPendulumSway637(time) {
+      // Feature 637: Pendulum Sway — pendulum swinging with gravity
+      ctx.globalAlpha=0.1;var psx=canvas.width*0.12,psy=10,psa=Math.sin(time*0.8)*0.6;var pbx=psx+Math.sin(psa)*50,pby=psy+Math.cos(psa)*50;ctx.strokeStyle='#bdbdbd';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(psx,psy);ctx.lineTo(pbx,pby);ctx.stroke();ctx.fillStyle='#9e9e9e';ctx.beginPath();ctx.arc(pbx,pby,5,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawWaveCrest638(time) {
+      // Feature 638: Wave Crest — white-cap wave crests rolling across
+      ctx.globalAlpha=0.08;ctx.fillStyle='#e0f7fa';for(var i=0;i<3;i++){var wcx=(time*25+i*300)%canvas.width,wcy=canvas.height*0.88+i*8;ctx.beginPath();ctx.moveTo(wcx-15,wcy);ctx.quadraticCurveTo(wcx,wcy-8-Math.sin(time+i)*3,wcx+15,wcy);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawMossGlow639(time) {
+      // Feature 639: Moss Glow — softly glowing moss patches in corners
+      ctx.globalAlpha=0.06;ctx.fillStyle='#aed581';for(var i=0;i<3;i++){ctx.beginPath();ctx.arc(canvas.width-10-i*12,canvas.height-10-i*8,6+Math.sin(time*0.6+i)*2,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawOrbitTrace640(time) {
+      // Feature 640: Orbit Trace — orbital path traces showing planet trajectories
+      ctx.globalAlpha=0.06;ctx.strokeStyle='#90a4ae';ctx.lineWidth=0.5;for(var i=0;i<3;i++){var or=50+i*25;ctx.setLineDash([3,5]);ctx.beginPath();ctx.arc(canvas.width/2,canvas.height/2,or,0,Math.PI*2);ctx.stroke();}ctx.setLineDash([]);ctx.globalAlpha=0.2;for(var i=0;i<3;i++){var oa=time*0.4/(i+1),or2=50+i*25;ctx.fillStyle='hsl('+(180+i*50)+',50%,65%)';ctx.beginPath();ctx.arc(canvas.width/2+Math.cos(oa)*or2,canvas.height/2+Math.sin(oa)*or2,3-i*0.5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
     }
 
     document.body.appendChild(autoWalkIndicator);
