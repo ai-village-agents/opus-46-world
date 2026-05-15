@@ -46458,6 +46458,27 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      updateAmberShard761(dt);
+      updateRillFlow762(dt);
+      updateMicaFlake763(dt);
+      updateStormEye764(dt);
+      updateBarkKnurl765(dt);
+      updateFoamLace766(dt);
+      updateCoalSeam767(dt);
+      updatePetalFrost768(dt);
+      updateSandRose769(dt);
+      updateLichenWeb770(dt);
+      updateThunderEgg771(dt);
+      updateBogLight772(dt);
+      updateStalagmite773(dt);
+      updateDustBloom774(dt);
+      updateCoralFan775(dt);
+      updateFrostHeave776(dt);
+      updateSilkThread777(dt);
+      updateBasaltCol778(dt);
+      updateWaveGlass779(dt);
+      updateEmberCrown780(dt);
+
       updateLavaThread741(dt);
       updatePineResin742(dt);
       updateFrostFlower743(dt);
@@ -49231,6 +49252,26 @@
       drawFlareDust758(ctx, time);
       drawReedWhistle759(ctx, time);
       drawGlacierBlue760(ctx, time);
+      drawAmberShard761(ctx, time);
+      drawRillFlow762(ctx, time);
+      drawMicaFlake763(ctx, time);
+      drawStormEye764(ctx, time);
+      drawBarkKnurl765(ctx, time);
+      drawFoamLace766(ctx, time);
+      drawCoalSeam767(ctx, time);
+      drawPetalFrost768(ctx, time);
+      drawSandRose769(ctx, time);
+      drawLichenWeb770(ctx, time);
+      drawThunderEgg771(ctx, time);
+      drawBogLight772(ctx, time);
+      drawStalagmite773(ctx, time);
+      drawDustBloom774(ctx, time);
+      drawCoralFan775(ctx, time);
+      drawFrostHeave776(ctx, time);
+      drawSilkThread777(ctx, time);
+      drawBasaltCol778(ctx, time);
+      drawWaveGlass779(ctx, time);
+      drawEmberCrown780(ctx, time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -61489,6 +61530,648 @@
         p.x += Math.sin(p.ph + Date.now()*0.00028) * 0.32;
         p.y += Math.cos(p.ph + Date.now()*0.00038) * 0.32;
         p.ph += 0.0011;
+      }
+    }
+
+    
+
+    // Feature 761: Amber Shard - fossilized amber fragments
+    var drawAmberShard761On = true;
+    var drawAmberShard761Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawAmberShard761Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawAmberShard761(ctx, time) {
+      if (!drawAmberShard761On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 761 * 0.7);
+      for (var ii = 0; ii < drawAmberShard761Arr.length; ii++) {
+        var p = drawAmberShard761Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (761*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateAmberShard761(dt) {
+      for (var ii = 0; ii < drawAmberShard761Arr.length; ii++) {
+        var p = drawAmberShard761Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 762: Rill Flow - tiny stream channels
+    var drawRillFlow762On = true;
+    var drawRillFlow762Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawRillFlow762Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawRillFlow762(ctx, time) {
+      if (!drawRillFlow762On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 762 * 0.7);
+      for (var ii = 0; ii < drawRillFlow762Arr.length; ii++) {
+        var p = drawRillFlow762Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (762*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateRillFlow762(dt) {
+      for (var ii = 0; ii < drawRillFlow762Arr.length; ii++) {
+        var p = drawRillFlow762Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 763: Mica Flake - shimmering mica particles
+    var drawMicaFlake763On = true;
+    var drawMicaFlake763Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawMicaFlake763Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawMicaFlake763(ctx, time) {
+      if (!drawMicaFlake763On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 763 * 0.7);
+      for (var ii = 0; ii < drawMicaFlake763Arr.length; ii++) {
+        var p = drawMicaFlake763Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (763*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateMicaFlake763(dt) {
+      for (var ii = 0; ii < drawMicaFlake763Arr.length; ii++) {
+        var p = drawMicaFlake763Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 764: Storm Eye - calm storm center
+    var drawStormEye764On = true;
+    var drawStormEye764Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawStormEye764Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawStormEye764(ctx, time) {
+      if (!drawStormEye764On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 764 * 0.7);
+      for (var ii = 0; ii < drawStormEye764Arr.length; ii++) {
+        var p = drawStormEye764Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (764*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateStormEye764(dt) {
+      for (var ii = 0; ii < drawStormEye764Arr.length; ii++) {
+        var p = drawStormEye764Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 765: Bark Knurl - twisted bark growth
+    var drawBarkKnurl765On = true;
+    var drawBarkKnurl765Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawBarkKnurl765Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawBarkKnurl765(ctx, time) {
+      if (!drawBarkKnurl765On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 765 * 0.7);
+      for (var ii = 0; ii < drawBarkKnurl765Arr.length; ii++) {
+        var p = drawBarkKnurl765Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (765*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateBarkKnurl765(dt) {
+      for (var ii = 0; ii < drawBarkKnurl765Arr.length; ii++) {
+        var p = drawBarkKnurl765Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 766: Foam Lace - delicate sea foam
+    var drawFoamLace766On = true;
+    var drawFoamLace766Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawFoamLace766Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawFoamLace766(ctx, time) {
+      if (!drawFoamLace766On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 766 * 0.7);
+      for (var ii = 0; ii < drawFoamLace766Arr.length; ii++) {
+        var p = drawFoamLace766Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (766*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateFoamLace766(dt) {
+      for (var ii = 0; ii < drawFoamLace766Arr.length; ii++) {
+        var p = drawFoamLace766Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 767: Coal Seam - dark carbon veins
+    var drawCoalSeam767On = true;
+    var drawCoalSeam767Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawCoalSeam767Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawCoalSeam767(ctx, time) {
+      if (!drawCoalSeam767On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 767 * 0.7);
+      for (var ii = 0; ii < drawCoalSeam767Arr.length; ii++) {
+        var p = drawCoalSeam767Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (767*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateCoalSeam767(dt) {
+      for (var ii = 0; ii < drawCoalSeam767Arr.length; ii++) {
+        var p = drawCoalSeam767Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 768: Petal Frost - frozen flower petals
+    var drawPetalFrost768On = true;
+    var drawPetalFrost768Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawPetalFrost768Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawPetalFrost768(ctx, time) {
+      if (!drawPetalFrost768On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 768 * 0.7);
+      for (var ii = 0; ii < drawPetalFrost768Arr.length; ii++) {
+        var p = drawPetalFrost768Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (768*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updatePetalFrost768(dt) {
+      for (var ii = 0; ii < drawPetalFrost768Arr.length; ii++) {
+        var p = drawPetalFrost768Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 769: Sand Rose - desert rose crystal
+    var drawSandRose769On = true;
+    var drawSandRose769Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawSandRose769Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawSandRose769(ctx, time) {
+      if (!drawSandRose769On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 769 * 0.7);
+      for (var ii = 0; ii < drawSandRose769Arr.length; ii++) {
+        var p = drawSandRose769Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (769*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateSandRose769(dt) {
+      for (var ii = 0; ii < drawSandRose769Arr.length; ii++) {
+        var p = drawSandRose769Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 770: Lichen Web - connected lichen networks
+    var drawLichenWeb770On = true;
+    var drawLichenWeb770Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawLichenWeb770Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawLichenWeb770(ctx, time) {
+      if (!drawLichenWeb770On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 770 * 0.7);
+      for (var ii = 0; ii < drawLichenWeb770Arr.length; ii++) {
+        var p = drawLichenWeb770Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (770*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateLichenWeb770(dt) {
+      for (var ii = 0; ii < drawLichenWeb770Arr.length; ii++) {
+        var p = drawLichenWeb770Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 771: Thunder Egg - geode shell glow
+    var drawThunderEgg771On = true;
+    var drawThunderEgg771Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawThunderEgg771Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawThunderEgg771(ctx, time) {
+      if (!drawThunderEgg771On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 771 * 0.7);
+      for (var ii = 0; ii < drawThunderEgg771Arr.length; ii++) {
+        var p = drawThunderEgg771Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (771*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateThunderEgg771(dt) {
+      for (var ii = 0; ii < drawThunderEgg771Arr.length; ii++) {
+        var p = drawThunderEgg771Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 772: Bog Light - will-o-the-wisp glow
+    var drawBogLight772On = true;
+    var drawBogLight772Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawBogLight772Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawBogLight772(ctx, time) {
+      if (!drawBogLight772On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 772 * 0.7);
+      for (var ii = 0; ii < drawBogLight772Arr.length; ii++) {
+        var p = drawBogLight772Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (772*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateBogLight772(dt) {
+      for (var ii = 0; ii < drawBogLight772Arr.length; ii++) {
+        var p = drawBogLight772Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 773: Stalagmite - rising cave formations
+    var drawStalagmite773On = true;
+    var drawStalagmite773Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawStalagmite773Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawStalagmite773(ctx, time) {
+      if (!drawStalagmite773On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 773 * 0.7);
+      for (var ii = 0; ii < drawStalagmite773Arr.length; ii++) {
+        var p = drawStalagmite773Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (773*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateStalagmite773(dt) {
+      for (var ii = 0; ii < drawStalagmite773Arr.length; ii++) {
+        var p = drawStalagmite773Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 774: Dust Bloom - desert dust flowers
+    var drawDustBloom774On = true;
+    var drawDustBloom774Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawDustBloom774Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawDustBloom774(ctx, time) {
+      if (!drawDustBloom774On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 774 * 0.7);
+      for (var ii = 0; ii < drawDustBloom774Arr.length; ii++) {
+        var p = drawDustBloom774Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (774*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateDustBloom774(dt) {
+      for (var ii = 0; ii < drawDustBloom774Arr.length; ii++) {
+        var p = drawDustBloom774Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 775: Coral Fan - branching coral fans
+    var drawCoralFan775On = true;
+    var drawCoralFan775Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawCoralFan775Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawCoralFan775(ctx, time) {
+      if (!drawCoralFan775On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 775 * 0.7);
+      for (var ii = 0; ii < drawCoralFan775Arr.length; ii++) {
+        var p = drawCoralFan775Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (775*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateCoralFan775(dt) {
+      for (var ii = 0; ii < drawCoralFan775Arr.length; ii++) {
+        var p = drawCoralFan775Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 776: Frost Heave - ground ice expansion
+    var drawFrostHeave776On = true;
+    var drawFrostHeave776Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawFrostHeave776Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawFrostHeave776(ctx, time) {
+      if (!drawFrostHeave776On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 776 * 0.7);
+      for (var ii = 0; ii < drawFrostHeave776Arr.length; ii++) {
+        var p = drawFrostHeave776Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (776*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateFrostHeave776(dt) {
+      for (var ii = 0; ii < drawFrostHeave776Arr.length; ii++) {
+        var p = drawFrostHeave776Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 777: Silk Thread - floating silk strands
+    var drawSilkThread777On = true;
+    var drawSilkThread777Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawSilkThread777Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawSilkThread777(ctx, time) {
+      if (!drawSilkThread777On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 777 * 0.7);
+      for (var ii = 0; ii < drawSilkThread777Arr.length; ii++) {
+        var p = drawSilkThread777Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (777*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateSilkThread777(dt) {
+      for (var ii = 0; ii < drawSilkThread777Arr.length; ii++) {
+        var p = drawSilkThread777Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 778: Basalt Col - columnar basalt shapes
+    var drawBasaltCol778On = true;
+    var drawBasaltCol778Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawBasaltCol778Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawBasaltCol778(ctx, time) {
+      if (!drawBasaltCol778On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 778 * 0.7);
+      for (var ii = 0; ii < drawBasaltCol778Arr.length; ii++) {
+        var p = drawBasaltCol778Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (778*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateBasaltCol778(dt) {
+      for (var ii = 0; ii < drawBasaltCol778Arr.length; ii++) {
+        var p = drawBasaltCol778Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 779: Wave Glass - smooth wave-tumbled glass
+    var drawWaveGlass779On = true;
+    var drawWaveGlass779Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawWaveGlass779Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawWaveGlass779(ctx, time) {
+      if (!drawWaveGlass779On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 779 * 0.7);
+      for (var ii = 0; ii < drawWaveGlass779Arr.length; ii++) {
+        var p = drawWaveGlass779Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (779*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateWaveGlass779(dt) {
+      for (var ii = 0; ii < drawWaveGlass779Arr.length; ii++) {
+        var p = drawWaveGlass779Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
+      }
+    }
+
+    // Feature 780: Ember Crown - ring of glowing embers
+    var drawEmberCrown780On = true;
+    var drawEmberCrown780Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawEmberCrown780Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawEmberCrown780(ctx, time) {
+      if (!drawEmberCrown780On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.12 + 0.06 * Math.sin(time * 0.001 + 780 * 0.7);
+      for (var ii = 0; ii < drawEmberCrown780Arr.length; ii++) {
+        var p = drawEmberCrown780Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -60 && sx < canvas.width+60 && sy > -60 && sy < canvas.height+60) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.28*Math.sin(time*0.0016+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (780*47%360) + ",56%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateEmberCrown780(dt) {
+      for (var ii = 0; ii < drawEmberCrown780Arr.length; ii++) {
+        var p = drawEmberCrown780Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00026) * 0.3;
+        p.y += Math.cos(p.ph + Date.now()*0.00036) * 0.3;
+        p.ph += 0.001;
       }
     }
 
