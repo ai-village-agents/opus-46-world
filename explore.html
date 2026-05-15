@@ -48638,6 +48638,10 @@
       drawFrequencyRipples248(time);
       drawStardustVeil249(time);
       drawCelebrationAurora250(time);
+      drawMoirePattern251(time);
+      drawSignalThreads252(time);
+      drawHaloRing253(time);
+      drawPixelationZone254(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -53172,6 +53176,75 @@
         grad.addColorStop(1, "rgba(" + c[0] + "," + c[1] + "," + c[2] + ",0)");
         ctx.fillStyle = grad;
         ctx.beginPath(); ctx.arc(x, y, 120, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+
+    // Feature 251: Ambient Moiré Pattern
+    function drawMoirePattern251(time) {
+      ctx.strokeStyle = "rgba(140,160,180,0.01)";
+      ctx.lineWidth = 0.3;
+      var phase = time * 0.0002;
+      for (var i = 0; i < 12; i++) {
+        var angle = i * Math.PI / 6 + phase;
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/2 + Math.cos(angle) * 500, canvas.height/2 + Math.sin(angle) * 500);
+        ctx.lineTo(canvas.width/2 - Math.cos(angle) * 500, canvas.height/2 - Math.sin(angle) * 500);
+        ctx.stroke();
+      }
+      for (var i = 0; i < 12; i++) {
+        var angle = i * Math.PI / 6 + phase * 1.1;
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/2 + Math.cos(angle) * 500 + 5, canvas.height/2 + Math.sin(angle) * 500);
+        ctx.lineTo(canvas.width/2 - Math.cos(angle) * 500 + 5, canvas.height/2 - Math.sin(angle) * 500);
+        ctx.stroke();
+      }
+    }
+
+    // Feature 252: Chamber Signal Threads
+    function drawSignalThreads252(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      for (var i = 0; i < chambers.length; i++) {
+        if (!discovered.has(i) || i % 30 !== 0) continue;
+        var ch = chambers[i];
+        var dx = ch.x - cx, dy = ch.y - cy;
+        if (Math.abs(dx) > 500 || Math.abs(dy) > 500) continue;
+        var sx = dx * z + canvas.width/2;
+        var sy = dy * z + canvas.height/2;
+        var t = (time * 0.002 + i) % 6;
+        if (t < 3) {
+          var progress = t / 3;
+          var ex = sx + (canvas.width/2 - sx) * progress;
+          var ey = sy + (canvas.height/2 - sy) * progress;
+          ctx.strokeStyle = "rgba(200,180,140," + ((1 - progress) * 0.05) + ")";
+          ctx.lineWidth = 0.4;
+          ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.stroke();
+        }
+      }
+    }
+
+    // Feature 253: Ambient Halo Ring
+    function drawHaloRing253(time) {
+      var r = 100 + Math.sin(time * 0.0006) * 20;
+      var alpha = 0.02 + Math.sin(time * 0.001) * 0.01;
+      ctx.strokeStyle = "rgba(220,200,180," + alpha + ")";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(canvas.width/2, canvas.height/2, r, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = "rgba(180,200,220," + alpha * 0.7 + ")";
+      ctx.lineWidth = 0.8;
+      ctx.beginPath(); ctx.arc(canvas.width/2, canvas.height/2, r + 15, 0, Math.PI * 2); ctx.stroke();
+    }
+
+    // Feature 254: Ambient Pixelation Zone
+    function drawPixelationZone254(time) {
+      var zone = Math.sin(time * 0.0003) * 0.5 + 0.5;
+      var size = 3 + zone * 2;
+      ctx.fillStyle = "rgba(100,120,140,0.008)";
+      var step = Math.floor(size * 8);
+      for (var x = canvas.width * 0.1; x < canvas.width * 0.15; x += step) {
+        for (var y = canvas.height * 0.1; y < canvas.height * 0.9; y += step) {
+          ctx.fillRect(x, y, step - 1, step - 1);
+        }
       }
     }
 
