@@ -46458,6 +46458,12 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Update Feature 209: Wake Ripples
+      var wrSpeed209 = Math.sqrt(player.vx * player.vx + player.vy * player.vy);
+      if (wrSpeed209 > 2 && Math.random() < 0.08) {
+        wakeRipples209.push({x: player.x, y: player.y, radius: 3, alpha: 0.12});
+      }
+
       // Update Feature 206: Cipher glyphs drift
       for (var cg = 0; cg < cipherGlyphs206.length; cg++) {
         cipherGlyphs206[cg].x += Math.sin(time * cipherGlyphs206[cg].drift + cipherGlyphs206[cg].phase) * 0.15;
@@ -48305,6 +48311,71 @@
         var cgAlpha = 0.08 + 0.06 * Math.sin(time * 0.7 + glyph.phase);
         ctx.fillStyle = "rgba(180, 200, 220, " + cgAlpha + ")";
         ctx.fillText(glyph.symbol, cgSX, cgSY);
+      }
+
+      // Draw Feature 207: Sonar Rings
+      sonar207Timer += dt;
+      if (sonar207Timer > 2) {
+        sonar207Timer = 0;
+        sonarRings207.push({x: player.x, y: player.y, radius: 10, alpha: 0.15});
+      }
+      for (var sr = sonarRings207.length - 1; sr >= 0; sr--) {
+        var ring = sonarRings207[sr];
+        ring.radius += 1.5;
+        ring.alpha -= 0.001;
+        if (ring.alpha <= 0) { sonarRings207.splice(sr, 1); continue; }
+        var srSX = (ring.x - camera.x) * zoom + canvas.width/2;
+        var srSY = (ring.y - camera.y) * zoom + canvas.height/2;
+        ctx.strokeStyle = "rgba(100, 180, 220, " + ring.alpha + ")";
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.arc(srSX, srSY, ring.radius * zoom, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Draw Feature 208: Color Pulse on nearby chambers
+      colorPulse208Timer += 0.016;
+      for (var cp = 0; cp < chambers.length; cp++) {
+        if (cp % 13 !== 0) continue;
+        var cpDx = chambers[cp].x - player.x;
+        var cpDy = chambers[cp].y - player.y;
+        var cpDist = Math.sqrt(cpDx*cpDx + cpDy*cpDy);
+        if (cpDist > 350) continue;
+        var cpSX = (chambers[cp].x - camera.x) * zoom + canvas.width/2;
+        var cpSY = (chambers[cp].y - camera.y) * zoom + canvas.height/2;
+        var cpPulse = (Math.sin(colorPulse208Timer * 2 + cp * 0.3) + 1) / 2;
+        var cpR = parseInt(chambers[cp].color.slice(1,3),16);
+        var cpG = parseInt(chambers[cp].color.slice(3,5),16);
+        var cpB = parseInt(chambers[cp].color.slice(5,7),16);
+        ctx.fillStyle = "rgba(" + Math.floor(cpR * cpPulse) + "," + Math.floor(cpG * cpPulse) + "," + Math.floor(cpB * cpPulse) + ", 0.08)";
+        ctx.beginPath();
+        ctx.arc(cpSX, cpSY, 12 * zoom, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Draw Feature 209: Wake Ripples
+      for (var wr = wakeRipples209.length - 1; wr >= 0; wr--) {
+        var ripple = wakeRipples209[wr];
+        ripple.radius += 0.8;
+        ripple.alpha -= 0.01;
+        if (ripple.alpha <= 0) { wakeRipples209.splice(wr, 1); continue; }
+        var wrSX = (ripple.x - camera.x) * zoom + canvas.width/2;
+        var wrSY = (ripple.y - camera.y) * zoom + canvas.height/2;
+        ctx.strokeStyle = "rgba(150, 180, 220, " + ripple.alpha + ")";
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.ellipse(wrSX, wrSY, ripple.radius * zoom, ripple.radius * zoom * 0.4, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Draw Feature 210: Constellation Map
+      for (var cm = 0; cm < constellationMap210Stars.length; cm++) {
+        var cStar = constellationMap210Stars[cm];
+        var cmAlpha = cStar.brightness * (0.5 + 0.5 * Math.sin(time * cStar.twinkleSpeed));
+        ctx.fillStyle = "rgba(220, 230, 255, " + cmAlpha + ")";
+        ctx.beginPath();
+        ctx.arc(cStar.x, cStar.y, 1.2, 0, Math.PI * 2);
+        ctx.fill();
       }
       drawCompassRose(time);
 
@@ -52290,6 +52361,22 @@
     var glyphSymbols206 = ["∴", "∵", "∷", "∸", "≡", "≢", "≣", "⋅", "⋆", "⋯"];
     for (var cg = 0; cg < 7; cg++) {
       cipherGlyphs206.push({x: Math.random() * 1000 - 500, y: Math.random() * 800 - 400, symbol: glyphSymbols206[cg % glyphSymbols206.length], phase: Math.random() * Math.PI * 2, drift: 0.1 + Math.random() * 0.3});
+    }
+
+    // Feature 207: Ambient Sonar Rings - expanding sonar-like rings from player
+    var sonarRings207 = [];
+    var sonar207Timer = 0;
+
+    // Feature 208: Chamber Color Pulse - chambers slowly pulse between shades
+    var colorPulse208Timer = 0;
+
+    // Feature 209: Exploration Wake Ripples - water-like ripples from movement
+    var wakeRipples209 = [];
+
+    // Feature 210: Ambient Constellation Map - faint star map overlay
+    var constellationMap210Stars = [];
+    for (var cm = 0; cm < 30; cm++) {
+      constellationMap210Stars.push({x: Math.random() * canvas.width, y: Math.random() * canvas.height, brightness: 0.03 + Math.random() * 0.06, twinkleSpeed: 1 + Math.random() * 3});
     }
     document.body.appendChild(autoWalkIndicator);
 
