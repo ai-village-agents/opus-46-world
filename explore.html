@@ -46458,6 +46458,21 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Update Feature 189: Path Glow
+      if (Math.abs(player.vx) > 0.3 || Math.abs(player.vy) > 0.3) {
+        pathGlow189Points.unshift({x: player.x, y: player.y});
+        if (pathGlow189Points.length > 40) pathGlow189Points.pop();
+      }
+
+      // Update Feature 190: Pixel Rain
+      for (var pr = 0; pr < pixelRain190.length; pr++) {
+        pixelRain190[pr].y += pixelRain190[pr].speed;
+        if (pixelRain190[pr].y > canvas.height) {
+          pixelRain190[pr].y = -5;
+          pixelRain190[pr].x = Math.random() * canvas.width;
+        }
+      }
+
       // Update Feature 185: Footprints
       footprint185Timer += dt;
       if (footprint185Timer > 0.25 && (Math.abs(player.vx) > 0.5 || Math.abs(player.vy) > 0.5)) {
@@ -47895,6 +47910,64 @@
         ctx.beginPath();
         ctx.arc(comet.x, comet.y, 2.5, 0, Math.PI * 2);
         ctx.fill();
+      }
+
+      // Draw Feature 187: Wormhole Portals
+      for (var wh = 0; wh < wormholes187.length; wh++) {
+        var worm = wormholes187[wh];
+        worm.rotation += worm.speed * 0.02;
+        var whSX = (player.x + worm.x - camera.x) * zoom + canvas.width/2;
+        var whSY = (player.y + worm.y - camera.y) * zoom + canvas.height/2;
+        for (var wr = 0; wr < 3; wr++) {
+          var wrAngle = worm.rotation + wr * (Math.PI * 2 / 3);
+          var wrRadius = worm.size * zoom * (0.6 + wr * 0.2);
+          ctx.strokeStyle = "rgba(120, 80, 200, " + (0.08 - wr * 0.02) + ")";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.ellipse(whSX, whSY, wrRadius, wrRadius * 0.4, wrAngle, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      // Draw Feature 188: Signal Pulse
+      signalPulse188Timer += 0.016;
+      for (var sp = 0; sp < chambers.length; sp++) {
+        if (sp % 23 !== 0) continue;
+        var spDx = chambers[sp].x - player.x;
+        var spDy = chambers[sp].y - player.y;
+        var spDist = Math.sqrt(spDx*spDx + spDy*spDy);
+        if (spDist > 500) continue;
+        var spSX = (chambers[sp].x - camera.x) * zoom + canvas.width/2;
+        var spSY = (chambers[sp].y - camera.y) * zoom + canvas.height/2;
+        var spWave = (Math.sin(signalPulse188Timer * 3 + sp * 0.5) + 1) / 2;
+        if (spWave > 0.7) {
+          ctx.fillStyle = "rgba(200, 255, 200, " + ((spWave - 0.7) * 0.3) + ")";
+          ctx.beginPath();
+          ctx.arc(spSX, spSY, 4 * zoom, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Draw Feature 189: Path Glow
+      for (var pg = 0; pg < pathGlow189Points.length; pg++) {
+        var pgPt = pathGlow189Points[pg];
+        var pgAge = 1 - pg / pathGlow189Points.length;
+        var pgSX = (pgPt.x - camera.x) * zoom + canvas.width/2;
+        var pgSY = (pgPt.y - camera.y) * zoom + canvas.height/2;
+        var pgGrad = ctx.createRadialGradient(pgSX, pgSY, 0, pgSX, pgSY, 8 * zoom * pgAge);
+        pgGrad.addColorStop(0, "rgba(180, 200, 255, " + (0.06 * pgAge) + ")");
+        pgGrad.addColorStop(1, "rgba(100, 150, 255, 0)");
+        ctx.fillStyle = pgGrad;
+        ctx.beginPath();
+        ctx.arc(pgSX, pgSY, 8 * zoom * pgAge, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Draw Feature 190: Pixel Rain
+      for (var pr = 0; pr < pixelRain190.length; pr++) {
+        var rain = pixelRain190[pr];
+        ctx.fillStyle = "rgba(150, 180, 220, " + rain.alpha + ")";
+        ctx.fillRect(rain.x, rain.y, rain.size, rain.size);
       }
       drawCompassRose(time);
 
@@ -51792,6 +51865,24 @@
     // Feature 186: Ambient Comet Streaks - bright comets crossing the viewport
     var cometStreaks186 = [];
     var comet186SpawnTimer = 0;
+
+    // Feature 187: Ambient Wormhole Portals - swirling portal effects at random locations
+    var wormholes187 = [];
+    for (var wh = 0; wh < 4; wh++) {
+      wormholes187.push({x: Math.random() * 1000 - 500, y: Math.random() * 800 - 400, rotation: Math.random() * Math.PI * 2, size: 20 + Math.random() * 30, speed: 0.5 + Math.random() * 1});
+    }
+
+    // Feature 188: Chamber Signal Pulse - chambers emit periodic signal waves
+    var signalPulse188Timer = 0;
+
+    // Feature 189: Exploration Path Glow - the path behind player glows softly
+    var pathGlow189Points = [];
+
+    // Feature 190: Ambient Pixel Rain - tiny pixel drops fall from above
+    var pixelRain190 = [];
+    for (var pr = 0; pr < 30; pr++) {
+      pixelRain190.push({x: Math.random() * 1200, y: Math.random() * 800, speed: 1 + Math.random() * 3, size: 1 + Math.random() * 2, alpha: 0.1 + Math.random() * 0.2});
+    }
     document.body.appendChild(autoWalkIndicator);
 
 
