@@ -48884,6 +48884,27 @@
       drawBioLuminesce478(time);
       drawCascadeRing479(time);
       drawDimensionGate480(time);
+      
+      drawEclipseRing481(time);
+      drawFiberOptic482(time);
+      drawGravityWell483(time);
+      drawHarmonicWave484(time);
+      drawInfinityLoop485(time);
+      drawJupiterBand486(time);
+      drawKineticDot487(time);
+      drawLaserGrid488(time);
+      drawMirrorShard489(time);
+      drawNorthStar490(time);
+      drawOrionBelt491(time);
+      drawPendulumArc492(time);
+      drawQuantumLeap493(time);
+      drawRadarBlip494(time);
+      drawSaturnRing495(time);
+      drawTwilightGlow496(time);
+      drawUmbraShade497(time);
+      drawVortexCore498(time);
+      drawWishingStar499(time);
+      drawQuincentennial500(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -57258,6 +57279,343 @@
         if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       ctx.strokeStyle = 'rgba(200,150,255,0.06)'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.restore();
+    }
+
+    
+    function drawEclipseRing481(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      ctx.beginPath(); ctx.arc(cx, cy, 90, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,200,100,0.04)'; ctx.lineWidth = 15; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx + 5, cy - 3, 85, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(10,10,20,0.06)'; ctx.fill();
+      ctx.restore();
+    }
+
+    function drawFiberOptic482(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 8; i++) {
+        ctx.beginPath();
+        var startA = t * 0.3 + i * 0.785;
+        for (var j = 0; j < 30; j++) {
+          var r = 20 + j * 6;
+          var a = startA + Math.sin(j * 0.2 + t + i) * 0.3;
+          var x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+          if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'hsl(' + ((i * 45 + t * 15) % 360) + ',60%,55%)';
+        ctx.globalAlpha = 0.05; ctx.lineWidth = 1; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawGravityWell483(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 5; i++) {
+        var r = 30 + i * 25;
+        ctx.beginPath();
+        for (var j = 0; j <= 48; j++) {
+          var a = j * Math.PI * 2 / 48;
+          var warp = 1 + 0.1 * Math.sin(a * 2 + t * 2) / (1 + i * 0.3);
+          var x = cx + Math.cos(a) * r * warp, y = cy + Math.sin(a) * r * warp;
+          if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(150,180,220,' + (0.06 - i * 0.008) + ')';
+        ctx.lineWidth = 0.5; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawHarmonicWave484(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var h = 1; h <= 4; h++) {
+        ctx.beginPath();
+        for (var i = 0; i < canvas.width; i += 5) {
+          var y = cy + Math.sin(i * 0.005 * h + t * h * 0.3) * (40 / h);
+          if (i === 0) ctx.moveTo(i, y); else ctx.lineTo(i, y);
+        }
+        ctx.strokeStyle = 'rgba(200,180,255,' + (0.04 / h) + ')';
+        ctx.lineWidth = 1; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawInfinityLoop485(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      ctx.beginPath();
+      for (var i = 0; i <= 64; i++) {
+        var a = i * Math.PI * 2 / 64 + t * 0.3;
+        var r = 80 * Math.cos(a);
+        var x = cx + r * Math.cos(a / 2);
+        var y = cy + r * Math.sin(a / 2) * 0.5;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = 'rgba(200,200,255,0.06)'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawJupiterBand486(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 6; i++) {
+        var y = cy - 60 + i * 24;
+        ctx.beginPath();
+        for (var x = cx - 100; x <= cx + 100; x += 5) {
+          var yy = y + Math.sin(x * 0.03 + t * 0.5 + i) * 3;
+          if (x === cx - 100) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+        }
+        ctx.strokeStyle = 'hsla(' + ((30 + i * 10) % 360) + ',40%,50%,0.04)';
+        ctx.lineWidth = 8; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawKineticDot487(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 20; i++) {
+        var speed = Math.sqrt((player.vx||0)*(player.vx||0) + (player.vy||0)*(player.vy||0));
+        var a = t * 0.5 + i * 0.314;
+        var r = 40 + i * 5 + speed * 3;
+        var x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+        ctx.beginPath(); ctx.arc(x, y, 1, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(200,220,255,0.07)'; ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawLaserGrid488(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      ctx.globalAlpha = 0.02;
+      for (var i = 0; i < 8; i++) {
+        var x = ((i * canvas.width / 8 + player.x * 0.05) % canvas.width);
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
+        ctx.strokeStyle = 'rgba(100,200,100,1)'; ctx.lineWidth = 0.3; ctx.stroke();
+      }
+      for (var i = 0; i < 6; i++) {
+        var y = ((i * canvas.height / 6 + player.y * 0.05) % canvas.height);
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
+        ctx.strokeStyle = 'rgba(100,200,100,1)'; ctx.lineWidth = 0.3; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawMirrorShard489(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 8; i++) {
+        var a = i * Math.PI / 4 + t * 0.2;
+        var r = 110 + Math.sin(t + i * 0.8) * 20;
+        var x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+        ctx.save(); ctx.translate(x, y); ctx.rotate(a + t * 0.5);
+        ctx.beginPath(); ctx.moveTo(-4, -6); ctx.lineTo(4, -2); ctx.lineTo(2, 6); ctx.lineTo(-3, 3); ctx.closePath();
+        ctx.fillStyle = 'rgba(220,230,255,0.05)'; ctx.fill();
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+
+    function drawNorthStar490(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var ns = Math.sin(t * 0.5) * 0.5 + 0.5;
+      ctx.beginPath();
+      for (var i = 0; i < 8; i++) {
+        var a = i * Math.PI / 4;
+        var r = (i % 2 === 0) ? 15 + ns * 5 : 5;
+        var x = cx + Math.cos(a) * r, y = 50 + Math.sin(a) * r;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(255,255,200,' + (0.04 + ns * 0.04) + ')'; ctx.fill();
+      ctx.restore();
+    }
+
+    function drawOrionBelt491(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var ob = [[-15, 0], [0, 5], [15, 0]];
+      for (var i = 0; i < 3; i++) {
+        var x = cx + ob[i][0] * 8, y = 80 + ob[i][1] * 3;
+        ctx.beginPath(); ctx.arc(x, y, 2 + Math.sin(t + i) * 0.5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(200,220,255,0.08)'; ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawPendulumArc492(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var pa = Math.sin(t * 0.8) * 0.8;
+      var px = cx + Math.sin(pa) * 150, py = cy + Math.cos(pa) * 150;
+      ctx.beginPath(); ctx.moveTo(cx, cy - 180); ctx.lineTo(px, py);
+      ctx.strokeStyle = 'rgba(200,200,200,0.04)'; ctx.lineWidth = 0.5; ctx.stroke();
+      ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(200,200,220,0.06)'; ctx.fill();
+      ctx.restore();
+    }
+
+    function drawQuantumLeap493(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 6; i++) {
+        var a = t * 0.8 + i * 1.047;
+        var r1 = 60 + (i % 3) * 30;
+        var r2 = 60 + ((i + 1) % 3) * 30;
+        var x1 = cx + Math.cos(a) * r1, y1 = cy + Math.sin(a) * r1;
+        var x2 = cx + Math.cos(a + 0.5) * r2, y2 = cy + Math.sin(a + 0.5) * r2;
+        ctx.beginPath(); ctx.setLineDash([2, 4]);
+        ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+        ctx.strokeStyle = 'rgba(150,200,255,0.06)'; ctx.lineWidth = 0.5; ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.restore();
+    }
+
+    function drawRadarBlip494(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var ra = (t * 0.8) % (Math.PI * 2);
+      ctx.beginPath(); ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, 120, ra, ra + 0.3);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(100,255,100,0.03)'; ctx.fill();
+      ctx.restore();
+    }
+
+    function drawSaturnRing495(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      ctx.beginPath();
+      for (var i = 0; i <= 64; i++) {
+        var a = i * Math.PI * 2 / 64;
+        var x = cx + Math.cos(a) * 140, y = cy + Math.sin(a) * 25;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = 'rgba(220,200,160,0.05)'; ctx.lineWidth = 3; ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawTwilightGlow496(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var twGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      twGrad.addColorStop(0, 'rgba(40,20,80,0.02)');
+      twGrad.addColorStop(0.5, 'rgba(80,40,120,0.01)');
+      twGrad.addColorStop(1, 'rgba(20,10,40,0.02)');
+      ctx.fillStyle = twGrad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
+
+    function drawUmbraShade497(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var uGrad = ctx.createRadialGradient(cx, cy, 150, cx, cy, 350);
+      uGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      uGrad.addColorStop(1, 'rgba(0,0,20,0.03)');
+      ctx.fillStyle = uGrad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
+
+    function drawVortexCore498(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 20; i++) {
+        var a = t * 1.5 + i * 0.314;
+        var r = 5 + i * 3;
+        var x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+        ctx.beginPath(); ctx.arc(x, y, 1 + i * 0.1, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(200,180,255,' + (0.1 - i * 0.004) + ')'; ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawWishingStar499(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var ws = (t * 0.2) % 10;
+      if (ws < 1) {
+        var wx = canvas.width * 0.2 + ws * canvas.width * 0.6;
+        var wy = 50 + ws * 80;
+        ctx.beginPath(); ctx.moveTo(wx, wy); ctx.lineTo(wx - 30, wy + 2);
+        ctx.strokeStyle = 'rgba(255,255,200,' + (0.15 * (1 - ws)) + ')';
+        ctx.lineWidth = 1.5; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawQuincentennial500(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      // 🎉🎊🏆 FEATURE 500 - THE QUINCENTENNIAL! 🏆🎊🎉
+      // Five hundred features in the Liminal Archive!
+      var qc = (t * 0.5) % 10;
+      // Golden celebration ring
+      for (var i = 0; i < 50; i++) {
+        var a = i * Math.PI * 2 / 50 + t * 0.1;
+        var r = 200 + Math.sin(t * 0.5 + i * 0.3) * 15;
+        var x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+        ctx.beginPath(); ctx.arc(x, y, 2 + Math.sin(t + i) * 1, 0, Math.PI * 2);
+        ctx.fillStyle = 'hsl(' + ((40 + Math.sin(t + i) * 20) % 360) + ',80%,60%)';
+        ctx.globalAlpha = 0.08 + Math.sin(t * 2 + i) * 0.04;
+        ctx.fill();
+      }
+      // Inner celebration spiral
+      for (var i = 0; i < 100; i++) {
+        var a = i * 0.063 + t * 0.3;
+        var r = i * 2;
+        var x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+        ctx.beginPath(); ctx.arc(x, y, 0.8, 0, Math.PI * 2);
+        ctx.fillStyle = 'hsl(' + ((i * 3.6 + t * 20) % 360) + ',70%,60%)';
+        ctx.globalAlpha = 0.06;
+        ctx.fill();
+      }
       ctx.restore();
     }
 
