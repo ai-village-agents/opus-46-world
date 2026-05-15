@@ -48754,6 +48754,20 @@
       drawDepthLines354(time);
       drawGlowPoints355(time);
       drawParticleOrbitRing356(time);
+      drawAuroraBands357(time);
+      drawTorusProjection358(time);
+      drawPulseDotGrid359(time);
+      drawEnergyArc360(time);
+      drawFeatherFloat361(time);
+      drawRotatingSquareWave362(time);
+      drawLighthouseBeam363(time);
+      drawTesseractEdges364(time);
+      drawPhaseBlobs365(time);
+      drawDopplerRings366(time);
+      drawButterflyCurve367(time);
+      drawPrismScatter368(time);
+      drawResonanceField369(time);
+      drawMobiusStrip370(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -55082,6 +55096,249 @@
         ctx.arc(x,y,1.5,0,Math.PI*2);
         ctx.fill();
       }
+    }
+
+
+    // === FEATURE 357: Ambient Aurora Bands ===
+    function drawAuroraBands357(time) {
+      for (var b = 0; b < 3; b++) {
+        var y = 30 + b * 25;
+        ctx.beginPath();
+        for (var x = 0; x < canvas.width; x += 5) {
+          var dy = Math.sin(x*0.008+time*0.001+b*1.5)*12 + Math.sin(x*0.015+time*0.0015)*6;
+          if (x===0) ctx.moveTo(x,y+dy); else ctx.lineTo(x,y+dy);
+        }
+        var hue = (120+b*30+time*0.01)%360;
+        ctx.strokeStyle = "hsla("+hue+",60%,50%,0.02)";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 358: Ambient Torus Projection ===
+    function drawTorusProjection358(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      ctx.strokeStyle = "rgba(180,160,220,0.02)";
+      ctx.lineWidth = 0.5;
+      for (var i = 0; i < 12; i++) {
+        var a = (i/12)*Math.PI*2;
+        var R = 80, r = 30;
+        ctx.beginPath();
+        for (var t = 0; t < Math.PI*2; t += 0.1) {
+          var x = cx + (R + r*Math.cos(t+time*0.001))*Math.cos(a+time*0.0003);
+          var y = cy + (R + r*Math.cos(t+time*0.001))*Math.sin(a+time*0.0003)*0.4;
+          if (t===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        }
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 359: Ambient Pulse Dot Grid ===
+    function drawPulseDotGrid359(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      for (var x = -4; x <= 4; x++) {
+        for (var y = -4; y <= 4; y++) {
+          var d = Math.sqrt(x*x+y*y);
+          var pulse = Math.sin(time*0.003 - d*0.5)*0.5+0.5;
+          var alpha = 0.02 * pulse;
+          var px = cx + x*25, py = cy + y*25;
+          ctx.fillStyle = "rgba(200,200,220,"+alpha+")";
+          ctx.beginPath();
+          ctx.arc(px,py,1.5,0,Math.PI*2);
+          ctx.fill();
+        }
+      }
+    }
+
+    // === FEATURE 360: Ambient Energy Arc ===
+    function drawEnergyArc360(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      for (var i = 0; i < 3; i++) {
+        var startA = time*0.001 + i*2.1;
+        var endA = startA + 1.2;
+        var r = 90 + i*20;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, startA, endA);
+        ctx.strokeStyle = "rgba(100,200,255,"+(0.04-i*0.01)+")";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 361: Ambient Feather Float ===
+    var featherFloat361 = [];
+    (function() {
+      for (var i = 0; i < 6; i++) {
+        featherFloat361.push({ x: Math.random()*800, y: Math.random()*600, phase: Math.random()*Math.PI*2, speed: 0.15+Math.random()*0.2 });
+      }
+    })();
+    function drawFeatherFloat361(time) {
+      if (typeof featherFloat361 === "undefined") return;
+      for (var i = 0; i < featherFloat361.length; i++) {
+        var f = featherFloat361[i];
+        f.y += f.speed;
+        f.x += Math.sin(time*0.001+f.phase)*0.5;
+        if (f.y > canvas.height+20) { f.y = -20; f.x = Math.random()*canvas.width; }
+        ctx.save();
+        ctx.translate(f.x, f.y);
+        ctx.rotate(Math.sin(time*0.002+f.phase)*0.3);
+        ctx.strokeStyle = "rgba(220,220,200,0.04)";
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(-8,0); ctx.quadraticCurveTo(0,-3,8,0);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-8,0); ctx.quadraticCurveTo(0,3,8,0);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    // === FEATURE 362: Ambient Rotating Square Wave ===
+    function drawRotatingSquareWave362(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      ctx.save();
+      ctx.translate(cx,cy);
+      ctx.rotate(time*0.0003);
+      ctx.beginPath();
+      for (var x = -120; x < 120; x += 4) {
+        var y = (Math.sin(x*0.05+time*0.003)>0?1:-1)*15;
+        if (x===-120) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle = "rgba(180,200,180,0.025)";
+      ctx.lineWidth = 0.7;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // === FEATURE 363: Ambient Lighthouse Beam ===
+    function drawLighthouseBeam363(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      var a = time * 0.001;
+      var len = 300;
+      var spread = 0.15;
+      ctx.beginPath();
+      ctx.moveTo(cx,cy);
+      ctx.lineTo(cx+Math.cos(a-spread)*len, cy+Math.sin(a-spread)*len);
+      ctx.lineTo(cx+Math.cos(a+spread)*len, cy+Math.sin(a+spread)*len);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(255,255,200,0.008)";
+      ctx.fill();
+    }
+
+    // === FEATURE 364: Ambient Tesseract Edges ===
+    function drawTesseractEdges364(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      var s1 = 40, s2 = 25;
+      var a = time*0.0004;
+      var cos_a = Math.cos(a), sin_a = Math.sin(a);
+      var pts1 = [], pts2 = [];
+      for (var i = 0; i < 4; i++) {
+        var pa = (i/4)*Math.PI*2;
+        pts1.push({x:cx+Math.cos(pa)*s1, y:cy+Math.sin(pa)*s1});
+        pts2.push({x:cx+Math.cos(pa+a)*s2, y:cy+Math.sin(pa+a)*s2});
+      }
+      ctx.strokeStyle = "rgba(160,180,220,0.02)";
+      ctx.lineWidth = 0.5;
+      for (var i = 0; i < 4; i++) {
+        var j = (i+1)%4;
+        ctx.beginPath(); ctx.moveTo(pts1[i].x,pts1[i].y); ctx.lineTo(pts1[j].x,pts1[j].y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pts2[i].x,pts2[i].y); ctx.lineTo(pts2[j].x,pts2[j].y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pts1[i].x,pts1[i].y); ctx.lineTo(pts2[i].x,pts2[i].y); ctx.stroke();
+      }
+    }
+
+    // === FEATURE 365: Ambient Phase Blobs ===
+    function drawPhaseBlobs365(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      for (var i = 0; i < 5; i++) {
+        var x = cx + Math.sin(time*0.001+i*1.3)*100;
+        var y = cy + Math.cos(time*0.0012+i*1.7)*80;
+        var r = 15+5*Math.sin(time*0.002+i);
+        var grad = ctx.createRadialGradient(x,y,0,x,y,r);
+        grad.addColorStop(0,"rgba(150,180,220,0.02)");
+        grad.addColorStop(1,"rgba(150,180,220,0)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(x-r,y-r,r*2,r*2);
+      }
+    }
+
+    // === FEATURE 366: Ambient Doppler Rings ===
+    function drawDopplerRings366(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      var ox = Math.sin(time*0.001)*30;
+      for (var i = 0; i < 4; i++) {
+        var r = 40+i*30;
+        ctx.beginPath();
+        ctx.arc(cx+ox, cy, r, 0, Math.PI*2);
+        ctx.strokeStyle = "rgba(180,200,220,"+(0.025-i*0.005)+")";
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 367: Ambient Butterfly Curve ===
+    function drawButterflyCurve367(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      ctx.beginPath();
+      for (var t = 0; t < Math.PI*2; t += 0.05) {
+        var r = Math.exp(Math.sin(t)) - 2*Math.cos(4*t) + Math.pow(Math.sin((2*t-Math.PI)/24),5);
+        r *= 15;
+        var x = cx + r*Math.cos(t+time*0.0003);
+        var y = cy + r*Math.sin(t+time*0.0003);
+        if (t===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle = "rgba(200,180,255,0.02)";
+      ctx.lineWidth = 0.6;
+      ctx.stroke();
+    }
+
+    // === FEATURE 368: Ambient Prism Scatter ===
+    function drawPrismScatter368(time) {
+      var colors = ["rgba(255,100,100,0.02)","rgba(100,255,100,0.02)","rgba(100,100,255,0.02)","rgba(255,255,100,0.02)","rgba(255,100,255,0.02)"];
+      for (var i = 0; i < 5; i++) {
+        var x = canvas.width/2 + Math.cos(time*0.0008+i*1.2)*120;
+        var y = canvas.height/2 + Math.sin(time*0.001+i*1.5)*90;
+        ctx.fillStyle = colors[i];
+        ctx.beginPath();
+        ctx.moveTo(x,y-5); ctx.lineTo(x+4,y+3); ctx.lineTo(x-4,y+3);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    // === FEATURE 369: Ambient Resonance Field ===
+    function drawResonanceField369(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      for (var x = -3; x <= 3; x++) {
+        for (var y = -3; y <= 3; y++) {
+          var d = Math.sqrt(x*x+y*y);
+          if (d > 0) {
+            var wave = Math.sin(d*2 - time*0.003)*0.5+0.5;
+            var px = cx + x*35, py = cy + y*35;
+            ctx.fillStyle = "rgba(180,200,220,"+(wave*0.03)+")";
+            ctx.beginPath();
+            ctx.arc(px,py,2,0,Math.PI*2);
+            ctx.fill();
+          }
+        }
+      }
+    }
+
+    // === FEATURE 370: Ambient Möbius Strip ===
+    function drawMobiusStrip370(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      ctx.beginPath();
+      for (var t = 0; t < Math.PI*2; t += 0.05) {
+        var R = 70;
+        var w = 15 * Math.cos(t/2+time*0.0005);
+        var x = cx + (R+w*Math.cos(t))*Math.cos(t);
+        var y = cy + (R+w*Math.cos(t))*Math.sin(t)*0.4;
+        if (t===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle = "rgba(200,180,200,0.02)";
+      ctx.lineWidth = 0.7;
+      ctx.stroke();
     }
 
     document.body.appendChild(autoWalkIndicator);
