@@ -48988,6 +48988,26 @@
       drawStarMap578(time);
       drawDuneShift579(time);
       drawCandleFlicker580(time);
+      drawTidePool581(time);
+      drawSeedPod582(time);
+      drawThunderGlow583(time);
+      drawRopeBridge584(time);
+      drawDewWeb585(time);
+      drawBambooSway586(time);
+      drawFrostBreath587(time);
+      drawGearTurn588(time);
+      drawCloudShadow589(time);
+      drawBellChime590(time);
+      drawKelpForest591(time);
+      drawPrismSplit592(time);
+      drawFogHorn593(time);
+      drawChalkDust594(time);
+      drawTotemPole595(time);
+      drawAuroraRing596(time);
+      drawInkBlot597(time);
+      drawWindSock598(time);
+      drawMirageWave599(time);
+      drawHexcentennialBloom600(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -58715,6 +58735,107 @@
     function drawCandleFlicker580(time) {
       // Feature 580: Candle Flicker — warm candle-like glows with flickering light
       for(var i=0;i<3;i++){var cx=canvas.width*0.2+i*canvas.width*0.3,cy=canvas.height*0.7;var flick=Math.sin(time*8+i*2)*2;ctx.globalAlpha=0.2+Math.sin(time*5+i)*0.08;ctx.fillStyle='#ffab40';ctx.beginPath();ctx.ellipse(cx,cy+flick,3,6,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=0.1;ctx.fillStyle='#fff3e0';ctx.beginPath();ctx.arc(cx,cy+flick,12,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    
+    function drawTidePool581(time) {
+      // Feature 581: Tide Pool — small circular pools with gentle ripple effects
+      for(var i=0;i<3;i++){var tx=canvas.width*0.15+i*canvas.width*0.3,ty=canvas.height*0.85;var tr=12+Math.sin(time*1.5+i)*4;ctx.globalAlpha=0.12;ctx.strokeStyle='#4dd0e1';ctx.lineWidth=1;ctx.beginPath();ctx.arc(tx,ty,tr,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(tx,ty,tr*0.6,0,Math.PI*2);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawSeedPod582(time) {
+      // Feature 582: Seed Pod — seed-like shapes floating and spinning slowly
+      for(var i=0;i<4;i++){var sa=time*0.6+i*1.57,sx=canvas.width*0.5+Math.cos(sa)*90,sy=canvas.height*0.4+Math.sin(sa*0.7)*60;ctx.globalAlpha=0.18;ctx.fillStyle='#a5d6a7';ctx.beginPath();ctx.ellipse(sx,sy,2,5,sa,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawThunderGlow583(time) {
+      // Feature 583: Thunder Glow — distant lightning-like flashes on horizon
+      var tg=Math.sin(time*4)*Math.sin(time*7);if(tg>0.85){ctx.globalAlpha=0.08*tg;ctx.fillStyle='#e1f5fe';ctx.fillRect(0,0,canvas.width,canvas.height*0.3);}ctx.globalAlpha=1;
+    }
+
+    function drawRopeBridge584(time) {
+      // Feature 584: Rope Bridge — swaying bridge-like lines connecting points
+      ctx.globalAlpha=0.1;ctx.strokeStyle='#8d6e63';ctx.lineWidth=1.5;ctx.beginPath();var ry=canvas.height*0.5;for(var x=canvas.width*0.2;x<canvas.width*0.8;x+=5){ctx.lineTo(x,ry+Math.sin(x*0.02+time*0.8)*15+Math.sin(x*0.05)*5);}ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawDewWeb585(time) {
+      // Feature 585: Dew Web — spider web pattern with dewdrop highlights
+      ctx.globalAlpha=0.08;ctx.strokeStyle='#e0e0e0';var wx=canvas.width*0.85,wy=canvas.height*0.3;for(var i=0;i<6;i++){var wa=i*Math.PI/3;ctx.beginPath();ctx.moveTo(wx,wy);ctx.lineTo(wx+Math.cos(wa)*40,wy+Math.sin(wa)*40);ctx.stroke();}ctx.globalAlpha=0.2;ctx.fillStyle='#b3e5fc';for(var i=0;i<6;i++){var wa=i*Math.PI/3,dr=20+Math.sin(time+i)*5;ctx.beginPath();ctx.arc(wx+Math.cos(wa)*dr,wy+Math.sin(wa)*dr,1.5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawBambooSway586(time) {
+      // Feature 586: Bamboo Sway — tall bamboo-like lines swaying in breeze
+      ctx.globalAlpha=0.1;ctx.strokeStyle='#81c784';ctx.lineWidth=2;for(var i=0;i<4;i++){var bx=canvas.width*0.05+i*30;ctx.beginPath();ctx.moveTo(bx,canvas.height);ctx.quadraticCurveTo(bx+Math.sin(time*0.6+i)*10,canvas.height*0.5,bx+Math.sin(time*0.4+i)*15,canvas.height*0.2);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawFrostBreath587(time) {
+      // Feature 587: Frost Breath — misty breath-like puffs dissipating
+      for(var i=0;i<2;i++){var fr=((time*40+i*100)%160);var fa=0.15*(1-fr/160);ctx.globalAlpha=fa;ctx.fillStyle='#e3f2fd';ctx.beginPath();ctx.arc(canvas.width*0.5+i*60,canvas.height*0.6,fr*0.3+5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawGearTurn588(time) {
+      // Feature 588: Gear Turn — interlocking gear outlines rotating
+      ctx.globalAlpha=0.1;ctx.strokeStyle='#90a4ae';var gx=canvas.width*0.9,gy=canvas.height*0.8;ctx.save();ctx.translate(gx,gy);ctx.rotate(time*0.3);for(var i=0;i<8;i++){var ga=i*Math.PI/4;ctx.beginPath();ctx.moveTo(Math.cos(ga)*12,Math.sin(ga)*12);ctx.lineTo(Math.cos(ga)*18,Math.sin(ga)*18);ctx.stroke();}ctx.beginPath();ctx.arc(0,0,12,0,Math.PI*2);ctx.stroke();ctx.restore();ctx.globalAlpha=1;
+    }
+
+    function drawCloudShadow589(time) {
+      // Feature 589: Cloud Shadow — dark patches drifting across like cloud shadows
+      ctx.globalAlpha=0.04;ctx.fillStyle='#000';var csx=(time*15)%canvas.width;ctx.beginPath();ctx.ellipse(csx,canvas.height*0.5,80,40,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawBellChime590(time) {
+      // Feature 590: Bell Chime — circular ripples emanating like bell sound waves
+      for(var i=0;i<3;i++){var br=((time*50+i*60)%180);ctx.globalAlpha=0.1*(1-br/180);ctx.strokeStyle='#fff59d';ctx.lineWidth=1;ctx.beginPath();ctx.arc(canvas.width*0.5,canvas.height*0.15,br,0,Math.PI*2);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawKelpForest591(time) {
+      // Feature 591: Kelp Forest — tall wavy kelp strands rising from bottom
+      ctx.globalAlpha=0.1;ctx.strokeStyle='#2e7d32';ctx.lineWidth=2;for(var i=0;i<5;i++){var kx=canvas.width*0.6+i*20;ctx.beginPath();ctx.moveTo(kx,canvas.height);for(var y=canvas.height;y>canvas.height*0.4;y-=10){ctx.lineTo(kx+Math.sin(y*0.03+time*0.5+i)*8,y);}ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawPrismSplit592(time) {
+      // Feature 592: Prism Split — white light splitting into rainbow bands
+      ctx.globalAlpha=0.08;var px=canvas.width*0.7,py=canvas.height*0.25;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+15,py+25);ctx.lineTo(px-15,py+25);ctx.closePath();ctx.fill();var cols=['#f44','#ff9800','#ffeb3b','#4caf50','#2196f3','#9c27b0'];for(var i=0;i<6;i++){ctx.strokeStyle=cols[i];ctx.beginPath();ctx.moveTo(px,py+25);ctx.lineTo(px+30+i*8,py+60);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawFogHorn593(time) {
+      // Feature 593: Fog Horn — expanding arc shapes like distant fog horn sound
+      for(var i=0;i<3;i++){var fhr=40+i*25+Math.sin(time*0.5)*10;ctx.globalAlpha=0.06;ctx.strokeStyle='#b0bec5';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,canvas.height*0.5,fhr,-0.4,0.4);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawChalkDust594(time) {
+      // Feature 594: Chalk Dust — chalky particles suspended in air
+      for(var i=0;i<6;i++){var cdx=(time*10+i*143)%canvas.width,cdy=(time*8+i*107)%canvas.height;ctx.globalAlpha=0.12;ctx.fillStyle='#efebe9';ctx.beginPath();ctx.arc(cdx,cdy,1+Math.sin(time+i)*0.5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawTotemPole595(time) {
+      // Feature 595: Totem Pole — stacked geometric faces with subtle animation
+      ctx.globalAlpha=0.1;var tx=canvas.width*0.05,ty=canvas.height*0.3;for(var i=0;i<4;i++){ctx.fillStyle='hsl('+(30+i*40)+',50%,55%)';ctx.fillRect(tx-6,ty+i*16,12,14);ctx.fillStyle='#222';ctx.fillRect(tx-3,ty+i*16+4+Math.sin(time+i)*1,2,2);ctx.fillRect(tx+1,ty+i*16+4+Math.sin(time+i)*1,2,2);}ctx.globalAlpha=1;
+    }
+
+    function drawAuroraRing596(time) {
+      // Feature 596: Aurora Ring — thin aurora-colored ring encircling view
+      ctx.globalAlpha=0.08;ctx.strokeStyle='hsl('+(time*20%360)+',70%,60%)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(canvas.width/2,canvas.height/2,Math.min(canvas.width,canvas.height)*0.45+Math.sin(time*0.3)*10,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawInkBlot597(time) {
+      // Feature 597: Ink Blot — abstract ink blot shapes morphing slowly
+      ctx.globalAlpha=0.06;ctx.fillStyle='#263238';var ix=canvas.width*0.4,iy=canvas.height*0.6;ctx.beginPath();for(var a=0;a<Math.PI*2;a+=0.2){var ir=25+Math.sin(a*3+time*0.4)*12+Math.cos(a*5+time*0.3)*8;ctx.lineTo(ix+Math.cos(a)*ir,iy+Math.sin(a)*ir);}ctx.closePath();ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawWindSock598(time) {
+      // Feature 598: Wind Sock — wind direction indicator fluttering
+      ctx.globalAlpha=0.12;ctx.fillStyle='#ef5350';var wsx=canvas.width*0.95,wsy=canvas.height*0.15;ctx.beginPath();ctx.moveTo(wsx,wsy);ctx.lineTo(wsx-25-Math.sin(time*2)*8,wsy+5+Math.sin(time*3)*3);ctx.lineTo(wsx-25-Math.sin(time*2)*8,wsy-5+Math.sin(time*3)*3);ctx.closePath();ctx.fill();ctx.strokeStyle='#795548';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(wsx,wsy-15);ctx.lineTo(wsx,wsy);ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawMirageWave599(time) {
+      // Feature 599: Mirage Wave — heat mirage distortion effect on horizon
+      ctx.globalAlpha=0.05;ctx.fillStyle='#fff3e0';for(var x=0;x<canvas.width;x+=30){var mh=3+Math.sin(x*0.05+time*2)*2;ctx.fillRect(x,canvas.height*0.45+Math.sin(x*0.02+time)*5,25,mh);}ctx.globalAlpha=1;
+    }
+
+    function drawHexcentennialBloom600(time) {
+      // Feature 600: Hexcentennial Bloom — THE SEXCENTENNIAL — 600 features celebration firework bloom
+      ctx.globalAlpha=0.3+Math.sin(time*2)*0.15;for(var i=0;i<12;i++){var ha=i*Math.PI/6+time*0.2,hr=40+Math.sin(time*1.5+i)*20;var hx=canvas.width/2+Math.cos(ha)*hr,hy=canvas.height/2+Math.sin(ha)*hr;ctx.fillStyle='hsl('+(i*30+time*50)%360+',90%,65%)';ctx.beginPath();ctx.arc(hx,hy,4+Math.sin(time*3+i)*2,0,Math.PI*2);ctx.fill();}for(var i=0;i<6;i++){var ha2=i*Math.PI/3+time*0.1,hr2=70+Math.sin(time+i)*15;var hx2=canvas.width/2+Math.cos(ha2)*hr2,hy2=canvas.height/2+Math.sin(ha2)*hr2;ctx.fillStyle='hsl('+(i*60+time*30)%360+',85%,75%)';ctx.beginPath();ctx.arc(hx2,hy2,3,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
     }
 
     document.body.appendChild(autoWalkIndicator);
