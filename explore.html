@@ -46458,6 +46458,9 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      updateJellyfish155();
+      updateSonarPing157();
+
       updateDustMotes154();
 
       updateRipplePools149();
@@ -47432,6 +47435,10 @@
       drawProximityHum152(time);
       drawMilestoneBeacons153(time);
       drawDustMotes154();
+      drawJellyfish155();
+      drawMagneticField156(time);
+      drawSonarPing157();
+      drawLightPillars158(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -50823,6 +50830,151 @@
         ctx.beginPath();
         ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
         ctx.fill();
+      }
+    }
+
+
+    // Feature 155: Ambient Jellyfish Floaters
+    var jellyfish155 = [];
+    for (var jf155 = 0; jf155 < 5; jf155++) {
+      jellyfish155.push({
+        x: Math.random() * 1200,
+        y: Math.random() * 900,
+        size: 10 + Math.random() * 15,
+        phase: Math.random() * Math.PI * 2,
+        driftX: (Math.random() - 0.5) * 0.2,
+        driftY: -0.15 - Math.random() * 0.2,
+        hue: 200 + Math.random() * 80,
+        alpha: 0.04 + Math.random() * 0.06
+      });
+    }
+    function updateJellyfish155() {
+      for (var i = 0; i < jellyfish155.length; i++) {
+        var j = jellyfish155[i];
+        j.phase += 0.03;
+        j.x += j.driftX + Math.sin(j.phase) * 0.3;
+        j.y += j.driftY;
+        if (j.y < -40) { j.y = canvas.height + 40; j.x = Math.random() * canvas.width; }
+        if (j.x < -40) j.x = canvas.width + 40;
+        if (j.x > canvas.width + 40) j.x = -40;
+      }
+    }
+    function drawJellyfish155() {
+      for (var i = 0; i < jellyfish155.length; i++) {
+        var j = jellyfish155[i];
+        var grad = ctx.createRadialGradient(j.x, j.y - j.size * 0.3, 0, j.x, j.y, j.size);
+        grad.addColorStop(0, "hsla(" + j.hue + ",50%,60%," + (j.alpha * 1.5) + ")");
+        grad.addColorStop(1, "hsla(" + j.hue + ",40%,40%,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.ellipse(j.x, j.y - j.size * 0.3, j.size * 0.8, j.size * 0.5, 0, Math.PI, 0);
+        ctx.fill();
+        ctx.strokeStyle = "hsla(" + j.hue + ",40%,60%," + j.alpha + ")";
+        ctx.lineWidth = 0.5;
+        for (var t = 0; t < 4; t++) {
+          var tx = j.x + (t - 1.5) * (j.size * 0.3);
+          ctx.beginPath();
+          ctx.moveTo(tx, j.y);
+          var ty = j.y;
+          for (var s = 0; s < 4; s++) {
+            ty += 5;
+            tx += Math.sin(j.phase + s + t) * 3;
+            ctx.lineTo(tx, ty);
+          }
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Feature 156: Chamber Magnetic Field Lines
+    function drawMagneticField156(time) {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      var nearby = [];
+      for (var i = 0; i < chambers.length; i++) {
+        var c = chambers[i];
+        var sx = c.x - vl;
+        var sy = c.y - vt;
+        if (sx > -50 && sx < canvas.width + 50 && sy > -50 && sy < canvas.height + 50 && discovered.has(i)) {
+          nearby.push({ sx: sx, sy: sy });
+          if (nearby.length >= 15) break;
+        }
+      }
+      if (nearby.length < 2) return;
+      ctx.strokeStyle = "rgba(120,100,180,0.03)";
+      ctx.lineWidth = 0.5;
+      for (var a = 0; a < nearby.length; a++) {
+        for (var b = a + 1; b < nearby.length; b++) {
+          var dx = nearby[b].sx - nearby[a].sx;
+          var dy = nearby[b].sy - nearby[a].sy;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist > 200) continue;
+          var mx = (nearby[a].sx + nearby[b].sx) / 2;
+          var my = (nearby[a].sy + nearby[b].sy) / 2;
+          var curve = 20 * Math.sin(time * 0.001 + a + b);
+          ctx.beginPath();
+          ctx.moveTo(nearby[a].sx, nearby[a].sy);
+          ctx.quadraticCurveTo(mx + curve, my - curve, nearby[b].sx, nearby[b].sy);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Feature 157: Exploration Sonar Ping
+    var sonarPing157 = { radius: 0, active: false, interval: 300, timer: 0 };
+    function updateSonarPing157() {
+      sonarPing157.timer++;
+      if (sonarPing157.timer >= sonarPing157.interval) {
+        sonarPing157.timer = 0;
+        sonarPing157.radius = 0;
+        sonarPing157.active = true;
+      }
+      if (sonarPing157.active) {
+        sonarPing157.radius += 3;
+        if (sonarPing157.radius > 400) sonarPing157.active = false;
+      }
+    }
+    function drawSonarPing157() {
+      if (!sonarPing157.active) return;
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      var px = player.x - vl;
+      var py = player.y - vt;
+      var alpha = (1 - sonarPing157.radius / 400) * 0.1;
+      ctx.strokeStyle = "rgba(0,255,200," + alpha + ")";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(px, py, sonarPing157.radius, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Feature 158: Ambient Light Pillars
+    var lightPillars158 = [];
+    for (var lp158 = 0; lp158 < 4; lp158++) {
+      lightPillars158.push({
+        x: Math.random() * 800000 - 100000,
+        y: Math.random() * 800000 - 100000,
+        width: 3 + Math.random() * 6,
+        height: 150 + Math.random() * 200,
+        hue: Math.random() * 360,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+    function drawLightPillars158(time) {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      for (var i = 0; i < lightPillars158.length; i++) {
+        var p = lightPillars158[i];
+        var sx = p.x - vl;
+        var sy = p.y - vt;
+        if (sx < -20 || sx > canvas.width + 20) continue;
+        var alpha = 0.03 + 0.02 * Math.sin(time * 0.001 + p.phase);
+        var grad = ctx.createLinearGradient(sx, sy - p.height / 2, sx, sy + p.height / 2);
+        grad.addColorStop(0, "hsla(" + p.hue + ",50%,70%,0)");
+        grad.addColorStop(0.5, "hsla(" + p.hue + ",50%,70%," + alpha + ")");
+        grad.addColorStop(1, "hsla(" + p.hue + ",50%,70%,0)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(sx - p.width / 2, sy - p.height / 2, p.width, p.height);
       }
     }
 
