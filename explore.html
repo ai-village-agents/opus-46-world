@@ -47339,6 +47339,18 @@
       // Feature 112: Region Name Banner
       drawRegionBanner112();
 
+      // Feature 116: Color Breathing (early, behind other elements)
+      drawColorBreathing116(time);
+
+      // Feature 114: Gravity Wells
+      drawGravityWells114(viewLeft55, viewTop55, time);
+
+      // Feature 113: Cloud Wisps
+      drawCloudWisps113(time);
+
+      // Feature 115: Session Timer Ring
+      drawTimerRing115(time);
+
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -49396,6 +49408,110 @@
       ctx.fillStyle = "rgba(200, 200, 220, " + currentRegionBanner112.alpha + ")";
       ctx.fillText(currentRegionBanner112.name, canvas.width / 2, 30);
       ctx.textAlign = "left";
+      ctx.restore();
+    }
+
+
+
+    // Feature 113: Ambient Cloud Wisps
+    var cloudWisps113 = [];
+    function initCloudWisps113() {
+      if (cloudWisps113.length > 0) return;
+      for (var c113 = 0; c113 < 8; c113++) {
+        cloudWisps113.push({
+          x: Math.random() * 1500, y: Math.random() * 800,
+          width: 100 + Math.random() * 200, height: 20 + Math.random() * 40,
+          speed: 0.1 + Math.random() * 0.3, alpha: 0.02 + Math.random() * 0.03,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+    }
+    function drawCloudWisps113(time) {
+      if (typeof ctx === "undefined" || typeof canvas === "undefined") return;
+      initCloudWisps113();
+      ctx.save();
+      for (var c113 = 0; c113 < cloudWisps113.length; c113++) {
+        var w113 = cloudWisps113[c113];
+        var x113 = (w113.x + time * w113.speed * 20) % (canvas.width + w113.width * 2) - w113.width;
+        var y113 = w113.y + Math.sin(time * 0.3 + w113.phase) * 10;
+        var grad113 = ctx.createRadialGradient(x113, y113, 0, x113, y113, w113.width / 2);
+        grad113.addColorStop(0, "rgba(180, 190, 210, " + w113.alpha + ")");
+        grad113.addColorStop(1, "rgba(180, 190, 210, 0)");
+        ctx.fillStyle = grad113;
+        ctx.beginPath();
+        ctx.ellipse(x113, y113, w113.width / 2, w113.height / 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // Feature 114: Chamber Gravity Wells (distortion lines near clusters)
+    function drawGravityWells114(viewLeft, viewTop, time) {
+      if (typeof ctx === "undefined" || typeof chambers === "undefined") return;
+      ctx.save();
+      ctx.strokeStyle = "rgba(100, 80, 180, 0.06)";
+      ctx.lineWidth = 0.5;
+      var step114 = 50;
+      for (var gx114 = -step114; gx114 < canvas.width + step114; gx114 += step114) {
+        for (var gy114 = -step114; gy114 < canvas.height + step114; gy114 += step114) {
+          var wx114 = gx114 + viewLeft; var wy114 = gy114 + viewTop;
+          var fx114 = 0; var fy114 = 0;
+          for (var ci114 = 0; ci114 < chambers.length; ci114 += 50) {
+            var c114 = chambers[ci114];
+            var dx114 = c114.x - wx114; var dy114 = c114.y - wy114;
+            var d114 = Math.sqrt(dx114*dx114 + dy114*dy114);
+            if (d114 < 20 || d114 > 400) continue;
+            var f114 = 50 / (d114 * d114);
+            fx114 += dx114 * f114; fy114 += dy114 * f114;
+          }
+          var mag114 = Math.sqrt(fx114*fx114 + fy114*fy114);
+          if (mag114 < 0.001) continue;
+          ctx.beginPath();
+          ctx.moveTo(gx114, gy114);
+          ctx.lineTo(gx114 + fx114 * 500, gy114 + fy114 * 500);
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+
+    // Feature 115: Session Timer Ring
+    function drawTimerRing115(time) {
+      if (typeof ctx === "undefined" || typeof canvas === "undefined") return;
+      if (typeof startTime === "undefined") return;
+      var elapsed115 = (performance.now() - startTime) / 1000;
+      var minutes115 = elapsed115 / 60;
+      var angle115 = (minutes115 % 60) / 60 * Math.PI * 2;
+      var cx115 = canvas.width - 40; var cy115 = canvas.height - 40;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx115, cy115, 16, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(150, 150, 170, 0.15)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(cx115, cy115, 16, -Math.PI/2, -Math.PI/2 + angle115);
+      ctx.strokeStyle = "rgba(200, 180, 255, 0.4)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.font = "7px monospace";
+      ctx.textAlign = "center";
+      ctx.fillStyle = "rgba(200, 180, 255, 0.4)";
+      ctx.fillText(Math.floor(minutes115) + "m", cx115, cy115 + 3);
+      ctx.textAlign = "left";
+      ctx.restore();
+    }
+
+    // Feature 116: Ambient Color Breathing (background shifts with depth)
+    function drawColorBreathing116(time) {
+      if (typeof ctx === "undefined" || typeof canvas === "undefined") return;
+      var depth116 = player.y / 400000;
+      depth116 = Math.min(Math.max(depth116, 0), 1);
+      var hue116 = 240 - depth116 * 60;
+      var breathe116 = Math.sin(time * 0.2) * 0.01;
+      ctx.save();
+      ctx.fillStyle = "hsla(" + hue116 + ", 30%, 8%, " + (0.03 + breathe116) + ")";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
     }
 
