@@ -48692,6 +48692,20 @@
       drawTwinkleField298(time);
       drawPhaseShift299(time);
       drawTercentenary300(time);
+      drawSpiralGalaxy301(time);
+      drawSignalBeacon302(time);
+      drawPendulumWaves303(time);
+      drawWaveformPulse304(time);
+      drawGravityPool305(time);
+      drawWhisperLines306(time);
+      drawFractalNoise307(time);
+      drawPulseStar308(time);
+      drawDriftMotes309(time);
+      drawInterferencePattern310(time);
+      drawHarmonicCircles311(time);
+      drawBokehDots312(time);
+      drawCurrentLines313(time);
+      drawBloomHaze314(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -54096,6 +54110,236 @@
       ctx.textAlign = "center";
       ctx.fillText("300", canvas.width/2, canvas.height - 30);
       ctx.textAlign = "start";
+    }
+
+
+    // === FEATURE 301: Ambient Spiral Galaxy ===
+    function drawSpiralGalaxy301(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      ctx.beginPath();
+      for (var t = 0; t < 120; t++) {
+        var angle = t * 0.12 + time * 0.0005;
+        var r = t * 1.5;
+        var x = cx + Math.cos(angle) * r;
+        var y = cy + Math.sin(angle) * r * 0.6;
+        var alpha = 0.04 * (1 - t/120);
+        ctx.fillStyle = "rgba(200,180,255," + alpha + ")";
+        ctx.fillRect(x, y, 1.5, 1.5);
+      }
+    }
+
+    // === FEATURE 302: Chamber Signal Beacon ===
+    function drawSignalBeacon302(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      for (var i = 0; i < chambers.length; i++) {
+        var ch = chambers[i];
+        var dx = ch.x - player.x, dy = ch.y - player.y;
+        var d = Math.sqrt(dx*dx+dy*dy);
+        if (d < 300 && d > 100 && discovered.has(i)) {
+          var sx = dx * zoom + cx, sy = dy * zoom + cy;
+          var blink = Math.sin(time * 0.005 + i * 3) > 0.7 ? 0.15 : 0;
+          if (blink > 0) {
+            ctx.fillStyle = "rgba(255,220,100," + blink + ")";
+            ctx.beginPath();
+            ctx.arc(sx, sy, 4 * zoom, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+    }
+
+    // === FEATURE 303: Ambient Pendulum Waves ===
+    function drawPendulumWaves303(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      for (var i = 0; i < 10; i++) {
+        var freq = 0.002 + i * 0.0003;
+        var x = cx - 100 + i * 22;
+        var y = cy + Math.sin(time * freq) * 40;
+        ctx.fillStyle = "rgba(180,220,200,0.06)";
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // === FEATURE 304: Ambient Waveform Pulse ===
+    function drawWaveformPulse304(time) {
+      var cx = canvas.width/2, cy = canvas.height - 60;
+      ctx.beginPath();
+      for (var x = 0; x < canvas.width; x += 3) {
+        var val = Math.sin(x * 0.02 + time * 0.003) * Math.sin(x * 0.005 + time * 0.001) * 8;
+        if (x === 0) ctx.moveTo(x, cy + val);
+        else ctx.lineTo(x, cy + val);
+      }
+      ctx.strokeStyle = "rgba(100,180,200,0.03)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // === FEATURE 305: Ambient Gravity Pool ===
+    function drawGravityPool305(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      for (var ring = 0; ring < 4; ring++) {
+        var r = 30 + ring * 25 + Math.sin(time * 0.002 + ring) * 5;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(120,100,180," + (0.03 - ring * 0.006) + ")";
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 306: Chamber Whisper Lines ===
+    function drawWhisperLines306(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      for (var i = 0; i < chambers.length; i++) {
+        var ch = chambers[i];
+        var dx = ch.x - player.x, dy = ch.y - player.y;
+        var d = Math.sqrt(dx*dx+dy*dy);
+        if (d < 250 && d > 30) {
+          var sx = dx * zoom + cx, sy = dy * zoom + cy;
+          var alpha = 0.03 * (1 - d/250);
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          var mx = (cx + sx)/2 + Math.sin(time*0.003+i)*15;
+          var my = (cy + sy)/2 + Math.cos(time*0.003+i)*15;
+          ctx.quadraticCurveTo(mx, my, sx, sy);
+          ctx.strokeStyle = "rgba(200,200,255," + alpha + ")";
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // === FEATURE 307: Ambient Fractal Noise ===
+    function drawFractalNoise307(time) {
+      var t = time * 0.001;
+      for (var i = 0; i < 20; i++) {
+        var x = (Math.sin(i * 12.9898 + t) * 43758.5453) % canvas.width;
+        var y = (Math.sin(i * 78.233 + t) * 43758.5453) % canvas.height;
+        if (x < 0) x += canvas.width;
+        if (y < 0) y += canvas.height;
+        ctx.fillStyle = "rgba(180,180,200,0.03)";
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+
+    // === FEATURE 308: Ambient Pulse Star ===
+    function drawPulseStar308(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      var points = 5;
+      var outerR = 15 + 5 * Math.sin(time * 0.002);
+      var innerR = 7 + 3 * Math.sin(time * 0.003);
+      ctx.beginPath();
+      for (var i = 0; i <= points * 2; i++) {
+        var a = (i * Math.PI / points) - Math.PI/2 + time * 0.0005;
+        var r = i % 2 === 0 ? outerR : innerR;
+        var x = cx + Math.cos(a) * r;
+        var y = cy + Math.sin(a) * r;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = "rgba(255,220,150,0.04)";
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    }
+
+    // === FEATURE 309: Ambient Drift Motes ===
+    var driftMotes309 = [];
+    (function() {
+      for (var i = 0; i < 15; i++) {
+        driftMotes309.push({ x: Math.random()*1000, y: Math.random()*800, vx: (Math.random()-0.5)*0.3, vy: -0.1-Math.random()*0.2, alpha: Math.random()*0.1 });
+      }
+    })();
+    function drawDriftMotes309(time) {
+      if (typeof driftMotes309 === "undefined") return;
+      for (var i = 0; i < driftMotes309.length; i++) {
+        var m = driftMotes309[i];
+        m.x += m.vx; m.y += m.vy;
+        if (m.y < -10) { m.y = canvas.height + 10; m.x = Math.random() * canvas.width; }
+        if (m.x < -10) m.x = canvas.width + 10;
+        if (m.x > canvas.width + 10) m.x = -10;
+        m.alpha = 0.04 + 0.03 * Math.sin(time * 0.002 + i);
+        ctx.fillStyle = "rgba(220,200,180," + m.alpha + ")";
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // === FEATURE 310: Ambient Interference Pattern ===
+    function drawInterferencePattern310(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      for (var i = 0; i < 8; i++) {
+        var angle = (i / 8) * Math.PI * 2 + time * 0.0008;
+        var r1 = 60 + 20 * Math.sin(time * 0.002 + i);
+        var r2 = 80 + 20 * Math.sin(time * 0.0025 + i * 2);
+        var x1 = cx + Math.cos(angle) * r1;
+        var y1 = cy + Math.sin(angle) * r1;
+        var x2 = cx + Math.cos(angle + 0.3) * r2;
+        var y2 = cy + Math.sin(angle + 0.3) * r2;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = "rgba(150,170,200,0.03)";
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 311: Ambient Harmonic Circles ===
+    function drawHarmonicCircles311(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      for (var h = 1; h <= 4; h++) {
+        var r = 40 * h + 10 * Math.sin(time * 0.001 * h);
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(180,200,220," + (0.02/h) + ")";
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 312: Ambient Bokeh Dots ===
+    function drawBokehDots312(time) {
+      for (var i = 0; i < 8; i++) {
+        var seed = i * 3571;
+        var x = (seed * 13 % 997) / 997 * canvas.width;
+        var y = (seed * 17 % 991) / 991 * canvas.height;
+        var r = 8 + 6 * Math.sin(time * 0.001 + i * 2);
+        var alpha = 0.015 + 0.01 * Math.sin(time * 0.002 + i);
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(200,220,255," + alpha + ")";
+        ctx.fill();
+      }
+    }
+
+    // === FEATURE 313: Ambient Current Lines ===
+    function drawCurrentLines313(time) {
+      ctx.strokeStyle = "rgba(120,180,160,0.03)";
+      ctx.lineWidth = 0.8;
+      for (var i = 0; i < 5; i++) {
+        ctx.beginPath();
+        var y = canvas.height * (0.2 + i * 0.15);
+        for (var x = 0; x < canvas.width; x += 10) {
+          var dy = Math.sin(x * 0.01 + time * 0.001 + i * 1.5) * 10;
+          if (x === 0) ctx.moveTo(x, y + dy);
+          else ctx.lineTo(x, y + dy);
+        }
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 314: Ambient Bloom Haze ===
+    function drawBloomHaze314(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      var r = 120 + 30 * Math.sin(time * 0.001);
+      var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      grad.addColorStop(0, "rgba(200,180,255,0.02)");
+      grad.addColorStop(1, "rgba(200,180,255,0)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
     }
 
     document.body.appendChild(autoWalkIndicator);
