@@ -46410,6 +46410,8 @@
             if (typeof recordDiscoveryTime103 === 'function') recordDiscoveryTime103(i);
             if (typeof triggerDiscoveryFlash110 === 'function') triggerDiscoveryFlash110(chambers[i].x, chambers[i].y);
             if (typeof triggerSoundWave118 === 'function') triggerSoundWave118(chambers[i].x, chambers[i].y);
+            if (typeof triggerResonanceRing122 === 'function') triggerResonanceRing122(chambers[i].x, chambers[i].y);
+
             if (typeof triggerScreenShake === 'function') triggerScreenShake(4, 12); trackVisit(i); spawnDiscoveryRipple(chambers[i].x, chambers[i].y, chambers[i].color);
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
           checkMilestone(discovered.size);
@@ -46454,6 +46456,9 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      updateResonanceRings122();
+      updateCometTrail123();
+
       // Features 117 update
       if (typeof updateMoths117 === "function") updateMoths117();
 
@@ -47367,6 +47372,10 @@
       // Feature 120: Heat Shimmer
       drawHeatShimmer120(viewLeft55, viewTop55, time);
 
+      drawNebulaClouds121(time);
+      drawResonanceRings122();
+      drawCometTrail123();
+      drawConstellationLabels124(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -49653,6 +49662,148 @@
       ctx.restore();
     }
 
+
+
+    // Feature 121: Ambient Nebula Clouds
+    var nebulaClouds121 = [];
+    for (var nc = 0; nc < 8; nc++) {
+      nebulaClouds121.push({
+        x: Math.random() * 800000 - 100000,
+        y: Math.random() * 800000 - 100000,
+        radius: 200 + Math.random() * 400,
+        hue: Math.random() * 360,
+        drift: 0.1 + Math.random() * 0.2,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+    function drawNebulaClouds121(time) {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      for (var i = 0; i < nebulaClouds121.length; i++) {
+        var nc = nebulaClouds121[i];
+        var sx = nc.x - vl;
+        var sy = nc.y - vt;
+        if (sx < -600 || sx > canvas.width + 600 || sy < -600 || sy > canvas.height + 600) continue;
+        var pulse = 0.03 + 0.015 * Math.sin(time * 0.0003 + nc.phase);
+        var grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, nc.radius);
+        grad.addColorStop(0, "hsla(" + nc.hue + ",60%,40%," + pulse + ")");
+        grad.addColorStop(0.5, "hsla(" + ((nc.hue + 30) % 360) + ",50%,30%," + (pulse * 0.5) + ")");
+        grad.addColorStop(1, "hsla(" + nc.hue + ",40%,20%,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(sx, sy, nc.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Feature 122: Chamber Resonance Rings
+    var resonanceRings122 = [];
+    function triggerResonanceRing122(x, y) {
+      if (resonanceRings122.length < 15) {
+        resonanceRings122.push({ x: x, y: y, radius: 0, maxRadius: 80 + Math.random() * 60, alpha: 0.4 });
+      }
+    }
+    function updateResonanceRings122() {
+      for (var i = resonanceRings122.length - 1; i >= 0; i--) {
+        resonanceRings122[i].radius += 0.5;
+        resonanceRings122[i].alpha *= 0.995;
+        if (resonanceRings122[i].radius > resonanceRings122[i].maxRadius || resonanceRings122[i].alpha < 0.01) {
+          resonanceRings122.splice(i, 1);
+        }
+      }
+    }
+    function drawResonanceRings122() {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      for (var i = 0; i < resonanceRings122.length; i++) {
+        var r = resonanceRings122[i];
+        var sx = r.x - vl;
+        var sy = r.y - vt;
+        if (sx < -200 || sx > canvas.width + 200 || sy < -200 || sy > canvas.height + 200) continue;
+        ctx.strokeStyle = "rgba(180,220,255," + r.alpha + ")";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(sx, sy, r.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        if (r.radius > 10) {
+          ctx.strokeStyle = "rgba(180,220,255," + (r.alpha * 0.4) + ")";
+          ctx.beginPath();
+          ctx.arc(sx, sy, r.radius * 0.6, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Feature 123: Exploration Comet Trail
+    var cometParticles123 = [];
+    function updateCometTrail123() {
+      var speed = Math.sqrt(player.vx * player.vx + player.vy * player.vy);
+      if (speed > 1.5 && cometParticles123.length < 30) {
+        cometParticles123.push({
+          x: player.x + (Math.random() - 0.5) * 6,
+          y: player.y + (Math.random() - 0.5) * 6,
+          vx: -player.vx * 0.1 + (Math.random() - 0.5) * 0.5,
+          vy: -player.vy * 0.1 + (Math.random() - 0.5) * 0.5,
+          life: 1.0,
+          size: 2 + Math.random() * 3,
+          hue: 30 + Math.random() * 30
+        });
+      }
+      for (var i = cometParticles123.length - 1; i >= 0; i--) {
+        var p = cometParticles123[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.02;
+        p.size *= 0.98;
+        if (p.life <= 0) cometParticles123.splice(i, 1);
+      }
+    }
+    function drawCometTrail123() {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      for (var i = 0; i < cometParticles123.length; i++) {
+        var p = cometParticles123[i];
+        var sx = p.x - vl;
+        var sy = p.y - vt;
+        ctx.fillStyle = "hsla(" + p.hue + ",80%,60%," + (p.life * 0.6) + ")";
+        ctx.beginPath();
+        ctx.arc(sx, sy, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Feature 124: Chamber Constellation Labels
+    function drawConstellationLabels124(time) {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      var groups = {};
+      for (var i = 0; i < chambers.length; i++) {
+        var c = chambers[i];
+        var sx = c.x - vl;
+        var sy = c.y - vt;
+        if (sx < -100 || sx > canvas.width + 100 || sy < -100 || sy > canvas.height + 100) continue;
+        var gx = Math.floor(c.x / 2000);
+        var gy = Math.floor(c.y / 2000);
+        var key = gx + "," + gy;
+        if (!groups[key]) groups[key] = { count: 0, tx: 0, ty: 0, tag: c.tag || "unknown" };
+        groups[key].count++;
+        groups[key].tx += sx;
+        groups[key].ty += sy;
+      }
+      ctx.font = "9px monospace";
+      ctx.textAlign = "center";
+      var alpha = 0.12 + 0.04 * Math.sin(time * 0.0005);
+      for (var k in groups) {
+        var g = groups[k];
+        if (g.count >= 3) {
+          var cx = g.tx / g.count;
+          var cy = g.ty / g.count - 30;
+          ctx.fillStyle = "rgba(200,200,255," + alpha + ")";
+          ctx.fillText(g.tag.toUpperCase(), cx, cy);
+        }
+      }
+      ctx.textAlign = "left";
+    }
 
     document.body.appendChild(autoWalkIndicator);
 
