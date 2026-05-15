@@ -48654,6 +48654,10 @@
       drawPulseCrown264(time);
       drawDepthScanner265(time);
       drawFractalBranches266(time);
+      drawChromaticAberration267(time);
+      drawOrbitMoons268(time);
+      drawHorizonStars269(time);
+      drawMagneticField270(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -53464,6 +53468,66 @@
         branch(ex, ey, len * 0.65, angle + 0.5 + sway, depth - 1);
       }
       branch(ox, oy, 40, Math.PI, 5);
+    }
+
+
+    // Feature 267: Ambient Chromatic Aberration
+    function drawChromaticAberration267(time) {
+      var offset = Math.sin(time * 0.0006) * 2;
+      ctx.fillStyle = "rgba(255,0,0,0.003)";
+      ctx.fillRect(offset, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "rgba(0,0,255,0.003)";
+      ctx.fillRect(-offset, 0, canvas.width, canvas.height);
+    }
+
+    // Feature 268: Chamber Orbit Moons
+    function drawOrbitMoons268(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      for (var i = 0; i < chambers.length; i++) {
+        if (!discovered.has(i) || i % 60 !== 0) continue;
+        var ch = chambers[i];
+        var dx = ch.x - cx, dy = ch.y - cy;
+        if (Math.abs(dx) > 400 || Math.abs(dy) > 400) continue;
+        var sx = dx * z + canvas.width/2;
+        var sy = dy * z + canvas.height/2;
+        var moonAngle = time * 0.002 + i;
+        var mr = 15 * z;
+        var mx = sx + Math.cos(moonAngle) * mr;
+        var my = sy + Math.sin(moonAngle) * mr;
+        ctx.fillStyle = "rgba(200,200,220,0.06)";
+        ctx.beginPath(); ctx.arc(mx, my, 1.5 * z, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    // Feature 269: Ambient Horizon Stars
+    function drawHorizonStars269(time) {
+      for (var i = 0; i < 20; i++) {
+        var seed = i * 3571;
+        var x = (seed * 97) % canvas.width;
+        var y = (i < 10) ? (seed * 23) % 30 : canvas.height - ((seed * 31) % 30);
+        var twinkle = Math.sin(time * 0.002 + seed * 0.1) * 0.5 + 0.5;
+        ctx.fillStyle = "rgba(220,220,255," + (twinkle * 0.15) + ")";
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+
+    // Feature 270: Ambient Magnetic Field
+    function drawMagneticField270(time) {
+      ctx.strokeStyle = "rgba(140,160,200,0.012)";
+      ctx.lineWidth = 0.4;
+      var cx2 = canvas.width/2, cy2 = canvas.height/2;
+      for (var i = 0; i < 8; i++) {
+        var startAngle = i * Math.PI / 4 + time * 0.0002;
+        ctx.beginPath();
+        for (var t = 0; t < 2; t += 0.05) {
+          var r = 30 + t * 80;
+          var a = startAngle + t * 0.8;
+          var x = cx2 + Math.cos(a) * r;
+          var y = cy2 + Math.sin(a) * r * 0.6;
+          if (t === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
     }
 
     document.body.appendChild(autoWalkIndicator);
