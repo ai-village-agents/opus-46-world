@@ -46409,6 +46409,7 @@
             if (typeof addToTimeline98 === 'function') addToTimeline98(i);
             if (typeof recordDiscoveryTime103 === 'function') recordDiscoveryTime103(i);
             if (typeof triggerDiscoveryFlash110 === 'function') triggerDiscoveryFlash110(chambers[i].x, chambers[i].y);
+            if (typeof triggerSoundWave118 === 'function') triggerSoundWave118(chambers[i].x, chambers[i].y);
             if (typeof triggerScreenShake === 'function') triggerScreenShake(4, 12); trackVisit(i); spawnDiscoveryRipple(chambers[i].x, chambers[i].y, chambers[i].color);
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
           checkMilestone(discovered.size);
@@ -46453,6 +46454,9 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Features 117 update
+      if (typeof updateMoths117 === "function") updateMoths117();
+
       // Features 109-112 updates
       if (typeof updateFireflies109 === "function") updateFireflies109();
       if (typeof updateMomentumTrail111 === "function") updateMomentumTrail111();
@@ -47350,6 +47354,18 @@
 
       // Feature 115: Session Timer Ring
       drawTimerRing115(time);
+
+      // Feature 119: Category Threads
+      drawCategoryThreads119(viewLeft55, viewTop55);
+
+      // Feature 117: Moths
+      drawMoths117(viewLeft55, viewTop55);
+
+      // Feature 118: Sound Waves
+      drawSoundWaves118(viewLeft55, viewTop55);
+
+      // Feature 120: Heat Shimmer
+      drawHeatShimmer120(viewLeft55, viewTop55, time);
 
       drawCompassRose(time);
 
@@ -49512,6 +49528,128 @@
       ctx.save();
       ctx.fillStyle = "hsla(" + hue116 + ", 30%, 8%, " + (0.03 + breathe116) + ")";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
+
+
+
+    // Feature 117: Ambient Moth Particles (circle discovered chambers)
+    var moths117 = [];
+    function updateMoths117() {
+      if (typeof moths117 === "undefined" || typeof chambers === "undefined") return;
+      if (moths117.length < 12 && Math.random() < 0.02 && discovered.size > 0) {
+        var discArr117 = Array.from(discovered);
+        var ri117 = discArr117[Math.floor(Math.random() * discArr117.length)];
+        var c117 = chambers[ri117];
+        if (c117) {
+          var dx117 = c117.x - player.x; var dy117 = c117.y - player.y;
+          if (Math.sqrt(dx117*dx117 + dy117*dy117) < 500) {
+            moths117.push({ cx: c117.x, cy: c117.y, angle: Math.random() * Math.PI * 2,
+              radius: 20 + Math.random() * 30, speed: 0.02 + Math.random() * 0.03,
+              size: 1.5 + Math.random() * 1.5, life: 200 + Math.floor(Math.random() * 200) });
+          }
+        }
+      }
+      for (var m117 = moths117.length - 1; m117 >= 0; m117--) {
+        moths117[m117].angle += moths117[m117].speed;
+        moths117[m117].life--;
+        if (moths117[m117].life <= 0) moths117.splice(m117, 1);
+      }
+    }
+    function drawMoths117(viewLeft, viewTop) {
+      if (typeof ctx === "undefined" || typeof moths117 === "undefined") return;
+      ctx.save();
+      for (var m117 = 0; m117 < moths117.length; m117++) {
+        var moth117 = moths117[m117];
+        var mx117 = moth117.cx + Math.cos(moth117.angle) * moth117.radius - viewLeft;
+        var my117 = moth117.cy + Math.sin(moth117.angle) * moth117.radius - viewTop;
+        if (mx117 < -20 || mx117 > canvas.width + 20 || my117 < -20 || my117 > canvas.height + 20) continue;
+        var fadeAlpha117 = Math.min(moth117.life / 50, 1) * 0.5;
+        ctx.beginPath();
+        ctx.arc(mx117, my117, moth117.size, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(220, 200, 170, " + fadeAlpha117 + ")";
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // Feature 118: Discovery Sound Wave visual
+    var soundWaves118 = [];
+    function triggerSoundWave118(x, y) {
+      for (var w118 = 0; w118 < 3; w118++) {
+        soundWaves118.push({ x: x, y: y, radius: 5 + w118 * 15, maxRadius: 120 + w118 * 30, alpha: 0.4 - w118 * 0.1 });
+      }
+    }
+    function drawSoundWaves118(viewLeft, viewTop) {
+      if (typeof ctx === "undefined" || typeof soundWaves118 === "undefined") return;
+      ctx.save();
+      for (var w118 = soundWaves118.length - 1; w118 >= 0; w118--) {
+        var sw118 = soundWaves118[w118];
+        sw118.radius += 2;
+        sw118.alpha -= 0.005;
+        if (sw118.alpha <= 0 || sw118.radius > sw118.maxRadius) { soundWaves118.splice(w118, 1); continue; }
+        var sx118 = sw118.x - viewLeft; var sy118 = sw118.y - viewTop;
+        ctx.beginPath();
+        ctx.arc(sx118, sy118, sw118.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(255, 220, 100, " + sw118.alpha + ")";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Feature 119: Chamber Category Threads (connect same-category chambers)
+    function drawCategoryThreads119(viewLeft, viewTop) {
+      if (typeof ctx === "undefined" || typeof chambers === "undefined") return;
+      ctx.save();
+      ctx.lineWidth = 0.3;
+      var visible119 = [];
+      for (var i119 = 0; i119 < chambers.length; i119++) {
+        var c119 = chambers[i119];
+        var sx119 = c119.x - viewLeft; var sy119 = c119.y - viewTop;
+        if (sx119 >= -100 && sx119 <= canvas.width + 100 && sy119 >= -100 && sy119 <= canvas.height + 100) {
+          visible119.push(i119);
+        }
+        if (visible119.length > 30) break;
+      }
+      for (var a119 = 0; a119 < visible119.length; a119++) {
+        for (var b119 = a119 + 1; b119 < visible119.length; b119++) {
+          var ca119 = chambers[visible119[a119]]; var cb119 = chambers[visible119[b119]];
+          if (ca119.tag !== cb119.tag) continue;
+          var dx119 = ca119.x - cb119.x; var dy119 = ca119.y - cb119.y;
+          if (Math.sqrt(dx119*dx119 + dy119*dy119) > 500) continue;
+          ctx.beginPath();
+          ctx.moveTo(ca119.x - viewLeft, ca119.y - viewTop);
+          ctx.lineTo(cb119.x - viewLeft, cb119.y - viewTop);
+          ctx.strokeStyle = (ca119.color || "#888");
+          ctx.globalAlpha = 0.08;
+          ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+
+    // Feature 120: Exploration Heat Shimmer
+    function drawHeatShimmer120(viewLeft, viewTop, time) {
+      if (typeof ctx === "undefined" || typeof canvas === "undefined") return;
+      if (typeof discovered === "undefined" || discovered.size < 3) return;
+      ctx.save();
+      var shimmerY120 = canvas.height - 60;
+      ctx.globalAlpha = 0.04;
+      for (var s120 = 0; s120 < 5; s120++) {
+        var offset120 = Math.sin(time * 2 + s120 * 0.7) * 3;
+        ctx.beginPath();
+        ctx.moveTo(0, shimmerY120 + s120 * 4 + offset120);
+        for (var x120 = 0; x120 < canvas.width; x120 += 20) {
+          var y120 = shimmerY120 + s120 * 4 + Math.sin(x120 * 0.02 + time * 3 + s120) * 2 + offset120;
+          ctx.lineTo(x120, y120);
+        }
+        ctx.strokeStyle = "rgba(255, 200, 100, 1)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
       ctx.restore();
     }
 
