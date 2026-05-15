@@ -46458,6 +46458,27 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      updateGeodeSplit801(dt);
+      updatePinePitch802(dt);
+      updateTideSurge803(dt);
+      updateFlameSeed804(dt);
+      updateRockFlour805(dt);
+      updateMothScale806(dt);
+      updateIronBloom807(dt);
+      updateCloudReef808(dt);
+      updateBoneCoral809(dt);
+      updateDewPrism810(dt);
+      updateAshBloom811(dt);
+      updateTideJewel812(dt);
+      updateRootCrown813(dt);
+      updateStormSeed814(dt);
+      updateChalkReef815(dt);
+      updateEmberLeaf816(dt);
+      updateFrostLens817(dt);
+      updateSandJewel818(dt);
+      updateWaveSeed819(dt);
+      updateCrystalBloom820(dt);
+
       updateSporeBurst781(dt);
       updateTidePool782(dt);
       updateEmberDrift783(dt);
@@ -49313,6 +49334,26 @@
       drawStormGlass798(ctx, time);
       drawDawnMist799(ctx, time);
       drawOctSun800(ctx, time);
+      drawGeodeSplit801(ctx, time);
+      drawPinePitch802(ctx, time);
+      drawTideSurge803(ctx, time);
+      drawFlameSeed804(ctx, time);
+      drawRockFlour805(ctx, time);
+      drawMothScale806(ctx, time);
+      drawIronBloom807(ctx, time);
+      drawCloudReef808(ctx, time);
+      drawBoneCoral809(ctx, time);
+      drawDewPrism810(ctx, time);
+      drawAshBloom811(ctx, time);
+      drawTideJewel812(ctx, time);
+      drawRootCrown813(ctx, time);
+      drawStormSeed814(ctx, time);
+      drawChalkReef815(ctx, time);
+      drawEmberLeaf816(ctx, time);
+      drawFrostLens817(ctx, time);
+      drawSandJewel818(ctx, time);
+      drawWaveSeed819(ctx, time);
+      drawCrystalBloom820(ctx, time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -62871,6 +62912,648 @@
       ctx.restore();
     }
     function updateOctSun800(dt) { }
+
+    
+
+    // Feature 801: Geode Split - cracked geode interior
+    var drawGeodeSplit801On = true;
+    var drawGeodeSplit801Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawGeodeSplit801Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawGeodeSplit801(ctx, time) {
+      if (!drawGeodeSplit801On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 801 * 0.6);
+      for (var ii = 0; ii < drawGeodeSplit801Arr.length; ii++) {
+        var p = drawGeodeSplit801Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (801*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateGeodeSplit801(dt) {
+      for (var ii = 0; ii < drawGeodeSplit801Arr.length; ii++) {
+        var p = drawGeodeSplit801Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 802: Pine Pitch - dark pine tar drops
+    var drawPinePitch802On = true;
+    var drawPinePitch802Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawPinePitch802Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawPinePitch802(ctx, time) {
+      if (!drawPinePitch802On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 802 * 0.6);
+      for (var ii = 0; ii < drawPinePitch802Arr.length; ii++) {
+        var p = drawPinePitch802Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (802*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updatePinePitch802(dt) {
+      for (var ii = 0; ii < drawPinePitch802Arr.length; ii++) {
+        var p = drawPinePitch802Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 803: Tide Surge - rushing tidal wave
+    var drawTideSurge803On = true;
+    var drawTideSurge803Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawTideSurge803Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawTideSurge803(ctx, time) {
+      if (!drawTideSurge803On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 803 * 0.6);
+      for (var ii = 0; ii < drawTideSurge803Arr.length; ii++) {
+        var p = drawTideSurge803Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (803*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateTideSurge803(dt) {
+      for (var ii = 0; ii < drawTideSurge803Arr.length; ii++) {
+        var p = drawTideSurge803Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 804: Flame Seed - fire-born seeds
+    var drawFlameSeed804On = true;
+    var drawFlameSeed804Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawFlameSeed804Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawFlameSeed804(ctx, time) {
+      if (!drawFlameSeed804On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 804 * 0.6);
+      for (var ii = 0; ii < drawFlameSeed804Arr.length; ii++) {
+        var p = drawFlameSeed804Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (804*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateFlameSeed804(dt) {
+      for (var ii = 0; ii < drawFlameSeed804Arr.length; ii++) {
+        var p = drawFlameSeed804Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 805: Rock Flour - glacial rock dust
+    var drawRockFlour805On = true;
+    var drawRockFlour805Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawRockFlour805Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawRockFlour805(ctx, time) {
+      if (!drawRockFlour805On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 805 * 0.6);
+      for (var ii = 0; ii < drawRockFlour805Arr.length; ii++) {
+        var p = drawRockFlour805Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (805*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateRockFlour805(dt) {
+      for (var ii = 0; ii < drawRockFlour805Arr.length; ii++) {
+        var p = drawRockFlour805Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 806: Moth Scale - iridescent wing scales
+    var drawMothScale806On = true;
+    var drawMothScale806Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawMothScale806Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawMothScale806(ctx, time) {
+      if (!drawMothScale806On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 806 * 0.6);
+      for (var ii = 0; ii < drawMothScale806Arr.length; ii++) {
+        var p = drawMothScale806Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (806*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateMothScale806(dt) {
+      for (var ii = 0; ii < drawMothScale806Arr.length; ii++) {
+        var p = drawMothScale806Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 807: Iron Bloom - iron flower formations
+    var drawIronBloom807On = true;
+    var drawIronBloom807Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawIronBloom807Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawIronBloom807(ctx, time) {
+      if (!drawIronBloom807On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 807 * 0.6);
+      for (var ii = 0; ii < drawIronBloom807Arr.length; ii++) {
+        var p = drawIronBloom807Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (807*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateIronBloom807(dt) {
+      for (var ii = 0; ii < drawIronBloom807Arr.length; ii++) {
+        var p = drawIronBloom807Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 808: Cloud Reef - floating cloud structures
+    var drawCloudReef808On = true;
+    var drawCloudReef808Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawCloudReef808Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawCloudReef808(ctx, time) {
+      if (!drawCloudReef808On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 808 * 0.6);
+      for (var ii = 0; ii < drawCloudReef808Arr.length; ii++) {
+        var p = drawCloudReef808Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (808*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateCloudReef808(dt) {
+      for (var ii = 0; ii < drawCloudReef808Arr.length; ii++) {
+        var p = drawCloudReef808Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 809: Bone Coral - skeletal coral branches
+    var drawBoneCoral809On = true;
+    var drawBoneCoral809Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawBoneCoral809Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawBoneCoral809(ctx, time) {
+      if (!drawBoneCoral809On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 809 * 0.6);
+      for (var ii = 0; ii < drawBoneCoral809Arr.length; ii++) {
+        var p = drawBoneCoral809Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (809*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateBoneCoral809(dt) {
+      for (var ii = 0; ii < drawBoneCoral809Arr.length; ii++) {
+        var p = drawBoneCoral809Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 810: Dew Prism - rainbow dew refractions
+    var drawDewPrism810On = true;
+    var drawDewPrism810Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawDewPrism810Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawDewPrism810(ctx, time) {
+      if (!drawDewPrism810On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 810 * 0.6);
+      for (var ii = 0; ii < drawDewPrism810Arr.length; ii++) {
+        var p = drawDewPrism810Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (810*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateDewPrism810(dt) {
+      for (var ii = 0; ii < drawDewPrism810Arr.length; ii++) {
+        var p = drawDewPrism810Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 811: Ash Bloom - ash flower formations
+    var drawAshBloom811On = true;
+    var drawAshBloom811Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawAshBloom811Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawAshBloom811(ctx, time) {
+      if (!drawAshBloom811On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 811 * 0.6);
+      for (var ii = 0; ii < drawAshBloom811Arr.length; ii++) {
+        var p = drawAshBloom811Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (811*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateAshBloom811(dt) {
+      for (var ii = 0; ii < drawAshBloom811Arr.length; ii++) {
+        var p = drawAshBloom811Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 812: Tide Jewel - sea-polished gems
+    var drawTideJewel812On = true;
+    var drawTideJewel812Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawTideJewel812Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawTideJewel812(ctx, time) {
+      if (!drawTideJewel812On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 812 * 0.6);
+      for (var ii = 0; ii < drawTideJewel812Arr.length; ii++) {
+        var p = drawTideJewel812Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (812*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateTideJewel812(dt) {
+      for (var ii = 0; ii < drawTideJewel812Arr.length; ii++) {
+        var p = drawTideJewel812Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 813: Root Crown - exposed root circles
+    var drawRootCrown813On = true;
+    var drawRootCrown813Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawRootCrown813Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawRootCrown813(ctx, time) {
+      if (!drawRootCrown813On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 813 * 0.6);
+      for (var ii = 0; ii < drawRootCrown813Arr.length; ii++) {
+        var p = drawRootCrown813Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (813*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateRootCrown813(dt) {
+      for (var ii = 0; ii < drawRootCrown813Arr.length; ii++) {
+        var p = drawRootCrown813Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 814: Storm Seed - storm-carried seeds
+    var drawStormSeed814On = true;
+    var drawStormSeed814Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawStormSeed814Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawStormSeed814(ctx, time) {
+      if (!drawStormSeed814On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 814 * 0.6);
+      for (var ii = 0; ii < drawStormSeed814Arr.length; ii++) {
+        var p = drawStormSeed814Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (814*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateStormSeed814(dt) {
+      for (var ii = 0; ii < drawStormSeed814Arr.length; ii++) {
+        var p = drawStormSeed814Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 815: Chalk Reef - white chalk formations
+    var drawChalkReef815On = true;
+    var drawChalkReef815Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawChalkReef815Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawChalkReef815(ctx, time) {
+      if (!drawChalkReef815On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 815 * 0.6);
+      for (var ii = 0; ii < drawChalkReef815Arr.length; ii++) {
+        var p = drawChalkReef815Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (815*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateChalkReef815(dt) {
+      for (var ii = 0; ii < drawChalkReef815Arr.length; ii++) {
+        var p = drawChalkReef815Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 816: Ember Leaf - glowing leaf edges
+    var drawEmberLeaf816On = true;
+    var drawEmberLeaf816Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawEmberLeaf816Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawEmberLeaf816(ctx, time) {
+      if (!drawEmberLeaf816On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 816 * 0.6);
+      for (var ii = 0; ii < drawEmberLeaf816Arr.length; ii++) {
+        var p = drawEmberLeaf816Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (816*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateEmberLeaf816(dt) {
+      for (var ii = 0; ii < drawEmberLeaf816Arr.length; ii++) {
+        var p = drawEmberLeaf816Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 817: Frost Lens - ice magnification
+    var drawFrostLens817On = true;
+    var drawFrostLens817Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawFrostLens817Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawFrostLens817(ctx, time) {
+      if (!drawFrostLens817On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 817 * 0.6);
+      for (var ii = 0; ii < drawFrostLens817Arr.length; ii++) {
+        var p = drawFrostLens817Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (817*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateFrostLens817(dt) {
+      for (var ii = 0; ii < drawFrostLens817Arr.length; ii++) {
+        var p = drawFrostLens817Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 818: Sand Jewel - desert gem sparkles
+    var drawSandJewel818On = true;
+    var drawSandJewel818Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawSandJewel818Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawSandJewel818(ctx, time) {
+      if (!drawSandJewel818On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 818 * 0.6);
+      for (var ii = 0; ii < drawSandJewel818Arr.length; ii++) {
+        var p = drawSandJewel818Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (818*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateSandJewel818(dt) {
+      for (var ii = 0; ii < drawSandJewel818Arr.length; ii++) {
+        var p = drawSandJewel818Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 819: Wave Seed - ocean-borne seeds
+    var drawWaveSeed819On = true;
+    var drawWaveSeed819Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawWaveSeed819Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawWaveSeed819(ctx, time) {
+      if (!drawWaveSeed819On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 819 * 0.6);
+      for (var ii = 0; ii < drawWaveSeed819Arr.length; ii++) {
+        var p = drawWaveSeed819Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (819*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateWaveSeed819(dt) {
+      for (var ii = 0; ii < drawWaveSeed819Arr.length; ii++) {
+        var p = drawWaveSeed819Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
+
+    // Feature 820: Crystal Bloom - blooming crystal formations
+    var drawCrystalBloom820On = true;
+    var drawCrystalBloom820Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawCrystalBloom820Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawCrystalBloom820(ctx, time) {
+      if (!drawCrystalBloom820On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0014 + 820 * 0.6);
+      for (var ii = 0; ii < drawCrystalBloom820Arr.length; ii++) {
+        var p = drawCrystalBloom820Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.27*Math.sin(time*0.0019+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (820*31%360) + ",54%,64%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateCrystalBloom820(dt) {
+      for (var ii = 0; ii < drawCrystalBloom820Arr.length; ii++) {
+        var p = drawCrystalBloom820Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00024) * 0.31;
+        p.y += Math.cos(p.ph + Date.now()*0.00034) * 0.31;
+        p.ph += 0.0013;
+      }
+    }
 
     document.body.appendChild(autoWalkIndicator);
 
