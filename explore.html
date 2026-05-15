@@ -48670,6 +48670,10 @@
       drawAetherGlow280(time);
       drawWovenGrid281(time);
       drawPhotonTrail282(time);
+      drawWindStreaks283(time);
+      drawResonanceHum284(time);
+      drawDissolvePixels285(time);
+      drawHorizonLine286(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -53743,6 +53747,66 @@
           ctx.fillRect(p.trail[t].x, p.trail[t].y, 1, 1);
         }
       }
+    }
+
+
+    // Feature 283: Ambient Wind Streaks
+    function drawWindStreaks283(time) {
+      ctx.strokeStyle = "rgba(180,200,220,0.015)";
+      ctx.lineWidth = 0.4;
+      for (var i = 0; i < 12; i++) {
+        var seed = i * 4219;
+        var y = (seed * 7) % canvas.height;
+        var x = ((time * 0.1 + seed) % (canvas.width + 100)) - 50;
+        var len = 30 + (seed % 40);
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + len, y + (Math.sin(seed) * 3)); ctx.stroke();
+      }
+    }
+
+    // Feature 284: Chamber Resonance Hum
+    function drawResonanceHum284(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      var px = player.x, py = player.y;
+      for (var i = 0; i < chambers.length; i++) {
+        if (!discovered.has(i)) continue;
+        var ch = chambers[i];
+        var dx = ch.x - px, dy = ch.y - py;
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist > 150) continue;
+        var sx = (ch.x - cx) * z + canvas.width/2;
+        var sy = (ch.y - cy) * z + canvas.height/2;
+        var intensity = (150 - dist) / 150;
+        var wave = Math.sin(time * 0.006 * intensity + i) * 0.5 + 0.5;
+        ctx.strokeStyle = "rgba(200,180,255," + (wave * intensity * 0.04) + ")";
+        ctx.lineWidth = 0.5;
+        ctx.beginPath(); ctx.arc(sx, sy, (5 + wave * 5) * z, 0, Math.PI * 2); ctx.stroke();
+      }
+    }
+
+    // Feature 285: Ambient Dissolve Pixels
+    function drawDissolvePixels285(time) {
+      var t = (time * 0.0001) % 1;
+      for (var i = 0; i < 20; i++) {
+        var seed = i * 8461;
+        var x = (seed * 13) % canvas.width;
+        var y = (seed * 29) % canvas.height;
+        var alpha = Math.sin(time * 0.002 + seed) * 0.5 + 0.5;
+        if (alpha > 0.7) {
+          ctx.fillStyle = "rgba(200,200,220," + ((alpha - 0.7) * 0.2) + ")";
+          ctx.fillRect(x, y, 2, 2);
+        }
+      }
+    }
+
+    // Feature 286: Ambient Horizon Line
+    function drawHorizonLine286(time) {
+      var y = canvas.height * 0.5 + Math.sin(time * 0.0003) * 30;
+      ctx.strokeStyle = "rgba(160,140,180,0.01)";
+      ctx.lineWidth = 0.5;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+      ctx.strokeStyle = "rgba(140,160,180,0.008)";
+      ctx.beginPath(); ctx.moveTo(0, y - 20); ctx.lineTo(canvas.width, y - 20); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, y + 20); ctx.lineTo(canvas.width, y + 20); ctx.stroke();
     }
 
     document.body.appendChild(autoWalkIndicator);
