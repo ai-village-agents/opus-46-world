@@ -46456,6 +46456,9 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      updateEchoShadows126();
+      if (typeof updateStellarWind128 === 'function') updateStellarWind128(time);
+
       updateResonanceRings122();
       updateCometTrail123();
 
@@ -47376,6 +47379,10 @@
       drawResonanceRings122();
       drawCometTrail123();
       drawConstellationLabels124(time);
+      drawAmbientTide125(time);
+      drawEchoShadows126();
+      drawDepthRings127(time);
+      drawStellarWind128();
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -49803,6 +49810,130 @@
         }
       }
       ctx.textAlign = "left";
+    }
+
+
+    // Feature 125: Ambient Tide Effect
+    function drawAmbientTide125(time) {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      ctx.save();
+      ctx.globalAlpha = 0.025;
+      for (var wave = 0; wave < 3; wave++) {
+        var wavePhase = time * 0.0002 + wave * 2.1;
+        var waveY = (Math.sin(wavePhase) * 0.5 + 0.5) * canvas.height;
+        ctx.strokeStyle = "rgba(100,150,255,0.3)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (var wx = 0; wx < canvas.width; wx += 8) {
+          var ty = waveY + Math.sin(wx * 0.008 + wavePhase) * 40 + Math.sin(wx * 0.003 + time * 0.0001) * 20;
+          if (wx === 0) ctx.moveTo(wx, ty); else ctx.lineTo(wx, ty);
+        }
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Feature 126: Chamber Echo Shadows
+    var echoShadows126 = [];
+    var echoShadowTimer126 = 0;
+    function updateEchoShadows126() {
+      echoShadowTimer126++;
+      if (echoShadowTimer126 % 120 === 0 && visitHistory.length > 0) {
+        var recentIdx = visitHistory[visitHistory.length - 1 - Math.floor(Math.random() * Math.min(5, visitHistory.length))];
+        if (recentIdx !== undefined && chambers[recentIdx]) {
+          echoShadows126.push({
+            x: chambers[recentIdx].x,
+            y: chambers[recentIdx].y,
+            color: chambers[recentIdx].color || "#888",
+            alpha: 0.3,
+            size: 15
+          });
+        }
+      }
+      for (var i = echoShadows126.length - 1; i >= 0; i--) {
+        echoShadows126[i].alpha -= 0.003;
+        echoShadows126[i].size += 0.1;
+        if (echoShadows126[i].alpha <= 0) echoShadows126.splice(i, 1);
+      }
+    }
+    function drawEchoShadows126() {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      for (var i = 0; i < echoShadows126.length; i++) {
+        var e = echoShadows126[i];
+        var sx = e.x - vl;
+        var sy = e.y - vt;
+        if (sx < -100 || sx > canvas.width + 100 || sy < -100 || sy > canvas.height + 100) continue;
+        ctx.strokeStyle = e.color.replace(")", "," + e.alpha + ")").replace("rgb(", "rgba(");
+        if (ctx.strokeStyle === e.color) ctx.strokeStyle = "rgba(150,150,200," + e.alpha + ")";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 5]);
+        ctx.beginPath();
+        ctx.arc(sx, sy, e.size, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    // Feature 127: Exploration Depth Rings
+    function drawDepthRings127(time) {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      var px = player.x - vl;
+      var py = player.y - vt;
+      var discoveredCount = discovered.size || 0;
+      var rings = Math.min(Math.floor(discoveredCount / 100) + 1, 5);
+      for (var r = 1; r <= rings; r++) {
+        var radius = r * 80 + Math.sin(time * 0.001 + r) * 5;
+        var alpha = 0.06 - r * 0.01;
+        if (alpha < 0.01) alpha = 0.01;
+        ctx.strokeStyle = "rgba(120,180,255," + alpha + ")";
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.arc(px, py, radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    // Feature 128: Ambient Stellar Wind
+    var stellarWindParticles128 = [];
+    var stellarWindAngle128 = 0;
+    for (var sw = 0; sw < 25; sw++) {
+      stellarWindParticles128.push({
+        x: Math.random() * 2000 - 500,
+        y: Math.random() * 1500 - 300,
+        speed: 0.3 + Math.random() * 0.7,
+        alpha: 0.1 + Math.random() * 0.15,
+        len: 8 + Math.random() * 15
+      });
+    }
+    function updateStellarWind128(time) {
+      stellarWindAngle128 = Math.sin(time * 0.00005) * 0.5 + 0.3;
+      var dx = Math.cos(stellarWindAngle128);
+      var dy = Math.sin(stellarWindAngle128);
+      for (var i = 0; i < stellarWindParticles128.length; i++) {
+        var p = stellarWindParticles128[i];
+        p.x += dx * p.speed;
+        p.y += dy * p.speed;
+        if (p.x > 1600) p.x = -200;
+        if (p.x < -300) p.x = 1500;
+        if (p.y > 1200) p.y = -200;
+        if (p.y < -300) p.y = 1100;
+      }
+    }
+    function drawStellarWind128() {
+      var dx = Math.cos(stellarWindAngle128);
+      var dy = Math.sin(stellarWindAngle128);
+      for (var i = 0; i < stellarWindParticles128.length; i++) {
+        var p = stellarWindParticles128[i];
+        ctx.strokeStyle = "rgba(180,200,255," + p.alpha + ")";
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x + dx * p.len, p.y + dy * p.len);
+        ctx.stroke();
+      }
     }
 
     document.body.appendChild(autoWalkIndicator);
