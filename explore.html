@@ -46456,6 +46456,9 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      updatePrismFlares129(time);
+      updateWaypointMarkers131();
+
       updateEchoShadows126();
       if (typeof updateStellarWind128 === 'function') updateStellarWind128(time);
 
@@ -47383,6 +47386,10 @@
       drawEchoShadows126();
       drawDepthRings127(time);
       drawStellarWind128();
+      drawPrismFlares129();
+      drawOrbitTrails130(time);
+      drawWaypointMarkers131();
+      drawVoidTendrils132(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -49932,6 +49939,149 @@
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
         ctx.lineTo(p.x + dx * p.len, p.y + dy * p.len);
+        ctx.stroke();
+      }
+    }
+
+
+    // Feature 129: Ambient Prism Flares
+    var prismFlares129 = [];
+    function updatePrismFlares129(time) {
+      if (Math.random() < 0.005 && prismFlares129.length < 5) {
+        var vl = camera.x - canvas.width / 2;
+        var vt = camera.y - canvas.height / 2;
+        for (var i = 0; i < chambers.length; i++) {
+          var c = chambers[i];
+          var sx = c.x - vl;
+          var sy = c.y - vt;
+          if (sx > 0 && sx < canvas.width && sy > 0 && sy < canvas.height && discovered.has(i)) {
+            prismFlares129.push({ x: sx, y: sy, life: 1.0, angle: Math.random() * Math.PI * 2 });
+            break;
+          }
+        }
+      }
+      for (var i = prismFlares129.length - 1; i >= 0; i--) {
+        prismFlares129[i].life -= 0.015;
+        if (prismFlares129[i].life <= 0) prismFlares129.splice(i, 1);
+      }
+    }
+    function drawPrismFlares129() {
+      for (var i = 0; i < prismFlares129.length; i++) {
+        var f = prismFlares129[i];
+        var colors = ["rgba(255,0,0,", "rgba(255,165,0,", "rgba(255,255,0,", "rgba(0,255,0,", "rgba(0,100,255,", "rgba(128,0,255,"];
+        for (var c = 0; c < colors.length; c++) {
+          var a = f.angle + c * 0.15;
+          var len = 30 * f.life;
+          ctx.strokeStyle = colors[c] + (f.life * 0.3) + ")";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(f.x, f.y);
+          ctx.lineTo(f.x + Math.cos(a) * len, f.y + Math.sin(a) * len);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Feature 130: Chamber Orbit Trails
+    function drawOrbitTrails130(time) {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      for (var i = 0; i < chambers.length; i += 50) {
+        var c = chambers[i];
+        var sx = c.x - vl;
+        var sy = c.y - vt;
+        if (sx < -100 || sx > canvas.width + 100 || sy < -100 || sy > canvas.height + 100) continue;
+        if (!discovered.has(i)) continue;
+        var orbitR = 25 + (i % 20);
+        var alpha = 0.04 + 0.02 * Math.sin(time * 0.0004 + i);
+        ctx.strokeStyle = "rgba(180,180,220," + alpha + ")";
+        ctx.lineWidth = 0.5;
+        ctx.setLineDash([2, 6]);
+        ctx.beginPath();
+        ctx.arc(sx, sy, orbitR, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        var dotAngle = time * 0.001 + i;
+        var dx = sx + Math.cos(dotAngle) * orbitR;
+        var dy = sy + Math.sin(dotAngle) * orbitR;
+        ctx.fillStyle = "rgba(200,200,255," + (alpha * 3) + ")";
+        ctx.beginPath();
+        ctx.arc(dx, dy, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Feature 131: Exploration Waypoint Markers
+    var waypointMarkers131 = [];
+    var waypointTimer131 = 0;
+    function updateWaypointMarkers131() {
+      waypointTimer131++;
+      if (waypointTimer131 % 300 === 0 && waypointMarkers131.length < 20) {
+        var dx = (Math.random() - 0.5) * 600;
+        var dy = (Math.random() - 0.5) * 600;
+        waypointMarkers131.push({
+          x: player.x + dx,
+          y: player.y + dy,
+          alpha: 0.4,
+          decay: 0.0005
+        });
+      }
+      for (var i = waypointMarkers131.length - 1; i >= 0; i--) {
+        waypointMarkers131[i].alpha -= waypointMarkers131[i].decay;
+        if (waypointMarkers131[i].alpha <= 0) waypointMarkers131.splice(i, 1);
+      }
+    }
+    function drawWaypointMarkers131() {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      for (var i = 0; i < waypointMarkers131.length; i++) {
+        var w = waypointMarkers131[i];
+        var sx = w.x - vl;
+        var sy = w.y - vt;
+        if (sx < -20 || sx > canvas.width + 20 || sy < -20 || sy > canvas.height + 20) continue;
+        ctx.fillStyle = "rgba(255,220,100," + w.alpha + ")";
+        ctx.beginPath();
+        ctx.moveTo(sx, sy - 5);
+        ctx.lineTo(sx + 4, sy);
+        ctx.lineTo(sx, sy + 5);
+        ctx.lineTo(sx - 4, sy);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    // Feature 132: Ambient Void Tendrils
+    var voidTendrils132 = [];
+    for (var vt132 = 0; vt132 < 6; vt132++) {
+      voidTendrils132.push({
+        baseX: Math.random() * 800000 - 100000,
+        baseY: Math.random() * 800000 - 100000,
+        segments: 8 + Math.floor(Math.random() * 6),
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.0002 + Math.random() * 0.0003,
+        length: 60 + Math.random() * 100
+      });
+    }
+    function drawVoidTendrils132(time) {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      for (var t = 0; t < voidTendrils132.length; t++) {
+        var td = voidTendrils132[t];
+        var sx = td.baseX - vl;
+        var sy = td.baseY - vt;
+        if (sx < -300 || sx > canvas.width + 300 || sy < -300 || sy > canvas.height + 300) continue;
+        ctx.strokeStyle = "rgba(40,30,60,0.15)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        var cx = sx, cy = sy;
+        for (var s = 0; s < td.segments; s++) {
+          var angle = Math.sin(time * td.speed + td.phase + s * 0.7) * 0.8;
+          var segLen = td.length / td.segments;
+          cx += Math.cos(angle) * segLen;
+          cy += Math.sin(angle) * segLen;
+          ctx.lineTo(cx, cy);
+        }
         ctx.stroke();
       }
     }
