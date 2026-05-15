@@ -46458,6 +46458,11 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Update Feature 199: Gravity waves shift
+      for (var gw = 0; gw < gravityWaves199.length; gw++) {
+        gravityWaves199[gw].y += Math.sin(time * 0.1 + gravityWaves199[gw].phase) * 0.1;
+      }
+
       // Update Feature 195: Sand Drift
       for (var sd = 0; sd < sandDrift195.length; sd++) {
         sandDrift195[sd].x += sandDrift195[sd].speed;
@@ -48140,6 +48145,98 @@
         ctx.beginPath();
         ctx.arc(loSX, loSY, orb.radius * zoom * loPulse, 0, Math.PI * 2);
         ctx.fill();
+      }
+
+      // Draw Feature 199: Gravity Waves
+      for (var gw = 0; gw < gravityWaves199.length; gw++) {
+        var wave = gravityWaves199[gw];
+        ctx.strokeStyle = "rgba(120, 140, 180, 0.04)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (var gwx = 0; gwx < canvas.width; gwx += 10) {
+          var gwy = wave.y + Math.sin(gwx * wave.frequency + time * wave.speed + wave.phase) * wave.amplitude;
+          if (gwx === 0) ctx.moveTo(gwx, gwy); else ctx.lineTo(gwx, gwy);
+        }
+        ctx.stroke();
+      }
+
+      // Draw Feature 200: BICENTENNIAL Celebration!
+      if (!bicentennial200Triggered) {
+        bicentennial200Triggered = true;
+        for (var bp = 0; bp < 100; bp++) {
+          var bpAngle = Math.random() * Math.PI * 2;
+          var bpSpeed = 2 + Math.random() * 5;
+          var bpColors = ["#FFD700","#FF6B6B","#4ECDC4","#A855F7","#F97316","#10B981","#3B82F6","#EC4899","#FBBF24","#8B5CF6"];
+          bicentennialParticles200.push({x: canvas.width/2, y: canvas.height/2, vx: Math.cos(bpAngle) * bpSpeed, vy: Math.sin(bpAngle) * bpSpeed - 2, life: 1, color: bpColors[bp % bpColors.length], size: 3 + Math.random() * 5});
+        }
+      }
+      bicentennial200Timer += 0.016;
+      if (bicentennial200Timer < 8) {
+        for (var bp2 = bicentennialParticles200.length - 1; bp2 >= 0; bp2--) {
+          var bPart = bicentennialParticles200[bp2];
+          bPart.x += bPart.vx;
+          bPart.y += bPart.vy;
+          bPart.vy += 0.05;
+          bPart.life -= 0.005;
+          if (bPart.life <= 0) { bicentennialParticles200.splice(bp2, 1); continue; }
+          ctx.globalAlpha = bPart.life;
+          ctx.fillStyle = bPart.color;
+          ctx.beginPath();
+          ctx.arc(bPart.x, bPart.y, bPart.size * bPart.life, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        // Draw 200 text
+        if (bicentennial200Timer < 5) {
+          var textAlpha = bicentennial200Timer < 1 ? bicentennial200Timer : (bicentennial200Timer > 4 ? 5 - bicentennial200Timer : 1);
+          ctx.globalAlpha = textAlpha * 0.7;
+          ctx.fillStyle = "#FFD700";
+          ctx.font = "bold 48px Georgia, serif";
+          ctx.textAlign = "center";
+          ctx.fillText("200 FEATURES", canvas.width/2, canvas.height/2 - 20);
+          ctx.font = "20px Georgia, serif";
+          ctx.fillStyle = "#FBBF24";
+          ctx.fillText("THE BICENTENNIAL", canvas.width/2, canvas.height/2 + 20);
+          ctx.globalAlpha = 1;
+          ctx.textAlign = "start";
+        }
+      }
+
+      // Draw Feature 201: Ether Threads
+      for (var et = 0; et < etherThreads201.length; et++) {
+        var thread = etherThreads201[et];
+        var et1SX = (player.x + thread.x1 - camera.x) * zoom + canvas.width/2;
+        var et1SY = (player.y + thread.y1 - camera.y) * zoom + canvas.height/2;
+        var et2SX = (player.x + thread.x2 - camera.x) * zoom + canvas.width/2;
+        var et2SY = (player.y + thread.y2 - camera.y) * zoom + canvas.height/2;
+        var etAlpha = 0.04 + 0.03 * Math.sin(time * thread.speed + thread.phase);
+        ctx.strokeStyle = "rgba(200, 180, 255, " + etAlpha + ")";
+        ctx.lineWidth = 0.3;
+        ctx.beginPath();
+        ctx.moveTo(et1SX, et1SY);
+        var etMidX = (et1SX + et2SX)/2 + Math.sin(time * 0.5 + thread.phase) * 40;
+        var etMidY = (et1SY + et2SY)/2 + Math.cos(time * 0.3 + thread.phase) * 30;
+        ctx.quadraticCurveTo(etMidX, etMidY, et2SX, et2SY);
+        ctx.stroke();
+      }
+
+      // Draw Feature 202: Luminance Waves
+      luminanceWave202Phase += 0.03;
+      for (var lw = 0; lw < chambers.length; lw++) {
+        if (!discovered.has(lw)) continue;
+        var lwDx = chambers[lw].x - player.x;
+        var lwDy = chambers[lw].y - player.y;
+        var lwDist = Math.sqrt(lwDx*lwDx + lwDy*lwDy);
+        if (lwDist > 500) continue;
+        var lwWave = Math.sin(luminanceWave202Phase + lwDist * 0.01);
+        if (lwWave > 0.7) {
+          var lwSX = (chambers[lw].x - camera.x) * zoom + canvas.width/2;
+          var lwSY = (chambers[lw].y - camera.y) * zoom + canvas.height/2;
+          ctx.fillStyle = "rgba(255, 255, 220, " + ((lwWave - 0.7) * 0.15) + ")";
+          ctx.beginPath();
+          ctx.arc(lwSX, lwSY, 6 * zoom, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
       drawCompassRose(time);
 
@@ -52086,6 +52183,26 @@
     for (var lo = 0; lo < 6; lo++) {
       lightOrbs198.push({x: Math.random() * 900 - 450, y: Math.random() * 700 - 350, phase: Math.random() * Math.PI * 2, radius: 25 + Math.random() * 35, drift: 0.2 + Math.random() * 0.3});
     }
+
+    // Feature 199: Ambient Gravity Waves - slow undulating gravity distortion lines
+    var gravityWaves199 = [];
+    for (var gw = 0; gw < 5; gw++) {
+      gravityWaves199.push({y: Math.random() * 600 + 100, amplitude: 5 + Math.random() * 10, frequency: 0.005 + Math.random() * 0.01, phase: Math.random() * Math.PI * 2, speed: 0.3 + Math.random() * 0.5});
+    }
+
+    // Feature 200: THE BICENTENNIAL — Celebration Particle System! 🎉🎊✨🏆
+    var bicentennialParticles200 = [];
+    var bicentennial200Triggered = false;
+    var bicentennial200Timer = 0;
+
+    // Feature 201: Ambient Ether Threads - thin ethereal threads connecting random points
+    var etherThreads201 = [];
+    for (var et = 0; et < 8; et++) {
+      etherThreads201.push({x1: Math.random() * 1000 - 500, y1: Math.random() * 800 - 400, x2: Math.random() * 1000 - 500, y2: Math.random() * 800 - 400, phase: Math.random() * Math.PI * 2, speed: 0.1 + Math.random() * 0.3});
+    }
+
+    // Feature 202: Chamber Luminance Waves - luminance waves ripple across discovered chambers
+    var luminanceWave202Phase = 0;
     document.body.appendChild(autoWalkIndicator);
 
 
