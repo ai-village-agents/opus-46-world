@@ -46458,6 +46458,24 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Update Feature 185: Footprints
+      footprint185Timer += dt;
+      if (footprint185Timer > 0.25 && (Math.abs(player.vx) > 0.5 || Math.abs(player.vy) > 0.5)) {
+        footprint185Timer = 0;
+        var fpAngle = Math.atan2(player.vy, player.vx);
+        var fpSide = footprints185.length % 2 === 0 ? 5 : -5;
+        footprints185.push({x: player.x, y: player.y, alpha: 0.12, angle: fpAngle, offset: fpSide});
+        if (footprints185.length > 80) footprints185.shift();
+      }
+
+      // Update Feature 186: Comet spawn
+      comet186SpawnTimer += dt;
+      if (comet186SpawnTimer > 5 && Math.random() < 0.008) {
+        comet186SpawnTimer = 0;
+        var csDir = Math.random() * Math.PI * 2;
+        cometStreaks186.push({x: Math.random() * canvas.width, y: -20, vx: Math.cos(csDir) * 3, vy: Math.abs(Math.sin(csDir)) * 3 + 1, life: 1});
+      }
+
       // Update Feature 180: Memory Echoes - record visited chambers
       for (var me = 0; me < chambers.length; me++) {
         var meDx = chambers[me].x - player.x;
@@ -47806,6 +47824,77 @@
         ctx.moveTo(star.x, star.y);
         ctx.lineTo(star.x - star.vx * 3, star.y - star.vy * 3);
         ctx.stroke();
+      }
+
+      // Draw Feature 183: Aurora Curtain V2
+      auroraCurtain183Phase += 0.015;
+      ctx.globalAlpha = 0.06;
+      for (var ac = 0; ac < auroraCurtain183Points.length - 1; ac++) {
+        var acp1 = auroraCurtain183Points[ac];
+        var acp2 = auroraCurtain183Points[ac + 1];
+        var acx1 = canvas.width/2 + acp1.x + Math.sin(auroraCurtain183Phase + acp1.phase) * 30;
+        var acx2 = canvas.width/2 + acp2.x + Math.sin(auroraCurtain183Phase + acp2.phase) * 30;
+        var acy = 40 + Math.sin(auroraCurtain183Phase * 0.5 + ac) * 15;
+        var acGrad = ctx.createLinearGradient(acx1, acy, acx1, acy + acp1.height);
+        acGrad.addColorStop(0, "rgba(50, 200, 150, 0.3)");
+        acGrad.addColorStop(0.5, "rgba(100, 150, 250, 0.15)");
+        acGrad.addColorStop(1, "rgba(150, 50, 200, 0)");
+        ctx.fillStyle = acGrad;
+        ctx.beginPath();
+        ctx.moveTo(acx1, acy);
+        ctx.lineTo(acx2, acy);
+        ctx.lineTo(acx2, acy + acp2.height);
+        ctx.lineTo(acx1, acy + acp1.height);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      // Draw Feature 184: Pulse Beacons
+      for (var pb = pulseBeacons184.length - 1; pb >= 0; pb--) {
+        var beacon = pulseBeacons184[pb];
+        beacon.radius += 2;
+        beacon.alpha -= 0.008;
+        if (beacon.alpha <= 0) { pulseBeacons184.splice(pb, 1); continue; }
+        var pbSX = (beacon.x - camera.x) * zoom + canvas.width/2;
+        var pbSY = (beacon.y - camera.y) * zoom + canvas.height/2;
+        ctx.strokeStyle = "rgba(255, 220, 100, " + beacon.alpha + ")";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(pbSX, pbSY, beacon.radius * zoom, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Draw Feature 185: Footprints
+      for (var fp = 0; fp < footprints185.length; fp++) {
+        var foot = footprints185[fp];
+        foot.alpha -= 0.0005;
+        if (foot.alpha <= 0) { footprints185.splice(fp, 1); fp--; continue; }
+        var fpSX = (foot.x - camera.x) * zoom + canvas.width/2;
+        var fpSY = (foot.y - camera.y) * zoom + canvas.height/2;
+        ctx.fillStyle = "rgba(180, 170, 200, " + foot.alpha + ")";
+        ctx.beginPath();
+        ctx.ellipse(fpSX + foot.offset, fpSY, 3 * zoom, 4.5 * zoom, foot.angle, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Draw Feature 186: Comet Streaks
+      for (var cs = cometStreaks186.length - 1; cs >= 0; cs--) {
+        var comet = cometStreaks186[cs];
+        comet.x += comet.vx;
+        comet.y += comet.vy;
+        comet.life -= 0.01;
+        if (comet.life <= 0) { cometStreaks186.splice(cs, 1); continue; }
+        ctx.strokeStyle = "rgba(255, 250, 200, " + (comet.life * 0.5) + ")";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(comet.x, comet.y);
+        ctx.lineTo(comet.x - comet.vx * 8, comet.y - comet.vy * 8);
+        ctx.stroke();
+        ctx.fillStyle = "rgba(255, 255, 255, " + (comet.life * 0.7) + ")";
+        ctx.beginPath();
+        ctx.arc(comet.x, comet.y, 2.5, 0, Math.PI * 2);
+        ctx.fill();
       }
       drawCompassRose(time);
 
@@ -51685,6 +51774,24 @@
     // Feature 182: Ambient Starfall - occasional stars fall diagonally across screen
     var starfall182 = [];
     var starfall182Timer = 0;
+
+    // Feature 183: Ambient Aurora Curtain V2 - flowing curtain of northern lights
+    var auroraCurtain183Phase = 0;
+    var auroraCurtain183Points = [];
+    for (var ac = 0; ac < 8; ac++) {
+      auroraCurtain183Points.push({x: ac * 150 - 525, height: 60 + Math.random() * 40, phase: Math.random() * Math.PI * 2});
+    }
+
+    // Feature 184: Chamber Pulse Beacon - strong pulse from recently discovered chambers
+    var pulseBeacons184 = [];
+
+    // Feature 185: Exploration Footprint Trail - footprint-like marks left behind
+    var footprints185 = [];
+    var footprint185Timer = 0;
+
+    // Feature 186: Ambient Comet Streaks - bright comets crossing the viewport
+    var cometStreaks186 = [];
+    var comet186SpawnTimer = 0;
     document.body.appendChild(autoWalkIndicator);
 
 
