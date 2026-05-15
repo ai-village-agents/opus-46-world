@@ -48618,6 +48618,10 @@
       drawChamberDepthFog228(time);
       drawRhythmPulse229(time);
       drawSpectrumLines230(time);
+      drawLeyLines231(time);
+      drawChamberShimmer232(time);
+      drawSineWaves233(time);
+      drawGravityDust234(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -52808,6 +52812,80 @@
           ctx.lineTo(x, y + Math.sin(x * 0.01 + time * 0.001 + i) * 5);
         }
         ctx.stroke();
+      }
+    }
+
+
+    // Feature 231: Ambient Ley Lines
+    function drawLeyLines231(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      ctx.strokeStyle = "rgba(200,180,100,0.025)";
+      ctx.lineWidth = 1;
+      for (var i = 0; i < 5; i++) {
+        var angle = time * 0.0001 + i * Math.PI / 5;
+        var px = canvas.width/2 + Math.cos(angle) * 600;
+        var py = canvas.height/2 + Math.sin(angle) * 600;
+        var px2 = canvas.width/2 - Math.cos(angle) * 600;
+        var py2 = canvas.height/2 - Math.sin(angle) * 600;
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px2, py2); ctx.stroke();
+      }
+    }
+
+    // Feature 232: Chamber Shimmer Effect
+    function drawChamberShimmer232(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      for (var i = 0; i < chambers.length; i++) {
+        var ch = chambers[i];
+        var dx = ch.x - cx, dy = ch.y - cy;
+        if (Math.abs(dx) > 400 || Math.abs(dy) > 400) continue;
+        if (!discovered.has(i)) continue;
+        var sx = dx * z + canvas.width/2;
+        var sy = dy * z + canvas.height/2;
+        var shimmer = Math.sin(time * 0.003 + i * 2.3) * 0.5 + 0.5;
+        if (shimmer > 0.8) {
+          ctx.fillStyle = "rgba(255,255,255," + ((shimmer - 0.8) * 0.15) + ")";
+          ctx.beginPath(); ctx.arc(sx, sy, 4 * z, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    }
+
+    // Feature 233: Ambient Sine Wave Background
+    function drawSineWaves233(time) {
+      ctx.strokeStyle = "rgba(80,120,160,0.02)";
+      ctx.lineWidth = 0.8;
+      for (var w = 0; w < 3; w++) {
+        var freq = 0.005 + w * 0.003;
+        var amp = 15 + w * 10;
+        var yOff = canvas.height * (0.4 + w * 0.15);
+        ctx.beginPath();
+        for (var x = 0; x < canvas.width; x += 8) {
+          var y = yOff + Math.sin(x * freq + time * 0.0008 + w) * amp;
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    }
+
+    // Feature 234: Ambient Gravity Dust
+    var gravityDust234 = [];
+    for (var gd = 0; gd < 30; gd++) {
+      gravityDust234.push({x: Math.random() * 1000 - 500, y: Math.random() * 1000 - 500, vx: 0, vy: 0, sz: 0.5 + Math.random()});
+    }
+    function drawGravityDust234(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      for (var i = 0; i < gravityDust234.length; i++) {
+        var p = gravityDust234[i];
+        var dx = -p.x, dy = -p.y;
+        var dist = Math.sqrt(dx*dx + dy*dy) + 1;
+        p.vx += (dx / dist) * 0.02;
+        p.vy += (dy / dist) * 0.02;
+        p.vx *= 0.99; p.vy *= 0.99;
+        p.x += p.vx; p.y += p.vy;
+        if (dist < 10) { p.x = Math.random() * 1000 - 500; p.y = Math.random() * 1000 - 500; p.vx = 0; p.vy = 0; }
+        var sx = (cx + p.x - camera.x) * z + canvas.width/2;
+        var sy = (cy + p.y - camera.y) * z + canvas.height/2;
+        ctx.fillStyle = "rgba(180,160,200,0.15)";
+        ctx.fillRect(sx, sy, p.sz, p.sz);
       }
     }
 
