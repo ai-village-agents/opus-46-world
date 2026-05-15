@@ -48740,6 +48740,20 @@
       drawGradientSweep340(time);
       drawCometOrbit341(time);
       drawBreathingGrid342(time);
+      drawSpiralDots343(time);
+      drawPulseRingsV2_344(time);
+      drawStarCluster345(time);
+      drawWaveInterference346(time);
+      drawFloatingRunes347(time);
+      drawTangentLines348(time);
+      drawPolarRose349(time);
+      drawFallingPetals350(time);
+      drawFrequencyComb351(time);
+      drawCardioidCurve352(time);
+      drawDashRing353(time);
+      drawDepthLines354(time);
+      drawGlowPoints355(time);
+      drawParticleOrbitRing356(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -54846,6 +54860,227 @@
       }
       for (var y = cy-150; y <= cy+150; y += spacing) {
         ctx.beginPath(); ctx.moveTo(cx-150,y); ctx.lineTo(cx+150,y); ctx.stroke();
+      }
+    }
+
+
+    // === FEATURE 343: Ambient Spiral Dots ===
+    function drawSpiralDots343(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      for (var i = 0; i < 30; i++) {
+        var a = i * 0.4 + time * 0.0008;
+        var r = i * 4;
+        var x = cx + Math.cos(a) * r;
+        var y = cy + Math.sin(a) * r;
+        ctx.fillStyle = "rgba(180,200,220," + (0.04*(1-i/30)) + ")";
+        ctx.fillRect(x, y, 1.5, 1.5);
+      }
+    }
+
+    // === FEATURE 344: Ambient Pulse Rings V2 ===
+    function drawPulseRingsV2_344(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      for (var i = 0; i < 3; i++) {
+        var phase = (time * 0.002 + i * 2.1) % (Math.PI * 2);
+        var r = 50 + Math.abs(Math.sin(phase)) * 100;
+        var alpha = 0.03 * Math.abs(Math.cos(phase));
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(200,150,180," + alpha + ")";
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 345: Ambient Star Cluster ===
+    function drawStarCluster345(time) {
+      for (var i = 0; i < 10; i++) {
+        var seed = i * 6151;
+        var x = (seed * 7 % 997) / 997 * canvas.width;
+        var y = (seed * 11 % 991) / 991 * canvas.height;
+        var twinkle = 0.03 + 0.03 * Math.sin(time * 0.003 + seed);
+        ctx.fillStyle = "rgba(255,255,240," + twinkle + ")";
+        var s = 0.5 + Math.sin(time * 0.002 + i) * 0.3;
+        ctx.fillRect(x-s, y, s*2, 0.5);
+        ctx.fillRect(x, y-s, 0.5, s*2);
+      }
+    }
+
+    // === FEATURE 346: Ambient Wave Interference ===
+    function drawWaveInterference346(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      ctx.beginPath();
+      for (var x = -150; x < 150; x += 3) {
+        var y1 = Math.sin(x*0.05+time*0.002)*15;
+        var y2 = Math.sin(x*0.03+time*0.003)*20;
+        var y = cy + y1 + y2;
+        if (x === -150) ctx.moveTo(cx+x, y); else ctx.lineTo(cx+x, y);
+      }
+      ctx.strokeStyle = "rgba(100,200,180,0.03)";
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    }
+
+    // === FEATURE 347: Ambient Floating Runes ===
+    function drawFloatingRunes347(time) {
+      var runes = ["☀","★","☆","✦","✧","✨","✶","✷"];
+      ctx.font = "10px serif";
+      for (var i = 0; i < 6; i++) {
+        var x = ((i*173+time*0.01)%(canvas.width+40))-20;
+        var y = 100+i*80+Math.sin(time*0.001+i*2)*20;
+        var alpha = 0.04+0.02*Math.sin(time*0.003+i);
+        ctx.fillStyle = "rgba(200,200,220,"+alpha+")";
+        ctx.fillText(runes[i%runes.length], x, y);
+      }
+    }
+
+    // === FEATURE 348: Ambient Tangent Lines ===
+    function drawTangentLines348(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      ctx.strokeStyle = "rgba(160,180,200,0.02)";
+      ctx.lineWidth = 0.5;
+      for (var i = 0; i < 8; i++) {
+        var a = (i/8)*Math.PI*2 + time*0.0006;
+        var r = 80;
+        var x = cx + Math.cos(a)*r;
+        var y = cy + Math.sin(a)*r;
+        var tx = -Math.sin(a)*40;
+        var ty = Math.cos(a)*40;
+        ctx.beginPath();
+        ctx.moveTo(x-tx, y-ty);
+        ctx.lineTo(x+tx, y+ty);
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 349: Ambient Polar Rose ===
+    function drawPolarRose349(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      var k = 5;
+      ctx.beginPath();
+      for (var theta = 0; theta < Math.PI*2; theta += 0.05) {
+        var r = 60 * Math.cos(k * theta + time*0.0005);
+        var x = cx + r * Math.cos(theta);
+        var y = cy + r * Math.sin(theta);
+        if (theta === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = "rgba(255,180,200,0.025)";
+      ctx.lineWidth = 0.6;
+      ctx.stroke();
+    }
+
+    // === FEATURE 350: Ambient Falling Petals ===
+    var fallingPetals350 = [];
+    (function() {
+      for (var i = 0; i < 10; i++) {
+        fallingPetals350.push({ x: Math.random()*1000, y: Math.random()*800, vy: 0.2+Math.random()*0.3, vx: (Math.random()-0.5)*0.3, rot: Math.random()*Math.PI*2 });
+      }
+    })();
+    function drawFallingPetals350(time) {
+      if (typeof fallingPetals350 === "undefined") return;
+      for (var i = 0; i < fallingPetals350.length; i++) {
+        var p = fallingPetals350[i];
+        p.y += p.vy; p.x += p.vx + Math.sin(time*0.002+i)*0.2;
+        p.rot += 0.01;
+        if (p.y > canvas.height+10) { p.y = -10; p.x = Math.random()*canvas.width; }
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = "rgba(255,200,220,0.04)";
+        ctx.beginPath();
+        ctx.ellipse(0,0,4,2,0,0,Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // === FEATURE 351: Ambient Frequency Comb ===
+    function drawFrequencyComb351(time) {
+      var cx = canvas.width/2, cy = canvas.height - 45;
+      for (var i = 0; i < 30; i++) {
+        var h = 5 + 10*Math.abs(Math.sin(i*0.3+time*0.003));
+        var alpha = 0.02+0.01*Math.sin(time*0.004+i);
+        ctx.fillStyle = "rgba(180,200,220,"+alpha+")";
+        ctx.fillRect(cx-150+i*10, cy-h, 2, h);
+      }
+    }
+
+    // === FEATURE 352: Ambient Cardioid Curve ===
+    function drawCardioidCurve352(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      var a = 30;
+      ctx.beginPath();
+      for (var t = 0; t < Math.PI*2; t += 0.05) {
+        var r = a * (1 + Math.cos(t + time*0.0005));
+        var x = cx + r * Math.cos(t);
+        var y = cy + r * Math.sin(t);
+        if (t === 0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle = "rgba(200,150,200,0.025)";
+      ctx.lineWidth = 0.6;
+      ctx.stroke();
+    }
+
+    // === FEATURE 353: Ambient Dash Ring ===
+    function drawDashRing353(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      var r = 100;
+      var dashes = 20;
+      for (var i = 0; i < dashes; i++) {
+        var a = (i/dashes)*Math.PI*2 + time*0.0005;
+        var a2 = a + 0.1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, a, a2);
+        ctx.strokeStyle = "rgba(180,200,180,0.03)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 354: Ambient Depth Lines ===
+    function drawDepthLines354(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      for (var i = 0; i < 6; i++) {
+        var y = cy - 80 + i * 32;
+        var w = 200 - Math.abs(i-2.5)*30;
+        var alpha = 0.015 + 0.01*Math.sin(time*0.002+i);
+        ctx.beginPath();
+        ctx.moveTo(cx-w, y);
+        ctx.lineTo(cx+w, y);
+        ctx.strokeStyle = "rgba(160,180,200,"+alpha+")";
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 355: Ambient Glow Points ===
+    function drawGlowPoints355(time) {
+      for (var i = 0; i < 6; i++) {
+        var a = (i/6)*Math.PI*2 + time*0.0006;
+        var r = 130;
+        var x = canvas.width/2 + Math.cos(a)*r;
+        var y = canvas.height/2 + Math.sin(a)*r;
+        var grad = ctx.createRadialGradient(x,y,0,x,y,12);
+        grad.addColorStop(0,"rgba(200,220,255,0.04)");
+        grad.addColorStop(1,"rgba(200,220,255,0)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(x-12,y-12,24,24);
+      }
+    }
+
+    // === FEATURE 356: Ambient Particle Orbit Ring ===
+    function drawParticleOrbitRing356(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      var r = 170;
+      for (var i = 0; i < 16; i++) {
+        var a = (i/16)*Math.PI*2 + time*0.0007;
+        var x = cx + Math.cos(a)*r;
+        var y = cy + Math.sin(a)*r*0.4;
+        var alpha = 0.04 + 0.02*Math.sin(time*0.003+i);
+        ctx.fillStyle = "rgba(180,200,255,"+alpha+")";
+        ctx.beginPath();
+        ctx.arc(x,y,1.5,0,Math.PI*2);
+        ctx.fill();
       }
     }
 
