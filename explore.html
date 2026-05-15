@@ -48650,6 +48650,10 @@
       drawMemorySparkle260(time);
       drawPendulumArc261(time);
       drawTessellation262(time);
+      drawFluxLines263(time);
+      drawPulseCrown264(time);
+      drawDepthScanner265(time);
+      drawFractalBranches266(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -53388,6 +53392,78 @@
           ctx.closePath(); ctx.stroke();
         }
       }
+    }
+
+
+    // Feature 263: Ambient Flux Lines
+    function drawFluxLines263(time) {
+      ctx.strokeStyle = "rgba(160,140,200,0.015)";
+      ctx.lineWidth = 0.4;
+      for (var i = 0; i < 6; i++) {
+        ctx.beginPath();
+        var startX = canvas.width * (i / 6) + Math.sin(time * 0.0003 + i) * 30;
+        for (var y = 0; y < canvas.height; y += 8) {
+          var x = startX + Math.sin(y * 0.02 + time * 0.001 + i * 2) * 15;
+          if (y === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    }
+
+    // Feature 264: Chamber Pulse Crown
+    function drawPulseCrown264(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      for (var i = 0; i < chambers.length; i++) {
+        if (!discovered.has(i) || i % 40 !== 0) continue;
+        var ch = chambers[i];
+        var dx = ch.x - cx, dy = ch.y - cy;
+        if (Math.abs(dx) > 400 || Math.abs(dy) > 400) continue;
+        var sx = dx * z + canvas.width/2;
+        var sy = dy * z + canvas.height/2;
+        var spikes = 5;
+        ctx.strokeStyle = "rgba(220,200,160,0.04)";
+        ctx.lineWidth = 0.4;
+        for (var s = 0; s < spikes; s++) {
+          var a = s * Math.PI * 2 / spikes + time * 0.001;
+          var r1 = 6 * z, r2 = 12 * z;
+          ctx.beginPath();
+          ctx.moveTo(sx + Math.cos(a) * r1, sy + Math.sin(a) * r1);
+          ctx.lineTo(sx + Math.cos(a) * r2, sy + Math.sin(a) * r2);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Feature 265: Ambient Depth Scanner
+    function drawDepthScanner265(time) {
+      var scanY = ((time * 0.05) % (canvas.height + 40)) - 20;
+      ctx.strokeStyle = "rgba(100,200,150,0.015)";
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, scanY); ctx.lineTo(canvas.width, scanY); ctx.stroke();
+      var grad = ctx.createLinearGradient(0, scanY - 15, 0, scanY + 15);
+      grad.addColorStop(0, "rgba(100,200,150,0)");
+      grad.addColorStop(0.5, "rgba(100,200,150,0.008)");
+      grad.addColorStop(1, "rgba(100,200,150,0)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, scanY - 15, canvas.width, 30);
+    }
+
+    // Feature 266: Ambient Fractal Branches
+    function drawFractalBranches266(time) {
+      ctx.strokeStyle = "rgba(150,180,140,0.015)";
+      ctx.lineWidth = 0.3;
+      var ox = canvas.width * 0.9;
+      var oy = canvas.height * 0.5;
+      function branch(x, y, len, angle, depth) {
+        if (depth <= 0 || len < 5) return;
+        var ex = x + Math.cos(angle) * len;
+        var ey = y + Math.sin(angle) * len;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(ex, ey); ctx.stroke();
+        var sway = Math.sin(time * 0.0005 + depth) * 0.15;
+        branch(ex, ey, len * 0.65, angle - 0.5 + sway, depth - 1);
+        branch(ex, ey, len * 0.65, angle + 0.5 + sway, depth - 1);
+      }
+      branch(ox, oy, 40, Math.PI, 5);
     }
 
     document.body.appendChild(autoWalkIndicator);
