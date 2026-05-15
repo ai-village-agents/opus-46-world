@@ -46458,6 +46458,27 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      updateObsidianEdge841(dt);
+      updateMossCarpet842(dt);
+      updateTideCrystal843(dt);
+      updateFlamePetal844(dt);
+      updateRockLichen845(dt);
+      updateCloudPearl846(dt);
+      updateBoneDust847(dt);
+      updateDewChain848(dt);
+      updateAshFeather849(dt);
+      updateTideBone850(dt);
+      updateEmberDust851(dt);
+      updateFrostBloom852(dt);
+      updateSandBone853(dt);
+      updateKelpCrown854(dt);
+      updateSootVeil855(dt);
+      updateMoonBone856(dt);
+      updateClayDust857(dt);
+      updateStormPearl858(dt);
+      updateDawnSeed859(dt);
+      updateAmberWave860(dt);
+
       updateLavaCrust821(dt);
       updateFernSpore822(dt);
       updateIceShelf823(dt);
@@ -49395,6 +49416,26 @@
       drawStormReef838(ctx, time);
       drawDawnFrost839(ctx, time);
       drawCrystalWeb840(ctx, time);
+      drawObsidianEdge841(ctx, time);
+      drawMossCarpet842(ctx, time);
+      drawTideCrystal843(ctx, time);
+      drawFlamePetal844(ctx, time);
+      drawRockLichen845(ctx, time);
+      drawCloudPearl846(ctx, time);
+      drawBoneDust847(ctx, time);
+      drawDewChain848(ctx, time);
+      drawAshFeather849(ctx, time);
+      drawTideBone850(ctx, time);
+      drawEmberDust851(ctx, time);
+      drawFrostBloom852(ctx, time);
+      drawSandBone853(ctx, time);
+      drawKelpCrown854(ctx, time);
+      drawSootVeil855(ctx, time);
+      drawMoonBone856(ctx, time);
+      drawClayDust857(ctx, time);
+      drawStormPearl858(ctx, time);
+      drawDawnSeed859(ctx, time);
+      drawAmberWave860(ctx, time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -64235,6 +64276,648 @@
         p.x += Math.sin(p.ph + Date.now()*0.00023) * 0.28;
         p.y += Math.cos(p.ph + Date.now()*0.00033) * 0.28;
         p.ph += 0.0012;
+      }
+    }
+
+    
+
+    // Feature 841: Obsidian Edge - volcanic glass shards
+    var drawObsidianEdge841On = true;
+    var drawObsidianEdge841Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawObsidianEdge841Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawObsidianEdge841(ctx, time) {
+      if (!drawObsidianEdge841On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 841 * 0.55);
+      for (var ii = 0; ii < drawObsidianEdge841Arr.length; ii++) {
+        var p = drawObsidianEdge841Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (841*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateObsidianEdge841(dt) {
+      for (var ii = 0; ii < drawObsidianEdge841Arr.length; ii++) {
+        var p = drawObsidianEdge841Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 842: Moss Carpet - soft moss ground cover
+    var drawMossCarpet842On = true;
+    var drawMossCarpet842Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawMossCarpet842Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawMossCarpet842(ctx, time) {
+      if (!drawMossCarpet842On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 842 * 0.55);
+      for (var ii = 0; ii < drawMossCarpet842Arr.length; ii++) {
+        var p = drawMossCarpet842Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (842*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateMossCarpet842(dt) {
+      for (var ii = 0; ii < drawMossCarpet842Arr.length; ii++) {
+        var p = drawMossCarpet842Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 843: Tide Crystal - sea salt crystals
+    var drawTideCrystal843On = true;
+    var drawTideCrystal843Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawTideCrystal843Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawTideCrystal843(ctx, time) {
+      if (!drawTideCrystal843On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 843 * 0.55);
+      for (var ii = 0; ii < drawTideCrystal843Arr.length; ii++) {
+        var p = drawTideCrystal843Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (843*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateTideCrystal843(dt) {
+      for (var ii = 0; ii < drawTideCrystal843Arr.length; ii++) {
+        var p = drawTideCrystal843Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 844: Flame Petal - fire flower petals
+    var drawFlamePetal844On = true;
+    var drawFlamePetal844Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawFlamePetal844Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawFlamePetal844(ctx, time) {
+      if (!drawFlamePetal844On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 844 * 0.55);
+      for (var ii = 0; ii < drawFlamePetal844Arr.length; ii++) {
+        var p = drawFlamePetal844Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (844*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateFlamePetal844(dt) {
+      for (var ii = 0; ii < drawFlamePetal844Arr.length; ii++) {
+        var p = drawFlamePetal844Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 845: Rock Lichen - stone surface lichen
+    var drawRockLichen845On = true;
+    var drawRockLichen845Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawRockLichen845Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawRockLichen845(ctx, time) {
+      if (!drawRockLichen845On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 845 * 0.55);
+      for (var ii = 0; ii < drawRockLichen845Arr.length; ii++) {
+        var p = drawRockLichen845Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (845*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateRockLichen845(dt) {
+      for (var ii = 0; ii < drawRockLichen845Arr.length; ii++) {
+        var p = drawRockLichen845Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 846: Cloud Pearl - pearlescent cloud drops
+    var drawCloudPearl846On = true;
+    var drawCloudPearl846Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawCloudPearl846Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawCloudPearl846(ctx, time) {
+      if (!drawCloudPearl846On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 846 * 0.55);
+      for (var ii = 0; ii < drawCloudPearl846Arr.length; ii++) {
+        var p = drawCloudPearl846Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (846*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateCloudPearl846(dt) {
+      for (var ii = 0; ii < drawCloudPearl846Arr.length; ii++) {
+        var p = drawCloudPearl846Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 847: Bone Dust - ancient bone particles
+    var drawBoneDust847On = true;
+    var drawBoneDust847Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawBoneDust847Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawBoneDust847(ctx, time) {
+      if (!drawBoneDust847On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 847 * 0.55);
+      for (var ii = 0; ii < drawBoneDust847Arr.length; ii++) {
+        var p = drawBoneDust847Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (847*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateBoneDust847(dt) {
+      for (var ii = 0; ii < drawBoneDust847Arr.length; ii++) {
+        var p = drawBoneDust847Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 848: Dew Chain - linked dewdrop chains
+    var drawDewChain848On = true;
+    var drawDewChain848Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawDewChain848Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawDewChain848(ctx, time) {
+      if (!drawDewChain848On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 848 * 0.55);
+      for (var ii = 0; ii < drawDewChain848Arr.length; ii++) {
+        var p = drawDewChain848Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (848*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateDewChain848(dt) {
+      for (var ii = 0; ii < drawDewChain848Arr.length; ii++) {
+        var p = drawDewChain848Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 849: Ash Feather - floating ash feathers
+    var drawAshFeather849On = true;
+    var drawAshFeather849Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawAshFeather849Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawAshFeather849(ctx, time) {
+      if (!drawAshFeather849On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 849 * 0.55);
+      for (var ii = 0; ii < drawAshFeather849Arr.length; ii++) {
+        var p = drawAshFeather849Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (849*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateAshFeather849(dt) {
+      for (var ii = 0; ii < drawAshFeather849Arr.length; ii++) {
+        var p = drawAshFeather849Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 850: Tide Bone - sea-worn bone fragments
+    var drawTideBone850On = true;
+    var drawTideBone850Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawTideBone850Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawTideBone850(ctx, time) {
+      if (!drawTideBone850On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 850 * 0.55);
+      for (var ii = 0; ii < drawTideBone850Arr.length; ii++) {
+        var p = drawTideBone850Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (850*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateTideBone850(dt) {
+      for (var ii = 0; ii < drawTideBone850Arr.length; ii++) {
+        var p = drawTideBone850Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 851: Ember Dust - fine ember particles
+    var drawEmberDust851On = true;
+    var drawEmberDust851Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawEmberDust851Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawEmberDust851(ctx, time) {
+      if (!drawEmberDust851On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 851 * 0.55);
+      for (var ii = 0; ii < drawEmberDust851Arr.length; ii++) {
+        var p = drawEmberDust851Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (851*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateEmberDust851(dt) {
+      for (var ii = 0; ii < drawEmberDust851Arr.length; ii++) {
+        var p = drawEmberDust851Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 852: Frost Bloom V2 - ice crystal flowers
+    var drawFrostBloom852On = true;
+    var drawFrostBloom852Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawFrostBloom852Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawFrostBloom852(ctx, time) {
+      if (!drawFrostBloom852On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 852 * 0.55);
+      for (var ii = 0; ii < drawFrostBloom852Arr.length; ii++) {
+        var p = drawFrostBloom852Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (852*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateFrostBloom852(dt) {
+      for (var ii = 0; ii < drawFrostBloom852Arr.length; ii++) {
+        var p = drawFrostBloom852Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 853: Sand Bone - desert bone fragments
+    var drawSandBone853On = true;
+    var drawSandBone853Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawSandBone853Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawSandBone853(ctx, time) {
+      if (!drawSandBone853On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 853 * 0.55);
+      for (var ii = 0; ii < drawSandBone853Arr.length; ii++) {
+        var p = drawSandBone853Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (853*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateSandBone853(dt) {
+      for (var ii = 0; ii < drawSandBone853Arr.length; ii++) {
+        var p = drawSandBone853Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 854: Kelp Crown - seaweed crown ring
+    var drawKelpCrown854On = true;
+    var drawKelpCrown854Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawKelpCrown854Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawKelpCrown854(ctx, time) {
+      if (!drawKelpCrown854On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 854 * 0.55);
+      for (var ii = 0; ii < drawKelpCrown854Arr.length; ii++) {
+        var p = drawKelpCrown854Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (854*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateKelpCrown854(dt) {
+      for (var ii = 0; ii < drawKelpCrown854Arr.length; ii++) {
+        var p = drawKelpCrown854Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 855: Soot Veil - thin soot curtain
+    var drawSootVeil855On = true;
+    var drawSootVeil855Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawSootVeil855Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawSootVeil855(ctx, time) {
+      if (!drawSootVeil855On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 855 * 0.55);
+      for (var ii = 0; ii < drawSootVeil855Arr.length; ii++) {
+        var p = drawSootVeil855Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (855*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateSootVeil855(dt) {
+      for (var ii = 0; ii < drawSootVeil855Arr.length; ii++) {
+        var p = drawSootVeil855Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 856: Moon Bone - pale lunar fragments
+    var drawMoonBone856On = true;
+    var drawMoonBone856Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawMoonBone856Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawMoonBone856(ctx, time) {
+      if (!drawMoonBone856On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 856 * 0.55);
+      for (var ii = 0; ii < drawMoonBone856Arr.length; ii++) {
+        var p = drawMoonBone856Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (856*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateMoonBone856(dt) {
+      for (var ii = 0; ii < drawMoonBone856Arr.length; ii++) {
+        var p = drawMoonBone856Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 857: Clay Dust - fine clay particles
+    var drawClayDust857On = true;
+    var drawClayDust857Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawClayDust857Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawClayDust857(ctx, time) {
+      if (!drawClayDust857On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 857 * 0.55);
+      for (var ii = 0; ii < drawClayDust857Arr.length; ii++) {
+        var p = drawClayDust857Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (857*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateClayDust857(dt) {
+      for (var ii = 0; ii < drawClayDust857Arr.length; ii++) {
+        var p = drawClayDust857Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 858: Storm Pearl - lightning-forged pearls
+    var drawStormPearl858On = true;
+    var drawStormPearl858Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawStormPearl858Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawStormPearl858(ctx, time) {
+      if (!drawStormPearl858On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 858 * 0.55);
+      for (var ii = 0; ii < drawStormPearl858Arr.length; ii++) {
+        var p = drawStormPearl858Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (858*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateStormPearl858(dt) {
+      for (var ii = 0; ii < drawStormPearl858Arr.length; ii++) {
+        var p = drawStormPearl858Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 859: Dawn Seed - morning light seeds
+    var drawDawnSeed859On = true;
+    var drawDawnSeed859Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawDawnSeed859Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawDawnSeed859(ctx, time) {
+      if (!drawDawnSeed859On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 859 * 0.55);
+      for (var ii = 0; ii < drawDawnSeed859Arr.length; ii++) {
+        var p = drawDawnSeed859Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (859*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateDawnSeed859(dt) {
+      for (var ii = 0; ii < drawDawnSeed859Arr.length; ii++) {
+        var p = drawDawnSeed859Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
+      }
+    }
+
+    // Feature 860: Amber Wave - golden amber ripples
+    var drawAmberWave860On = true;
+    var drawAmberWave860Arr = [];
+    for (var ii = 0; ii < 5; ii++) {
+      drawAmberWave860Arr.push({x: Math.random()*8000, y: Math.random()*8000, ph: Math.random()*Math.PI*2, sz: 1+Math.random()*3});
+    }
+    function drawAmberWave860(ctx, time) {
+      if (!drawAmberWave860On) return;
+      ctx.save();
+      ctx.globalAlpha = 0.13 + 0.05 * Math.sin(time * 0.0011 + 860 * 0.55);
+      for (var ii = 0; ii < drawAmberWave860Arr.length; ii++) {
+        var p = drawAmberWave860Arr[ii];
+        var sx = (p.x - camX) * scale + canvas.width/2;
+        var sy = (p.y - camY) * scale + canvas.height/2;
+        if (sx > -50 && sx < canvas.width+50 && sy > -50 && sy < canvas.height+50) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, p.sz * scale * (1 + 0.26*Math.sin(time*0.0018+p.ph)), 0, Math.PI*2);
+          ctx.fillStyle = "hsl(" + (860*33%360) + ",53%,63%)";
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+    function updateAmberWave860(dt) {
+      for (var ii = 0; ii < drawAmberWave860Arr.length; ii++) {
+        var p = drawAmberWave860Arr[ii];
+        p.x += Math.sin(p.ph + Date.now()*0.00025) * 0.29;
+        p.y += Math.cos(p.ph + Date.now()*0.00035) * 0.29;
+        p.ph += 0.0011;
       }
     }
 
