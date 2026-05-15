@@ -46407,6 +46407,7 @@
         if (d <= 200 && !discovered.has(i)) {
           discovered.add(i);
             if (typeof addToTimeline98 === 'function') addToTimeline98(i);
+            if (typeof recordDiscoveryTime103 === 'function') recordDiscoveryTime103(i);
             if (typeof triggerScreenShake === 'function') triggerScreenShake(4, 12); trackVisit(i); spawnDiscoveryRipple(chambers[i].x, chambers[i].y, chambers[i].color);
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
           checkMilestone(discovered.size);
@@ -47291,6 +47292,18 @@
 
       // Feature 100: Aurora Borealis Effect
       drawAurora100(time);
+
+      // Feature 101: Chamber Magnetic Pull Lines
+      drawMagneticPull101(viewLeft55, viewTop55, time);
+
+      // Feature 102: Exploration Wave Radar
+      drawRadarWave102(viewLeft55, viewTop55, time);
+
+      // Feature 103: Chamber Age Tint
+      drawChamberAgeTint103(viewLeft55, viewTop55, time);
+
+      // Feature 104: Ambient Sparkle Field
+      drawSparkleField104(time);
 
       drawCompassRose(time);
 
@@ -48948,6 +48961,131 @@
         ctx.fill();
       }
       ctx.globalCompositeOperation = "source-over";
+      ctx.restore();
+    }
+
+
+
+    // Feature 101: Chamber Magnetic Pull Lines
+    function drawMagneticPull101(viewLeft, viewTop, time) {
+      if (typeof ctx === "undefined" || typeof canvas === "undefined") return;
+      if (typeof chambers === "undefined" || typeof discovered === "undefined") return;
+      var px101 = player.x; var py101 = player.y;
+      var pullRange101 = 350;
+      ctx.save();
+      for (var i101 = 0; i101 < chambers.length; i101++) {
+        var c101 = chambers[i101];
+        var dx101 = c101.x - px101; var dy101 = c101.y - py101;
+        var d101 = Math.sqrt(dx101*dx101 + dy101*dy101);
+        if (d101 > pullRange101 || d101 < 30) continue;
+        var strength101 = 1 - (d101 / pullRange101);
+        var sx101 = px101 - viewLeft; var sy101 = py101 - viewTop;
+        var ex101 = c101.x - viewLeft; var ey101 = c101.y - viewTop;
+        var midX101 = (sx101 + ex101) / 2 + Math.sin(time * 2 + i101) * 15 * strength101;
+        var midY101 = (sy101 + ey101) / 2 + Math.cos(time * 2.5 + i101) * 15 * strength101;
+        ctx.beginPath();
+        ctx.moveTo(sx101, sy101);
+        ctx.quadraticCurveTo(midX101, midY101, ex101, ey101);
+        ctx.strokeStyle = "rgba(150, 180, 255, " + (strength101 * 0.15) + ")";
+        ctx.lineWidth = strength101 * 2;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Feature 102: Exploration Wave Radar
+    var radarWave102 = { phase: 0, rings: [] };
+    function drawRadarWave102(viewLeft, viewTop, time) {
+      if (typeof ctx === "undefined" || typeof canvas === "undefined") return;
+      radarWave102.phase += 0.02;
+      if (radarWave102.phase > Math.PI * 2) {
+        radarWave102.phase -= Math.PI * 2;
+        radarWave102.rings.push({ born: time, radius: 0 });
+      }
+      var px102 = player.x - viewLeft; var py102 = player.y - viewTop;
+      ctx.save();
+      for (var r102 = radarWave102.rings.length - 1; r102 >= 0; r102--) {
+        var ring102 = radarWave102.rings[r102];
+        ring102.radius += 1.5;
+        var age102 = time - ring102.born;
+        if (ring102.radius > 300) { radarWave102.rings.splice(r102, 1); continue; }
+        var alpha102 = (1 - ring102.radius / 300) * 0.12;
+        ctx.beginPath();
+        ctx.arc(px102, py102, ring102.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(100, 200, 255, " + alpha102 + ")";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Feature 103: Chamber Age Tint
+    var chamberDiscoveryTimes103 = {};
+    function recordDiscoveryTime103(idx) {
+      if (typeof chamberDiscoveryTimes103 === "undefined") return;
+      if (!chamberDiscoveryTimes103[idx]) chamberDiscoveryTimes103[idx] = performance.now();
+    }
+    function drawChamberAgeTint103(viewLeft, viewTop, time) {
+      if (typeof ctx === "undefined" || typeof canvas === "undefined") return;
+      if (typeof chamberDiscoveryTimes103 === "undefined") return;
+      var now103 = performance.now();
+      ctx.save();
+      for (var idx103 in chamberDiscoveryTimes103) {
+        var c103 = chambers[idx103];
+        if (!c103) continue;
+        var sx103 = c103.x - viewLeft; var sy103 = c103.y - viewTop;
+        if (sx103 < -50 || sx103 > canvas.width + 50 || sy103 < -50 || sy103 > canvas.height + 50) continue;
+        var age103 = (now103 - chamberDiscoveryTimes103[idx103]) / 60000;
+        age103 = Math.min(age103, 10);
+        var hue103 = 200 - age103 * 15;
+        var alpha103 = 0.06 + (age103 / 10) * 0.08;
+        ctx.beginPath();
+        ctx.arc(sx103, sy103, 18, 0, Math.PI * 2);
+        ctx.fillStyle = "hsla(" + hue103 + ", 60%, 50%, " + alpha103 + ")";
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // Feature 104: Ambient Sparkle Field
+    var sparkleField104 = [];
+    function initSparkleField104() {
+      if (sparkleField104.length > 0) return;
+      for (var s104 = 0; s104 < 60; s104++) {
+        sparkleField104.push({
+          x: Math.random(), y: Math.random(),
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.5 + Math.random() * 2,
+          size: 0.5 + Math.random() * 1.5
+        });
+      }
+    }
+    function drawSparkleField104(time) {
+      if (typeof ctx === "undefined" || typeof canvas === "undefined") return;
+      initSparkleField104();
+      ctx.save();
+      for (var s104 = 0; s104 < sparkleField104.length; s104++) {
+        var sp104 = sparkleField104[s104];
+        var brightness104 = Math.sin(time * sp104.speed + sp104.phase);
+        if (brightness104 < 0.3) continue;
+        var alpha104 = (brightness104 - 0.3) * 0.4;
+        var sx104 = sp104.x * canvas.width;
+        var sy104 = sp104.y * canvas.height;
+        ctx.beginPath();
+        ctx.arc(sx104, sy104, sp104.size, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255, 255, 255, " + alpha104 + ")";
+        ctx.fill();
+        if (brightness104 > 0.8) {
+          ctx.beginPath();
+          ctx.moveTo(sx104 - sp104.size * 3, sy104);
+          ctx.lineTo(sx104 + sp104.size * 3, sy104);
+          ctx.moveTo(sx104, sy104 - sp104.size * 3);
+          ctx.lineTo(sx104, sy104 + sp104.size * 3);
+          ctx.strokeStyle = "rgba(255, 255, 255, " + (alpha104 * 0.3) + ")";
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
       ctx.restore();
     }
 
