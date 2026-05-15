@@ -46456,6 +46456,10 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      updateSporeParticles133();
+      updateSpiralTrail135();
+      updateGlitchFragments136();
+
       updatePrismFlares129(time);
       updateWaypointMarkers131();
 
@@ -47390,6 +47394,10 @@
       drawOrbitTrails130(time);
       drawWaypointMarkers131();
       drawVoidTendrils132(time);
+      drawSporeParticles133();
+      drawPulseNetwork134(time);
+      drawSpiralTrail135();
+      drawGlitchFragments136();
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -50083,6 +50091,139 @@
           ctx.lineTo(cx, cy);
         }
         ctx.stroke();
+      }
+    }
+
+
+    // Feature 133: Ambient Spore Particles
+    var sporeParticles133 = [];
+    for (var sp133 = 0; sp133 < 20; sp133++) {
+      sporeParticles133.push({
+        x: Math.random() * 1200,
+        y: Math.random() * 900,
+        drift: 0.2 + Math.random() * 0.3,
+        wobble: Math.random() * Math.PI * 2,
+        wobbleSpeed: 0.01 + Math.random() * 0.02,
+        size: 1.5 + Math.random() * 2.5,
+        alpha: 0.08 + Math.random() * 0.12
+      });
+    }
+    function updateSporeParticles133() {
+      for (var i = 0; i < sporeParticles133.length; i++) {
+        var s = sporeParticles133[i];
+        s.y -= s.drift;
+        s.wobble += s.wobbleSpeed;
+        s.x += Math.sin(s.wobble) * 0.5;
+        if (s.y < -20) { s.y = canvas.height + 20; s.x = Math.random() * canvas.width; }
+        if (s.x < -20) s.x = canvas.width + 20;
+        if (s.x > canvas.width + 20) s.x = -20;
+      }
+    }
+    function drawSporeParticles133() {
+      for (var i = 0; i < sporeParticles133.length; i++) {
+        var s = sporeParticles133[i];
+        ctx.fillStyle = "rgba(180,255,180," + s.alpha + ")";
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(180,255,180," + (s.alpha * 0.5) + ")";
+        ctx.lineWidth = 0.3;
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y + s.size);
+        ctx.lineTo(s.x + Math.sin(s.wobble) * 4, s.y + s.size + 6);
+        ctx.stroke();
+      }
+    }
+
+    // Feature 134: Chamber Pulse Network
+    var pulseNetworkTimer134 = 0;
+    function drawPulseNetwork134(time) {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      var visible = [];
+      for (var i = 0; i < chambers.length; i++) {
+        var c = chambers[i];
+        var sx = c.x - vl;
+        var sy = c.y - vt;
+        if (sx > -50 && sx < canvas.width + 50 && sy > -50 && sy < canvas.height + 50 && discovered.has(i)) {
+          visible.push({ sx: sx, sy: sy, idx: i });
+        }
+        if (visible.length > 30) break;
+      }
+      for (var a = 0; a < visible.length; a++) {
+        for (var b = a + 1; b < visible.length; b++) {
+          var dx = visible[b].sx - visible[a].sx;
+          var dy = visible[b].sy - visible[a].sy;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            var pulse = 0.03 + 0.02 * Math.sin(time * 0.002 + visible[a].idx + visible[b].idx);
+            ctx.strokeStyle = "rgba(100,180,255," + pulse + ")";
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(visible[a].sx, visible[a].sy);
+            ctx.lineTo(visible[b].sx, visible[b].sy);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // Feature 135: Exploration Spiral Trail
+    var spiralTrail135 = [];
+    var spiralAngle135 = 0;
+    function updateSpiralTrail135() {
+      var speed = Math.sqrt(player.vx * player.vx + player.vy * player.vy);
+      if (speed > 1 && spiralTrail135.length < 40) {
+        spiralAngle135 += 0.3;
+        var r = 8;
+        spiralTrail135.push({
+          x: player.x + Math.cos(spiralAngle135) * r,
+          y: player.y + Math.sin(spiralAngle135) * r,
+          life: 1.0
+        });
+      }
+      for (var i = spiralTrail135.length - 1; i >= 0; i--) {
+        spiralTrail135[i].life -= 0.025;
+        if (spiralTrail135[i].life <= 0) spiralTrail135.splice(i, 1);
+      }
+    }
+    function drawSpiralTrail135() {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      for (var i = 0; i < spiralTrail135.length; i++) {
+        var s = spiralTrail135[i];
+        var sx = s.x - vl;
+        var sy = s.y - vt;
+        ctx.fillStyle = "rgba(200,150,255," + (s.life * 0.3) + ")";
+        ctx.beginPath();
+        ctx.arc(sx, sy, 2 * s.life, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Feature 136: Ambient Glitch Fragments
+    var glitchFragments136 = [];
+    function updateGlitchFragments136() {
+      if (Math.random() < 0.003 && glitchFragments136.length < 3) {
+        glitchFragments136.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          w: 10 + Math.random() * 40,
+          h: 2 + Math.random() * 6,
+          life: 0.5 + Math.random() * 0.5,
+          hue: Math.random() * 360
+        });
+      }
+      for (var i = glitchFragments136.length - 1; i >= 0; i--) {
+        glitchFragments136[i].life -= 0.03;
+        if (glitchFragments136[i].life <= 0) glitchFragments136.splice(i, 1);
+      }
+    }
+    function drawGlitchFragments136() {
+      for (var i = 0; i < glitchFragments136.length; i++) {
+        var g = glitchFragments136[i];
+        ctx.fillStyle = "hsla(" + g.hue + ",60%,50%," + (g.life * 0.15) + ")";
+        ctx.fillRect(g.x, g.y, g.w, g.h);
       }
     }
 
