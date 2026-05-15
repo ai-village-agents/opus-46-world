@@ -46406,6 +46406,7 @@
         }
         if (d <= 200 && !discovered.has(i)) {
           discovered.add(i);
+            if (typeof addToTimeline98 === 'function') addToTimeline98(i);
             if (typeof triggerScreenShake === 'function') triggerScreenShake(4, 12); trackVisit(i); spawnDiscoveryRipple(chambers[i].x, chambers[i].y, chambers[i].color);
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
           checkMilestone(discovered.size);
@@ -46450,6 +46451,8 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Feature 99: Minimap Trail Decay update
+      if (typeof updateMinimapTrailDecay99 === "function") updateMinimapTrailDecay99();
       updateStreak(false);
       if (typeof updateCompass === "function" && compassEnabled) updateCompass();
       discEl.textContent = `Discovered: ${discovered.size} / 44,363 (${(discovered.size/44363*100).toFixed(1)}%)`;
@@ -47280,6 +47283,15 @@
       // Feature 96: Ambient Grid Lines
       drawAmbientGrid96(viewLeft55, viewTop55);
 
+      // Feature 97: Compass Needle Animation
+      drawCompassNeedle97(viewLeft55, viewTop55, time);
+
+      // Feature 98: Discovery Timeline Bar
+      drawDiscoveryTimeline98(time);
+
+      // Feature 100: Aurora Borealis Effect
+      drawAurora100(time);
+
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -47472,6 +47484,8 @@
         mctx.globalAlpha = 1.0;
         mctx.textAlign = 'left';
       }
+      // Feature 99: Minimap Trail Decay
+      if (typeof drawMinimapTrailDecay99 === "function") drawMinimapTrailDecay99();
       // Lens-aware minimap border glow + label
       if (activeLens && lensCategories) {
         var _lensCol = null;
@@ -48778,6 +48792,162 @@
         ctx.lineTo(canvas.width, ly96);
         ctx.stroke();
       }
+      ctx.restore();
+    }
+
+
+
+    // Feature 97: Compass Needle Animation
+    var compassNeedle97 = { angle: 0, targetAngle: 0, pulsePhase: 0 };
+    function drawCompassNeedle97(viewLeft, viewTop, time) {
+      if (typeof ctx === "undefined" || typeof canvas === "undefined") return;
+      if (typeof discovered === "undefined" || typeof chambers === "undefined") return;
+      var px97 = player.x; var py97 = player.y;
+      var nearDist97 = Infinity; var nearAngle97 = 0;
+      for (var i97 = 0; i97 < chambers.length; i97 += 10) {
+        if (discovered.has(i97)) continue;
+        var dx97 = chambers[i97].x - px97; var dy97 = chambers[i97].y - py97;
+        var d97 = Math.sqrt(dx97*dx97 + dy97*dy97);
+        if (d97 < nearDist97) { nearDist97 = d97; nearAngle97 = Math.atan2(dy97, dx97); }
+      }
+      compassNeedle97.targetAngle = nearAngle97;
+      var diff97 = compassNeedle97.targetAngle - compassNeedle97.angle;
+      while (diff97 > Math.PI) diff97 -= 2*Math.PI;
+      while (diff97 < -Math.PI) diff97 += 2*Math.PI;
+      compassNeedle97.angle += diff97 * 0.05;
+      compassNeedle97.pulsePhase += 0.03;
+      var cx97 = 70; var cy97 = canvas.height - 70;
+      var radius97 = 25 + Math.sin(compassNeedle97.pulsePhase) * 3;
+      ctx.save();
+      ctx.translate(cx97, cy97);
+      ctx.rotate(compassNeedle97.angle);
+      ctx.beginPath();
+      ctx.moveTo(radius97, 0);
+      ctx.lineTo(-8, -6);
+      ctx.lineTo(-4, 0);
+      ctx.lineTo(-8, 6);
+      ctx.closePath();
+      var pulse97 = 0.5 + Math.sin(compassNeedle97.pulsePhase) * 0.3;
+      ctx.fillStyle = "rgba(255, 100, 50, " + pulse97 + ")";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255, 150, 80, " + (pulse97 + 0.2) + ")";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, 0, 4, 0, Math.PI*2);
+      ctx.fillStyle = "rgba(255, 200, 150, 0.7)";
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Feature 98: Discovery Timeline Bar
+    var discoveryTimeline98 = [];
+    var discoveryTimelineMax98 = 200;
+    function addToTimeline98(chamberIdx) {
+      if (typeof discoveryTimeline98 === "undefined") return;
+      discoveryTimeline98.push({ idx: chamberIdx, time: performance.now() });
+      if (discoveryTimeline98.length > discoveryTimelineMax98) discoveryTimeline98.shift();
+    }
+    function drawDiscoveryTimeline98(time) {
+      if (typeof ctx === "undefined" || typeof canvas === "undefined") return;
+      if (typeof discoveryTimeline98 === "undefined" || discoveryTimeline98.length === 0) return;
+      var barY98 = canvas.height - 14;
+      var barH98 = 8;
+      ctx.save();
+      ctx.fillStyle = "rgba(20, 15, 30, 0.4)";
+      ctx.fillRect(0, barY98 - 2, canvas.width, barH98 + 4);
+      var count98 = discoveryTimeline98.length;
+      for (var i98 = 0; i98 < count98; i98++) {
+        var x98 = (i98 / Math.max(count98 - 1, 1)) * canvas.width;
+        var entry98 = discoveryTimeline98[i98];
+        var c98 = chambers[entry98.idx];
+        if (!c98) continue;
+        var age98 = (performance.now() - entry98.time) / 30000;
+        age98 = Math.min(age98, 1);
+        var alpha98 = 0.3 + (1 - age98) * 0.7;
+        ctx.globalAlpha = alpha98;
+        ctx.beginPath();
+        ctx.arc(x98, barY98 + barH98/2, 3, 0, Math.PI*2);
+        ctx.fillStyle = c98.color || "#888";
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+
+    // Feature 99: Minimap Trail Decay
+    var minimapTrailDecay99 = [];
+    function updateMinimapTrailDecay99() {
+      if (typeof minimapTrailDecay99 === "undefined") return;
+      minimapTrailDecay99.push({ x: player.x, y: player.y, t: performance.now() });
+      while (minimapTrailDecay99.length > 400) minimapTrailDecay99.shift();
+    }
+    function drawMinimapTrailDecay99() {
+      if (typeof minimapTrailDecay99 === "undefined" || typeof mctx === "undefined") return;
+      if (typeof MINIMAP_SCALE === "undefined") return;
+      if (minimapTrailDecay99.length < 2) return;
+      var now99 = performance.now();
+      var maxAge99 = 30000;
+      for (var i99 = 1; i99 < minimapTrailDecay99.length; i99++) {
+        var p99 = minimapTrailDecay99[i99];
+        var age99 = now99 - p99.t;
+        if (age99 > maxAge99) continue;
+        var alpha99 = 1 - (age99 / maxAge99);
+        var sx99 = p99.x * MINIMAP_SCALE;
+        var sy99 = p99.y * MINIMAP_SCALE;
+        mctx.beginPath();
+        mctx.arc(sx99, sy99, 1.5, 0, Math.PI*2);
+        mctx.fillStyle = "rgba(180, 120, 255, " + (alpha99 * 0.5) + ")";
+        mctx.fill();
+      }
+    }
+
+    // Feature 100: Aurora Borealis Effect (THE 100TH FEATURE!)
+    var aurora100 = { waves: [], initialized: false };
+    function initAurora100() {
+      if (aurora100.initialized) return;
+      aurora100.waves = [];
+      for (var w100 = 0; w100 < 5; w100++) {
+        aurora100.waves.push({
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.0003 + Math.random() * 0.0005,
+          amplitude: 30 + Math.random() * 40,
+          yBase: 20 + w100 * 25,
+          hue: 120 + w100 * 30,
+          width: 0.6 + Math.random() * 0.4
+        });
+      }
+      aurora100.initialized = true;
+    }
+    function drawAurora100(time) {
+      if (typeof ctx === "undefined" || typeof canvas === "undefined") return;
+      initAurora100();
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      var t100 = time * 1000;
+      for (var w100 = 0; w100 < aurora100.waves.length; w100++) {
+        var wave100 = aurora100.waves[w100];
+        var grad100 = ctx.createLinearGradient(0, wave100.yBase - 20, 0, wave100.yBase + 40);
+        var alpha100 = 0.03 + Math.sin(t100 * wave100.speed + wave100.phase) * 0.02;
+        grad100.addColorStop(0, "hsla(" + wave100.hue + ", 80%, 60%, 0)");
+        grad100.addColorStop(0.3, "hsla(" + wave100.hue + ", 80%, 60%, " + alpha100 + ")");
+        grad100.addColorStop(0.5, "hsla(" + (wave100.hue + 20) + ", 90%, 70%, " + (alpha100 * 1.5) + ")");
+        grad100.addColorStop(0.7, "hsla(" + wave100.hue + ", 80%, 60%, " + alpha100 + ")");
+        grad100.addColorStop(1, "hsla(" + wave100.hue + ", 80%, 60%, 0)");
+        ctx.fillStyle = grad100;
+        ctx.beginPath();
+        ctx.moveTo(0, wave100.yBase + wave100.amplitude);
+        for (var x100 = 0; x100 <= canvas.width; x100 += 8) {
+          var y100 = wave100.yBase + Math.sin(x100 * 0.005 + t100 * wave100.speed + wave100.phase) * wave100.amplitude;
+          y100 += Math.sin(x100 * 0.01 + t100 * wave100.speed * 0.7) * wave100.amplitude * 0.3;
+          ctx.lineTo(x100, y100);
+        }
+        ctx.lineTo(canvas.width, wave100.yBase + wave100.amplitude + 40);
+        ctx.lineTo(0, wave100.yBase + wave100.amplitude + 40);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.globalCompositeOperation = "source-over";
       ctx.restore();
     }
 
