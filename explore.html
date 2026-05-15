@@ -46408,6 +46408,7 @@
           discovered.add(i);
             if (typeof addToTimeline98 === 'function') addToTimeline98(i);
             if (typeof recordDiscoveryTime103 === 'function') recordDiscoveryTime103(i);
+            if (typeof triggerDiscoveryFlash110 === 'function') triggerDiscoveryFlash110(chambers[i].x, chambers[i].y);
             if (typeof triggerScreenShake === 'function') triggerScreenShake(4, 12); trackVisit(i); spawnDiscoveryRipple(chambers[i].x, chambers[i].y, chambers[i].color);
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
           checkMilestone(discovered.size);
@@ -46452,6 +46453,11 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Features 109-112 updates
+      if (typeof updateFireflies109 === "function") updateFireflies109();
+      if (typeof updateMomentumTrail111 === "function") updateMomentumTrail111();
+      if (typeof updateRegionBanner112 === "function") updateRegionBanner112();
+
       // Features 105-106 updates
       if (typeof updatePulseRings105 === "function") updatePulseRings105();
       if (typeof updateNameWhispers106 === "function") updateNameWhispers106();
@@ -47320,6 +47326,18 @@
 
       // Feature 107: Exploration Percentage Arc
       drawExplorationArc107(viewLeft55, viewTop55);
+
+      // Feature 109: Ambient Firefly Particles
+      drawFireflies109(viewLeft55, viewTop55, time);
+
+      // Feature 110: Chamber Discovery Flash
+      drawDiscoveryFlashes110(viewLeft55, viewTop55);
+
+      // Feature 111: Exploration Momentum Trail
+      drawMomentumTrail111(viewLeft55, viewTop55);
+
+      // Feature 112: Region Name Banner
+      drawRegionBanner112();
 
       drawCompassRose(time);
 
@@ -49241,6 +49259,143 @@
           ctx.fill();
         }
       }
+      ctx.restore();
+    }
+
+
+
+    // Feature 109: Ambient Firefly Particles
+    var fireflies109 = [];
+    function initFireflies109() {
+      if (fireflies109.length > 0) return;
+      for (var f109 = 0; f109 < 30; f109++) {
+        fireflies109.push({
+          x: Math.random() * 2000 - 1000, y: Math.random() * 2000 - 1000,
+          vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+          phase: Math.random() * Math.PI * 2, glowSpeed: 0.5 + Math.random() * 1.5,
+          hue: 40 + Math.random() * 40, size: 2 + Math.random() * 2
+        });
+      }
+    }
+    function updateFireflies109() {
+      initFireflies109();
+      for (var f109 = 0; f109 < fireflies109.length; f109++) {
+        var ff109 = fireflies109[f109];
+        ff109.vx += (Math.random() - 0.5) * 0.05;
+        ff109.vy += (Math.random() - 0.5) * 0.05;
+        ff109.vx *= 0.98; ff109.vy *= 0.98;
+        ff109.x += ff109.vx; ff109.y += ff109.vy;
+        ff109.phase += 0.02 * ff109.glowSpeed;
+        var dx109 = ff109.x - player.x; var dy109 = ff109.y - player.y;
+        if (Math.sqrt(dx109*dx109 + dy109*dy109) > 800) {
+          ff109.x = player.x + (Math.random() - 0.5) * 600;
+          ff109.y = player.y + (Math.random() - 0.5) * 600;
+        }
+      }
+    }
+    function drawFireflies109(viewLeft, viewTop, time) {
+      if (typeof ctx === "undefined") return;
+      initFireflies109();
+      ctx.save();
+      for (var f109 = 0; f109 < fireflies109.length; f109++) {
+        var ff109 = fireflies109[f109];
+        var sx109 = ff109.x - viewLeft; var sy109 = ff109.y - viewTop;
+        if (sx109 < -20 || sx109 > canvas.width + 20 || sy109 < -20 || sy109 > canvas.height + 20) continue;
+        var glow109 = Math.max(0, Math.sin(ff109.phase));
+        if (glow109 < 0.1) continue;
+        ctx.beginPath();
+        ctx.arc(sx109, sy109, ff109.size * glow109, 0, Math.PI * 2);
+        ctx.fillStyle = "hsla(" + ff109.hue + ", 100%, 70%, " + (glow109 * 0.6) + ")";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(sx109, sy109, ff109.size * glow109 * 2, 0, Math.PI * 2);
+        ctx.fillStyle = "hsla(" + ff109.hue + ", 100%, 70%, " + (glow109 * 0.15) + ")";
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // Feature 110: Chamber Discovery Flash
+    var discoveryFlashes110 = [];
+    function triggerDiscoveryFlash110(x, y) {
+      discoveryFlashes110.push({ x: x, y: y, radius: 0, alpha: 0.8 });
+    }
+    function drawDiscoveryFlashes110(viewLeft, viewTop) {
+      if (typeof ctx === "undefined" || typeof discoveryFlashes110 === "undefined") return;
+      ctx.save();
+      for (var f110 = discoveryFlashes110.length - 1; f110 >= 0; f110--) {
+        var fl110 = discoveryFlashes110[f110];
+        fl110.radius += 4;
+        fl110.alpha -= 0.02;
+        if (fl110.alpha <= 0) { discoveryFlashes110.splice(f110, 1); continue; }
+        var sx110 = fl110.x - viewLeft; var sy110 = fl110.y - viewTop;
+        var grad110 = ctx.createRadialGradient(sx110, sy110, 0, sx110, sy110, fl110.radius);
+        grad110.addColorStop(0, "rgba(255, 255, 255, " + fl110.alpha + ")");
+        grad110.addColorStop(0.5, "rgba(255, 255, 200, " + (fl110.alpha * 0.5) + ")");
+        grad110.addColorStop(1, "rgba(255, 255, 200, 0)");
+        ctx.fillStyle = grad110;
+        ctx.beginPath();
+        ctx.arc(sx110, sy110, fl110.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // Feature 111: Exploration Momentum Trail (velocity-based width)
+    var momentumTrail111 = [];
+    function updateMomentumTrail111() {
+      if (typeof momentumTrail111 === "undefined") return;
+      var vx111 = player.vx || 0; var vy111 = player.vy || 0;
+      var speed111 = Math.sqrt(vx111*vx111 + vy111*vy111);
+      momentumTrail111.push({ x: player.x, y: player.y, speed: speed111, t: performance.now() });
+      while (momentumTrail111.length > 60) momentumTrail111.shift();
+    }
+    function drawMomentumTrail111(viewLeft, viewTop) {
+      if (typeof ctx === "undefined" || typeof momentumTrail111 === "undefined") return;
+      if (momentumTrail111.length < 2) return;
+      ctx.save();
+      for (var m111 = 1; m111 < momentumTrail111.length; m111++) {
+        var p0 = momentumTrail111[m111 - 1]; var p1 = momentumTrail111[m111];
+        var age111 = m111 / momentumTrail111.length;
+        var width111 = Math.max(0.5, p1.speed * 1.5);
+        ctx.beginPath();
+        ctx.moveTo(p0.x - viewLeft, p0.y - viewTop);
+        ctx.lineTo(p1.x - viewLeft, p1.y - viewTop);
+        ctx.strokeStyle = "rgba(180, 140, 255, " + (age111 * 0.3) + ")";
+        ctx.lineWidth = width111;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Feature 112: Region Name Banner at top center
+    var currentRegionBanner112 = { name: "", alpha: 0, targetAlpha: 0 };
+    function updateRegionBanner112() {
+      if (typeof currentRegionBanner112 === "undefined") return;
+      var regionName112 = "";
+      var py112 = player.y;
+      if (py112 < 2000) regionName112 = "THE UPPER ARCHIVES";
+      else if (py112 < 50000) regionName112 = "THE ANTECHAMBER";
+      else if (py112 < 200000) regionName112 = "THE MIDDLE DEPTHS";
+      else if (py112 < 300000) regionName112 = "THE LOWER GALLERIES";
+      else regionName112 = "THE DEEP VAULTS";
+      if (regionName112 !== currentRegionBanner112.name) {
+        currentRegionBanner112.name = regionName112;
+        currentRegionBanner112.targetAlpha = 1;
+      }
+      currentRegionBanner112.alpha += (currentRegionBanner112.targetAlpha - currentRegionBanner112.alpha) * 0.05;
+      if (currentRegionBanner112.alpha > 0.9) currentRegionBanner112.targetAlpha = 0.15;
+    }
+    function drawRegionBanner112() {
+      if (typeof ctx === "undefined" || typeof currentRegionBanner112 === "undefined") return;
+      if (currentRegionBanner112.alpha < 0.01) return;
+      ctx.save();
+      ctx.font = "14px serif";
+      ctx.textAlign = "center";
+      ctx.letterSpacing = "4px";
+      ctx.fillStyle = "rgba(200, 200, 220, " + currentRegionBanner112.alpha + ")";
+      ctx.fillText(currentRegionBanner112.name, canvas.width / 2, 30);
+      ctx.textAlign = "left";
       ctx.restore();
     }
 
