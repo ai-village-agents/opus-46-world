@@ -48634,6 +48634,10 @@
       drawGlowHaze244(time);
       drawDriftParticles245(time);
       drawPulseGrid246(time);
+      drawRefractionArcs247(time);
+      drawFrequencyRipples248(time);
+      drawStardustVeil249(time);
+      drawCelebrationAurora250(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -53102,6 +53106,72 @@
       }
       for (var y = 0; y < canvas.height; y += step) {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+      }
+    }
+
+
+    // Feature 247: Ambient Refraction Arcs
+    function drawRefractionArcs247(time) {
+      var cx2 = canvas.width/2, cy2 = canvas.height/2;
+      for (var i = 0; i < 4; i++) {
+        var angle = time * 0.0002 + i * Math.PI / 2;
+        var r = 150 + Math.sin(time * 0.0005 + i) * 30;
+        var startA = angle - 0.4;
+        var endA = angle + 0.4;
+        ctx.strokeStyle = "rgba(180,200,240," + (0.02 + Math.sin(time * 0.001 + i) * 0.01) + ")";
+        ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.arc(cx2, cy2, r, startA, endA); ctx.stroke();
+      }
+    }
+
+    // Feature 248: Chamber Frequency Ripples
+    function drawFrequencyRipples248(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      var px = player.x, py = player.y;
+      for (var i = 0; i < chambers.length; i++) {
+        var ch = chambers[i];
+        var dx = ch.x - px, dy = ch.y - py;
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist > 200 || !discovered.has(i)) continue;
+        var sx = (ch.x - cx) * z + canvas.width/2;
+        var sy = (ch.y - cy) * z + canvas.height/2;
+        var freq = (200 - dist) / 200;
+        var ripple = Math.sin(time * 0.004 * freq + i) * 0.5 + 0.5;
+        ctx.strokeStyle = "rgba(255,220,180," + (ripple * 0.06 * freq) + ")";
+        ctx.lineWidth = 0.5;
+        ctx.beginPath(); ctx.arc(sx, sy, (8 + ripple * 6) * z, 0, Math.PI * 2); ctx.stroke();
+      }
+    }
+
+    // Feature 249: Ambient Stardust Veil
+    function drawStardustVeil249(time) {
+      for (var i = 0; i < 60; i++) {
+        var seed = i * 7919;
+        var x = ((seed * 13 + Math.floor(time * 0.01)) * 17) % canvas.width;
+        var y = ((seed * 31 + Math.floor(time * 0.008)) * 23) % canvas.height;
+        var twinkle = Math.sin(time * 0.002 + seed) * 0.5 + 0.5;
+        if (twinkle > 0.7) {
+          ctx.fillStyle = "rgba(220,220,255," + ((twinkle - 0.7) * 0.3) + ")";
+          ctx.fillRect(x, y, 1, 1);
+        }
+      }
+    }
+
+    // Feature 250: THE QUARTER-MILLENNIUM — Ambient Celebration Aurora
+    function drawCelebrationAurora250(time) {
+      var colors = [
+        [255, 100, 100], [255, 200, 100], [100, 255, 100],
+        [100, 200, 255], [200, 100, 255], [255, 100, 200]
+      ];
+      for (var i = 0; i < colors.length; i++) {
+        var c = colors[i];
+        var x = canvas.width * (i / colors.length) + Math.sin(time * 0.0003 + i * 1.2) * 80;
+        var y = canvas.height * 0.3 + Math.cos(time * 0.0004 + i * 0.9) * 60;
+        var grad = ctx.createRadialGradient(x, y, 0, x, y, 120);
+        grad.addColorStop(0, "rgba(" + c[0] + "," + c[1] + "," + c[2] + ",0.012)");
+        grad.addColorStop(1, "rgba(" + c[0] + "," + c[1] + "," + c[2] + ",0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(x, y, 120, 0, Math.PI * 2); ctx.fill();
       }
     }
 
