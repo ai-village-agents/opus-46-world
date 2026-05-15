@@ -46411,6 +46411,8 @@
             if (typeof triggerDiscoveryFlash110 === 'function') triggerDiscoveryFlash110(chambers[i].x, chambers[i].y);
             if (typeof triggerSoundWave118 === 'function') triggerSoundWave118(chambers[i].x, chambers[i].y);
             if (typeof triggerResonanceRing122 === 'function') triggerResonanceRing122(chambers[i].x, chambers[i].y);
+            if (typeof triggerDiscoveryChain138 === 'function') triggerDiscoveryChain138(chambers[i].x, chambers[i].y);
+
 
             if (typeof triggerScreenShake === 'function') triggerScreenShake(4, 12); trackVisit(i); spawnDiscoveryRipple(chambers[i].x, chambers[i].y, chambers[i].color);
           localStorage.setItem('liminal-discovered', JSON.stringify([...discovered]));
@@ -46456,6 +46458,9 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      updateDiscoveryChain138();
+      updateCrystalShards140();
+
       updateSporeParticles133();
       updateSpiralTrail135();
       updateGlitchFragments136();
@@ -47398,6 +47403,10 @@
       drawPulseNetwork134(time);
       drawSpiralTrail135();
       drawGlitchFragments136();
+      drawLanternGlows137(time);
+      drawDiscoveryChain138();
+      drawCompassPetals139(time);
+      drawCrystalShards140();
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -50224,6 +50233,150 @@
         var g = glitchFragments136[i];
         ctx.fillStyle = "hsla(" + g.hue + ",60%,50%," + (g.life * 0.15) + ")";
         ctx.fillRect(g.x, g.y, g.w, g.h);
+      }
+    }
+
+
+    // Feature 137: Ambient Lantern Glow
+    var lanternGlows137 = [];
+    for (var lg137 = 0; lg137 < 10; lg137++) {
+      lanternGlows137.push({
+        x: Math.random() * 800000 - 100000,
+        y: Math.random() * 800000 - 100000,
+        radius: 20 + Math.random() * 30,
+        flicker: Math.random() * Math.PI * 2,
+        flickerSpeed: 0.003 + Math.random() * 0.005,
+        hue: 30 + Math.random() * 30
+      });
+    }
+    function drawLanternGlows137(time) {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      for (var i = 0; i < lanternGlows137.length; i++) {
+        var l = lanternGlows137[i];
+        var sx = l.x - vl;
+        var sy = l.y - vt;
+        if (sx < -100 || sx > canvas.width + 100 || sy < -100 || sy > canvas.height + 100) continue;
+        var bright = 0.08 + 0.04 * Math.sin(time * l.flickerSpeed + l.flicker);
+        var grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, l.radius);
+        grad.addColorStop(0, "hsla(" + l.hue + ",80%,60%," + bright + ")");
+        grad.addColorStop(0.6, "hsla(" + l.hue + ",70%,40%," + (bright * 0.3) + ")");
+        grad.addColorStop(1, "hsla(" + l.hue + ",60%,30%,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(sx, sy, l.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Feature 138: Chamber Discovery Chain
+    var discoveryChain138 = [];
+    function triggerDiscoveryChain138(x, y) {
+      if (discoveryChain138.length > 0) {
+        var last = discoveryChain138[discoveryChain138.length - 1];
+        var dx = x - last.x;
+        var dy = y - last.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 500) {
+          discoveryChain138.push({ x: x, y: y, fromX: last.x, fromY: last.y, life: 1.0 });
+          return;
+        }
+      }
+      discoveryChain138.push({ x: x, y: y, fromX: x, fromY: y, life: 1.0 });
+    }
+    function updateDiscoveryChain138() {
+      for (var i = discoveryChain138.length - 1; i >= 0; i--) {
+        discoveryChain138[i].life -= 0.01;
+        if (discoveryChain138[i].life <= 0) discoveryChain138.splice(i, 1);
+      }
+    }
+    function drawDiscoveryChain138() {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      for (var i = 0; i < discoveryChain138.length; i++) {
+        var c = discoveryChain138[i];
+        var sx = c.x - vl;
+        var sy = c.y - vt;
+        var fx = c.fromX - vl;
+        var fy = c.fromY - vt;
+        ctx.strokeStyle = "rgba(255,255,100," + (c.life * 0.5) + ")";
+        ctx.lineWidth = 2 * c.life;
+        ctx.beginPath();
+        var mx = (sx + fx) / 2 + (Math.random() - 0.5) * 20 * c.life;
+        var my = (sy + fy) / 2 + (Math.random() - 0.5) * 20 * c.life;
+        ctx.moveTo(fx, fy);
+        ctx.quadraticCurveTo(mx, my, sx, sy);
+        ctx.stroke();
+      }
+    }
+
+    // Feature 139: Exploration Compass Petals
+    function drawCompassPetals139(time) {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      var px = player.x - vl;
+      var py = player.y - vt;
+      var speed = Math.sqrt(player.vx * player.vx + player.vy * player.vy);
+      if (speed < 0.5) return;
+      var moveAngle = Math.atan2(player.vy, player.vx);
+      for (var p = 0; p < 4; p++) {
+        var angle = moveAngle + p * Math.PI / 2;
+        var dist = 25 + Math.sin(time * 0.003 + p) * 3;
+        var tipX = px + Math.cos(angle) * dist;
+        var tipY = py + Math.sin(angle) * dist;
+        var alpha = (p === 0) ? 0.25 : 0.08;
+        ctx.fillStyle = "rgba(255,200,100," + alpha + ")";
+        ctx.beginPath();
+        ctx.moveTo(tipX, tipY);
+        ctx.lineTo(px + Math.cos(angle - 0.3) * (dist - 8), py + Math.sin(angle - 0.3) * (dist - 8));
+        ctx.lineTo(px + Math.cos(angle + 0.3) * (dist - 8), py + Math.sin(angle + 0.3) * (dist - 8));
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    // Feature 140: Ambient Crystal Shards
+    var crystalShards140 = [];
+    for (var cs140 = 0; cs140 < 15; cs140++) {
+      crystalShards140.push({
+        x: Math.random() * 1200,
+        y: Math.random() * 900,
+        angle: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.02,
+        size: 3 + Math.random() * 5,
+        driftX: (Math.random() - 0.5) * 0.3,
+        driftY: (Math.random() - 0.5) * 0.3,
+        hue: 180 + Math.random() * 60,
+        alpha: 0.06 + Math.random() * 0.1
+      });
+    }
+    function updateCrystalShards140() {
+      for (var i = 0; i < crystalShards140.length; i++) {
+        var c = crystalShards140[i];
+        c.x += c.driftX;
+        c.y += c.driftY;
+        c.angle += c.rotSpeed;
+        if (c.x < -20) c.x = canvas.width + 20;
+        if (c.x > canvas.width + 20) c.x = -20;
+        if (c.y < -20) c.y = canvas.height + 20;
+        if (c.y > canvas.height + 20) c.y = -20;
+      }
+    }
+    function drawCrystalShards140() {
+      for (var i = 0; i < crystalShards140.length; i++) {
+        var c = crystalShards140[i];
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate(c.angle);
+        ctx.fillStyle = "hsla(" + c.hue + ",50%,70%," + c.alpha + ")";
+        ctx.beginPath();
+        ctx.moveTo(0, -c.size);
+        ctx.lineTo(c.size * 0.4, 0);
+        ctx.lineTo(0, c.size);
+        ctx.lineTo(-c.size * 0.4, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
       }
     }
 
