@@ -46458,6 +46458,14 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Update Feature 213: Echo Dots
+      echoDot213Timer += dt;
+      if (echoDot213Timer > 0.5) {
+        echoDot213Timer = 0;
+        echoDots213.push({x: player.x, y: player.y, alpha: 0.1});
+        if (echoDots213.length > 50) echoDots213.shift();
+      }
+
       // Update Feature 209: Wake Ripples
       var wrSpeed209 = Math.sqrt(player.vx * player.vx + player.vy * player.vy);
       if (wrSpeed209 > 2 && Math.random() < 0.08) {
@@ -48377,6 +48385,69 @@
         ctx.arc(cStar.x, cStar.y, 1.2, 0, Math.PI * 2);
         ctx.fill();
       }
+
+      // Draw Feature 211: Lens Flare
+      lensFlare211Angle += 0.003;
+      var lfX = canvas.width/2 + Math.cos(lensFlare211Angle) * 300;
+      var lfY = 100 + Math.sin(lensFlare211Angle * 0.7) * 50;
+      var lfAlpha = 0.03 + 0.02 * Math.sin(time * 0.5);
+      for (var lf = 0; lf < 4; lf++) {
+        var lfR = (20 + lf * 15);
+        var lfGrad = ctx.createRadialGradient(lfX + lf * 30, lfY + lf * 10, 0, lfX + lf * 30, lfY + lf * 10, lfR);
+        lfGrad.addColorStop(0, "rgba(255, 240, 200, " + (lfAlpha * (1 - lf * 0.2)) + ")");
+        lfGrad.addColorStop(1, "rgba(255, 200, 100, 0)");
+        ctx.fillStyle = lfGrad;
+        ctx.beginPath();
+        ctx.arc(lfX + lf * 30, lfY + lf * 10, lfR, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Draw Feature 212: Heartbeat Glow
+      heartbeatGlow212Timer += 0.016;
+      var hbPhase = heartbeatGlow212Timer * 1.2;
+      var hbBeat = Math.pow(Math.sin(hbPhase), 20) + Math.pow(Math.sin(hbPhase + 0.5), 20) * 0.6;
+      for (var hb = 0; hb < chambers.length; hb++) {
+        if (hb % 19 !== 0) continue;
+        var hbDx = chambers[hb].x - player.x;
+        var hbDy = chambers[hb].y - player.y;
+        var hbDist = Math.sqrt(hbDx*hbDx + hbDy*hbDy);
+        if (hbDist > 350) continue;
+        var hbSX = (chambers[hb].x - camera.x) * zoom + canvas.width/2;
+        var hbSY = (chambers[hb].y - camera.y) * zoom + canvas.height/2;
+        ctx.fillStyle = "rgba(200, 80, 80, " + (0.08 * hbBeat) + ")";
+        ctx.beginPath();
+        ctx.arc(hbSX, hbSY, (8 + hbBeat * 6) * zoom, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Draw Feature 213: Echo Dots
+      for (var ed = 0; ed < echoDots213.length; ed++) {
+        var eDot = echoDots213[ed];
+        eDot.alpha -= 0.0008;
+        if (eDot.alpha <= 0) { echoDots213.splice(ed, 1); ed--; continue; }
+        var edSX = (eDot.x - camera.x) * zoom + canvas.width/2;
+        var edSY = (eDot.y - camera.y) * zoom + canvas.height/2;
+        ctx.fillStyle = "rgba(160, 180, 220, " + eDot.alpha + ")";
+        ctx.beginPath();
+        ctx.arc(edSX, edSY, 2 * zoom, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Draw Feature 214: Vortex Spiral
+      vortexSpiral214Angle += 0.008;
+      vortexSpiral214X = canvas.width * 0.7 + Math.sin(time * 0.1) * 100;
+      vortexSpiral214Y = canvas.height * 0.6 + Math.cos(time * 0.08) * 80;
+      ctx.strokeStyle = "rgba(120, 100, 180, 0.04)";
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      for (var vs = 0; vs < 80; vs++) {
+        var vsA = vortexSpiral214Angle + vs * 0.12;
+        var vsR = vs * 1.2;
+        var vsX = vortexSpiral214X + Math.cos(vsA) * vsR;
+        var vsY = vortexSpiral214Y + Math.sin(vsA) * vsR;
+        if (vs === 0) ctx.moveTo(vsX, vsY); else ctx.lineTo(vsX, vsY);
+      }
+      ctx.stroke();
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -52378,6 +52449,21 @@
     for (var cm = 0; cm < 30; cm++) {
       constellationMap210Stars.push({x: Math.random() * canvas.width, y: Math.random() * canvas.height, brightness: 0.03 + Math.random() * 0.06, twinkleSpeed: 1 + Math.random() * 3});
     }
+
+    // Feature 211: Ambient Lens Flare - subtle lens flare toward bright areas
+    var lensFlare211Angle = 0;
+
+    // Feature 212: Chamber Heartbeat Glow - chambers pulse like a heartbeat
+    var heartbeatGlow212Timer = 0;
+
+    // Feature 213: Exploration Echo Dots - dots that echo your previous positions
+    var echoDots213 = [];
+    var echoDot213Timer = 0;
+
+    // Feature 214: Ambient Vortex Spiral - slow-spinning vortex in the background
+    var vortexSpiral214Angle = 0;
+    var vortexSpiral214X = 0;
+    var vortexSpiral214Y = 0;
     document.body.appendChild(autoWalkIndicator);
 
 
