@@ -48905,6 +48905,27 @@
       drawVortexCore498(time);
       drawWishingStar499(time);
       drawQuincentennial500(time);
+      
+      drawArcticGlow501(time);
+      drawBubbleRise502(time);
+      drawChainLink503(time);
+      drawDewDrop504(time);
+      drawEmberFloat505(time);
+      drawFlameWisp506(time);
+      drawGalaxyArm507(time);
+      drawHorizonMist508(time);
+      drawIcecrystal509(time);
+      drawJewelTone510(time);
+      drawKnotWork511(time);
+      drawLightHouse512(time);
+      drawMoonPhase513(time);
+      drawNeonGrid514(time);
+      drawOpalShimmer515(time);
+      drawPlasmaField516(time);
+      drawQuiltPattern517(time);
+      drawRainbowArc518(time);
+      drawSilkThread519(time);
+      drawTidalPull520(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -57615,6 +57636,323 @@
         ctx.fillStyle = 'hsl(' + ((i * 3.6 + t * 20) % 360) + ',70%,60%)';
         ctx.globalAlpha = 0.06;
         ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    
+    function drawArcticGlow501(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var agGrad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+      agGrad.addColorStop(0, 'rgba(100,200,255,0)');
+      agGrad.addColorStop(0.5, 'rgba(100,200,255,' + (0.02 + Math.sin(t * 0.3) * 0.01) + ')');
+      agGrad.addColorStop(1, 'rgba(100,200,255,0)');
+      ctx.fillStyle = agGrad; ctx.fillRect(0, 0, canvas.width, 60);
+      ctx.restore();
+    }
+
+    function drawBubbleRise502(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 10; i++) {
+        var x = ((i * 103 + player.x * 0.03) % canvas.width);
+        var y = canvas.height - ((t * 20 + i * 80) % (canvas.height + 40));
+        ctx.beginPath(); ctx.arc(x, y, 4 + Math.sin(t + i) * 2, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(180,220,255,0.06)'; ctx.lineWidth = 0.5; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawChainLink503(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 8; i++) {
+        var a = t * 0.3 + i * 0.785;
+        var r = 100 + Math.sin(t * 0.5 + i) * 10;
+        var x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+        ctx.beginPath(); ctx.ellipse(x, y, 8, 5, a, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(200,200,200,0.06)'; ctx.lineWidth = 0.5; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawDewDrop504(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 15; i++) {
+        var x = cx + Math.sin(t * 0.2 + i * 1.2) * 200;
+        var y = cy + Math.cos(t * 0.15 + i * 0.9) * 150;
+        var sz = 2 + Math.sin(t * 1.5 + i) * 1;
+        ctx.beginPath(); ctx.arc(x, y, sz, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(200,230,255,0.07)'; ctx.fill();
+        ctx.beginPath(); ctx.arc(x - 0.5, y - 0.5, sz * 0.4, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.05)'; ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawEmberFloat505(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 12; i++) {
+        var x = ((i * 89 + player.x * 0.04) % canvas.width);
+        var y = canvas.height - ((t * 15 + i * 65) % (canvas.height + 20));
+        var sz = 1 + Math.sin(t + i) * 0.5;
+        ctx.beginPath(); ctx.arc(x, y, sz, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,150,50,0.08)'; ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawFlameWisp506(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 5; i++) {
+        ctx.beginPath();
+        var bx = cx + Math.sin(t * 0.4 + i * 1.3) * 100;
+        for (var j = 0; j < 15; j++) {
+          var y = cy + 50 - j * 8;
+          var x = bx + Math.sin(t * 2 + j * 0.3 + i) * (8 - j * 0.4);
+          if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(255,180,80,0.04)'; ctx.lineWidth = 2; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawGalaxyArm507(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var arm = 0; arm < 2; arm++) {
+        ctx.beginPath();
+        for (var i = 0; i < 60; i++) {
+          var a = i * 0.1 + arm * Math.PI + t * 0.1;
+          var r = 20 + i * 3.5;
+          var x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(200,200,255,0.03)'; ctx.lineWidth = 3; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawHorizonMist508(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var hmGrad = ctx.createLinearGradient(0, canvas.height - 100, 0, canvas.height);
+      hmGrad.addColorStop(0, 'rgba(150,170,200,0)');
+      hmGrad.addColorStop(1, 'rgba(150,170,200,' + (0.03 + Math.sin(t * 0.2) * 0.01) + ')');
+      ctx.fillStyle = hmGrad; ctx.fillRect(0, canvas.height - 100, canvas.width, 100);
+      ctx.restore();
+    }
+
+    function drawIcecrystal509(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 4; i++) {
+        var x = cx + Math.sin(t * 0.15 + i * 1.6) * 170;
+        var y = cy + Math.cos(t * 0.12 + i * 2) * 130;
+        ctx.save(); ctx.translate(x, y); ctx.rotate(t * 0.1 + i);
+        for (var j = 0; j < 6; j++) {
+          ctx.rotate(Math.PI / 3);
+          ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -10);
+          ctx.strokeStyle = 'rgba(180,220,255,0.06)'; ctx.lineWidth = 0.4; ctx.stroke();
+        }
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+
+    function drawJewelTone510(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var jewels = [[255,50,50],[50,200,50],[50,100,255],[255,200,50],[200,50,200]];
+      for (var i = 0; i < 5; i++) {
+        var a = t * 0.2 + i * Math.PI * 2 / 5;
+        var r = 130;
+        var x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+        var j = jewels[i];
+        ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + j[0] + ',' + j[1] + ',' + j[2] + ',0.06)'; ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawKnotWork511(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      ctx.beginPath();
+      for (var i = 0; i <= 100; i++) {
+        var a = i * Math.PI * 6 / 100 + t * 0.2;
+        var r = 80 + Math.sin(a * 2) * 30;
+        var x = cx + Math.cos(a) * r, y = cy + Math.sin(a * 1.5) * r * 0.6;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = 'rgba(200,180,150,0.04)'; ctx.lineWidth = 0.8; ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawLightHouse512(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var lha = t * 0.6;
+      var lx = cx + Math.cos(lha) * 250, ly = cy + Math.sin(lha) * 250;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(lx, ly);
+      ctx.strokeStyle = 'rgba(255,255,200,0.03)'; ctx.lineWidth = 4; ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawMoonPhase513(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var mp = (t * 0.1) % (Math.PI * 2);
+      var mx = cx + 180, my = 60;
+      ctx.beginPath(); ctx.arc(mx, my, 12, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(220,220,200,0.05)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(mx + Math.cos(mp) * 6, my, 12, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(10,10,20,0.05)'; ctx.fill();
+      ctx.restore();
+    }
+
+    function drawNeonGrid514(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      ctx.globalAlpha = 0.015;
+      for (var i = 0; i < 10; i++) {
+        var x = ((i * canvas.width / 10 + player.x * 0.02) % canvas.width);
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
+        ctx.strokeStyle = 'rgba(255,0,200,1)'; ctx.lineWidth = 0.3; ctx.stroke();
+      }
+      for (var i = 0; i < 8; i++) {
+        var y = ((i * canvas.height / 8 + player.y * 0.02) % canvas.height);
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
+        ctx.strokeStyle = 'rgba(0,200,255,1)'; ctx.lineWidth = 0.3; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawOpalShimmer515(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 8; i++) {
+        var x = cx + Math.sin(t * 0.3 + i * 0.8) * 160;
+        var y = cy + Math.cos(t * 0.25 + i * 1.1) * 120;
+        var hue = (t * 30 + i * 45) % 360;
+        var grad = ctx.createRadialGradient(x, y, 0, x, y, 20);
+        grad.addColorStop(0, 'hsla(' + hue + ',60%,70%,0.04)');
+        grad.addColorStop(1, 'hsla(' + hue + ',60%,70%,0)');
+        ctx.fillStyle = grad; ctx.fillRect(x-20, y-20, 40, 40);
+      }
+      ctx.restore();
+    }
+
+    function drawPlasmaField516(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 20; i++) {
+        var a = t * 0.5 + i * 0.314;
+        var r = 70 + Math.sin(t * 1.5 + i * 0.7) * 30;
+        var x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+        ctx.beginPath(); ctx.arc(x, y, 3 + Math.sin(t * 2 + i) * 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(200,100,255,0.04)'; ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawQuiltPattern517(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var qs = 50;
+      var ox = (player.x * 0.02) % qs, oy = (player.y * 0.02) % qs;
+      for (var i = -1; i < canvas.width / qs + 1; i++) {
+        for (var j = -1; j < canvas.height / qs + 1; j++) {
+          if ((i + j) % 2 === 0) continue;
+          var x = i * qs - ox, y = j * qs - oy;
+          ctx.fillStyle = 'rgba(180,180,200,0.008)';
+          ctx.fillRect(x, y, qs, qs);
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawRainbowArc518(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var colors = ['rgba(255,0,0,0.02)','rgba(255,127,0,0.02)','rgba(255,255,0,0.02)','rgba(0,255,0,0.02)','rgba(0,0,255,0.02)','rgba(75,0,130,0.02)','rgba(148,0,211,0.02)'];
+      for (var i = 0; i < 7; i++) {
+        ctx.beginPath(); ctx.arc(cx, cy + 200, 250 + i * 6, Math.PI + 0.3, Math.PI * 2 - 0.3);
+        ctx.strokeStyle = colors[i]; ctx.lineWidth = 4; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawSilkThread519(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (var i = 0; i < 6; i++) {
+        ctx.beginPath();
+        var sy = canvas.height * (0.1 + i * 0.15);
+        for (var x = 0; x < canvas.width; x += 8) {
+          var y = sy + Math.sin(x * 0.008 + t * 0.2 + i * 0.5) * 20 + Math.sin(x * 0.003 + t * 0.1) * 30;
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(220,200,180,0.02)'; ctx.lineWidth = 0.5; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawTidalPull520(time) {
+      var cx = canvas.width / 2, cy = canvas.height / 2;
+      var t = time * 0.001;
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      var tp = Math.sin(t * 0.3) * 20;
+      for (var i = 0; i < 3; i++) {
+        ctx.beginPath();
+        for (var x = 0; x < canvas.width; x += 5) {
+          var y = canvas.height - 40 - i * 15 + Math.sin(x * 0.01 + t * 0.5 + i * 0.5) * (8 + tp * 0.3);
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(100,180,220,' + (0.04 - i * 0.01) + ')'; ctx.lineWidth = 1; ctx.stroke();
       }
       ctx.restore();
     }
