@@ -48642,6 +48642,10 @@
       drawSignalThreads252(time);
       drawHaloRing253(time);
       drawPixelationZone254(time);
+      drawTidalFlow255(time);
+      drawBeaconFlash256(time);
+      drawOscilloscope257(time);
+      drawGravityLens258(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -53246,6 +53250,72 @@
           ctx.fillRect(x, y, step - 1, step - 1);
         }
       }
+    }
+
+
+    // Feature 255: Ambient Tidal Flow
+    function drawTidalFlow255(time) {
+      ctx.strokeStyle = "rgba(100,160,200,0.02)";
+      ctx.lineWidth = 0.6;
+      for (var w = 0; w < 4; w++) {
+        ctx.beginPath();
+        var yBase = canvas.height * (0.2 + w * 0.2);
+        for (var x = 0; x < canvas.width; x += 5) {
+          var y = yBase + Math.sin(x * 0.008 + time * 0.001 + w * 1.5) * 20 + Math.sin(x * 0.003 + time * 0.0005) * 10;
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    }
+
+    // Feature 256: Chamber Beacon Flash
+    function drawBeaconFlash256(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      for (var i = 0; i < chambers.length; i++) {
+        if (!discovered.has(i) || i % 50 !== 0) continue;
+        var ch = chambers[i];
+        var dx = ch.x - cx, dy = ch.y - cy;
+        if (Math.abs(dx) > 500 || Math.abs(dy) > 500) continue;
+        var sx = dx * z + canvas.width/2;
+        var sy = dy * z + canvas.height/2;
+        var flash = ((time * 0.001 + i * 3.7) % 5);
+        if (flash < 0.3) {
+          var alpha = (0.3 - flash) / 0.3 * 0.15;
+          ctx.fillStyle = "rgba(255,255,200," + alpha + ")";
+          ctx.beginPath(); ctx.arc(sx, sy, 3 * z, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    }
+
+    // Feature 257: Ambient Oscilloscope
+    function drawOscilloscope257(time) {
+      ctx.strokeStyle = "rgba(100,255,100,0.025)";
+      ctx.lineWidth = 0.7;
+      ctx.beginPath();
+      var yBase = 40;
+      for (var x = 20; x < 120; x++) {
+        var t = x * 0.1 + time * 0.003;
+        var y = yBase + Math.sin(t) * 8 + Math.sin(t * 2.3) * 4 + Math.sin(t * 5.1) * 2;
+        if (x === 20) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    // Feature 258: Ambient Gravity Lens
+    function drawGravityLens258(time) {
+      var cx2 = canvas.width/2, cy2 = canvas.height/2;
+      var r = 60 + Math.sin(time * 0.0007) * 10;
+      var distortion = Math.sin(time * 0.0004) * 0.3;
+      ctx.strokeStyle = "rgba(180,180,220,0.02)";
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      for (var a = 0; a < Math.PI * 2; a += 0.1) {
+        var rr = r + Math.sin(a * 3 + time * 0.001) * 5 * distortion;
+        var x = cx2 + Math.cos(a) * rr;
+        var y = cy2 + Math.sin(a) * rr;
+        if (a === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath(); ctx.stroke();
     }
 
     document.body.appendChild(autoWalkIndicator);
