@@ -49068,6 +49068,26 @@
       drawSandClock658(time);
       drawMoonHaze659(time);
       drawEchoRipple660(time);
+      drawCanopyLight661(time);
+      drawPebbleSkip662(time);
+      drawIronFilings663(time);
+      drawDuskGradient664(time);
+      drawGrainTexture665(time);
+      drawHexGlyph666(time);
+      drawVaporTrail667(time);
+      drawLoomThread668(time);
+      drawTideFoam669(time);
+      drawStarCluster670(time);
+      drawWaxDrip671(time);
+      drawPetalFall672(time);
+      drawDepthFog673(time);
+      drawSparkFly674(time);
+      drawDewBead675(time);
+      drawGrainWave676(time);
+      drawFrostFern677(time);
+      drawClayPot678(time);
+      drawRainFilm679(time);
+      drawAmberGlow680(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -59199,6 +59219,107 @@
     function drawEchoRipple660(time) {
       // Feature 660: Echo Ripple — acoustic echo ripples from discovered chambers
       for(var i=0;i<3;i++){var err=((time*35+i*50)%140);ctx.globalAlpha=0.08*(1-err/140);ctx.strokeStyle='#ce93d8';ctx.lineWidth=1;ctx.beginPath();ctx.arc(canvas.width*0.4,canvas.height*0.5,err,0,Math.PI*2);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    
+    function drawCanopyLight661(time) {
+      // Feature 661: Canopy Light — dappled light filtering through tree canopy
+      ctx.globalAlpha=0.04;ctx.fillStyle='#fff9c4';for(var i=0;i<6;i++){var clx=(time*5+i*160)%canvas.width,cly=canvas.height*0.15+Math.sin(i*2.3)*40;var cls=10+Math.sin(time*0.5+i)*5;ctx.beginPath();ctx.ellipse(clx,cly,cls,cls*0.6,i*0.5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawPebbleSkip662(time) {
+      // Feature 662: Pebble Skip — stone skipping across water surface
+      var pst=time%4;var psx=canvas.width*0.1+pst*canvas.width*0.2;var psy=canvas.height*0.7-Math.abs(Math.sin(pst*3))*30;ctx.globalAlpha=0.15;ctx.fillStyle='#90a4ae';ctx.beginPath();ctx.arc(psx,psy,3,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawIronFilings663(time) {
+      // Feature 663: Iron Filings — magnetic iron filing alignment pattern
+      ctx.globalAlpha=0.06;ctx.strokeStyle='#455a64';ctx.lineWidth=0.5;var ifx=canvas.width*0.5,ify=canvas.height*0.5;for(var i=0;i<12;i++){var ia=i*Math.PI/6,ir=30+i*5;var idx=ifx+Math.cos(ia)*ir,idy=ify+Math.sin(ia)*ir;ctx.save();ctx.translate(idx,idy);ctx.rotate(ia);ctx.beginPath();ctx.moveTo(-4,0);ctx.lineTo(4,0);ctx.stroke();ctx.restore();}ctx.globalAlpha=1;
+    }
+
+    function drawDuskGradient664(time) {
+      // Feature 664: Dusk Gradient — subtle dusk color gradient shift
+      ctx.globalAlpha=0.02;var dgGrad=ctx.createLinearGradient(0,0,0,canvas.height);dgGrad.addColorStop(0,'#1a237e');dgGrad.addColorStop(0.5,'#4a148c');dgGrad.addColorStop(1,'#e65100');ctx.fillStyle=dgGrad;ctx.fillRect(0,0,canvas.width,canvas.height);ctx.globalAlpha=1;
+    }
+
+    function drawGrainTexture665(time) {
+      // Feature 665: Grain Texture — subtle film grain texture overlay
+      ctx.globalAlpha=0.03;for(var i=0;i<15;i++){var gx=Math.sin(time*3+i*47)*canvas.width*0.5+canvas.width*0.5;var gy=Math.cos(time*2+i*31)*canvas.height*0.5+canvas.height*0.5;ctx.fillStyle=i%2?'#fff':'#000';ctx.fillRect(gx,gy,1,1);}ctx.globalAlpha=1;
+    }
+
+    function drawHexGlyph666(time) {
+      // Feature 666: Hex Glyph — mysterious hexagonal glyphs floating
+      ctx.globalAlpha=0.07;ctx.strokeStyle='#7c4dff';var hgx=canvas.width*0.65+Math.sin(time*0.3)*30,hgy=canvas.height*0.35+Math.cos(time*0.4)*20;ctx.beginPath();for(var i=0;i<6;i++){var ha=i*Math.PI/3+time*0.1;ctx.lineTo(hgx+Math.cos(ha)*15,hgy+Math.sin(ha)*15);}ctx.closePath();ctx.stroke();ctx.beginPath();ctx.moveTo(hgx-5,hgy);ctx.lineTo(hgx+5,hgy);ctx.moveTo(hgx,hgy-5);ctx.lineTo(hgx,hgy+5);ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawVaporTrail667(time) {
+      // Feature 667: Vapor Trail — jet vapor trail dissipating slowly
+      ctx.globalAlpha=0.05;ctx.strokeStyle='#eceff1';ctx.lineWidth=2;ctx.beginPath();var vtx=(time*30)%canvas.width,vty=canvas.height*0.08;ctx.moveTo(vtx,vty);ctx.lineTo(vtx-80,vty+Math.sin(time)*5);ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawLoomThread668(time) {
+      // Feature 668: Loom Thread — weaving loom thread pattern
+      ctx.globalAlpha=0.04;ctx.strokeStyle='#8d6e63';ctx.lineWidth=0.5;for(var i=0;i<8;i++){ctx.beginPath();ctx.moveTo(canvas.width*0.8+i*5,canvas.height*0.6);ctx.lineTo(canvas.width*0.8+i*5,canvas.height*0.8);ctx.stroke();}for(var j=0;j<6;j++){ctx.beginPath();ctx.moveTo(canvas.width*0.8,canvas.height*0.6+j*5+Math.sin(time*0.5+j)*2);ctx.lineTo(canvas.width*0.8+40,canvas.height*0.6+j*5+Math.sin(time*0.5+j)*2);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawTideFoam669(time) {
+      // Feature 669: Tide Foam — sea foam bubbling at tide edges
+      ctx.globalAlpha=0.06;ctx.fillStyle='#e0f7fa';for(var i=0;i<8;i++){var tfx=canvas.width*0.1+i*canvas.width*0.1+Math.sin(time+i)*10,tfy=canvas.height*0.92+Math.sin(time*0.5+i*0.7)*5;ctx.beginPath();ctx.arc(tfx,tfy,3+Math.sin(time*2+i)*1.5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawStarCluster670(time) {
+      // Feature 670: Star Cluster — dense cluster of tiny stars
+      ctx.globalAlpha=0.12;ctx.fillStyle='#fff';var scx=canvas.width*0.25,scy=canvas.height*0.15;for(var i=0;i<10;i++){var ssx=scx+Math.cos(i*2.4+time*0.05)*20+Math.sin(i*3.7)*10;var ssy=scy+Math.sin(i*2.4+time*0.05)*15+Math.cos(i*3.7)*8;ctx.beginPath();ctx.arc(ssx,ssy,0.5+Math.sin(time+i)*0.3,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawWaxDrip671(time) {
+      // Feature 671: Wax Drip — candle wax dripping down slowly
+      ctx.globalAlpha=0.08;ctx.fillStyle='#ffe0b2';var wdx=canvas.width*0.08;for(var i=0;i<3;i++){var wdy=canvas.height*0.3+i*20+(time*5+i*30)%40;ctx.beginPath();ctx.ellipse(wdx,wdy,3,5,0,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawPetalFall672(time) {
+      // Feature 672: Petal Fall — individual flower petals drifting down
+      for(var i=0;i<3;i++){var pfx=canvas.width*0.3+i*canvas.width*0.2+Math.sin(time*0.6+i*1.5)*30;var pfy=(time*15+i*200)%canvas.height;ctx.globalAlpha=0.15;ctx.fillStyle='hsl('+(330+i*20)+',60%,75%)';ctx.save();ctx.translate(pfx,pfy);ctx.rotate(time+i);ctx.beginPath();ctx.ellipse(0,0,5,2,0,0,Math.PI*2);ctx.fill();ctx.restore();}ctx.globalAlpha=1;
+    }
+
+    function drawDepthFog673(time) {
+      // Feature 673: Depth Fog — fog layers indicating depth
+      ctx.globalAlpha=0.03;ctx.fillStyle='#546e7a';ctx.fillRect(0,canvas.height*0.6,canvas.width,canvas.height*0.1);ctx.globalAlpha=0.02;ctx.fillRect(0,canvas.height*0.75,canvas.width,canvas.height*0.08);ctx.globalAlpha=1;
+    }
+
+    function drawSparkFly674(time) {
+      // Feature 674: Spark Fly — sparks flying from an unseen forge
+      for(var i=0;i<4;i++){var sfx=canvas.width*0.1+Math.cos(time*3+i*1.5)*20;var sfy=canvas.height*0.7-(time*40+i*50)%80;ctx.globalAlpha=0.2*(1-((time*40+i*50)%80)/80);ctx.fillStyle='#ff6d00';ctx.beginPath();ctx.arc(sfx,sfy,1.5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawDewBead675(time) {
+      // Feature 675: Dew Bead — dewdrops beading on an invisible surface
+      for(var i=0;i<5;i++){var dbx=canvas.width*0.4+i*30,dby=canvas.height*0.25+Math.sin(i*1.7)*15;ctx.globalAlpha=0.12;ctx.fillStyle='#b3e5fc';ctx.beginPath();ctx.arc(dbx,dby,3,0,Math.PI*2);ctx.fill();ctx.globalAlpha=0.2;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(dbx-1,dby-1,1,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawGrainWave676(time) {
+      // Feature 676: Grain Wave — wind-blown grain field wave pattern
+      ctx.globalAlpha=0.06;ctx.strokeStyle='#c8b560';ctx.lineWidth=1;for(var i=0;i<6;i++){var gwx=canvas.width*0.1+i*canvas.width*0.15;ctx.beginPath();ctx.moveTo(gwx,canvas.height*0.88);ctx.quadraticCurveTo(gwx+Math.sin(time*1.5+i)*10,canvas.height*0.75,gwx+5,canvas.height*0.65);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawFrostFern677(time) {
+      // Feature 677: Frost Fern — fractal frost fern pattern growing
+      ctx.globalAlpha=0.06;ctx.strokeStyle='#b3e5fc';ctx.lineWidth=0.8;var ffx=canvas.width*0.95,ffy=canvas.height*0.5;ctx.beginPath();ctx.moveTo(ffx,ffy);ctx.lineTo(ffx-20,ffy-25);ctx.moveTo(ffx-8,ffy-10);ctx.lineTo(ffx-18,ffy-8);ctx.moveTo(ffx-12,ffy-15);ctx.lineTo(ffx-22,ffy-13);ctx.moveTo(ffx-8,ffy-10);ctx.lineTo(ffx-5,ffy-18);ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawClayPot678(time) {
+      // Feature 678: Clay Pot — terracotta pot silhouette with warmth glow
+      ctx.globalAlpha=0.06;ctx.fillStyle='#a1887f';var cpx=canvas.width*0.92,cpy=canvas.height*0.92;ctx.beginPath();ctx.moveTo(cpx-8,cpy);ctx.lineTo(cpx-6,cpy-12);ctx.quadraticCurveTo(cpx,cpy-18,cpx+6,cpy-12);ctx.lineTo(cpx+8,cpy);ctx.closePath();ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawRainFilm679(time) {
+      // Feature 679: Rain Film — rain streaming down like on a window
+      ctx.globalAlpha=0.04;ctx.strokeStyle='#90caf9';ctx.lineWidth=0.5;for(var i=0;i<5;i++){var rfx=canvas.width*0.1+i*canvas.width*0.2;ctx.beginPath();for(var y=0;y<canvas.height;y+=8){rfx+=Math.sin(y*0.1+time+i)*0.5;ctx.lineTo(rfx,y);}ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawAmberGlow680(time) {
+      // Feature 680: Amber Glow — warm amber backlighting effect
+      ctx.globalAlpha=0.03;var agGrad=ctx.createRadialGradient(canvas.width/2,canvas.height/2,50,canvas.width/2,canvas.height/2,canvas.width*0.4);agGrad.addColorStop(0,'#ffab40');agGrad.addColorStop(1,'transparent');ctx.fillStyle=agGrad;ctx.beginPath();ctx.arc(canvas.width/2,canvas.height/2,canvas.width*0.4,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
     }
 
     document.body.appendChild(autoWalkIndicator);
