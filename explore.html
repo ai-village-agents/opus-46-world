@@ -48968,6 +48968,26 @@
       drawFireflySwarm558(time);
       drawGlacierBlue559(time);
       drawHaloEffect560(time);
+      drawPrismDust561(time);
+      drawCrescentMoon562(time);
+      drawSparkTrail563(time);
+      drawCoralReef564(time);
+      drawLanternFloat565(time);
+      drawTideMark566(time);
+      drawPollenCloud567(time);
+      drawEchoChamber568(time);
+      drawMothFlight569(time);
+      drawVineCurl570(time);
+      drawCrystalCave571(time);
+      drawSmokeRing572(time);
+      drawPixelRain573(time);
+      drawSandRipple574(time);
+      drawBeaconPulse575(time);
+      drawFeatherFall576(time);
+      drawMagmaFlow577(time);
+      drawStarMap578(time);
+      drawDuneShift579(time);
+      drawCandleFlicker580(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -58594,6 +58614,107 @@
         ctx.lineWidth = 3; ctx.stroke();
       }
       ctx.restore();
+    }
+
+    
+    function drawPrismDust561(time) {
+      // Feature 561: Prism Dust — tiny rainbow-colored particles floating upward
+      for(var i=0;i<4;i++){var a=time*0.3+i*1.57,r=80+Math.sin(time*0.5+i)*30;var px=canvas.width/2+Math.cos(a)*r,py=canvas.height/2+Math.sin(a)*r;ctx.globalAlpha=0.25+Math.sin(time+i)*0.15;ctx.fillStyle='hsl('+(time*40+i*90)%360+',80%,70%)';ctx.fillRect(px,py,3,3);}ctx.globalAlpha=1;
+    }
+
+    function drawCrescentMoon562(time) {
+      // Feature 562: Crescent Moon — soft crescent shapes orbiting gently
+      var cx=canvas.width*0.85,cy=canvas.height*0.15;ctx.globalAlpha=0.2+Math.sin(time*0.3)*0.1;ctx.fillStyle='#ffe4b5';ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fill();ctx.fillStyle='#0a0a1e';ctx.beginPath();ctx.arc(cx+7,cy-3,15,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawSparkTrail563(time) {
+      // Feature 563: Spark Trail — sparks that follow cursor movement briefly
+      for(var i=0;i<3;i++){var sx=canvas.width/2+Math.cos(time*2+i*2.1)*100,sy=canvas.height/2+Math.sin(time*1.7+i*2.1)*80;ctx.globalAlpha=0.3-i*0.08;ctx.fillStyle='#ffd700';ctx.beginPath();ctx.arc(sx,sy,2-i*0.5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawCoralReef564(time) {
+      // Feature 564: Coral Reef — branching coral-like structures growing subtly
+      ctx.globalAlpha=0.15;ctx.strokeStyle='#ff6b6b';ctx.lineWidth=1.5;for(var i=0;i<3;i++){var bx=canvas.width*0.1+i*canvas.width*0.35,by=canvas.height*0.9;ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+Math.sin(time*0.4+i)*20,by-30-Math.sin(time*0.3)*10);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawLanternFloat565(time) {
+      // Feature 565: Lantern Float — paper lanterns drifting upward slowly
+      for(var i=0;i<3;i++){var lx=canvas.width*0.2+i*canvas.width*0.3,ly=canvas.height-(time*15+i*200)%(canvas.height+100);ctx.globalAlpha=0.2+Math.sin(time+i)*0.1;ctx.fillStyle='#ff8c42';ctx.fillRect(lx-4,ly-6,8,10);ctx.fillStyle='#ffd700';ctx.fillRect(lx-2,ly-2,4,4);}ctx.globalAlpha=1;
+    }
+
+    function drawTideMark566(time) {
+      // Feature 566: Tide Mark — horizontal wave lines pulsing across bottom
+      ctx.globalAlpha=0.12;ctx.strokeStyle='#4fc3f7';ctx.lineWidth=1;for(var i=0;i<3;i++){ctx.beginPath();for(var x=0;x<canvas.width;x+=10){ctx.lineTo(x,canvas.height-30-i*15+Math.sin(x*0.02+time+i)*8);}ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawPollenCloud567(time) {
+      // Feature 567: Pollen Cloud — tiny yellow dots drifting in wind patterns
+      for(var i=0;i<6;i++){var px=((time*20+i*170)%canvas.width),py=canvas.height*0.3+Math.sin(time*0.5+i*1.1)*100;ctx.globalAlpha=0.2;ctx.fillStyle='#f0e68c';ctx.beginPath();ctx.arc(px,py,1.5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawEchoChamber568(time) {
+      // Feature 568: Echo Chamber — concentric squares pulsing from center
+      ctx.globalAlpha=0.08;ctx.strokeStyle='#b39ddb';for(var i=0;i<4;i++){var s=20+i*25+Math.sin(time*0.8+i)*10;ctx.strokeRect(canvas.width/2-s,canvas.height/2-s,s*2,s*2);}ctx.globalAlpha=1;
+    }
+
+    function drawMothFlight569(time) {
+      // Feature 569: Moth Flight — moth-like shapes fluttering around light sources
+      for(var i=0;i<3;i++){var ma=time*1.5+i*2.09,mr=50+Math.sin(time*3+i)*20;var mx=canvas.width/2+Math.cos(ma)*mr,my=canvas.height/2+Math.sin(ma)*mr;ctx.globalAlpha=0.2;ctx.fillStyle='#d4c5a9';ctx.beginPath();ctx.ellipse(mx,my,4,2,ma,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawVineCurl570(time) {
+      // Feature 570: Vine Curl — curling vine tendrils along edges
+      ctx.globalAlpha=0.12;ctx.strokeStyle='#66bb6a';ctx.lineWidth=1.5;ctx.beginPath();for(var t=0;t<Math.PI*2;t+=0.1){var vx=20+t*5+Math.sin(t*3+time*0.5)*8,vy=canvas.height*0.5+Math.cos(t*2+time*0.3)*40;ctx.lineTo(vx,vy);}ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawCrystalCave571(time) {
+      // Feature 571: Crystal Cave — geometric crystal formations with inner glow
+      ctx.globalAlpha=0.15;for(var i=0;i<3;i++){var cx=canvas.width*0.7+i*40,cy=canvas.height*0.8-i*20;ctx.fillStyle='hsl('+(200+i*30)+',60%,70%)';ctx.beginPath();ctx.moveTo(cx,cy-15);ctx.lineTo(cx+8,cy);ctx.lineTo(cx-8,cy);ctx.closePath();ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawSmokeRing572(time) {
+      // Feature 572: Smoke Ring — translucent smoke rings expanding outward
+      for(var i=0;i<2;i++){var sr=30+((time*30+i*80)%120);ctx.globalAlpha=0.15*(1-sr/150);ctx.strokeStyle='#9e9e9e';ctx.lineWidth=3;ctx.beginPath();ctx.arc(canvas.width*0.3,canvas.height*0.4,sr,0,Math.PI*2);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawPixelRain573(time) {
+      // Feature 573: Pixel Rain — tiny pixel drops falling in columns
+      for(var i=0;i<8;i++){var px=canvas.width*0.1+i*canvas.width*0.1,py=(time*60+i*90)%canvas.height;ctx.globalAlpha=0.2;ctx.fillStyle='#80deea';ctx.fillRect(px,py,2,4);}ctx.globalAlpha=1;
+    }
+
+    function drawSandRipple574(time) {
+      // Feature 574: Sand Ripple — desert sand ripple patterns undulating
+      ctx.globalAlpha=0.1;ctx.strokeStyle='#d4a574';ctx.lineWidth=1;for(var i=0;i<4;i++){ctx.beginPath();for(var x=0;x<canvas.width;x+=8){ctx.lineTo(x,canvas.height*0.85+i*8+Math.sin(x*0.03+time*0.5+i*0.5)*5);}ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawBeaconPulse575(time) {
+      // Feature 575: Beacon Pulse — rhythmic beacon light sweeping in arc
+      var ba=time*0.8;ctx.globalAlpha=0.1;ctx.fillStyle='#fff9c4';ctx.beginPath();ctx.moveTo(canvas.width*0.9,canvas.height*0.1);ctx.lineTo(canvas.width*0.9+Math.cos(ba)*200,canvas.height*0.1+Math.sin(ba)*200);ctx.lineTo(canvas.width*0.9+Math.cos(ba+0.15)*200,canvas.height*0.1+Math.sin(ba+0.15)*200);ctx.closePath();ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawFeatherFall576(time) {
+      // Feature 576: Feather Fall — feathers drifting down with gentle sway
+      for(var i=0;i<3;i++){var fx=canvas.width*0.3+i*canvas.width*0.2+Math.sin(time*0.7+i)*40,fy=(time*25+i*180)%canvas.height;ctx.globalAlpha=0.2;ctx.strokeStyle='#e0e0e0';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(fx-5,fy);ctx.quadraticCurveTo(fx,fy-8,fx+5,fy);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawMagmaFlow577(time) {
+      // Feature 577: Magma Flow — slow-moving lava streams with orange glow
+      ctx.globalAlpha=0.12;ctx.strokeStyle='#ff5722';ctx.lineWidth=3;ctx.beginPath();for(var x=0;x<canvas.width;x+=6){ctx.lineTo(x,canvas.height*0.95+Math.sin(x*0.01+time*0.4)*8);}ctx.stroke();ctx.shadowBlur=0;ctx.globalAlpha=1;
+    }
+
+    function drawStarMap578(time) {
+      // Feature 578: Star Map — constellation-like dot patterns with connecting lines
+      ctx.globalAlpha=0.15;ctx.fillStyle='#fff';ctx.strokeStyle='#555';ctx.lineWidth=0.5;var pts=[];for(var i=0;i<5;i++){var sx=canvas.width*0.6+Math.cos(i*1.26)*60,sy=canvas.height*0.2+Math.sin(i*1.26)*40;pts.push([sx,sy]);ctx.beginPath();ctx.arc(sx,sy,2,0,Math.PI*2);ctx.fill();}for(var i=0;i<pts.length-1;i++){ctx.beginPath();ctx.moveTo(pts[i][0],pts[i][1]);ctx.lineTo(pts[i+1][0],pts[i+1][1]);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawDuneShift579(time) {
+      // Feature 579: Dune Shift — sand dune silhouettes slowly shifting shape
+      ctx.globalAlpha=0.08;ctx.fillStyle='#c4a35a';ctx.beginPath();ctx.moveTo(0,canvas.height);for(var x=0;x<=canvas.width;x+=20){ctx.lineTo(x,canvas.height-20-Math.sin(x*0.005+time*0.2)*15-Math.sin(x*0.01+time*0.15)*10);}ctx.lineTo(canvas.width,canvas.height);ctx.closePath();ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawCandleFlicker580(time) {
+      // Feature 580: Candle Flicker — warm candle-like glows with flickering light
+      for(var i=0;i<3;i++){var cx=canvas.width*0.2+i*canvas.width*0.3,cy=canvas.height*0.7;var flick=Math.sin(time*8+i*2)*2;ctx.globalAlpha=0.2+Math.sin(time*5+i)*0.08;ctx.fillStyle='#ffab40';ctx.beginPath();ctx.ellipse(cx,cy+flick,3,6,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=0.1;ctx.fillStyle='#fff3e0';ctx.beginPath();ctx.arc(cx,cy+flick,12,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
     }
 
     document.body.appendChild(autoWalkIndicator);
