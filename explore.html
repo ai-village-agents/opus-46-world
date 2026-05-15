@@ -46458,6 +46458,34 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Update Feature 180: Memory Echoes - record visited chambers
+      for (var me = 0; me < chambers.length; me++) {
+        var meDx = chambers[me].x - player.x;
+        var meDy = chambers[me].y - player.y;
+        if (Math.sqrt(meDx*meDx + meDy*meDy) < 100 && discovered.has(me)) {
+          var meExists = false;
+          for (var me2 = 0; me2 < memoryEchoes180.length; me2++) {
+            if (memoryEchoes180[me2].idx === me) { memoryEchoes180[me2].alpha = 0.15; meExists = true; break; }
+          }
+          if (!meExists && memoryEchoes180.length < 20) {
+            memoryEchoes180.push({x: chambers[me].x, y: chambers[me].y, alpha: 0.15, idx: me});
+          }
+        }
+      }
+
+      // Update Feature 181: Velocity Rings
+      var vrSpeed181 = Math.sqrt(player.vx * player.vx + player.vy * player.vy);
+      if (vrSpeed181 > 4 && Math.random() < 0.05) {
+        velocityRings181.push({x: player.x, y: player.y, radius: 5, speed: vrSpeed181 * 0.3, alpha: 0.25});
+      }
+
+      // Update Feature 182: Starfall spawning
+      starfall182Timer += dt;
+      if (starfall182Timer > 3 && Math.random() < 0.01) {
+        starfall182Timer = 0;
+        starfall182.push({x: Math.random() * canvas.width, y: -10, vx: -1.5 - Math.random() * 2, vy: 2 + Math.random() * 3, life: 1});
+      }
+
       // Update Feature 177: Depth gradient based on distance from origin
       depthGradient177 = Math.sqrt(player.x * player.x + player.y * player.y);
 
@@ -47717,6 +47745,67 @@
           ctx.arc(mbSX, mbSY, 8 * zoom, 0, Math.PI * 2);
           ctx.fill();
         }
+      }
+
+      // Draw Feature 179: Tide Shimmer
+      tideShimmer179Phase += 0.02;
+      for (var ts = 0; ts < 5; ts++) {
+        var tsY = canvas.height * (0.2 + ts * 0.15);
+        var tsWave = Math.sin(tideShimmer179Phase + ts * 0.8) * 3;
+        ctx.strokeStyle = "rgba(100, 150, 200, 0.04)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (var tsx = 0; tsx < canvas.width; tsx += 20) {
+          var tswy = tsY + Math.sin(tsx * 0.01 + tideShimmer179Phase + ts) * 8 + tsWave;
+          if (tsx === 0) ctx.moveTo(tsx, tswy); else ctx.lineTo(tsx, tswy);
+        }
+        ctx.stroke();
+      }
+
+      // Draw Feature 180: Memory Echoes
+      for (var me = memoryEchoes180.length - 1; me >= 0; me--) {
+        var echo = memoryEchoes180[me];
+        echo.alpha -= 0.001;
+        if (echo.alpha <= 0) { memoryEchoes180.splice(me, 1); continue; }
+        var meSX = (echo.x - camera.x) * zoom + canvas.width/2;
+        var meSY = (echo.y - camera.y) * zoom + canvas.height/2;
+        ctx.strokeStyle = "rgba(180, 180, 220, " + echo.alpha + ")";
+        ctx.lineWidth = 0.5;
+        ctx.setLineDash([3, 5]);
+        ctx.beginPath();
+        ctx.arc(meSX, meSY, 15 * zoom, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Draw Feature 181: Velocity Rings
+      for (var vr = velocityRings181.length - 1; vr >= 0; vr--) {
+        var ring = velocityRings181[vr];
+        ring.radius += ring.speed;
+        ring.alpha -= 0.015;
+        if (ring.alpha <= 0) { velocityRings181.splice(vr, 1); continue; }
+        var vrSX = (ring.x - camera.x) * zoom + canvas.width/2;
+        var vrSY = (ring.y - camera.y) * zoom + canvas.height/2;
+        ctx.strokeStyle = "rgba(200, 220, 255, " + ring.alpha + ")";
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.arc(vrSX, vrSY, ring.radius * zoom, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Draw Feature 182: Starfall
+      for (var sf = starfall182.length - 1; sf >= 0; sf--) {
+        var star = starfall182[sf];
+        star.x += star.vx;
+        star.y += star.vy;
+        star.life -= 0.02;
+        if (star.life <= 0) { starfall182.splice(sf, 1); continue; }
+        ctx.strokeStyle = "rgba(255, 255, 220, " + (star.life * 0.4) + ")";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(star.x, star.y);
+        ctx.lineTo(star.x - star.vx * 3, star.y - star.vy * 3);
+        ctx.stroke();
       }
       drawCompassRose(time);
 
@@ -51583,6 +51672,19 @@
     for (var mb = 0; mb < 6; mb++) {
       morseBlink178.push({x: Math.random() * 1400 - 700, y: Math.random() * 1000 - 500, pattern: [1,0,1,1,0,1,0,0,1,1,1,0], idx: Math.floor(Math.random()*12), timer: 0, speed: 0.5 + Math.random() * 1.5});
     }
+
+    // Feature 179: Ambient Tide Shimmer - horizontal wave shimmer across screen
+    var tideShimmer179Phase = 0;
+
+    // Feature 180: Chamber Memory Echoes - ghost outlines of recently visited chambers
+    var memoryEchoes180 = [];
+
+    // Feature 181: Exploration Velocity Rings - rings expand based on movement speed
+    var velocityRings181 = [];
+
+    // Feature 182: Ambient Starfall - occasional stars fall diagonally across screen
+    var starfall182 = [];
+    var starfall182Timer = 0;
     document.body.appendChild(autoWalkIndicator);
 
 
