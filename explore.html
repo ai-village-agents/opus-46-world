@@ -48630,6 +48630,10 @@
       drawTwilightGradient240(time);
       drawProximityThreads241(time);
       drawPhaseDots242(time);
+      drawRippleGrid243(time);
+      drawGlowHaze244(time);
+      drawDriftParticles245(time);
+      drawPulseGrid246(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -53032,6 +53036,72 @@
         var sy = d.y + canvas.height/2 + Math.cos(time * 0.0005 + d.phase) * 20;
         ctx.fillStyle = "rgba(200,200,255," + alpha + ")";
         ctx.beginPath(); ctx.arc(sx, sy, 1.5, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+
+    // Feature 243: Ambient Ripple Grid
+    function drawRippleGrid243(time) {
+      ctx.strokeStyle = "rgba(120,150,180,0.015)";
+      ctx.lineWidth = 0.5;
+      var spacing = 80;
+      var ox = (time * 0.02) % spacing;
+      for (var x = -spacing + ox; x < canvas.width + spacing; x += spacing) {
+        for (var y = -spacing + ox; y < canvas.height + spacing; y += spacing) {
+          var ripple = Math.sin(time * 0.001 + x * 0.01 + y * 0.01) * 3;
+          ctx.beginPath(); ctx.arc(x + ripple, y + ripple, 2, 0, Math.PI * 2); ctx.stroke();
+        }
+      }
+    }
+
+    // Feature 244: Chamber Glow Haze
+    function drawGlowHaze244(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      for (var i = 0; i < chambers.length; i++) {
+        var ch = chambers[i];
+        var dx = ch.x - cx, dy = ch.y - cy;
+        if (Math.abs(dx) > 300 || Math.abs(dy) > 300) continue;
+        if (!discovered.has(i)) continue;
+        var sx = dx * z + canvas.width/2;
+        var sy = dy * z + canvas.height/2;
+        var pulse = Math.sin(time * 0.0008 + i * 1.1) * 0.5 + 0.5;
+        var grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, 25 * z);
+        grad.addColorStop(0, "rgba(200,180,255," + (pulse * 0.03) + ")");
+        grad.addColorStop(1, "rgba(200,180,255,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(sx, sy, 25 * z, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    // Feature 245: Ambient Drift Particles
+    var driftParts245 = [];
+    for (var dp = 0; dp < 35; dp++) {
+      driftParts245.push({x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.3, vy: -0.1 - Math.random() * 0.2, alpha: Math.random()});
+    }
+    function drawDriftParticles245(time) {
+      for (var i = 0; i < driftParts245.length; i++) {
+        var p = driftParts245[i];
+        p.x += p.vx; p.y += p.vy;
+        if (p.y < -10) { p.y = canvas.height + 10; p.x = Math.random() * canvas.width; }
+        if (p.x < -10) p.x = canvas.width + 10;
+        if (p.x > canvas.width + 10) p.x = -10;
+        var a = (Math.sin(time * 0.001 + i) + 1) / 2 * 0.12;
+        ctx.fillStyle = "rgba(180,200,220," + a + ")";
+        ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    // Feature 246: Ambient Pulse Grid
+    function drawPulseGrid246(time) {
+      var pulse = Math.sin(time * 0.0015) * 0.5 + 0.5;
+      ctx.strokeStyle = "rgba(100,120,160," + (pulse * 0.015) + ")";
+      ctx.lineWidth = 0.3;
+      var step = 120;
+      for (var x = 0; x < canvas.width; x += step) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+      }
+      for (var y = 0; y < canvas.height; y += step) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
       }
     }
 
