@@ -48622,6 +48622,10 @@
       drawChamberShimmer232(time);
       drawSineWaves233(time);
       drawGravityDust234(time);
+      drawHorizonGlow235(time);
+      drawChamberEchoRing236(time);
+      drawWaveform237(time);
+      drawParticleChains238(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -52886,6 +52890,84 @@
         var sy = (cy + p.y - camera.y) * z + canvas.height/2;
         ctx.fillStyle = "rgba(180,160,200,0.15)";
         ctx.fillRect(sx, sy, p.sz, p.sz);
+      }
+    }
+
+
+    // Feature 235: Ambient Horizon Glow
+    function drawHorizonGlow235(time) {
+      var pulse = Math.sin(time * 0.0004) * 0.5 + 0.5;
+      var grad = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - 80);
+      grad.addColorStop(0, "rgba(100,60,150," + (0.03 + pulse * 0.02) + ")");
+      grad.addColorStop(1, "rgba(100,60,150,0)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+      var grad2 = ctx.createLinearGradient(0, 0, 0, 60);
+      grad2.addColorStop(0, "rgba(60,100,150," + (0.02 + pulse * 0.02) + ")");
+      grad2.addColorStop(1, "rgba(60,100,150,0)");
+      ctx.fillStyle = grad2;
+      ctx.fillRect(0, 0, canvas.width, 60);
+    }
+
+    // Feature 236: Chamber Echo Ring
+    function drawChamberEchoRing236(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      for (var i = 0; i < chambers.length; i++) {
+        if (!discovered.has(i)) continue;
+        var ch = chambers[i];
+        var dx = ch.x - cx, dy = ch.y - cy;
+        if (Math.abs(dx) > 350 || Math.abs(dy) > 350) continue;
+        var sx = dx * z + canvas.width/2;
+        var sy = dy * z + canvas.height/2;
+        var t = (time * 0.001 + i * 0.5) % 4;
+        if (t < 2) {
+          var r = t * 15 * z;
+          var alpha = (1 - t/2) * 0.04;
+          ctx.strokeStyle = "rgba(200,200,255," + alpha + ")";
+          ctx.lineWidth = 0.5;
+          ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI * 2); ctx.stroke();
+        }
+      }
+    }
+
+    // Feature 237: Ambient Waveform Display
+    function drawWaveform237(time) {
+      ctx.strokeStyle = "rgba(150,200,150,0.03)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      var baseY = canvas.height - 30;
+      for (var x = 0; x < canvas.width; x += 3) {
+        var val = Math.sin(x * 0.02 + time * 0.002) * 8 + Math.sin(x * 0.05 + time * 0.003) * 4;
+        var y = baseY + val;
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    // Feature 238: Ambient Particle Chains
+    var particleChains238 = [];
+    for (var pc = 0; pc < 5; pc++) {
+      var chain = [];
+      var sx0 = Math.random() * 600 - 300, sy0 = Math.random() * 600 - 300;
+      for (var cn = 0; cn < 8; cn++) {
+        chain.push({x: sx0 + cn * 20, y: sy0 + Math.sin(cn) * 15, phase: Math.random() * Math.PI * 2});
+      }
+      particleChains238.push(chain);
+    }
+    function drawParticleChains238(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      for (var c = 0; c < particleChains238.length; c++) {
+        var chain = particleChains238[c];
+        ctx.strokeStyle = "rgba(180,160,220,0.04)";
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        for (var n = 0; n < chain.length; n++) {
+          var p = chain[n];
+          var px = (cx + p.x - camera.x) * z + canvas.width/2;
+          var py = (cy + p.y + Math.sin(time * 0.001 + p.phase) * 10 - camera.y) * z + canvas.height/2;
+          if (n === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
       }
     }
 
