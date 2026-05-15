@@ -46458,6 +46458,10 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      updateRadarPing316(time);
+      updateRippleEcho318(time);
+      updateWispTrail323(time);
+
       updateQuantumRipple287(time);
       updateParticleSwarm289(time);
       updateTercentenary300(time);
@@ -48706,6 +48710,20 @@
       drawBokehDots312(time);
       drawCurrentLines313(time);
       drawBloomHaze314(time);
+      drawFireflyDance315(time);
+      drawRadarPing316(time);
+      drawDiamondGrid317(time);
+      drawRippleEcho318(time);
+      drawChevronLines319(time);
+      drawConstellationWeb320(time);
+      drawGlowRibbon321(time);
+      drawCrossHatch322(time);
+      drawWispTrail323(time);
+      drawHorizonPulse324(time);
+      drawParticleLattice325(time);
+      drawVignettePulse326(time);
+      drawLightShaft327(time);
+      drawMorseDots328(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -54340,6 +54358,259 @@
       grad.addColorStop(1, "rgba(200,180,255,0)");
       ctx.fillStyle = grad;
       ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+    }
+
+
+    // === FEATURE 315: Ambient Firefly Dance ===
+    var fireflyDance315 = [];
+    (function() {
+      for (var i = 0; i < 12; i++) {
+        fireflyDance315.push({ x: Math.random()*800, y: Math.random()*600, phase: Math.random()*Math.PI*2, speed: 0.5+Math.random()*0.5 });
+      }
+    })();
+    function drawFireflyDance315(time) {
+      if (typeof fireflyDance315 === "undefined") return;
+      for (var i = 0; i < fireflyDance315.length; i++) {
+        var f = fireflyDance315[i];
+        f.x += Math.sin(time * 0.001 + f.phase) * 0.3;
+        f.y += Math.cos(time * 0.0012 + f.phase * 1.3) * 0.3;
+        if (f.x < 0) f.x = canvas.width; if (f.x > canvas.width) f.x = 0;
+        if (f.y < 0) f.y = canvas.height; if (f.y > canvas.height) f.y = 0;
+        var glow = 0.1 + 0.1 * Math.sin(time * 0.004 + f.phase);
+        ctx.fillStyle = "rgba(255,255,100," + glow + ")";
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // === FEATURE 316: Ambient Radar Ping ===
+    var radarPing316 = { r: 0, active: false, lastPing: 0 };
+    function updateRadarPing316(time) {
+      if (time - radarPing316.lastPing > 5000) {
+        radarPing316.active = true;
+        radarPing316.r = 0;
+        radarPing316.lastPing = time;
+      }
+      if (radarPing316.active) {
+        radarPing316.r += 2;
+        if (radarPing316.r > 300) radarPing316.active = false;
+      }
+    }
+    function drawRadarPing316(time) {
+      if (typeof radarPing316 === "undefined" || !radarPing316.active) return;
+      var cx = canvas.width/2, cy = canvas.height/2;
+      var alpha = 0.1 * (1 - radarPing316.r / 300);
+      ctx.beginPath();
+      ctx.arc(cx, cy, radarPing316.r, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(100,255,150," + alpha + ")";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    // === FEATURE 317: Ambient Diamond Grid ===
+    function drawDiamondGrid317(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      var offset = time * 0.01 % 40;
+      ctx.strokeStyle = "rgba(150,150,180,0.015)";
+      ctx.lineWidth = 0.5;
+      for (var x = -200 + offset; x < 200; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(cx + x, cy - 150);
+        ctx.lineTo(cx + x + 75, cy);
+        ctx.lineTo(cx + x, cy + 150);
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 318: Ambient Ripple Echo ===
+    var rippleEchoes318 = [];
+    function updateRippleEcho318(time) {
+      if (Math.abs(player.vx) > 0.5 || Math.abs(player.vy) > 0.5) {
+        if (Math.random() < 0.02) {
+          rippleEchoes318.push({ x: canvas.width/2, y: canvas.height/2, r: 0, alpha: 0.15 });
+        }
+      }
+      for (var i = rippleEchoes318.length - 1; i >= 0; i--) {
+        var re = rippleEchoes318[i];
+        re.r += 1;
+        re.alpha *= 0.98;
+        if (re.alpha < 0.005) rippleEchoes318.splice(i, 1);
+      }
+    }
+    function drawRippleEcho318(time) {
+      if (typeof rippleEchoes318 === "undefined") return;
+      for (var i = 0; i < rippleEchoes318.length; i++) {
+        var re = rippleEchoes318[i];
+        ctx.beginPath();
+        ctx.arc(re.x, re.y, re.r, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(180,200,220," + re.alpha + ")";
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 319: Ambient Chevron Lines ===
+    function drawChevronLines319(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      ctx.strokeStyle = "rgba(160,180,200,0.025)";
+      ctx.lineWidth = 0.7;
+      for (var i = 0; i < 5; i++) {
+        var y = cy - 60 + i * 30;
+        var spread = 40 + i * 15;
+        var wobble = Math.sin(time * 0.002 + i) * 5;
+        ctx.beginPath();
+        ctx.moveTo(cx - spread, y + wobble);
+        ctx.lineTo(cx, y - 15 + wobble);
+        ctx.lineTo(cx + spread, y + wobble);
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 320: Ambient Constellation Web ===
+    function drawConstellationWeb320(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      var points = [];
+      for (var i = 0; i < 7; i++) {
+        var a = (i / 7) * Math.PI * 2 + time * 0.0003;
+        var r = 100 + 30 * Math.sin(i * 2.5);
+        points.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r });
+      }
+      ctx.strokeStyle = "rgba(180,200,255,0.02)";
+      ctx.lineWidth = 0.5;
+      for (var i = 0; i < points.length; i++) {
+        var j = (i + 2) % points.length;
+        ctx.beginPath();
+        ctx.moveTo(points[i].x, points[i].y);
+        ctx.lineTo(points[j].x, points[j].y);
+        ctx.stroke();
+      }
+      for (var i = 0; i < points.length; i++) {
+        ctx.fillStyle = "rgba(200,220,255,0.05)";
+        ctx.beginPath();
+        ctx.arc(points[i].x, points[i].y, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // === FEATURE 321: Ambient Glow Ribbon ===
+    function drawGlowRibbon321(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      ctx.beginPath();
+      for (var t = 0; t < 80; t++) {
+        var x = cx - 200 + t * 5;
+        var y = cy + Math.sin(t * 0.15 + time * 0.002) * 30 + Math.sin(t * 0.08 + time * 0.001) * 20;
+        if (t === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = "rgba(200,150,255,0.03)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    // === FEATURE 322: Ambient Cross Hatch ===
+    function drawCrossHatch322(time) {
+      ctx.strokeStyle = "rgba(140,140,160,0.012)";
+      ctx.lineWidth = 0.5;
+      var offset = time * 0.005 % 30;
+      for (var i = 0; i < 15; i++) {
+        var x = i * 30 + offset;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x + canvas.height * 0.3, canvas.height);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(canvas.width - x, 0);
+        ctx.lineTo(canvas.width - x - canvas.height * 0.3, canvas.height);
+        ctx.stroke();
+      }
+    }
+
+    // === FEATURE 323: Ambient Wisp Trail ===
+    var wispTrail323 = [];
+    function updateWispTrail323(time) {
+      if (wispTrail323.length < 30) {
+        wispTrail323.push({ x: canvas.width/2 + (Math.random()-0.5)*20, y: canvas.height/2 + (Math.random()-0.5)*20 });
+      }
+      if (wispTrail323.length > 30) wispTrail323.shift();
+    }
+    function drawWispTrail323(time) {
+      if (typeof wispTrail323 === "undefined" || wispTrail323.length < 2) return;
+      ctx.beginPath();
+      ctx.moveTo(wispTrail323[0].x, wispTrail323[0].y);
+      for (var i = 1; i < wispTrail323.length; i++) {
+        ctx.lineTo(wispTrail323[i].x, wispTrail323[i].y);
+      }
+      ctx.strokeStyle = "rgba(180,220,200,0.04)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // === FEATURE 324: Ambient Horizon Pulse ===
+    function drawHorizonPulse324(time) {
+      var y = canvas.height * 0.85;
+      var pulse = 0.02 + 0.01 * Math.sin(time * 0.002);
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      for (var x = 0; x < canvas.width; x += 5) {
+        var dy = Math.sin(x * 0.01 + time * 0.002) * 3;
+        ctx.lineTo(x, y + dy);
+      }
+      ctx.strokeStyle = "rgba(200,180,150," + pulse + ")";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // === FEATURE 325: Ambient Particle Lattice ===
+    function drawParticleLattice325(time) {
+      var spacing = 60;
+      var ox = (time * 0.01) % spacing;
+      var oy = (time * 0.008) % spacing;
+      ctx.fillStyle = "rgba(180,180,200,0.02)";
+      for (var x = ox; x < canvas.width; x += spacing) {
+        for (var y = oy; y < canvas.height; y += spacing) {
+          ctx.fillRect(x, y, 1, 1);
+        }
+      }
+    }
+
+    // === FEATURE 326: Ambient Vignette Pulse ===
+    function drawVignettePulse326(time) {
+      var cx = canvas.width/2, cy = canvas.height/2;
+      var r = Math.max(canvas.width, canvas.height) * 0.6;
+      var pulse = 0.08 + 0.03 * Math.sin(time * 0.001);
+      var grad = ctx.createRadialGradient(cx, cy, r * 0.5, cx, cy, r);
+      grad.addColorStop(0, "rgba(0,0,0,0)");
+      grad.addColorStop(1, "rgba(0,0,20," + pulse + ")");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // === FEATURE 327: Ambient Light Shaft ===
+    function drawLightShaft327(time) {
+      var x = canvas.width * 0.3 + Math.sin(time * 0.0005) * 100;
+      var alpha = 0.015 + 0.01 * Math.sin(time * 0.002);
+      ctx.beginPath();
+      ctx.moveTo(x - 20, 0);
+      ctx.lineTo(x + 40, canvas.height);
+      ctx.lineTo(x - 10, canvas.height);
+      ctx.lineTo(x - 50, 0);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(200,200,220," + alpha + ")";
+      ctx.fill();
+    }
+
+    // === FEATURE 328: Ambient Morse Dots ===
+    function drawMorseDots328(time) {
+      var cx = canvas.width/2, cy = canvas.height - 30;
+      var morsePattern = [1,0,1,1,1,0,0,0,1,1,1,0,1,0,1];
+      for (var i = 0; i < morsePattern.length; i++) {
+        if (morsePattern[i]) {
+          var phase = (time * 0.002 + i * 0.5) % (Math.PI * 2);
+          var alpha = 0.05 * Math.max(0, Math.sin(phase));
+          ctx.fillStyle = "rgba(200,200,150," + alpha + ")";
+          ctx.fillRect(cx - 75 + i * 10, cy, 6, 2);
+        }
+      }
     }
 
     document.body.appendChild(autoWalkIndicator);
