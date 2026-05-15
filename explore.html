@@ -46452,6 +46452,10 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Features 105-106 updates
+      if (typeof updatePulseRings105 === "function") updatePulseRings105();
+      if (typeof updateNameWhispers106 === "function") updateNameWhispers106();
+
       // Feature 99: Minimap Trail Decay update
       if (typeof updateMinimapTrailDecay99 === "function") updateMinimapTrailDecay99();
       updateStreak(false);
@@ -47304,6 +47308,18 @@
 
       // Feature 104: Ambient Sparkle Field
       drawSparkleField104(time);
+
+      // Feature 108: Star Field Parallax (behind everything)
+      drawStarField108(viewLeft55, viewTop55, time);
+
+      // Feature 105: Ambient Pulse Rings
+      drawPulseRings105(viewLeft55, viewTop55);
+
+      // Feature 106: Chamber Name Whisper
+      drawNameWhispers106(viewLeft55, viewTop55);
+
+      // Feature 107: Exploration Percentage Arc
+      drawExplorationArc107(viewLeft55, viewTop55);
 
       drawCompassRose(time);
 
@@ -49084,6 +49100,145 @@
           ctx.strokeStyle = "rgba(255, 255, 255, " + (alpha104 * 0.3) + ")";
           ctx.lineWidth = 0.5;
           ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+
+
+
+    // Feature 105: Ambient Pulse Rings from discovered chambers
+    var pulseRings105 = [];
+    function updatePulseRings105() {
+      if (typeof pulseRings105 === "undefined") return;
+      if (Math.random() < 0.02 && discovered.size > 0) {
+        var discArr105 = Array.from(discovered);
+        var ri105 = discArr105[Math.floor(Math.random() * discArr105.length)];
+        var c105 = chambers[ri105];
+        if (c105) pulseRings105.push({ x: c105.x, y: c105.y, radius: 0, maxRadius: 80, color: c105.color || "#888" });
+      }
+      for (var p105 = pulseRings105.length - 1; p105 >= 0; p105--) {
+        pulseRings105[p105].radius += 0.8;
+        if (pulseRings105[p105].radius > pulseRings105[p105].maxRadius) pulseRings105.splice(p105, 1);
+      }
+    }
+    function drawPulseRings105(viewLeft, viewTop) {
+      if (typeof ctx === "undefined" || typeof pulseRings105 === "undefined") return;
+      ctx.save();
+      for (var p105 = 0; p105 < pulseRings105.length; p105++) {
+        var ring105 = pulseRings105[p105];
+        var sx105 = ring105.x - viewLeft; var sy105 = ring105.y - viewTop;
+        if (sx105 < -100 || sx105 > canvas.width + 100 || sy105 < -100 || sy105 > canvas.height + 100) continue;
+        var alpha105 = (1 - ring105.radius / ring105.maxRadius) * 0.2;
+        ctx.beginPath();
+        ctx.arc(sx105, sy105, ring105.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = ring105.color;
+        ctx.globalAlpha = alpha105;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+
+    // Feature 106: Chamber Name Whisper (floating text near chambers)
+    var nameWhispers106 = [];
+    function updateNameWhispers106() {
+      if (typeof nameWhispers106 === "undefined" || typeof chambers === "undefined") return;
+      if (Math.random() < 0.03 && discovered.size > 0) {
+        var discArr106 = Array.from(discovered);
+        var ri106 = discArr106[Math.floor(Math.random() * discArr106.length)];
+        var c106 = chambers[ri106];
+        if (c106) {
+          var dx106 = c106.x - player.x; var dy106 = c106.y - player.y;
+          if (Math.sqrt(dx106*dx106 + dy106*dy106) < 500) {
+            nameWhispers106.push({ x: c106.x, y: c106.y - 20, name: c106.name, alpha: 0.6, vy: -0.3 });
+          }
+        }
+      }
+      for (var w106 = nameWhispers106.length - 1; w106 >= 0; w106--) {
+        nameWhispers106[w106].y += nameWhispers106[w106].vy;
+        nameWhispers106[w106].alpha -= 0.003;
+        if (nameWhispers106[w106].alpha <= 0) nameWhispers106.splice(w106, 1);
+      }
+      while (nameWhispers106.length > 8) nameWhispers106.shift();
+    }
+    function drawNameWhispers106(viewLeft, viewTop) {
+      if (typeof ctx === "undefined" || typeof nameWhispers106 === "undefined") return;
+      ctx.save();
+      ctx.font = "11px serif";
+      ctx.textAlign = "center";
+      for (var w106 = 0; w106 < nameWhispers106.length; w106++) {
+        var wh106 = nameWhispers106[w106];
+        var sx106 = wh106.x - viewLeft; var sy106 = wh106.y - viewTop;
+        if (sx106 < -100 || sx106 > canvas.width + 100) continue;
+        ctx.globalAlpha = wh106.alpha;
+        ctx.fillStyle = "rgba(200, 200, 220, 1)";
+        ctx.fillText(wh106.name, sx106, sy106);
+      }
+      ctx.globalAlpha = 1;
+      ctx.textAlign = "left";
+      ctx.restore();
+    }
+
+    // Feature 107: Exploration Percentage Arc around player
+    function drawExplorationArc107(viewLeft, viewTop) {
+      if (typeof ctx === "undefined" || typeof canvas === "undefined") return;
+      if (typeof discovered === "undefined") return;
+      var pct107 = discovered.size / 44363;
+      var angle107 = pct107 * Math.PI * 2;
+      var px107 = player.x - viewLeft; var py107 = player.y - viewTop;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(px107, py107, 35, -Math.PI/2, -Math.PI/2 + angle107);
+      ctx.strokeStyle = "rgba(100, 255, 150, 0.3)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(px107, py107, 35, -Math.PI/2 + angle107, -Math.PI/2 + Math.PI * 2);
+      ctx.strokeStyle = "rgba(100, 255, 150, 0.08)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.font = "8px monospace";
+      ctx.textAlign = "center";
+      ctx.fillStyle = "rgba(100, 255, 150, 0.35)";
+      ctx.fillText((pct107 * 100).toFixed(2) + "%", px107, py107 + 47);
+      ctx.textAlign = "left";
+      ctx.restore();
+    }
+
+    // Feature 108: Star Field Parallax (3 depth layers)
+    var starField108 = { layers: [], initialized: false };
+    function initStarField108() {
+      if (starField108.initialized) return;
+      starField108.layers = [];
+      for (var l108 = 0; l108 < 3; l108++) {
+        var stars108 = [];
+        var count108 = 40 + l108 * 20;
+        for (var s108 = 0; s108 < count108; s108++) {
+          stars108.push({ x: Math.random() * 3000, y: Math.random() * 3000, size: 0.3 + Math.random() * (0.5 + l108 * 0.3), brightness: 0.3 + Math.random() * 0.4 });
+        }
+        starField108.layers.push({ stars: stars108, parallax: 0.05 + l108 * 0.08 });
+      }
+      starField108.initialized = true;
+    }
+    function drawStarField108(viewLeft, viewTop, time) {
+      if (typeof ctx === "undefined" || typeof canvas === "undefined") return;
+      initStarField108();
+      ctx.save();
+      for (var l108 = 0; l108 < starField108.layers.length; l108++) {
+        var layer108 = starField108.layers[l108];
+        var offX108 = viewLeft * layer108.parallax;
+        var offY108 = viewTop * layer108.parallax;
+        for (var s108 = 0; s108 < layer108.stars.length; s108++) {
+          var star108 = layer108.stars[s108];
+          var sx108 = ((star108.x - offX108) % canvas.width + canvas.width) % canvas.width;
+          var sy108 = ((star108.y - offY108) % canvas.height + canvas.height) % canvas.height;
+          var twinkle108 = star108.brightness + Math.sin(time * (1 + l108) + s108) * 0.15;
+          ctx.beginPath();
+          ctx.arc(sx108, sy108, star108.size, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(220, 230, 255, " + twinkle108 + ")";
+          ctx.fill();
         }
       }
       ctx.restore();
