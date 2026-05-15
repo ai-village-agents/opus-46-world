@@ -46458,6 +46458,19 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Update Feature 219: Stardust Trail spawning
+      if (Math.abs(player.vx) > 1 || Math.abs(player.vy) > 1) {
+        if (Math.random() < 0.15) {
+          stardustTrail219.push({x: player.x + (Math.random()-0.5)*10, y: player.y + (Math.random()-0.5)*10, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5, life: 1, size: 1+Math.random()*2});
+        }
+      }
+
+      // Update Feature 221: Depth Echo - spawn rings at depth milestones
+      var de221Dist = Math.sqrt(player.x * player.x + player.y * player.y);
+      if (de221Dist > 5000 && Math.random() < 0.002) {
+        depthEcho221Rings.push({radius: 5, alpha: 0.12});
+      }
+
       // Update Feature 216: Chime rings near chambers
       for (var cr = 0; cr < chambers.length; cr++) {
         if (cr % 29 !== 0) continue;
@@ -48529,6 +48542,73 @@
           ctx.arc(fdSX, fdSY, fPart.size * zoom, 0, Math.PI * 2);
           ctx.fill();
         }
+      }
+
+      // Draw Feature 219: Stardust Trail
+      for (var sdt = stardustTrail219.length - 1; sdt >= 0; sdt--) {
+        var dust = stardustTrail219[sdt];
+        dust.life -= 0.008;
+        dust.x += dust.vx;
+        dust.y += dust.vy;
+        if (dust.life <= 0) { stardustTrail219.splice(sdt, 1); continue; }
+        var sdSX = (dust.x - camera.x) * zoom + canvas.width/2;
+        var sdSY = (dust.y - camera.y) * zoom + canvas.height/2;
+        ctx.fillStyle = "rgba(255, 240, 180, " + (dust.life * 0.3) + ")";
+        ctx.beginPath();
+        ctx.arc(sdSX, sdSY, dust.size * zoom * dust.life, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Draw Feature 220: Whisper Waves from undiscovered
+      whisperWaves220Timer += 0.016;
+      for (var ww = 0; ww < chambers.length; ww++) {
+        if (discovered.has(ww) || ww % 37 !== 0) continue;
+        var wwDx = chambers[ww].x - player.x;
+        var wwDy = chambers[ww].y - player.y;
+        var wwDist = Math.sqrt(wwDx*wwDx + wwDy*wwDy);
+        if (wwDist > 500 || wwDist < 100) continue;
+        var wwSX = (chambers[ww].x - camera.x) * zoom + canvas.width/2;
+        var wwSY = (chambers[ww].y - camera.y) * zoom + canvas.height/2;
+        var wwWave = (Math.sin(whisperWaves220Timer * 1.5 + ww * 0.7) + 1) / 2;
+        var wwRadius = (10 + wwWave * 20) * zoom;
+        ctx.strokeStyle = "rgba(180, 180, 200, " + (0.04 * (1 - wwWave)) + ")";
+        ctx.lineWidth = 0.4;
+        ctx.beginPath();
+        ctx.arc(wwSX, wwSY, wwRadius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Draw Feature 221: Depth Echo Rings
+      for (var de = depthEcho221Rings.length - 1; de >= 0; de--) {
+        var dRing = depthEcho221Rings[de];
+        dRing.radius += 1;
+        dRing.alpha -= 0.005;
+        if (dRing.alpha <= 0) { depthEcho221Rings.splice(de, 1); continue; }
+        var deSX = (player.x - camera.x) * zoom + canvas.width/2;
+        var deSY = (player.y - camera.y) * zoom + canvas.height/2;
+        ctx.strokeStyle = "rgba(150, 120, 200, " + dRing.alpha + ")";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(deSX, deSY, dRing.radius * zoom, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Draw Feature 222: Galaxy Swirl
+      galaxySwirl222Angle += 0.005;
+      galaxySwirl222X = canvas.width * 0.2 + Math.sin(time * 0.05) * 80;
+      galaxySwirl222Y = canvas.height * 0.3 + Math.cos(time * 0.04) * 60;
+      for (var gs = 0; gs < 3; gs++) {
+        ctx.strokeStyle = "rgba(150, 130, 200, 0.025)";
+        ctx.lineWidth = 1 + gs * 0.5;
+        ctx.beginPath();
+        for (var gsp = 0; gsp < 60; gsp++) {
+          var gsAngle = galaxySwirl222Angle + gs * (Math.PI * 2 / 3) + gsp * 0.1;
+          var gsR = gsp * 1.5;
+          var gsX = galaxySwirl222X + Math.cos(gsAngle) * gsR;
+          var gsY = galaxySwirl222Y + Math.sin(gsAngle) * gsR * 0.6;
+          if (gsp === 0) ctx.moveTo(gsX, gsY); else ctx.lineTo(gsX, gsY);
+        }
+        ctx.stroke();
       }
       drawCompassRose(time);
 
@@ -52567,6 +52647,20 @@
         fractalDust218[fd].particles.push({dx: (Math.random() - 0.5) * 30, dy: (Math.random() - 0.5) * 30, size: 0.8 + Math.random() * 1.5});
       }
     }
+
+    // Feature 219: Ambient Stardust Trail - sparkling stardust following the player
+    var stardustTrail219 = [];
+
+    // Feature 220: Chamber Whisper Waves - gentle waves emanating from undiscovered chambers
+    var whisperWaves220Timer = 0;
+
+    // Feature 221: Exploration Depth Echo - visual echo rings at deep exploration depths
+    var depthEcho221Rings = [];
+
+    // Feature 222: Ambient Galaxy Swirl - distant galaxy spiral in background
+    var galaxySwirl222Angle = 0;
+    var galaxySwirl222X = 0;
+    var galaxySwirl222Y = 0;
     document.body.appendChild(autoWalkIndicator);
 
 
