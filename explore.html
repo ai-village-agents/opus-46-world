@@ -46458,6 +46458,29 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Update Feature 195: Sand Drift
+      for (var sd = 0; sd < sandDrift195.length; sd++) {
+        sandDrift195[sd].x += sandDrift195[sd].speed;
+        sandDrift195[sd].y += Math.sin(time + sd) * 0.2;
+        if (sandDrift195[sd].x > canvas.width + 10) { sandDrift195[sd].x = -10; sandDrift195[sd].y = Math.random() * canvas.height; }
+      }
+
+      // Update Feature 196: Nearest chamber halo
+      var minHaloDist196 = 9999;
+      nearestChamberHalo196 = -1;
+      for (var hc = 0; hc < chambers.length; hc++) {
+        var hcDx = chambers[hc].x - player.x;
+        var hcDy = chambers[hc].y - player.y;
+        var hcD = Math.sqrt(hcDx*hcDx + hcDy*hcDy);
+        if (hcD < minHaloDist196 && hcD < 500) { minHaloDist196 = hcD; nearestChamberHalo196 = hc; }
+      }
+
+      // Update Feature 198: Light Orbs drift
+      for (var lo = 0; lo < lightOrbs198.length; lo++) {
+        lightOrbs198[lo].x += Math.sin(time * lightOrbs198[lo].drift + lightOrbs198[lo].phase) * 0.2;
+        lightOrbs198[lo].y += Math.cos(time * lightOrbs198[lo].drift * 0.8 + lightOrbs198[lo].phase) * 0.15;
+      }
+
       // Update Feature 193: nothing needed (computed in draw)
 
       // Update Feature 189: Path Glow
@@ -48063,6 +48086,60 @@
         ctx.beginPath();
         ctx.arc(prX, prY, prRadius + rc * 4, Math.PI * 0.8, Math.PI * 0.2, true);
         ctx.stroke();
+      }
+
+      // Draw Feature 195: Sand Drift
+      for (var sd = 0; sd < sandDrift195.length; sd++) {
+        var sand = sandDrift195[sd];
+        ctx.fillStyle = "rgba(200, 180, 140, " + sand.alpha + ")";
+        ctx.fillRect(sand.x, sand.y, sand.size, sand.size * 0.5);
+      }
+
+      // Draw Feature 196: Chamber Halo
+      if (nearestChamberHalo196 >= 0 && nearestChamberHalo196 < chambers.length) {
+        var halo = chambers[nearestChamberHalo196];
+        var hSX = (halo.x - camera.x) * zoom + canvas.width/2;
+        var hSY = (halo.y - camera.y) * zoom + canvas.height/2;
+        var hGrad = ctx.createRadialGradient(hSX, hSY, 5 * zoom, hSX, hSY, 50 * zoom);
+        hGrad.addColorStop(0, "rgba(255, 240, 200, 0.12)");
+        hGrad.addColorStop(0.5, "rgba(255, 220, 150, 0.05)");
+        hGrad.addColorStop(1, "rgba(255, 200, 100, 0)");
+        ctx.fillStyle = hGrad;
+        ctx.beginPath();
+        ctx.arc(hSX, hSY, 50 * zoom, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Draw Feature 197: Spiral Path
+      spiralPath197Angle += 0.03;
+      var spSX = (player.x - camera.x) * zoom + canvas.width/2;
+      var spSY = (player.y - camera.y) * zoom + canvas.height/2;
+      ctx.strokeStyle = "rgba(180, 160, 220, 0.06)";
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      for (var sp = 0; sp < 60; sp++) {
+        var spA = spiralPath197Angle + sp * 0.15;
+        var spR = sp * 1.5;
+        var spPX = spSX + Math.cos(spA) * spR;
+        var spPY = spSY + Math.sin(spA) * spR;
+        if (sp === 0) ctx.moveTo(spPX, spPY); else ctx.lineTo(spPX, spPY);
+      }
+      ctx.stroke();
+
+      // Draw Feature 198: Light Orbs
+      for (var lo = 0; lo < lightOrbs198.length; lo++) {
+        var orb = lightOrbs198[lo];
+        var loSX = (player.x + orb.x - camera.x) * zoom + canvas.width/2;
+        var loSY = (player.y + orb.y - camera.y) * zoom + canvas.height/2;
+        var loPulse = 0.5 + 0.5 * Math.sin(time * 0.6 + orb.phase);
+        var loGrad = ctx.createRadialGradient(loSX, loSY, 0, loSX, loSY, orb.radius * zoom * loPulse);
+        loGrad.addColorStop(0, "rgba(255, 230, 180, " + (0.1 * loPulse) + ")");
+        loGrad.addColorStop(0.6, "rgba(255, 200, 120, " + (0.04 * loPulse) + ")");
+        loGrad.addColorStop(1, "rgba(200, 150, 80, 0)");
+        ctx.fillStyle = loGrad;
+        ctx.beginPath();
+        ctx.arc(loSX, loSY, orb.radius * zoom * loPulse, 0, Math.PI * 2);
+        ctx.fill();
       }
       drawCompassRose(time);
 
@@ -51991,6 +52068,24 @@
 
     // Feature 194: Ambient Prism Rainbow - subtle rainbow arc in the distance
     var prismRainbow194Phase = 0;
+
+    // Feature 195: Ambient Sand Drift - sand-like particles drifting horizontally
+    var sandDrift195 = [];
+    for (var sd = 0; sd < 20; sd++) {
+      sandDrift195.push({x: Math.random() * 1200, y: Math.random() * 800, speed: 0.5 + Math.random() * 1.5, size: 1 + Math.random(), alpha: 0.05 + Math.random() * 0.1});
+    }
+
+    // Feature 196: Chamber Halo Effect - bright halo around the nearest chamber
+    var nearestChamberHalo196 = -1;
+
+    // Feature 197: Exploration Spiral Path - spiral pattern drawn from player position
+    var spiralPath197Angle = 0;
+
+    // Feature 198: Ambient Light Orbs - soft warm light orbs floating slowly
+    var lightOrbs198 = [];
+    for (var lo = 0; lo < 6; lo++) {
+      lightOrbs198.push({x: Math.random() * 900 - 450, y: Math.random() * 700 - 350, phase: Math.random() * Math.PI * 2, radius: 25 + Math.random() * 35, drift: 0.2 + Math.random() * 0.3});
+    }
     document.body.appendChild(autoWalkIndicator);
 
 
