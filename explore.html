@@ -46458,6 +46458,8 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Update Feature 193: nothing needed (computed in draw)
+
       // Update Feature 189: Path Glow
       if (Math.abs(player.vx) > 0.3 || Math.abs(player.vy) > 0.3) {
         pathGlow189Points.unshift({x: player.x, y: player.y});
@@ -47968,6 +47970,99 @@
         var rain = pixelRain190[pr];
         ctx.fillStyle = "rgba(150, 180, 220, " + rain.alpha + ")";
         ctx.fillRect(rain.x, rain.y, rain.size, rain.size);
+      }
+
+      // Draw Feature 191: Electric Arcs
+      electricArc191Timer += dt;
+      if (electricArc191Timer > 0.15) {
+        electricArc191Timer = 0;
+        electricArcs191 = [];
+        for (var ea = 0; ea < chambers.length; ea++) {
+          if (ea % 31 !== 0) continue;
+          var eaDx = chambers[ea].x - player.x;
+          var eaDy = chambers[ea].y - player.y;
+          var eaDist = Math.sqrt(eaDx*eaDx + eaDy*eaDy);
+          if (eaDist < 250 && eaDist > 80) {
+            for (var ea2 = ea + 1; ea2 < chambers.length && ea2 < ea + 40; ea2++) {
+              var ea2Dx = chambers[ea2].x - chambers[ea].x;
+              var ea2Dy = chambers[ea2].y - chambers[ea].y;
+              if (Math.sqrt(ea2Dx*ea2Dx + ea2Dy*ea2Dy) < 200) {
+                electricArcs191.push({x1: chambers[ea].x, y1: chambers[ea].y, x2: chambers[ea2].x, y2: chambers[ea2].y});
+                break;
+              }
+            }
+          }
+        }
+      }
+      for (var ea3 = 0; ea3 < electricArcs191.length; ea3++) {
+        var arc = electricArcs191[ea3];
+        var a1SX = (arc.x1 - camera.x) * zoom + canvas.width/2;
+        var a1SY = (arc.y1 - camera.y) * zoom + canvas.height/2;
+        var a2SX = (arc.x2 - camera.x) * zoom + canvas.width/2;
+        var a2SY = (arc.y2 - camera.y) * zoom + canvas.height/2;
+        ctx.strokeStyle = "rgba(150, 200, 255, 0.12)";
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(a1SX, a1SY);
+        var aMidX = (a1SX + a2SX)/2 + (Math.random() - 0.5) * 20;
+        var aMidY = (a1SY + a2SY)/2 + (Math.random() - 0.5) * 20;
+        ctx.quadraticCurveTo(aMidX, aMidY, a2SX, a2SY);
+        ctx.stroke();
+      }
+
+      // Draw Feature 192: Aura Rings
+      auraRings192Timer += 0.016;
+      for (var ar = 0; ar < chambers.length; ar++) {
+        if (ar % 17 !== 0 || !discovered.has(ar)) continue;
+        var arDx = chambers[ar].x - player.x;
+        var arDy = chambers[ar].y - player.y;
+        var arDist = Math.sqrt(arDx*arDx + arDy*arDy);
+        if (arDist > 400) continue;
+        var arSX = (chambers[ar].x - camera.x) * zoom + canvas.width/2;
+        var arSY = (chambers[ar].y - camera.y) * zoom + canvas.height/2;
+        for (var arR = 0; arR < 3; arR++) {
+          var arRadius = (12 + arR * 8 + Math.sin(auraRings192Timer + ar + arR) * 3) * zoom;
+          var arHue = (parseInt(chambers[ar].color.slice(1,3),16) + arR * 40) % 360;
+          ctx.strokeStyle = "hsla(" + arHue + ", 60%, 60%, 0.06)";
+          ctx.lineWidth = 0.6;
+          ctx.beginPath();
+          ctx.arc(arSX, arSY, arRadius, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      // Draw Feature 193: Distance Markers
+      var dm193Dist = Math.sqrt(player.x * player.x + player.y * player.y);
+      var dm193Interval = 10000;
+      var dm193Count = Math.floor(dm193Dist / dm193Interval);
+      for (var dm = 1; dm <= Math.min(dm193Count + 1, 5); dm++) {
+        var dmRadius = dm * dm193Interval;
+        var dmSX = (0 - camera.x) * zoom + canvas.width/2;
+        var dmSY = (0 - camera.y) * zoom + canvas.height/2;
+        var dmScreenR = dmRadius * zoom;
+        if (dmScreenR > 50 && dmScreenR < 3000) {
+          ctx.strokeStyle = "rgba(100, 120, 150, 0.04)";
+          ctx.lineWidth = 0.5;
+          ctx.setLineDash([10, 20]);
+          ctx.beginPath();
+          ctx.arc(dmSX, dmSY, dmScreenR, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+
+      // Draw Feature 194: Prism Rainbow
+      prismRainbow194Phase += 0.005;
+      var prX = canvas.width/2 + Math.cos(prismRainbow194Phase) * 200;
+      var prY = 80;
+      var prRadius = 250;
+      var rainbowColors = ["rgba(255,0,0,0.03)","rgba(255,127,0,0.03)","rgba(255,255,0,0.03)","rgba(0,255,0,0.03)","rgba(0,0,255,0.03)","rgba(75,0,130,0.03)","rgba(148,0,211,0.03)"];
+      for (var rc = 0; rc < rainbowColors.length; rc++) {
+        ctx.strokeStyle = rainbowColors[rc];
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(prX, prY, prRadius + rc * 4, Math.PI * 0.8, Math.PI * 0.2, true);
+        ctx.stroke();
       }
       drawCompassRose(time);
 
@@ -51883,6 +51978,19 @@
     for (var pr = 0; pr < 30; pr++) {
       pixelRain190.push({x: Math.random() * 1200, y: Math.random() * 800, speed: 1 + Math.random() * 3, size: 1 + Math.random() * 2, alpha: 0.1 + Math.random() * 0.2});
     }
+
+    // Feature 191: Ambient Electric Arcs - brief electric arcs between nearby objects
+    var electricArcs191 = [];
+    var electricArc191Timer = 0;
+
+    // Feature 192: Chamber Aura Rings - concentric colored rings around chambers
+    var auraRings192Timer = 0;
+
+    // Feature 193: Exploration Distance Markers - distance markers at regular intervals
+    var distanceMarkers193 = [];
+
+    // Feature 194: Ambient Prism Rainbow - subtle rainbow arc in the distance
+    var prismRainbow194Phase = 0;
     document.body.appendChild(autoWalkIndicator);
 
 
