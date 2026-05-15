@@ -46458,6 +46458,10 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      updateSnowParticles163();
+      updateWhisperText164();
+      updateEmberGlow166();
+
       updateSmokeWisps159();
       updateOdometer161();
       updateShootingStars162();
@@ -47447,6 +47451,10 @@
       drawAttractionGlow160();
       drawOdometer161();
       drawShootingStars162();
+      drawSnowParticles163();
+      drawWhisperText164();
+      drawPulseWave165(time);
+      drawEmberGlow166();
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -51119,6 +51127,135 @@
         ctx.moveTo(s.x, s.y);
         ctx.lineTo(tx, ty);
         ctx.stroke();
+      }
+    }
+
+
+    // Feature 163: Ambient Snow Particles
+    var snowParticles163 = [];
+    for (var sn163 = 0; sn163 < 30; sn163++) {
+      snowParticles163.push({
+        x: Math.random() * 1400,
+        y: Math.random() * 1000,
+        size: 1 + Math.random() * 2,
+        speed: 0.3 + Math.random() * 0.5,
+        wobble: Math.random() * Math.PI * 2,
+        alpha: 0.04 + Math.random() * 0.06
+      });
+    }
+    function updateSnowParticles163() {
+      for (var i = 0; i < snowParticles163.length; i++) {
+        var s = snowParticles163[i];
+        s.wobble += 0.015;
+        s.y += s.speed;
+        s.x += Math.sin(s.wobble) * 0.4;
+        if (s.y > canvas.height + 10) { s.y = -10; s.x = Math.random() * canvas.width; }
+      }
+    }
+    function drawSnowParticles163() {
+      for (var i = 0; i < snowParticles163.length; i++) {
+        var s = snowParticles163[i];
+        ctx.fillStyle = "rgba(220,230,255," + s.alpha + ")";
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Feature 164: Chamber Whisper Text
+    var whisperTexts164 = ["remember...", "this way...", "listen...", "deeper...", "look...", "almost...", "between...", "through..."];
+    var activeWhispers164 = [];
+    function updateWhisperText164() {
+      if (Math.random() < 0.003 && activeWhispers164.length < 3) {
+        var vl = camera.x - canvas.width / 2;
+        var vt = camera.y - canvas.height / 2;
+        for (var i = 0; i < chambers.length; i++) {
+          var c = chambers[i];
+          var dx = c.x - player.x;
+          var dy = c.y - player.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 200 && dist > 30) {
+            activeWhispers164.push({
+              x: c.x - vl + (Math.random() - 0.5) * 20,
+              y: c.y - vt - 20,
+              text: whisperTexts164[Math.floor(Math.random() * whisperTexts164.length)],
+              alpha: 0.2,
+              driftY: -0.3
+            });
+            break;
+          }
+        }
+      }
+      for (var i = activeWhispers164.length - 1; i >= 0; i--) {
+        activeWhispers164[i].y += activeWhispers164[i].driftY;
+        activeWhispers164[i].alpha -= 0.003;
+        if (activeWhispers164[i].alpha <= 0) activeWhispers164.splice(i, 1);
+      }
+    }
+    function drawWhisperText164() {
+      ctx.font = "8px serif";
+      ctx.textAlign = "center";
+      for (var i = 0; i < activeWhispers164.length; i++) {
+        var w = activeWhispers164[i];
+        ctx.fillStyle = "rgba(180,180,200," + w.alpha + ")";
+        ctx.fillText(w.text, w.x, w.y);
+      }
+      ctx.textAlign = "left";
+    }
+
+    // Feature 165: Exploration Pulse Wave
+    var pulseWave165 = { phase: 0 };
+    function drawPulseWave165(time) {
+      var vl = camera.x - canvas.width / 2;
+      var vt = camera.y - canvas.height / 2;
+      var px = player.x - vl;
+      var py = player.y - vt;
+      var wave = (time * 0.002) % (Math.PI * 2);
+      var radius = (Math.sin(wave) * 0.5 + 0.5) * 60 + 15;
+      var alpha = (1 - radius / 75) * 0.06;
+      if (alpha > 0) {
+        ctx.strokeStyle = "rgba(100,200,255," + alpha + ")";
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.arc(px, py, radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    // Feature 166: Ambient Ember Glow
+    var emberGlow166 = [];
+    for (var eg166 = 0; eg166 < 12; eg166++) {
+      emberGlow166.push({
+        x: Math.random() * 1400,
+        y: canvas.height + Math.random() * 200,
+        size: 1 + Math.random() * 2,
+        speed: 0.4 + Math.random() * 0.6,
+        wobble: Math.random() * Math.PI * 2,
+        hue: 10 + Math.random() * 30,
+        alpha: 0.08 + Math.random() * 0.12
+      });
+    }
+    function updateEmberGlow166() {
+      for (var i = 0; i < emberGlow166.length; i++) {
+        var e = emberGlow166[i];
+        e.wobble += 0.02;
+        e.y -= e.speed;
+        e.x += Math.sin(e.wobble) * 0.5;
+        e.alpha -= 0.0003;
+        if (e.y < -20 || e.alpha <= 0) {
+          e.y = canvas.height + 20;
+          e.x = Math.random() * canvas.width;
+          e.alpha = 0.08 + Math.random() * 0.12;
+        }
+      }
+    }
+    function drawEmberGlow166() {
+      for (var i = 0; i < emberGlow166.length; i++) {
+        var e = emberGlow166[i];
+        ctx.fillStyle = "hsla(" + e.hue + ",90%,55%," + e.alpha + ")";
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
 
