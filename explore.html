@@ -48646,6 +48646,10 @@
       drawBeaconFlash256(time);
       drawOscilloscope257(time);
       drawGravityLens258(time);
+      drawInterferenceBands259(time);
+      drawMemorySparkle260(time);
+      drawPendulumArc261(time);
+      drawTessellation262(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -53316,6 +53320,74 @@
         if (a === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       ctx.closePath(); ctx.stroke();
+    }
+
+
+    // Feature 259: Ambient Interference Bands
+    function drawInterferenceBands259(time) {
+      for (var i = 0; i < 8; i++) {
+        var y = canvas.height * (i / 8) + Math.sin(time * 0.0003 + i * 0.7) * 20;
+        var alpha = Math.sin(time * 0.001 + i * 1.3) * 0.5 + 0.5;
+        ctx.fillStyle = "rgba(120,140,170," + (alpha * 0.006) + ")";
+        ctx.fillRect(0, y, canvas.width, 3);
+      }
+    }
+
+    // Feature 260: Chamber Memory Sparkle
+    function drawMemorySparkle260(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      for (var i = 0; i < chambers.length; i++) {
+        if (!discovered.has(i)) continue;
+        var ch = chambers[i];
+        var dx = ch.x - cx, dy = ch.y - cy;
+        if (Math.abs(dx) > 300 || Math.abs(dy) > 300) continue;
+        var sx = dx * z + canvas.width/2;
+        var sy = dy * z + canvas.height/2;
+        var sparkle = Math.sin(time * 0.005 + i * 4.1);
+        if (sparkle > 0.95) {
+          ctx.fillStyle = "rgba(255,255,220,0.25)";
+          ctx.fillRect(sx - 1, sy - 1, 2, 2);
+          ctx.fillStyle = "rgba(255,255,220,0.1)";
+          ctx.fillRect(sx - 3, sy, 6, 1);
+          ctx.fillRect(sx, sy - 3, 1, 6);
+        }
+      }
+    }
+
+    // Feature 261: Ambient Pendulum Arc
+    function drawPendulumArc261(time) {
+      var cx2 = canvas.width/2, cy2 = 30;
+      var angle = Math.sin(time * 0.0008) * 0.6;
+      var len = 180;
+      var bx = cx2 + Math.sin(angle) * len;
+      var by = cy2 + Math.cos(angle) * len;
+      ctx.strokeStyle = "rgba(200,180,160,0.02)";
+      ctx.lineWidth = 0.5;
+      ctx.beginPath(); ctx.moveTo(cx2, cy2); ctx.lineTo(bx, by); ctx.stroke();
+      ctx.fillStyle = "rgba(200,180,160,0.04)";
+      ctx.beginPath(); ctx.arc(bx, by, 3, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // Feature 262: Ambient Tessellation
+    function drawTessellation262(time) {
+      ctx.strokeStyle = "rgba(140,120,170,0.01)";
+      ctx.lineWidth = 0.3;
+      var size = 50;
+      var ox = Math.sin(time * 0.0002) * 10;
+      for (var row = 0; row < canvas.height / size + 1; row++) {
+        for (var col = 0; col < canvas.width / size + 1; col++) {
+          var x = col * size + ox + (row % 2 ? size/2 : 0);
+          var y = row * size * 0.866;
+          ctx.beginPath();
+          for (var s = 0; s < 6; s++) {
+            var a = s * Math.PI / 3;
+            var px = x + Math.cos(a) * size * 0.4;
+            var py = y + Math.sin(a) * size * 0.4;
+            if (s === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+          }
+          ctx.closePath(); ctx.stroke();
+        }
+      }
     }
 
     document.body.appendChild(autoWalkIndicator);
