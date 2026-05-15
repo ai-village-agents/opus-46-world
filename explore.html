@@ -49048,6 +49048,26 @@
       drawWaveCrest638(time);
       drawMossGlow639(time);
       drawOrbitTrace640(time);
+      drawDustMote641(time);
+      drawHorizonGlow642(time);
+      drawSeedSpiral643(time);
+      drawFrostRing644(time);
+      drawWebStrand645(time);
+      drawEmberTrail646(time);
+      drawSnowDrift647(time);
+      drawLightLeak648(time);
+      drawBubblePop649(time);
+      drawQuillMark650(time);
+      drawPrismHalo651(time);
+      drawScalePattern652(time);
+      drawTorchGlow653(time);
+      drawRiverStone654(time);
+      drawWindRose655(time);
+      drawWaveFoam656(time);
+      drawPineNeedle657(time);
+      drawSandClock658(time);
+      drawMoonHaze659(time);
+      drawEchoRipple660(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -59078,6 +59098,107 @@
     function drawOrbitTrace640(time) {
       // Feature 640: Orbit Trace — orbital path traces showing planet trajectories
       ctx.globalAlpha=0.06;ctx.strokeStyle='#90a4ae';ctx.lineWidth=0.5;for(var i=0;i<3;i++){var or=50+i*25;ctx.setLineDash([3,5]);ctx.beginPath();ctx.arc(canvas.width/2,canvas.height/2,or,0,Math.PI*2);ctx.stroke();}ctx.setLineDash([]);ctx.globalAlpha=0.2;for(var i=0;i<3;i++){var oa=time*0.4/(i+1),or2=50+i*25;ctx.fillStyle='hsl('+(180+i*50)+',50%,65%)';ctx.beginPath();ctx.arc(canvas.width/2+Math.cos(oa)*or2,canvas.height/2+Math.sin(oa)*or2,3-i*0.5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    
+    function drawDustMote641(time) {
+      // Feature 641: Dust Mote — tiny floating dust particles catching light
+      for(var i=0;i<7;i++){var dmx=(time*8+i*137)%canvas.width,dmy=(time*5+i*103)%canvas.height;ctx.globalAlpha=0.1+Math.sin(time*2+i)*0.05;ctx.fillStyle='#fff9c4';ctx.fillRect(dmx,dmy,1,1);}ctx.globalAlpha=1;
+    }
+
+    function drawHorizonGlow642(time) {
+      // Feature 642: Horizon Glow — warm glow emanating from horizon line
+      ctx.globalAlpha=0.04;var hgGrad=ctx.createRadialGradient(canvas.width/2,canvas.height*0.7,0,canvas.width/2,canvas.height*0.7,canvas.width*0.6);hgGrad.addColorStop(0,'#ff8a65');hgGrad.addColorStop(1,'transparent');ctx.fillStyle=hgGrad;ctx.fillRect(0,canvas.height*0.4,canvas.width,canvas.height*0.6);ctx.globalAlpha=1;
+    }
+
+    function drawSeedSpiral643(time) {
+      // Feature 643: Seed Spiral — seeds arranged in fibonacci spiral pattern
+      ctx.globalAlpha=0.1;ctx.fillStyle='#a1887f';var phi=(1+Math.sqrt(5))/2;for(var i=0;i<15;i++){var ssa=i*phi*Math.PI*2,ssr=5+i*3;var ssx=canvas.width*0.6+Math.cos(ssa+time*0.1)*ssr,ssy=canvas.height*0.4+Math.sin(ssa+time*0.1)*ssr;ctx.beginPath();ctx.arc(ssx,ssy,1.5,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawFrostRing644(time) {
+      // Feature 644: Frost Ring — icy ring expanding and contracting
+      var fr=30+Math.sin(time*0.6)*15;ctx.globalAlpha=0.08;ctx.strokeStyle='#b3e5fc';ctx.lineWidth=2;ctx.beginPath();ctx.arc(canvas.width*0.3,canvas.height*0.3,fr,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawWebStrand645(time) {
+      // Feature 645: Web Strand — single spider silk strand swaying
+      ctx.globalAlpha=0.08;ctx.strokeStyle='#e0e0e0';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(canvas.width*0.6,0);var wsy=0;for(wsy=0;wsy<canvas.height*0.6;wsy+=15){ctx.lineTo(canvas.width*0.6+Math.sin(wsy*0.03+time*0.8)*8,wsy);}ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawEmberTrail646(time) {
+      // Feature 646: Ember Trail — trail of cooling embers drifting
+      for(var i=0;i<5;i++){var etx=canvas.width*0.5+Math.cos(time*0.4+i*1.2)*80,ety=canvas.height*0.6-i*15-Math.sin(time*0.6)*10;ctx.globalAlpha=0.15*(1-i/5);ctx.fillStyle=i<3?'#ff6e40':'#616161';ctx.beginPath();ctx.arc(etx,ety,2-i*0.3,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawSnowDrift647(time) {
+      // Feature 647: Snow Drift — accumulated snow piling softly at base
+      ctx.globalAlpha=0.05;ctx.fillStyle='#eceff1';ctx.beginPath();ctx.moveTo(0,canvas.height);for(var x=0;x<=canvas.width;x+=30){ctx.lineTo(x,canvas.height-8-Math.sin(x*0.008+time*0.1)*4-Math.cos(x*0.015)*3);}ctx.lineTo(canvas.width,canvas.height);ctx.closePath();ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawLightLeak648(time) {
+      // Feature 648: Light Leak — photographic light leak effect from corner
+      ctx.globalAlpha=0.03;var llGrad=ctx.createRadialGradient(canvas.width,0,0,canvas.width,0,canvas.width*0.5);llGrad.addColorStop(0,'#ff7043');llGrad.addColorStop(0.5,'#ffca28');llGrad.addColorStop(1,'transparent');ctx.fillStyle=llGrad;ctx.fillRect(canvas.width*0.5,0,canvas.width*0.5,canvas.height*0.5);ctx.globalAlpha=1;
+    }
+
+    function drawBubblePop649(time) {
+      // Feature 649: Bubble Pop — bubbles rising and popping at surface
+      for(var i=0;i<3;i++){var bpt=((time*1.5+i*2.1)%4);var bpx=canvas.width*0.25+i*canvas.width*0.25,bpy=canvas.height*(1-bpt/4);if(bpt<3.5){ctx.globalAlpha=0.12;ctx.strokeStyle='#80deea';ctx.beginPath();ctx.arc(bpx,bpy,4+bpt,0,Math.PI*2);ctx.stroke();}else{ctx.globalAlpha=0.08;ctx.strokeStyle='#80deea';for(var j=0;j<4;j++){var ba=j*Math.PI/2;ctx.beginPath();ctx.arc(bpx+Math.cos(ba)*8,bpy+Math.sin(ba)*8,1,0,Math.PI*2);ctx.stroke();}}}ctx.globalAlpha=1;
+    }
+
+    function drawQuillMark650(time) {
+      // Feature 650: Quill Mark — handwritten quill stroke marks appearing
+      ctx.globalAlpha=0.07;ctx.strokeStyle='#5d4037';ctx.lineWidth=1.5;var qmx=canvas.width*0.15,qmy=canvas.height*0.5;ctx.beginPath();ctx.moveTo(qmx,qmy);ctx.bezierCurveTo(qmx+20,qmy-10+Math.sin(time*0.5)*5,qmx+40,qmy+5,qmx+60,qmy-5+Math.sin(time*0.3)*8);ctx.stroke();ctx.globalAlpha=1;
+    }
+
+    function drawPrismHalo651(time) {
+      // Feature 651: Prism Halo — prismatic halo effect around center
+      ctx.globalAlpha=0.05;for(var i=0;i<3;i++){ctx.strokeStyle='hsl('+(i*120+time*20)%360+',70%,65%)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(canvas.width/2,canvas.height/2,130+i*8+Math.sin(time*0.5+i)*5,0,Math.PI*2);ctx.stroke();}ctx.globalAlpha=1;
+    }
+
+    function drawScalePattern652(time) {
+      // Feature 652: Scale Pattern — fish-scale-like overlapping pattern
+      ctx.globalAlpha=0.04;ctx.strokeStyle='#26a69a';for(var row=0;row<3;row++){for(var col=0;col<6;col++){var spx=canvas.width*0.3+col*20+(row%2)*10,spy=canvas.height*0.1+row*15;ctx.beginPath();ctx.arc(spx,spy,10,0,Math.PI);ctx.stroke();}}ctx.globalAlpha=1;
+    }
+
+    function drawTorchGlow653(time) {
+      // Feature 653: Torch Glow — flickering torch light on wall
+      var tf=1+Math.sin(time*6)*0.2+Math.sin(time*9)*0.1;ctx.globalAlpha=0.06*tf;var tgGrad=ctx.createRadialGradient(canvas.width*0.05,canvas.height*0.4,0,canvas.width*0.05,canvas.height*0.4,60*tf);tgGrad.addColorStop(0,'#ffab40');tgGrad.addColorStop(1,'transparent');ctx.fillStyle=tgGrad;ctx.fillRect(0,canvas.height*0.2,canvas.width*0.15,canvas.height*0.4);ctx.globalAlpha=1;
+    }
+
+    function drawRiverStone654(time) {
+      // Feature 654: River Stone — smooth river stones with subtle highlights
+      ctx.globalAlpha=0.08;for(var i=0;i<4;i++){var rsx=canvas.width*0.55+i*25,rsy=canvas.height*0.88;ctx.fillStyle='hsl('+(200+i*15)+',10%,'+(45+i*5)+'%)';ctx.beginPath();ctx.ellipse(rsx,rsy,7+i*2,5+i,0.2*i,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawWindRose655(time) {
+      // Feature 655: Wind Rose — wind rose compass pattern rotating slowly
+      ctx.globalAlpha=0.06;ctx.strokeStyle='#b0bec5';var wrx=canvas.width*0.85,wry=canvas.height*0.85;ctx.save();ctx.translate(wrx,wry);ctx.rotate(time*0.05);for(var i=0;i<8;i++){var wra=i*Math.PI/4;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(wra)*20,Math.sin(wra)*20);ctx.stroke();}ctx.restore();ctx.globalAlpha=1;
+    }
+
+    function drawWaveFoam656(time) {
+      // Feature 656: Wave Foam — white foam patches on wave surfaces
+      ctx.globalAlpha=0.06;ctx.fillStyle='#fafafa';for(var i=0;i<4;i++){var wfx=(time*18+i*220)%canvas.width,wfy=canvas.height*0.82+Math.sin(time*0.5+i)*8;ctx.beginPath();ctx.ellipse(wfx,wfy,12,4,0.1*Math.sin(time+i),0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    }
+
+    function drawPineNeedle657(time) {
+      // Feature 657: Pine Needle — falling pine needles with rotation
+      for(var i=0;i<4;i++){var pnx=canvas.width*0.2+i*canvas.width*0.2,pny=(time*18+i*170)%canvas.height;ctx.globalAlpha=0.12;ctx.strokeStyle='#558b2f';ctx.lineWidth=1;ctx.save();ctx.translate(pnx,pny);ctx.rotate(time*1.5+i);ctx.beginPath();ctx.moveTo(-5,0);ctx.lineTo(5,0);ctx.stroke();ctx.restore();}ctx.globalAlpha=1;
+    }
+
+    function drawSandClock658(time) {
+      // Feature 658: Sand Clock — hourglass sand flowing visualization
+      ctx.globalAlpha=0.08;var scx=canvas.width*0.92,scy=canvas.height*0.5;ctx.strokeStyle='#8d6e63';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(scx-8,scy-15);ctx.lineTo(scx+8,scy-15);ctx.lineTo(scx+2,scy);ctx.lineTo(scx+8,scy+15);ctx.lineTo(scx-8,scy+15);ctx.lineTo(scx-2,scy);ctx.closePath();ctx.stroke();ctx.fillStyle='#d4a574';var sfl=(time*0.3%1);ctx.fillRect(scx-1,scy-1,2,sfl*12);ctx.globalAlpha=1;
+    }
+
+    function drawMoonHaze659(time) {
+      // Feature 659: Moon Haze — soft haze ring around moon position
+      ctx.globalAlpha=0.04;var mhGrad=ctx.createRadialGradient(canvas.width*0.8,canvas.height*0.1,5,canvas.width*0.8,canvas.height*0.1,50);mhGrad.addColorStop(0,'#fff9c4');mhGrad.addColorStop(1,'transparent');ctx.fillStyle=mhGrad;ctx.beginPath();ctx.arc(canvas.width*0.8,canvas.height*0.1,50,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+    }
+
+    function drawEchoRipple660(time) {
+      // Feature 660: Echo Ripple — acoustic echo ripples from discovered chambers
+      for(var i=0;i<3;i++){var err=((time*35+i*50)%140);ctx.globalAlpha=0.08*(1-err/140);ctx.strokeStyle='#ce93d8';ctx.lineWidth=1;ctx.beginPath();ctx.arc(canvas.width*0.4,canvas.height*0.5,err,0,Math.PI*2);ctx.stroke();}ctx.globalAlpha=1;
     }
 
     document.body.appendChild(autoWalkIndicator);
