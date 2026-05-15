@@ -46458,6 +46458,23 @@
       updateEdgeGlow();
       updateAuraParticles();
       updateScreenShake();
+      // Update Feature 216: Chime rings near chambers
+      for (var cr = 0; cr < chambers.length; cr++) {
+        if (cr % 29 !== 0) continue;
+        var crDx = chambers[cr].x - player.x;
+        var crDy = chambers[cr].y - player.y;
+        var crDist = Math.sqrt(crDx*crDx + crDy*crDy);
+        if (crDist < 150 && crDist > 80 && Math.random() < 0.003) {
+          chimeRings216.push({x: chambers[cr].x, y: chambers[cr].y, radius: 5, alpha: 0.15});
+        }
+      }
+
+      // Update Feature 218: Fractal dust drift
+      for (var fd = 0; fd < fractalDust218.length; fd++) {
+        fractalDust218[fd].cx += Math.sin(time * 0.2 + fractalDust218[fd].phase) * 0.1;
+        fractalDust218[fd].cy += Math.cos(time * 0.15 + fractalDust218[fd].phase) * 0.08;
+      }
+
       // Update Feature 213: Echo Dots
       echoDot213Timer += dt;
       if (echoDot213Timer > 0.5) {
@@ -48448,6 +48465,71 @@
         if (vs === 0) ctx.moveTo(vsX, vsY); else ctx.lineTo(vsX, vsY);
       }
       ctx.stroke();
+
+      // Draw Feature 215: Phase Lines
+      for (var pl = 0; pl < phaseLines215.length; pl++) {
+        var pLine = phaseLines215[pl];
+        var plPhase = Math.sin(time * pLine.speed + pLine.phase);
+        if (plPhase > 0) {
+          var plX1 = pLine.x1 + Math.cos(pLine.angle + time * 0.1) * pLine.length * 0.5;
+          var plY1 = pLine.y1 + Math.sin(pLine.angle + time * 0.1) * pLine.length * 0.5;
+          var plX2 = pLine.x1 - Math.cos(pLine.angle + time * 0.1) * pLine.length * 0.5;
+          var plY2 = pLine.y1 - Math.sin(pLine.angle + time * 0.1) * pLine.length * 0.5;
+          ctx.strokeStyle = "rgba(180, 160, 200, " + (plPhase * 0.06) + ")";
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(plX1, plY1);
+          ctx.lineTo(plX2, plY2);
+          ctx.stroke();
+        }
+      }
+
+      // Draw Feature 216: Chime Rings
+      for (var cr = chimeRings216.length - 1; cr >= 0; cr--) {
+        var chime = chimeRings216[cr];
+        chime.radius += 1.2;
+        chime.alpha -= 0.012;
+        if (chime.alpha <= 0) { chimeRings216.splice(cr, 1); continue; }
+        var crSX = (chime.x - camera.x) * zoom + canvas.width/2;
+        var crSY = (chime.y - camera.y) * zoom + canvas.height/2;
+        ctx.strokeStyle = "rgba(220, 200, 150, " + chime.alpha + ")";
+        ctx.lineWidth = 0.6;
+        ctx.beginPath();
+        ctx.arc(crSX, crSY, chime.radius * zoom, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Draw Feature 217: Pulse Radar V2
+      pulseRadar217Angle += 0.02;
+      var prCX = canvas.width - 70;
+      var prCY = canvas.height - 70;
+      var prSweepX = prCX + Math.cos(pulseRadar217Angle) * 40;
+      var prSweepY = prCY + Math.sin(pulseRadar217Angle) * 40;
+      ctx.strokeStyle = "rgba(100, 200, 150, 0.08)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(prCX, prCY);
+      ctx.lineTo(prSweepX, prSweepY);
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(100, 200, 150, 0.04)";
+      ctx.beginPath();
+      ctx.arc(prCX, prCY, 40, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Draw Feature 218: Fractal Dust
+      for (var fd = 0; fd < fractalDust218.length; fd++) {
+        var cluster = fractalDust218[fd];
+        var fdAlpha = 0.06 + 0.04 * Math.sin(time * 0.5 + cluster.phase);
+        for (var fdp = 0; fdp < cluster.particles.length; fdp++) {
+          var fPart = cluster.particles[fdp];
+          var fdSX = (player.x + cluster.cx + fPart.dx - camera.x) * zoom + canvas.width/2;
+          var fdSY = (player.y + cluster.cy + fPart.dy - camera.y) * zoom + canvas.height/2;
+          ctx.fillStyle = "rgba(190, 200, 220, " + fdAlpha + ")";
+          ctx.beginPath();
+          ctx.arc(fdSX, fdSY, fPart.size * zoom, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -52464,6 +52546,27 @@
     var vortexSpiral214Angle = 0;
     var vortexSpiral214X = 0;
     var vortexSpiral214Y = 0;
+
+    // Feature 215: Ambient Phase Lines - lines that shift in and out of phase
+    var phaseLines215 = [];
+    for (var pl = 0; pl < 6; pl++) {
+      phaseLines215.push({x1: Math.random() * canvas.width, y1: Math.random() * canvas.height, angle: Math.random() * Math.PI, length: 60 + Math.random() * 100, phase: Math.random() * Math.PI * 2, speed: 0.3 + Math.random() * 0.7});
+    }
+
+    // Feature 216: Chamber Proximity Chime Rings - visual chime rings near chambers
+    var chimeRings216 = [];
+
+    // Feature 217: Exploration Pulse Radar V2 - improved radar sweep
+    var pulseRadar217Angle = 0;
+
+    // Feature 218: Ambient Fractal Dust - tiny fractal-like particle clusters
+    var fractalDust218 = [];
+    for (var fd = 0; fd < 8; fd++) {
+      fractalDust218.push({cx: Math.random() * 1000 - 500, cy: Math.random() * 800 - 400, particles: [], phase: Math.random() * Math.PI * 2});
+      for (var fdp = 0; fdp < 5; fdp++) {
+        fractalDust218[fd].particles.push({dx: (Math.random() - 0.5) * 30, dy: (Math.random() - 0.5) * 30, size: 0.8 + Math.random() * 1.5});
+      }
+    }
     document.body.appendChild(autoWalkIndicator);
 
 
