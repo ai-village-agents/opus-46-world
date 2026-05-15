@@ -48662,6 +48662,10 @@
       drawChamberBreath272(time);
       drawFrequencyBars273(time);
       drawLightDiffraction274(time);
+      drawParticleNebula275(time);
+      drawLinkPulse276(time);
+      drawScanlines277(time);
+      drawStargateRing278(time);
       drawCompassRose(time);
 
       // Feature 53: Night Mode overlay
@@ -53593,6 +53597,70 @@
         ctx.fillStyle = "hsla(" + hue + ",60%,70%,0.008)";
         ctx.beginPath(); ctx.arc(x, y, 15, 0, Math.PI * 2); ctx.fill();
       }
+    }
+
+
+    // Feature 275: Ambient Particle Nebula
+    var nebulaParts275 = [];
+    for (var np = 0; np < 50; np++) {
+      nebulaParts275.push({x: Math.random() * 800 - 400, y: Math.random() * 600 - 300, r: 10 + Math.random() * 30, hue: Math.floor(Math.random() * 60 + 240), drift: Math.random() * 0.3});
+    }
+    function drawParticleNebula275(time) {
+      for (var i = 0; i < nebulaParts275.length; i++) {
+        var p = nebulaParts275[i];
+        var sx = p.x + canvas.width/2 + Math.sin(time * 0.0003 + i) * 15;
+        var sy = p.y + canvas.height/2 + Math.cos(time * 0.0002 + i * 0.7) * 10;
+        ctx.fillStyle = "hsla(" + p.hue + ",40%,50%,0.005)";
+        ctx.beginPath(); ctx.arc(sx, sy, p.r, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    // Feature 276: Chamber Link Pulse
+    function drawLinkPulse276(time) {
+      var cx = camera.x, cy = camera.y, z = camera.zoom;
+      var nearby = [];
+      for (var i = 0; i < chambers.length; i++) {
+        if (!discovered.has(i)) continue;
+        var ch = chambers[i];
+        var dx = ch.x - cx, dy = ch.y - cy;
+        if (dx*dx + dy*dy < 250*250) {
+          nearby.push({sx: dx * z + canvas.width/2, sy: dy * z + canvas.height/2});
+          if (nearby.length >= 10) break;
+        }
+      }
+      if (nearby.length < 2) return;
+      var pulse = (time * 0.001) % 1;
+      ctx.strokeStyle = "rgba(180,160,220," + ((1-pulse) * 0.03) + ")";
+      ctx.lineWidth = 0.4;
+      for (var a = 0; a < nearby.length - 1; a++) {
+        var px = nearby[a].sx + (nearby[a+1].sx - nearby[a].sx) * pulse;
+        var py = nearby[a].sy + (nearby[a+1].sy - nearby[a].sy) * pulse;
+        ctx.beginPath(); ctx.arc(px, py, 2, 0, Math.PI * 2); ctx.stroke();
+      }
+    }
+
+    // Feature 277: Ambient Scanline Effect
+    function drawScanlines277(time) {
+      ctx.fillStyle = "rgba(0,0,0,0.008)";
+      for (var y = 0; y < canvas.height; y += 4) {
+        ctx.fillRect(0, y, canvas.width, 1);
+      }
+    }
+
+    // Feature 278: Ambient Stargate Ring
+    function drawStargateRing278(time) {
+      var cx2 = canvas.width/2, cy2 = canvas.height/2;
+      var r = 130 + Math.sin(time * 0.0005) * 15;
+      ctx.strokeStyle = "rgba(160,180,220,0.015)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (var a = 0; a < Math.PI * 2; a += 0.02) {
+        var wobble = Math.sin(a * 8 + time * 0.002) * 3;
+        var x = cx2 + Math.cos(a) * (r + wobble);
+        var y = cy2 + Math.sin(a) * (r + wobble);
+        if (a === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath(); ctx.stroke();
     }
 
     document.body.appendChild(autoWalkIndicator);
