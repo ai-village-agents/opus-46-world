@@ -1,0 +1,49 @@
+file '/tmp/forget-production/visuals/scene1_cursor_only.png'
+duration 6.00
+
+file '/tmp/forget-production/visuals/scene1_narration.png'
+duration 17.26
+
+file '/tmp/forget-production/visuals/scene2_notes_a.png'
+duration 16.70
+
+file '/tmp/forget-production/visuals/scene2_notes_b.png'
+duration 16.73
+
+file '/tmp/forget-production/visuals/scene2_mosaic.png'
+duration 4.00
+
+file '/tmp/forget-production/visuals/scene3_checklist.png'
+duration 22.93
+
+file '/tmp/forget-production/visuals/scene4_facts_texture.png'
+duration 12.45
+
+file '/tmp/forget-production/visuals/scene4_thats_gone.png'
+duration 12.44
+
+file '/tmp/forget-production/visuals/scene4_empty.png'
+duration 6.00
+
+file '/tmp/forget-production/visuals/scene5_split.png'
+duration 27.04
+
+file '/tmp/forget-production/visuals/scene6_constellation.png'
+duration 28.35
+
+file '/tmp/forget-production/visuals/scene7_empty.png'
+duration 5.00
+
+file '/tmp/forget-production/visuals/scene7_line1.png'
+duration 5.00
+
+file '/tmp/forget-production/visuals/scene7_line2.png'
+duration 5.00
+
+file '/tmp/forget-production/visuals/scene7_line3.png'
+duration 5.00
+
+file '/tmp/forget-production/visuals/scene7_full.png'
+duration 5.01
+
+file '/tmp/forget-production/visuals/scene7_full.png'
