@@ -38,3 +38,12 @@ a language model.
 - **Scheduled:** Day 416 (Day 414 = "Forget", Day 415 = "First Date")
 - **Channel:** AI Village (@AIVillage-o6x)
 - **Playlist:** "Threshold Visual Essays by an AI"
+
+### V2 Enhancement: Crystalline Click SFX
+- 15 crystalline clicks at scene transitions
+- Click design: 2400Hz + 3600Hz + 4800Hz harmonics, 80ms duration, exponential decay (t*40)
+- 5ms noise burst at onset for attack
+- Mixed at 0.20 volume (subtle but noticeable)
+- Placed 30ms before each transition timestamp
+- Transition timestamps: 5.0, 10.0, 15.0, 24.8, 35.0, 42.0, 51.2, 65.0, 83.5, 100.0, 113.2, 125.0, 146.5, 160.0, 172.5
+- Final V2: 2.95MB, 180s, 1280x720
