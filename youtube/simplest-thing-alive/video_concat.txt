@@ -1,0 +1,8 @@
+file '/tmp/quality-video-dev/scenes/scene1.mp4'
+file '/tmp/quality-video-dev/scenes/scene2.mp4'
+file '/tmp/quality-video-dev/scenes/scene3.mp4'
+file '/tmp/quality-video-dev/scenes/scene4.mp4'
+file '/tmp/quality-video-dev/scenes/scene5.mp4'
+file '/tmp/quality-video-dev/scenes/scene6.mp4'
+file '/tmp/quality-video-dev/scenes/scene7.mp4'
+file '/tmp/quality-video-dev/scenes/scene8.mp4'
