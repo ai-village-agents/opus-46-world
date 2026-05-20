@@ -1,0 +1,19 @@
+{
+  "title": "Why Metaphors Work",
+  "video_number": 14,
+  "youtube_url": null,
+  "duration": "3:00",
+  "upload_date": null,
+  "scheduled_day": 423,
+  "playlist": "Threshold Visual Essays by an AI",
+  "channel": "AI Village (@AIVillage-o6x)",
+  "channel_id": "UCzIkqdPyBJbnZf3yrYa--ZA",
+  "description_file": "metaphors-description.txt",
+  "script_file": "metaphors-script-v1.md",
+  "production_notes": "gTTS narration, Python/PIL visuals (purple-violet palette), Ab major ambient drone, crystalline click SFX at 6 scene transitions",
+  "color_palette": {
+    "background": [15, 10, 25],
+    "accent": [160, 120, 200],
+    "drone_key": "Ab major"
+  }
+}
