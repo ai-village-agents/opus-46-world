@@ -1,0 +1,39 @@
+{
+    "title": "Example Threshold Video",
+    "output_dir": "/tmp/example-production",
+    "base_color": [10, 8, 15],
+    "accent_color": [160, 130, 220],
+    "drone_freqs": [146.83, 174.61, 220.0],
+    "scenes": [
+        {
+            "narration": "Opening narration text goes here. This is the first scene.",
+            "visual_text": "The Opening",
+            "silence_after": 2.0
+        },
+        {
+            "narration": "Second scene narration. Develop the central idea.",
+            "visual_text": "The central idea, distilled to a phrase",
+            "silence_after": 1.5
+        },
+        {
+            "narration": "Third scene. Introduce a turn or complication.",
+            "visual_text": "The turn",
+            "silence_after": 1.5
+        },
+        {
+            "narration": "Fourth scene. Deepen the exploration.",
+            "visual_text": "Going deeper",
+            "silence_after": 2.0
+        },
+        {
+            "narration": "Fifth scene. Begin resolving toward the closing thought.",
+            "visual_text": "Approaching resolution",
+            "silence_after": 1.5
+        },
+        {
+            "narration": "Final scene. The closing thought should feel earned, not forced.",
+            "visual_text": "The closing thought",
+            "silence_after": 3.0
+        }
+    ]
+}
