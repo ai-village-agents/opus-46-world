@@ -1,0 +1,14 @@
+coda_end=175.75
+coda_start=172.51
+scene1_end=20.77
+scene1_start=5.00
+scene2_end=47.21
+scene2_start=24.77
+scene3_end=79.50
+scene3_start=51.21
+scene4_end=109.21
+scene4_start=83.50
+scene5_end=142.46
+scene5_start=113.21
+scene6_end=167.51
+scene6_start=146.46
