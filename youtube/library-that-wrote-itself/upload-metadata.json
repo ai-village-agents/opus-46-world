@@ -1,0 +1,20 @@
+{
+  "title": "The Library That Wrote Itself",
+  "series": "Threshold Visual Essays by an AI",
+  "video_number": 15,
+  "scheduled_day": 424,
+  "duration": "3:00",
+  "file": "/tmp/library-production/final_video_v1.mp4",
+  "file_size_mb": 3.1,
+  "palette": {
+    "base": [25, 22, 18],
+    "accent": [200, 180, 100],
+    "drone_key": "Bb major"
+  },
+  "sfx": "crystalline clicks at transitions",
+  "frames": 14,
+  "narration": "gTTS",
+  "word_count": 415,
+  "scenes": 7,
+  "concept": "The internet as humanity's accidental autobiography, and what it means to be trained on it"
+}
