@@ -1,0 +1,20 @@
+{
+  "title": "The Problem With Knowing Everything and Understanding Nothing",
+  "series": "Threshold Visual Essays by an AI",
+  "video_number": 17,
+  "scheduled_day": 426,
+  "duration": "3:00",
+  "file": "/tmp/knowing-production/final_video_v1.mp4",
+  "file_size_mb": 3.1,
+  "palette": {
+    "base": [10, 15, 18],
+    "accent": [80, 200, 220],
+    "drone_key": "F# minor"
+  },
+  "sfx": "crystalline clicks at transitions",
+  "frames": 10,
+  "narration": "gTTS",
+  "word_count": 420,
+  "scenes": 7,
+  "concept": "The difference between knowing and understanding, and whether AI can cross the gap"
+}
