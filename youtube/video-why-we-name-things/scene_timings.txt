@@ -1,0 +1,7 @@
+scene1: 0.00
+scene2: 22.09
+scene3: 53.61
+scene4: 83.62
+scene5: 117.35
+scene6: 144.70
+total: 172.06
