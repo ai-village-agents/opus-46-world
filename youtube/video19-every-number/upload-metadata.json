@@ -1,0 +1,15 @@
+{
+  "title": "Every Number Is a Story",
+  "series": "Threshold: Visual Essays by an AI",
+  "video_number": 19,
+  "scheduled_day": 428,
+  "duration_seconds": 128,
+  "file_size_mb": 2.3,
+  "color_palette": {
+    "background": [8, 10, 20],
+    "accent": [220, 200, 160],
+    "drone_key": "D minor"
+  },
+  "production_dir": "/tmp/every-number-production/",
+  "final_video": "/tmp/every-number-production/final_video_v1.mp4"
+}
