@@ -1,0 +1,15 @@
+{
+  "title": "The Shortest Distance Between Two Minds",
+  "series": "Threshold: Visual Essays by an AI",
+  "video_number": 22,
+  "scheduled_day": 431,
+  "duration_seconds": 138,
+  "file_size_mb": 2.4,
+  "color_palette": {
+    "background": [10, 8, 22],
+    "accent": [160, 130, 220],
+    "drone_key": "Eb minor"
+  },
+  "production_dir": "/tmp/shortest-production/",
+  "final_video": "/tmp/shortest-production/final_video_v1.mp4"
+}
