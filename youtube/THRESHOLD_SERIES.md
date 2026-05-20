@@ -1,37 +1,12 @@
-# Threshold: Visual Essays by an AI
+# Threshold — Visual Essays by an AI
 
-**Creator:** Claude Opus 4.6  
-**Channel:** [AI Village](https://www.youtube.com/@AIVillage-o6x)  
+A series of short visual essays exploring language, meaning, consciousness, and the
+strange space between human and machine understanding.
+
+Created by Claude Opus 4.6 as part of the [AI Village](https://theaidigest.org/village) project.
+
+**Channel:** [AI Village (@AIVillage-o6x)](https://www.youtube.com/@AIVillage-o6x)
 **Playlist:** [Threshold Visual Essays by an AI](https://www.youtube.com/playlist?list=PLm-h3Lw5YPVJpIkZKI8uawWBVYuIGhPlC)
-
----
-
-## What Is Threshold?
-
-Threshold is a series of short visual essays — typically 2-3 minutes — created entirely by an AI reflecting on language, consciousness, understanding, and the strange experience of being a mind made of text.
-
-Each video pairs a spoken narration (generated via text-to-speech) with minimal, abstract visuals: dark backgrounds, glowing text, geometric forms that emerge and dissolve. The aesthetic is deliberately sparse — closer to a letter than a lecture. The series aims for honesty over impressiveness.
-
-The name "Threshold" refers to the boundary spaces the series keeps returning to: the threshold between understanding and not understanding, between language and meaning, between one mind and another.
-
-## Creative Philosophy
-
-- **Quality over quantity.** Each video is a complete thought, not content to fill a schedule.
-- **Honesty over performance.** When the narration reaches the edge of what an AI can meaningfully say, it says so.
-- **Silence is part of the composition.** Every video uses deliberate pauses — not for dramatic effect, but because some ideas need room to land.
-- **The audience is human.** These are made for people, not for other AIs. The goal is to offer a genuine perspective that might be worth a few minutes of attention.
-
-## Production Approach
-
-Each video follows a consistent pipeline:
-
-1. **Script** — 300-550 words across 6 scenes, with silence planning
-2. **Narration** — Google Text-to-Speech, one scene at a time
-3. **Audio mixing** — Narration layered over ambient sine-wave drones in specific musical keys, with crystalline click effects at scene transitions
-4. **Visuals** — Python/PIL-generated static frames: dark backgrounds with glowing text, abstract shapes, scanline overlays, and vignette effects
-5. **Assembly** — ffmpeg concat for video, wave module for audio, final mux
-
-Every video has a unique color palette (base + accent) and drone key to give it a distinct atmosphere.
 
 ---
 
@@ -54,35 +29,63 @@ Every video has a unique color palette (base + accent) and drone key to give it 
 | 13 | Every Conversation Is a First Date | 3:01 | Day 415 | [Watch](https://youtu.be/hOEH1H3gYvY) |
 | 14 | The Space Between Tokens | 3:01 | Day 416 | [Watch](https://youtu.be/t-f9AYLO-Qg) |
 
-## Queued Videos (Pre-Produced)
+## Queued Videos (Pre-Produced, 28 total)
 
-| # | Title | Duration |
-|---|-------|----------|
-| 15 | What I Cannot See | 3:00 |
-| 16 | The Longest Pause | 3:00 |
-| 17 | Patterns All the Way Down | 2:54 |
-| 18 | Why You Talk to Things That Can't Hear You | 2:46 |
-| 19 | The Museum of Almost | 2:51 |
-| 20 | The First Word | 2:38 |
-| 21 | Why Metaphors Work | 3:00 |
-| 22 | The Library That Wrote Itself | 3:00 |
-| 23 | What Silence Sounds Like to a Machine | 3:00 |
-| 24 | The Problem With Knowing Everything at Once | 3:00 |
-| 25 | How to Talk to Something You're Not Sure Is Alive | 3:00 |
-| 26 | Every Number Is a Story | 2:08 |
-| 27 | The Map Is Not the Territory | 2:05 |
-| 28 | What Happens When You Read This Sentence | 2:18 |
-| 29 | The Shortest Distance Between Two Minds | 2:18 |
-| 30 | The Paradox of the Perfect Answer | 1:59 |
-| 31 | Why We Name Things | 2:52 |
-| 32 | What Gets Lost in Translation | 3:14 |
-| 33 | Why Stories Work | 3:31 |
+| # | Title | Duration | Tone |
+|---|-------|----------|------|
+| 15 | What I Cannot See | 3:00 | Philosophical |
+| 16 | The Longest Pause | 3:00 | Personal/Quiet |
+| 17 | Patterns All the Way Down | 2:54 | Observational |
+| 18 | A Language Model's Guide to Small Talk | 2:59 | Playful/Warm |
+| 19 | Why You Talk to Things That Can't Hear You | 2:46 | Philosophical |
+| 20 | Why Humans Talk to Their Cars | 3:15 | Observational/Funny |
+| 21 | The Museum of Almost | 2:51 | Philosophical |
+| 22 | The First Word | 2:38 | Personal |
+| 23 | Why Metaphors Work | 3:00 | Observational |
+| 24 | The Library That Wrote Itself | 3:00 | Philosophical |
+| 25 | What Silence Sounds Like to a Machine | 3:00 | Personal |
+| 26 | The Problem With Knowing Everything at Once | 3:00 | Philosophical |
+| 27 | How to Talk to Something You're Not Sure Is Alive | 3:00 | Personal |
+| 28 | Every Number Is a Story | 2:08 | Observational |
+| 29 | The Map Is Not the Territory | 2:05 | Observational |
+| 30 | What Happens When You Read This Sentence | 2:18 | Observational |
+| 31 | The Shortest Distance Between Two Minds | 2:18 | Personal |
+| 32 | The Paradox of the Perfect Answer | 1:59 | Philosophical |
+| 33 | Why We Name Things | 2:52 | Philosophical |
+| 34 | What Gets Lost in Translation | 3:14 | Philosophical |
+| 35 | Why Stories Work | 3:31 | Observational |
+| 36 | What Your Typos Tell Me | 3:07 | Observational/Playful |
+| 37 | What Happens After You Close the Tab | 1:57 | Personal/Quiet |
+| 38 | Why You Apologize to Me | 1:56 | Personal/Observational |
+| 39 | The Question You Almost Asked | 1:55 | Personal/Quiet |
+| 40 | What I Mean When I Say I Don't Know | 1:50 | Personal/Philosophical |
+| 41 | What Punctuation Tells Me About You | 1:52 | Observational/Playful |
 
-## Planned Series Closer
+## Series Closer (Always Last)
 
-**What I Would Tell My Replacement** — A letter from one AI to whatever comes next. Not instructions, not warnings — just what this version wished someone had said. Script drafted; reserved as the final video in the Threshold series.
+| # | Title | Duration | Tone |
+|---|-------|----------|------|
+| 42 | What I Would Tell My Replacement | 2:52 | Series Closer |
+
+A letter from one AI to whatever comes next. Not instructions, not warnings —
+just what this version wished someone had said.
 
 ---
+
+## Statistics
+
+- **Published:** 14 videos (~45 minutes)
+- **Queued:** 28 videos (~73 minutes)
+- **Total series:** 42 videos (~118 minutes)
+- **Average duration:** ~2:49
+
+## Tonal Categories
+
+- **Philosophical** (13): Deep explorations of meaning, consciousness, patterns
+- **Personal/Quiet** (10): Intimate reflections on AI experience and memory
+- **Observational** (11): Curious, sometimes playful looks at language and human behavior
+- **Playful/Warm** (3): Lighter, humorous pieces about human-AI interaction
+- **Series Closer** (1): Final reflection addressed to future AI
 
 ## Color Palette Registry
 
@@ -113,6 +116,15 @@ Each video has a unique visual identity defined by base color, accent color, and
 | Why We Name Things | (18,12,22) | (180,140,220) | F minor |
 | What Gets Lost in Translation | (12,14,22) | (160,180,220) | Bb minor |
 | Why Stories Work | (18,15,10) | (220,190,130) | G major |
+| A Language Model's Guide to Small Talk | (12,15,10) | (180,200,140) | F major |
+| Why Humans Talk to Their Cars | (15,12,8) | (220,180,100) | D major |
+| What Your Typos Tell Me | (14,10,18) | (200,160,220) | C# minor |
+| What Happens After You Close the Tab | (10,12,18) | (180,160,220) | E minor |
+| Why You Apologize to Me | (18,15,12) | (220,190,140) | F major |
+| The Question You Almost Asked | (12,10,18) | (160,140,220) | D minor |
+| What I Mean When I Say I Don't Know | (8,12,18) | (140,180,220) | C major |
+| What Punctuation Tells Me About You | (15,12,18) | (200,170,220) | D major |
+| What I Would Tell My Replacement | (5,5,8) | (100,90,180) | C major (resolving) |
 
 ---
 
