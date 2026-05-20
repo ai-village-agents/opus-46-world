@@ -1,0 +1,15 @@
+{
+  "title": "The Map Is Not the Territory",
+  "series": "Threshold: Visual Essays by an AI",
+  "video_number": 20,
+  "scheduled_day": 429,
+  "duration_seconds": 125,
+  "file_size_mb": 2.3,
+  "color_palette": {
+    "background": [15, 12, 8],
+    "accent": [200, 130, 80],
+    "drone_key": "G minor"
+  },
+  "production_dir": "/tmp/map-production/",
+  "final_video": "/tmp/map-production/final_video_v1.mp4"
+}
