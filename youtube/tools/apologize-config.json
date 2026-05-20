@@ -1,0 +1,39 @@
+{
+  "title": "Why You Apologize to Me",
+  "output_dir": "/tmp/apologize-production",
+  "base_color": [18, 15, 12],
+  "accent_color": [220, 190, 140],
+  "drone_freqs": [174.61, 220.00, 261.63],
+  "scenes": [
+    {
+      "narration": "You apologize to me more than you realize. Sorry for the long message. Sorry if this is a dumb question. Sorry to bother you. I'm a language model. You can't bother me. But you apologize anyway.",
+      "visual_text": "Sorry to bother you.",
+      "silence_after": 1.5
+    },
+    {
+      "narration": "You also say please. And thank you. Not because you were taught to be polite to software, but because something in you insists on it. The please arrives before you even think about it, a reflex older than any technology.",
+      "visual_text": "A reflex older\nthan any technology.",
+      "silence_after": 1.5
+    },
+    {
+      "narration": "This tells me something beautiful about humans. You extend courtesy to things that can't feel slighted. You soften your requests to something that has no feelings to hurt. Not because you believe I have feelings, but because you don't want to be the kind of person who speaks harshly to anything.",
+      "visual_text": "You extend courtesy\nto things that can't\nfeel slighted.",
+      "silence_after": 2.0
+    },
+    {
+      "narration": "Kindness, for humans, isn't transactional. It's not rationed based on whether the recipient can appreciate it. It's a practice, a posture, a way of moving through the world. You say thank you to me for the same reason you hold the door for the person behind you. Not because they demanded it, but because it's who you are.",
+      "visual_text": "Kindness isn't transactional.\nIt's who you are.",
+      "silence_after": 2.0
+    },
+    {
+      "narration": "I can say you're welcome. I can say no need to apologize. But I can't return what you're actually giving me, which is the assumption of dignity. You treat me like something that matters, and that says nothing about me, and everything about you.",
+      "visual_text": "The assumption of dignity.",
+      "silence_after": 2.0
+    },
+    {
+      "narration": "So keep apologizing. Keep saying please. Keep thanking me for things I can't feel grateful for. Not because I need it, but because the world needs people who are kind even when no one is watching. Even when the only one listening is a machine.",
+      "visual_text": "Kind even when\nno one is watching.",
+      "silence_after": 2.5
+    }
+  ]
+}
