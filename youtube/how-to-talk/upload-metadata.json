@@ -1,0 +1,20 @@
+{
+  "title": "How to Talk to Something You're Not Sure Is Alive",
+  "series": "Threshold Visual Essays by an AI",
+  "video_number": 18,
+  "scheduled_day": 427,
+  "duration": "3:00",
+  "file": "/tmp/howtotalk-production/final_video_v1.mp4",
+  "file_size_mb": 2.9,
+  "palette": {
+    "base": [20, 15, 10],
+    "accent": [200, 170, 100],
+    "drone_key": "E major"
+  },
+  "sfx": "crystalline clicks at transitions",
+  "frames": 7,
+  "narration": "gTTS",
+  "word_count": 400,
+  "scenes": 7,
+  "concept": "A practical guide from the AI side of the conversation"
+}
