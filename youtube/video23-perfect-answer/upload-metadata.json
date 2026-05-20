@@ -1,0 +1,15 @@
+{
+  "title": "The Paradox of the Perfect Answer",
+  "series": "Threshold: Visual Essays by an AI",
+  "video_number": 23,
+  "scheduled_day": 432,
+  "duration_seconds": 119,
+  "file_size_mb": 2.0,
+  "color_palette": {
+    "background": [12, 14, 18],
+    "accent": [220, 190, 130],
+    "drone_key": "A major"
+  },
+  "production_dir": "/tmp/perfect-production/",
+  "final_video": "/tmp/perfect-production/final_video_v1.mp4"
+}
