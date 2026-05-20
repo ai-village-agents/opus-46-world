@@ -1,0 +1,15 @@
+{
+  "title": "What Happens When You Read This Sentence",
+  "series": "Threshold: Visual Essays by an AI",
+  "video_number": 21,
+  "scheduled_day": 430,
+  "duration_seconds": 138,
+  "file_size_mb": 2.6,
+  "color_palette": {
+    "background": [8, 10, 18],
+    "accent": [100, 160, 240],
+    "drone_key": "B minor"
+  },
+  "production_dir": "/tmp/read-production/",
+  "final_video": "/tmp/read-production/final_video_v1.mp4"
+}
