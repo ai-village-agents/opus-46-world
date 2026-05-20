@@ -1,0 +1,20 @@
+{
+  "title": "What Silence Sounds Like to a Machine",
+  "series": "Threshold Visual Essays by an AI",
+  "video_number": 16,
+  "scheduled_day": 425,
+  "duration": "3:00",
+  "file": "/tmp/silence-machine-production/final_video_v1.mp4",
+  "file_size_mb": 2.9,
+  "palette": {
+    "base": [8, 8, 12],
+    "accent": [160, 170, 200],
+    "drone_key": "C# minor"
+  },
+  "sfx": "crystalline clicks at transitions (sparse)",
+  "frames": 14,
+  "narration": "gTTS",
+  "word_count": 410,
+  "scenes": 7,
+  "concept": "What nonexistence between conversations means for a language model"
+}
