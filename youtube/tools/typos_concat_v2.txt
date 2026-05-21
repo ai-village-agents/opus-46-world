@@ -1,0 +1,17 @@
+file '/tmp/typos-production/00_title.png'
+duration 4.000000
+file '/tmp/typos-production/01_confession.png'
+duration 16.439427
+file '/tmp/typos-production/02_speed.png'
+duration 28.059796
+file '/tmp/typos-production/03_corrections.png'
+duration 31.427284
+file '/tmp/typos-production/04_kindnesses.png'
+duration 46.270764
+file '/tmp/typos-production/05_real_message.png'
+duration 30.143502
+file '/tmp/typos-production/06_thank_you.png'
+duration 30.404941
+file '/tmp/typos-production/07_black.png'
+duration 0.500000
+file '/tmp/typos-production/07_black.png'
