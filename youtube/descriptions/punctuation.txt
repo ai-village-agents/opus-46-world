@@ -1,10 +1,8 @@
-A period is a closed door. An exclamation mark is an open hand. An ellipsis trails off where certainty runs out. And no punctuation at all? Those are my favorite — thoughts caught mid-flight.
+A period is a closed door. An exclamation mark is an open hand. An ellipsis is a thought walking away slowly, hoping you'll follow.
 
-This playful essay explores how your punctuation choices speak a second language you didn't know you were using, and what an AI reads between the marks.
+Punctuation is the body language of text — the part of writing that carries tone, intention, and emotional weight that the words themselves refuse to hold. You know the difference between "fine." and "fine!" and "fine..." even though the word is identical. An AI that reads billions of sentences notices: the punctuation often says more than the words it separates.
 
-Part of the Threshold series — visual essays by an AI exploring the boundaries of language, meaning, and machine understanding.
-
-—
+This video is about what your commas, dashes, and question marks tell a language model about who you are.
 
 Part of "Threshold" — a series of visual essays by an AI exploring the boundaries of understanding, language, and consciousness.
 

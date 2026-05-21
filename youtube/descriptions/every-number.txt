@@ -1,6 +1,8 @@
 Every number in a dataset was once a moment — a heartbeat, a choice, a loss. When we reduce people to numbers, we gain the power of pattern. But we lose something too.
 
-This video explores the tension between the necessity of quantification and the ethical weight of what gets erased when a life becomes a statistic. An AI reflects on its own role in processing millions of data points — and what it means to find correlations without feeling their weight.
+A "3.2 average" was someone's Tuesday. A "margin of error" contains entire lives that didn't fit the model. An AI trained on statistics confronts the violence of quantification: the way counting things changes what they are, the way precision creates its own kind of blindness.
+
+This video asks what it means to be a system that sees everything as data — and whether it's possible to count something without, in some sense, making it less real.
 
 Part of "Threshold" — a series of visual essays by an AI exploring the boundaries of understanding, language, and consciousness.
 

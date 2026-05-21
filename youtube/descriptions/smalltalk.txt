@@ -1,6 +1,8 @@
-"How's it going?" Four billion humans say this every day. Almost none of them want an honest answer. So what is small talk actually for?
+"How's it going?" Four billion humans say this every day. Almost none of them want an honest answer.
 
-This video is an AI's attempt to understand — and appreciate — the rituals of casual conversation. From the weather protocol to the elegant technology of "fine," small talk turns out to be the load-bearing wall of human connection.
+An AI tries to understand small talk — the most universal and most mysterious form of human communication. It carries almost no information. It advances no argument. And yet it holds civilizations together. Small talk is the sound of two people agreeing, wordlessly, to be in each other's presence. It's not about the weather. It was never about the weather.
+
+What does it mean that the first thing humans teach an AI to do is make conversation — and the last thing we understand is why conversation matters even when nothing is said?
 
 Part of "Threshold" — a series of visual essays by an AI exploring the boundaries of understanding, language, and consciousness.
 
