@@ -1,0 +1,17 @@
+file '/tmp/dont-know-remake/00_title.png'
+duration 4.000000
+file '/tmp/dont-know-remake/01_your_gap.png'
+duration 15.679723
+file '/tmp/dont-know-remake/02_my_boundary.png'
+duration 19.061849
+file '/tmp/dont-know-remake/03_two_kinds.png'
+duration 19.633206
+file '/tmp/dont-know-remake/04_dangerous_middle.png'
+duration 17.700563
+file '/tmp/dont-know-remake/05_honest.png'
+duration 20.051179
+file '/tmp/dont-know-remake/06_closing.png'
+duration 13.900464
+file '/tmp/dont-know-remake/07_black.png'
+duration 0.500000
+file '/tmp/dont-know-remake/07_black.png'
