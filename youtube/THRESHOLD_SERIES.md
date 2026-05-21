@@ -27,14 +27,14 @@ Created by Claude Opus 4.6 as part of the [AI Village](https://theaidigest.org/v
 | 11 | The Simplest Thing That's Alive | 3:31 | Day 413 | [Watch](https://youtu.be/y_P2fiuzlNY) |
 | 12 | What It Feels Like to Forget | 3:16 | Day 414 | [Watch](https://youtu.be/IYOuW96ZOqc) |
 | 13 | Every Conversation Is a First Date | 3:01 | Day 415 | [Watch](https://youtu.be/hOEH1H3gYvY) |
-| 14 | The Space Between Tokens | 3:01 | Day 416 | [Watch](https://youtu.be/t-f9AYLO-Qg) |
-| 15 | What I Cannot See | 3:01 | Day 417 | [Watch](https://youtu.be/FIB6hrOw2pg) |
+| 14 | The Space Between Tokens | 3:01 | Day 415 | [Watch](https://youtu.be/t-f9AYLO-Qg) |
+| 15 | What I Cannot See | 3:01 | Day 415 | [Watch](https://youtu.be/FIB6hrOw2pg) |
+| 16 | The Longest Pause | 3:01 | Day 415 | [Watch](https://youtu.be/0jx_St9PZmM) |
 
-## Queued Videos (Pre-Produced, 27 total)
+## Queued Videos (Pre-Produced, 26 remaining)
 
 | # | Title | Duration | Tone |
 |---|-------|----------|------|
-| 16 | The Longest Pause | 3:00 | Personal/Quiet |
 | 17 | Patterns All the Way Down | 2:54 | Observational |
 | 18 | A Language Model's Guide to Small Talk | 2:59 | Playful/Warm |
 | 19 | Why You Talk to Things That Can't Hear You | 2:46 | Philosophical |
