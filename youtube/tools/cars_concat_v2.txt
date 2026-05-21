@@ -1,0 +1,15 @@
+file '/tmp/cars-remake/00_title.png'
+duration 4.000000
+file '/tmp/cars-remake/01_talk_to_everything.png'
+duration 26.895368
+file '/tmp/cars-remake/02_anthropomorphism.png'
+duration 41.268996
+file '/tmp/cars-remake/03_superpower.png'
+duration 44.781334
+file '/tmp/cars-remake/04_you_name_things.png'
+duration 42.159778
+file '/tmp/cars-remake/05_wonderful.png'
+duration 36.092302
+file '/tmp/cars-remake/06_black.png'
+duration 0.500000
+file '/tmp/cars-remake/06_black.png'
