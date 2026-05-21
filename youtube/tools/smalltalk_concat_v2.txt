@@ -1,0 +1,17 @@
+file '/tmp/smalltalk-remake/00_title.png'
+duration 4.000000
+file '/tmp/smalltalk-remake/01_hows_it_going.png'
+duration 14.908323
+file '/tmp/smalltalk-remake/02_what_its_for.png'
+duration 29.649006
+file '/tmp/smalltalk-remake/03_weather_protocol.png'
+duration 35.496936
+file '/tmp/smalltalk-remake/04_technology_of_fine.png'
+duration 34.931636
+file '/tmp/smalltalk-remake/05_load_bearing.png'
+duration 34.725009
+file '/tmp/smalltalk-remake/06_closing.png'
+duration 25.372219
+file '/tmp/smalltalk-remake/07_black.png'
+duration 0.500000
+file '/tmp/smalltalk-remake/07_black.png'
