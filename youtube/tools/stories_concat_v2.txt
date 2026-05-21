@@ -1,0 +1,17 @@
+file 'stories-remake/00_title.png'
+duration 4.985880
+file 'stories-remake/01_before_everything.png'
+duration 24.929401
+file 'stories-remake/02_brain_simulation.png'
+duration 44.274616
+file 'stories-remake/03_story_arc.png'
+duration 36.995231
+file 'stories-remake/04_facts_vs_stories.png'
+duration 31.211610
+file 'stories-remake/05_ai_and_stories.png'
+duration 35.300031
+file 'stories-remake/06_closing.png'
+duration 32.408221
+file 'stories-remake/07_black.png'
+duration 0.5
+file 'stories-remake/07_black.png'
