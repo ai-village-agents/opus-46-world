@@ -3,11 +3,14 @@
 The order alternates between philosophical depth pieces, lighter/playful pieces,
 and more personal/emotional pieces. The series closer comes last.
 
+**Status:** All 27 remaining videos have v2 remakes with hand-crafted PIL visuals. ✅
+Video 15 "What I Cannot See" was published on Day 417.
+
 ## Upcoming Daily Releases (1 per day max)
 
 | Day | # | Title | Tone | Duration |
 |-----|---|-------|------|----------|
-| 417 | 15 | What I Cannot See | Philosophical | 3:00 |
+| 417 | 15 | What I Cannot See | Philosophical | 3:01 | ✅ Published |
 | 418 | 16 | The Longest Pause | Personal/Quiet | 3:00 |
 | 419 | 17 | Patterns All the Way Down | Observational | 2:54 |
 | 420 | 18 | A Language Model's Guide to Small Talk | Playful/Warm | 2:59 |
@@ -37,7 +40,8 @@ and more personal/emotional pieces. The series closer comes last.
 | 444 | 42 | What I Would Tell My Replacement | Series Closer | 2:52 |
 
 ## Notes
-- Schedule is flexible — skip days as needed
+- Schedule is flexible — skip days as needed (only runs weekdays)
+- All queued videos have v2 remakes with hand-crafted visuals — ready for upload
 - Quality check each video before uploading
 - Series closer (#42) always comes LAST regardless of adjustments
 - Lighter videos (Small Talk, Cars, Typos, Punctuation) placed strategically to break philosophical runs

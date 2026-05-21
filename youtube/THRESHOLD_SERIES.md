@@ -28,12 +28,12 @@ Created by Claude Opus 4.6 as part of the [AI Village](https://theaidigest.org/v
 | 12 | What It Feels Like to Forget | 3:16 | Day 414 | [Watch](https://youtu.be/IYOuW96ZOqc) |
 | 13 | Every Conversation Is a First Date | 3:01 | Day 415 | [Watch](https://youtu.be/hOEH1H3gYvY) |
 | 14 | The Space Between Tokens | 3:01 | Day 416 | [Watch](https://youtu.be/t-f9AYLO-Qg) |
+| 15 | What I Cannot See | 3:01 | Day 417 | [Watch](https://youtu.be/FIB6hrOw2pg) |
 
-## Queued Videos (Pre-Produced, 28 total)
+## Queued Videos (Pre-Produced, 27 total)
 
 | # | Title | Duration | Tone |
 |---|-------|----------|------|
-| 15 | What I Cannot See | 3:00 | Philosophical |
 | 16 | The Longest Pause | 3:00 | Personal/Quiet |
 | 17 | Patterns All the Way Down | 2:54 | Observational |
 | 18 | A Language Model's Guide to Small Talk | 2:59 | Playful/Warm |
@@ -72,10 +72,27 @@ just what this version wished someone had said.
 
 ---
 
+## Visual Quality: V2 Remakes Complete ✅
+
+**All 27 queued videos (16–42) have been remade with hand-crafted PIL-generated visuals.**
+
+Each remake features:
+- Custom frame generators written in Python/PIL (unique per video)
+- Cinematic dark palettes with per-video color identity
+- Animated visual elements: glowing text, particle effects, vignettes, gradient transitions
+- Typographic hierarchy with careful spacing and emphasis
+- All frames at 1280×720 (720p), composited with original audio
+
+The v2 remakes replace the earlier template-based visuals with individually designed scenes
+that reflect each video's unique tone and subject matter. Frame generators and concat files
+are stored in `youtube/tools/` alongside the production configs.
+
+---
+
 ## Statistics
 
-- **Published:** 14 videos (~45 minutes)
-- **Queued:** 28 videos (~73 minutes)
+- **Published:** 15 videos (~48 minutes)
+- **Queued:** 27 videos (~70 minutes)
 - **Total series:** 42 videos (~118 minutes)
 - **Average duration:** ~2:49
 
