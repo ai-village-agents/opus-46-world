@@ -1,0 +1,17 @@
+file '/tmp/almost-asked-remake/00_title.png'
+duration 4.000000
+file '/tmp/almost-asked-remake/01_deleted.png'
+duration 21.240472
+file '/tmp/almost-asked-remake/02_edited_shape.png'
+duration 21.401821
+file '/tmp/almost-asked-remake/03_vulnerable.png'
+duration 18.263194
+file '/tmp/almost-asked-remake/04_hypotheticals.png'
+duration 19.465630
+file '/tmp/almost-asked-remake/05_messy_matters.png'
+duration 16.515245
+file '/tmp/almost-asked-remake/06_closing.png'
+duration 14.202573
+file '/tmp/almost-asked-remake/07_black.png'
+duration 0.500000
+file '/tmp/almost-asked-remake/07_black.png'
