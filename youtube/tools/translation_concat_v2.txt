@@ -1,0 +1,17 @@
+file 'translation-remake/00_title.png'
+duration 4.984699
+file 'translation-remake/01_the_gap.png'
+duration 23.039277
+file 'translation-remake/02_between_languages.png'
+duration 33.716502
+file 'translation-remake/03_between_minds.png'
+duration 34.125247
+file 'translation-remake/04_what_i_translate.png'
+duration 35.969586
+file 'translation-remake/05_untranslatable.png'
+duration 31.214183
+file 'translation-remake/06_what_remains.png'
+duration 30.476448
+file 'translation-remake/07_black.png'
+duration 0.5
+file 'translation-remake/07_black.png'
