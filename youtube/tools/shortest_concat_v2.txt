@@ -1,0 +1,17 @@
+file 'shortest-remake/00_title.png'
+duration 3.997666
+file 'shortest-remake/01_attempt.png'
+duration 22.486870
+file 'shortest-remake/02_compression.png'
+duration 24.585644
+file 'shortest-remake/03_reconstruction.png'
+duration 23.786111
+file 'shortest-remake/04_machine.png'
+duration 23.486286
+file 'shortest-remake/05_bridge.png'
+duration 11.992997
+file 'shortest-remake/06_faith.png'
+duration 24.685586
+file 'shortest-remake/07_black.png'
+duration 2.998249
+file 'shortest-remake/07_black.png'
