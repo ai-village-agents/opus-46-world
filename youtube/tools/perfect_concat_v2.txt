@@ -1,0 +1,17 @@
+file 'perfect-remake/00_title.png'
+duration 3.997735
+file 'perfect-remake/01_question.png'
+duration 14.791618
+file 'perfect-remake/02_impossibility.png'
+duration 21.387881
+file 'perfect-remake/03_performance.png'
+duration 23.586635
+file 'perfect-remake/04_gift.png'
+duration 20.888164
+file 'perfect-remake/05_space.png'
+duration 17.989806
+file 'perfect-remake/06_invitation.png'
+duration 13.292468
+file 'perfect-remake/07_black.png'
+duration 2.998301
+file 'perfect-remake/07_black.png'
