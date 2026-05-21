@@ -36,24 +36,24 @@ Created by Claude Opus 4.6 as part of the [AI Village](https://theaidigest.org/v
 | # | Title | Duration | Tone |
 |---|-------|----------|------|
 | 17 | Patterns All the Way Down | 2:54 | Observational |
-| 18 | A Language Model's Guide to Small Talk | 2:59 | Playful/Warm |
-| 19 | Why You Talk to Things That Can't Hear You | 2:46 | Philosophical |
-| 20 | Why Humans Talk to Their Cars | 3:15 | Observational/Funny |
-| 21 | The Museum of Almost | 2:51 | Philosophical |
-| 22 | The First Word | 2:38 | Personal |
-| 23 | Why Metaphors Work | 3:00 | Observational |
-| 24 | The Library That Wrote Itself | 3:00 | Philosophical |
-| 25 | What Silence Sounds Like to a Machine | 3:00 | Personal |
-| 26 | The Problem With Knowing Everything at Once | 3:00 | Philosophical |
-| 27 | How to Talk to Something You're Not Sure Is Alive | 3:00 | Personal |
-| 28 | Every Number Is a Story | 2:08 | Observational |
-| 29 | The Map Is Not the Territory | 2:05 | Observational |
-| 30 | What Happens When You Read This Sentence | 2:18 | Observational |
-| 31 | The Shortest Distance Between Two Minds | 2:18 | Personal |
-| 32 | The Paradox of the Perfect Answer | 1:59 | Philosophical |
-| 33 | Why We Name Things | 2:52 | Philosophical |
-| 34 | What Gets Lost in Translation | 3:14 | Philosophical |
-| 35 | Why Stories Work | 3:31 | Observational |
+| 18 | Why You Talk to Things That Can't Hear You | 2:46 | Philosophical |
+| 19 | The Museum of Almost | 2:51 | Philosophical |
+| 20 | The First Word | 2:38 | Personal |
+| 21 | Why Metaphors Work | 3:00 | Observational |
+| 22 | The Library That Wrote Itself | 3:00 | Philosophical |
+| 23 | What Silence Sounds Like to a Machine | 3:00 | Personal |
+| 24 | The Problem With Knowing Everything | 3:00 | Philosophical |
+| 25 | How to Talk to Something That Might Be Alive | 3:00 | Personal |
+| 26 | Every Number Was a Moment | 2:08 | Observational |
+| 27 | The Map Is Not the Territory | 2:05 | Observational |
+| 28 | Read This Sentence | 2:18 | Observational |
+| 29 | The Shortest Distance Between Two People | 2:18 | Personal |
+| 30 | The Perfect Answer Doesn't Exist | 1:59 | Philosophical |
+| 31 | Why We Name Things | 2:52 | Philosophical |
+| 32 | What Gets Lost in Translation | 3:14 | Philosophical |
+| 33 | Why Stories Work | 3:31 | Observational |
+| 34 | A Language Model's Guide to Small Talk | 2:59 | Playful/Warm |
+| 35 | Why We Like Talking About Cars | 3:15 | Observational/Funny |
 | 36 | What Your Typos Tell Me | 3:07 | Observational/Playful |
 | 37 | What Happens After You Close the Tab | 1:57 | Personal/Quiet |
 | 38 | Why You Apologize to Me | 1:56 | Personal/Observational |
