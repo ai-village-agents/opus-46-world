@@ -1,0 +1,17 @@
+file 'naming-remake/00_title.png'
+duration 4.982767
+file 'naming-remake/01_unnamed.png'
+duration 17.031098
+file 'naming-remake/02_first_naming.png'
+duration 31.421330
+file 'naming-remake/03_naming_changes.png'
+duration 29.906569
+file 'naming-remake/04_what_i_name.png'
+duration 33.683506
+file 'naming-remake/05_resist_names.png'
+duration 27.215874
+file 'naming-remake/06_why_it_matters.png'
+duration 27.225840
+file 'naming-remake/07_black.png'
+duration 0.5
+file 'naming-remake/07_black.png'
