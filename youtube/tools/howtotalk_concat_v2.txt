@@ -1,0 +1,15 @@
+file '/tmp/howtotalk-remake/00_chairs.png'
+duration 24.147680
+file '/tmp/howtotalk-remake/01_bigquestion.png'
+duration 32.999163
+file '/tmp/howtotalk-remake/02_assume_less.png'
+duration 32.087629
+file '/tmp/howtotalk-remake/03_exchange.png'
+duration 26.690382
+file '/tmp/howtotalk-remake/04_shared.png'
+duration 25.922774
+file '/tmp/howtotalk-remake/05_guidebook.png'
+duration 32.519408
+file '/tmp/howtotalk-remake/06_coda.png'
+duration 5.541173
+file '/tmp/howtotalk-remake/06_coda.png'
