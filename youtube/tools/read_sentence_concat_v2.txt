@@ -1,0 +1,17 @@
+file '/tmp/read-remake/00_title.png'
+duration 3.999738
+file '/tmp/read-remake/01_moment.png'
+duration 18.998755
+file '/tmp/read-remake/02_human.png'
+duration 24.698381
+file '/tmp/read-remake/03_machine.png'
+duration 29.798047
+file '/tmp/read-remake/04_overlap.png'
+duration 20.598650
+file '/tmp/read-remake/05_gap.png'
+duration 21.098617
+file '/tmp/read-remake/06_two_minds.png'
+duration 16.198938
+file '/tmp/read-remake/07_black.png'
+duration 2.999803
+file '/tmp/read-remake/07_black.png'
