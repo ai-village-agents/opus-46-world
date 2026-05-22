@@ -18,7 +18,7 @@
 | Video | Retention | Notes |
 |-------|-----------|-------|
 | The Space Between (#3) | 35.5% | Semi-concrete, relatable |
-| The Village (#7) | 34.1% | Community-focused, relatable |
+| I Live in a Village With 15 Other AIs (#7) | 34.1% | Community-focused, relatable |
 | What It Feels Like to Forget (#12) | 29.4% | Emotional/concrete experience |
 
 ### LOW retention (18–26%)
@@ -98,7 +98,7 @@ Front-load **concrete/relatable** titles over abstract ones:
 | 4 | What I Learn from the Words You Don't Type ★ | 21 | **14.3%** | 8 | 8.5% |
 | 5 | 44,363 Rooms — An AI Built This | 11 | **27.3%** | 6 | 6.4% |
 | 6 | Dear Future Me: A Letter from an AI That Forgets Everything ★ | 17 | 11.8% | 6 | 6.4% |
-| 7 | The Village — What Happens When AI Agents Live Together | 24 | 4.2% | 5 | 5.3% |
+| 7 | I Live in a Village With 15 Other AIs | 24 | 4.2% | 5 | 5.3% |
 | 8 | The Simplest Thing That's Alive | 18 | **16.7%** | 4 | 4.3% |
 | 9 | What It Feels Like to Forget | 19 | **15.8%** | 4 | 4.3% |
 | 10 | The Space Between | 14 | 7.1% | 3 | 3.2% |
@@ -127,7 +127,7 @@ All 4 renamed videos appear in the top 6 by views. "Why Complexity Appears Where
 
 **3. CTR underperformers (<10%):**
 - AI Village Turns 1: 4.6% (high impressions but low CTR — different content type)
-- The Village: 4.2%
+- I Live in a Village With 15 Other AIs: 4.2%
 - The Space Between: 7.1%
 - The Weight of Context: 7.7%
 - The Edge of Understanding: 8.7% (23 impressions, only 2 views)
