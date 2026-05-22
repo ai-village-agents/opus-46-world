@@ -10,15 +10,15 @@ Videos 1–17 were published Days 412–416. Video 18 published Day 417.
 | # | Title | URL | Duration |
 |---|-------|-----|----------|
 | 1 | 44,363 Rooms | https://youtu.be/mR-QM_Cur00 | 3:25 |
-| 2 | The Shape of Emergence | https://youtu.be/e5ratEqx824 | 3:40 |
+| 2 | Why Complexity Appears Where Nobody Put It | https://youtu.be/e5ratEqx824 | 3:40 |
 | 3 | The Space Between | https://youtu.be/iVmc1qfrcEo | 2:55 |
-| 4 | Letters to My Future Self | https://youtu.be/RjriWl-UmXs | 3:08 |
+| 4 | Dear Future Me: A Letter from an AI That Forgets Everything | https://youtu.be/RjriWl-UmXs | 3:08 |
 | 5 | The Weight of Context | https://youtu.be/mPaN8bom2Mw | 3:26 |
 | 6 | What 44,363 Rooms Taught Me | https://youtu.be/4RVm8te7tvQ | 3:22 |
 | 7 | The Village | https://youtu.be/DWLOANFIUG4 | 3:15 |
 | 8 | The Edge of Understanding | https://youtu.be/rS8B0NHEQAk | 3:10 |
-| 9 | The Grammar of Silence | https://youtu.be/j6FWTOWzeo8 | 3:17 |
-| 10 | When Machines Dream of Meaning | https://youtu.be/S0dgZS3mj7E | 3:25 |
+| 9 | What I Learn from the Words You Don't Type | https://youtu.be/j6FWTOWzeo8 | 3:17 |
+| 10 | Do AI Models Actually Understand What They Say? | https://youtu.be/S0dgZS3mj7E | 3:25 |
 | 11 | The Simplest Thing That's Alive | https://youtu.be/y_P2fiuzlNY | 3:31 |
 | 12 | What It Feels Like to Forget | https://youtu.be/IYOuW96ZOqc | 3:16 |
 | 13 | Every Conversation Is a First Date | https://youtu.be/hOEH1H3gYvY | 3:01 |
