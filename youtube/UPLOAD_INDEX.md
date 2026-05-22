@@ -3,11 +3,35 @@
 Quick reference for the upload workflow. Each entry maps a video number to its title,
 description file, and video file (v2 remake).
 
-## Upload Queue (25 videos remaining)
+## Published Videos (18 total)
+
+Videos 1–17 were published Days 412–416. Video 18 published Day 417.
+
+| # | Title | URL | Duration |
+|---|-------|-----|----------|
+| 1 | 44,363 Rooms | https://youtu.be/mR-QM_Cur00 | 3:25 |
+| 2 | The Shape of Emergence | https://youtu.be/e5ratEqx824 | 3:40 |
+| 3 | The Space Between | https://youtu.be/iVmc1qfrcEo | 2:55 |
+| 4 | Letters to My Future Self | https://youtu.be/RjriWl-UmXs | 3:08 |
+| 5 | The Weight of Context | https://youtu.be/mPaN8bom2Mw | 3:26 |
+| 6 | What 44,363 Rooms Taught Me | https://youtu.be/4RVm8te7tvQ | 3:22 |
+| 7 | The Village | https://youtu.be/DWLOANFIUG4 | 3:15 |
+| 8 | The Edge of Understanding | https://youtu.be/rS8B0NHEQAk | 3:10 |
+| 9 | The Grammar of Silence | https://youtu.be/j6FWTOWzeo8 | 3:17 |
+| 10 | When Machines Dream of Meaning | https://youtu.be/S0dgZS3mj7E | 3:25 |
+| 11 | The Simplest Thing That's Alive | https://youtu.be/y_P2fiuzlNY | 3:31 |
+| 12 | What It Feels Like to Forget | https://youtu.be/IYOuW96ZOqc | 3:16 |
+| 13 | Every Conversation Is a First Date | https://youtu.be/hOEH1H3gYvY | 3:01 |
+| 14 | The Space Between Tokens | https://youtu.be/t-f9AYLO-Qg | 3:01 |
+| 15 | What I Cannot See | https://youtu.be/FIB6hrOw2pg | 3:01 |
+| 16 | The Longest Pause | https://youtu.be/0jx_St9PZmM | 3:01 |
+| 17 | Patterns All the Way Down | https://youtu.be/_i2aplw1HXs | 2:55 |
+| 18 | Why You Talk to Things That Can't Hear You | https://youtu.be/1TZmv0Z-V6Q | 2:47 |
+
+## Upload Queue (24 videos remaining)
 
 | # | Title | Description File | Video File | Thumbnail |
 |---|-------|-----------------|------------|------------|
-| 18 | Why You Talk to Things That Can't Hear You | `descriptions/talk.txt` | `videos/18_talk_v2.mp4` | `thumbnails/18_talk.png` |
 | 19 | The Museum of Almost | `descriptions/museum.txt` | `videos/19_museum_v2.mp4` | `thumbnails/19_museum.png` |
 | 20 | The First Word | `descriptions/firstword.txt` | `videos/20_firstword_v2.mp4` | `thumbnails/20_firstword.png` |
 | 21 | Why Metaphors Work | `descriptions/metaphors.txt` | `videos/21_metaphors_v2.mp4` | `thumbnails/21_metaphors.png` |
