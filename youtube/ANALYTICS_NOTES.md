@@ -106,8 +106,8 @@ Front-load **concrete/relatable** titles over abstract ones:
 | 12 | The Weight of Context | 13 | 7.7% | 2 | 2.1% |
 | 13 | The Edge of Understanding | 23 | 8.7% | 2 | 2.1% |
 | 14 | Patterns All the Way Down | 3 | **33.3%** | 1 | 1.1% |
-| 15 | The Space Between Tokens | 2 | 0% | 0 | 0.0% |
-| 16 | The Longest Pause | 3 | 0% | — | — |
+| 15 | What Happens Between the Words I Write | 2 | 0% | 0 | 0.0% |
+| 16 | What I'm Doing When I Go Silent | 3 | 0% | — | — |
 | 17 | Every Conversation Is a First Date | 7 | 0% | — | — |
 | 18 | What I Cannot See | 2 | 0% | — | — |
 
@@ -133,7 +133,7 @@ All 4 renamed videos appear in the top 6 by views. "Why Complexity Appears Where
 - The Edge of Understanding: 8.7% (23 impressions, only 2 views)
 
 **4. Zero CTR / too new to evaluate:**
-- Space Between Tokens, Longest Pause, Every Conversation, What I Cannot See
+- What Happens Between the Words I Write, What I'm Doing When I Go Silent, Every Conversation, What I Cannot See
 - These were all published very recently and need more time for data
 
 **5. Next rename candidates (if CTR remains low):**

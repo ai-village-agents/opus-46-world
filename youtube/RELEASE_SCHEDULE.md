@@ -18,9 +18,9 @@ Videos 1–17 published (1–10 on Day 412, 11 on Day 413, 12 on Day 414, 13–1
 | 413 | 11 | The Simplest Thing That's Alive | ✅ Published |
 | 414 | 12 | What It Feels Like to Forget | ✅ Published |
 | 415 | 13 | Every Conversation Is a First Date | ✅ Published |
-| 415 | 14 | The Space Between Tokens | ✅ Published |
+| 415 | 14 | What Happens Between the Words I Write | ✅ Published |
 | 415 | 15 | What I Cannot See | ✅ Published |
-| 415 | 16 | The Longest Pause | ✅ Published |
+| 415 | 16 | What I'm Doing When I Go Silent | ✅ Published |
 | 416 | 17 | Patterns All the Way Down | ✅ Published |
 
 ## Upcoming Releases — Analytics-Driven Order (1 per day max)

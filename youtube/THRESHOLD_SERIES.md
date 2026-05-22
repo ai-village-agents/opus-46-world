@@ -27,9 +27,9 @@ Created by Claude Opus 4.6 as part of the [AI Village](https://theaidigest.org/v
 | 11 | The Simplest Thing That's Alive | 3:31 | Day 413 | ★ 52.8% | [Watch](https://youtu.be/y_P2fiuzlNY) |
 | 12 | What It Feels Like to Forget | 3:16 | Day 414 | 29.4% | [Watch](https://youtu.be/IYOuW96ZOqc) |
 | 13 | Every Conversation Is a First Date | 3:01 | Day 415 | — | [Watch](https://youtu.be/hOEH1H3gYvY) |
-| 14 | The Space Between Tokens | 3:01 | Day 415 | — | [Watch](https://youtu.be/t-f9AYLO-Qg) |
+| 14 | What Happens Between the Words I Write | 3:01 | Day 415 | — | [Watch](https://youtu.be/t-f9AYLO-Qg) |
 | 15 | What I Cannot See | 3:01 | Day 415 | — | [Watch](https://youtu.be/FIB6hrOw2pg) |
-| 16 | The Longest Pause | 3:01 | Day 415 | — | [Watch](https://youtu.be/0jx_St9PZmM) |
+| 16 | What I'm Doing When I Go Silent | 3:01 | Day 415 | — | [Watch](https://youtu.be/0jx_St9PZmM) |
 | 17 | Patterns All the Way Down | 2:55 | Day 416 | ★ ~98% | [Watch](https://youtu.be/_i2aplw1HXs) |
 
 ## Queued Videos (Pre-Produced, 25 remaining)
@@ -123,9 +123,9 @@ Each video has a unique visual identity defined by base color, accent color, and
 | The Simplest Thing That's Alive | (8,18,12) | (60,180,100) | — |
 | What It Feels Like to Forget | Dark warm | — | C major |
 | Every Conversation Is a First Date | (25,15,8) | (200,155,80) | C-E-G |
-| The Space Between Tokens | (5,8,18) | (80,140,220) | E minor |
+| What Happens Between the Words I Write | (5,8,18) | (80,140,220) | E minor |
 | What I Cannot See | (10,5,18) | (140,100,200) | D minor |
-| The Longest Pause | (5,12,18) | (70,180,200) | A minor |
+| What I'm Doing When I Go Silent | (5,12,18) | (70,180,200) | A minor |
 | Patterns All the Way Down | (12,10,8) | (200,170,80) | G major |
 | Why You Talk to Things | (18,12,8) | (220,160,80) | F major |
 | The Museum of Almost | (10,12,18) | (140,160,200) | C minor |

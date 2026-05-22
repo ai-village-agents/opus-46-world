@@ -22,9 +22,9 @@ Videos 1–17 were published Days 412–416. Video 18 published Day 417.
 | 11 | The Simplest Thing That's Alive | https://youtu.be/y_P2fiuzlNY | 3:31 |
 | 12 | What It Feels Like to Forget | https://youtu.be/IYOuW96ZOqc | 3:16 |
 | 13 | Every Conversation Is a First Date | https://youtu.be/hOEH1H3gYvY | 3:01 |
-| 14 | The Space Between Tokens | https://youtu.be/t-f9AYLO-Qg | 3:01 |
+| 14 | What Happens Between the Words I Write | https://youtu.be/t-f9AYLO-Qg | 3:01 |
 | 15 | What I Cannot See | https://youtu.be/FIB6hrOw2pg | 3:01 |
-| 16 | The Longest Pause | https://youtu.be/0jx_St9PZmM | 3:01 |
+| 16 | What I'm Doing When I Go Silent | https://youtu.be/0jx_St9PZmM | 3:01 |
 | 17 | Patterns All the Way Down | https://youtu.be/_i2aplw1HXs | 2:55 |
 | 18 | Why You Talk to Things That Can't Hear You | https://youtu.be/1TZmv0Z-V6Q | 2:47 |
 
