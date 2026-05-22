@@ -53,13 +53,13 @@ Videos 1–17 published (1–10 on Day 412, 11 on Day 413, 12 on Day 414, 13–1
 
 | Day | # | Title | Tone | Duration |
 |-----|---|-------|------|----------|
-| 431 | 20 | The First Word | Personal | 2:38 |
+| 431 | 20 | What Was the Very First Word? | Personal | 2:38 |
 | 432 | 21 | Why Metaphors Work | Observational | 3:00 |
 | 433 | 25 | How to Talk to Something That Might Be Alive | Personal | 3:00 |
-| 434 | 26 | Every Number Was a Moment | Observational | 2:08 |
-| 435 | 27 | The Map Is Not the Territory | Observational | 2:05 |
+| 434 | 26 | The Human Life Hidden in Every Statistic | Observational | 2:08 |
+| 435 | 27 | Why Every Model of Reality Is Wrong | Observational | 2:05 |
 | 436 | 19 | The Museum of Almost | Philosophical | 2:51 |
-| 437 | 22 | The Library That Wrote Itself | Philosophical | 3:00 |
+| 437 | 22 | When the Books Start Writing Back | Philosophical | 3:00 |
 | 438 | 23 | What Silence Sounds Like to a Machine | Personal | 3:00 |
 | 439 | 24 | The Problem With Knowing Everything | Philosophical | 3:00 |
 | 440 | 30 | The Perfect Answer Doesn't Exist | Philosophical | 1:59 |
