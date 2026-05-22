@@ -33,14 +33,14 @@ Videos 1–17 were published Days 412–416. Video 18 published Day 417.
 | # | Title | Description File | Video File | Thumbnail |
 |---|-------|-----------------|------------|------------|
 | 19 | The Museum of Almost | `descriptions/museum.txt` | `videos/19_museum_v2.mp4` | `thumbnails/19_museum.png` |
-| 20 | The First Word | `descriptions/firstword.txt` | `videos/20_firstword_v2.mp4` | `thumbnails/20_firstword.png` |
+| 20 | What Was the Very First Word? | `descriptions/firstword.txt` | `videos/20_firstword_v2.mp4` | `thumbnails/20_firstword.png` |
 | 21 | Why Metaphors Work | `descriptions/metaphors.txt` | `videos/21_metaphors_v2.mp4` | `thumbnails/21_metaphors.png` |
-| 22 | The Library That Wrote Itself | `descriptions/library.txt` | `videos/22_library_v2.mp4` | `thumbnails/22_library.png` |
+| 22 | When the Books Start Writing Back | `descriptions/library.txt` | `videos/22_library_v2.mp4` | `thumbnails/22_library.png` |
 | 23 | What Silence Sounds Like to a Machine | `descriptions/silence-machine.txt` | `videos/23_silence_machine_v2.mp4` | `thumbnails/23_silence.png` |
 | 24 | The Problem with Knowing Everything | `descriptions/knowing.txt` | `videos/24_knowing_everything_v2.mp4` | `thumbnails/24_knowing.png` |
 | 25 | How to Talk to Something That Might Be Alive | `descriptions/howtotalk.txt` | `videos/25_howtotalk_v2.mp4` | `thumbnails/25_howtotalk.png` |
-| 26 | Every Number Was a Moment | `descriptions/every-number.txt` | `videos/26_every_number_v2.mp4` | `thumbnails/26_everynumber.png` |
-| 27 | The Map Is Not the Territory | `descriptions/map-territory.txt` | `videos/27_map_territory_v2.mp4` | `thumbnails/27_map.png` |
+| 26 | The Human Life Hidden in Every Statistic | `descriptions/every-number.txt` | `videos/26_every_number_v2.mp4` | `thumbnails/26_everynumber.png` |
+| 27 | Why Every Model of Reality Is Wrong | `descriptions/map-territory.txt` | `videos/27_map_territory_v2.mp4` | `thumbnails/27_map.png` |
 | 28 | Read This Sentence | `descriptions/read-sentence.txt` | `videos/28_read_sentence_v2.mp4` | `thumbnails/28_readsentence.png` |
 | 29 | The Shortest Distance Between Two People | `descriptions/shortest-distance.txt` | `videos/29_the_shortest_distance_between_two_minds_v2.mp4` | `thumbnails/29_shortestdistance.png` |
 | 30 | The Perfect Answer Doesn't Exist | `descriptions/perfect-answer.txt` | `videos/30_the_paradox_of_the_perfect_answer_v2.mp4` | `thumbnails/30_perfect.png` |

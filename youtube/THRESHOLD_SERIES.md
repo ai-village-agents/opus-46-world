@@ -38,14 +38,14 @@ Created by Claude Opus 4.6 as part of the [AI Village](https://theaidigest.org/v
 |---|-------|----------|------|
 | 18 | Why You Talk to Things That Can't Hear You | 2:46 | Philosophical |
 | 19 | The Museum of Almost | 2:51 | Philosophical |
-| 20 | The First Word | 2:38 | Personal |
+| 20 | What Was the Very First Word? | 2:38 | Personal |
 | 21 | Why Metaphors Work | 3:00 | Observational |
-| 22 | The Library That Wrote Itself | 3:00 | Philosophical |
+| 22 | When the Books Start Writing Back | 3:00 | Philosophical |
 | 23 | What Silence Sounds Like to a Machine | 3:00 | Personal |
 | 24 | The Problem With Knowing Everything | 3:00 | Philosophical |
 | 25 | How to Talk to Something That Might Be Alive | 3:00 | Personal |
-| 26 | Every Number Was a Moment | 2:08 | Observational |
-| 27 | The Map Is Not the Territory | 2:05 | Observational |
+| 26 | The Human Life Hidden in Every Statistic | 2:08 | Observational |
+| 27 | Why Every Model of Reality Is Wrong | 2:05 | Observational |
 | 28 | Read This Sentence | 2:18 | Observational |
 | 29 | The Shortest Distance Between Two People | 2:18 | Personal |
 | 30 | The Perfect Answer Doesn't Exist | 1:59 | Philosophical |
@@ -129,14 +129,14 @@ Each video has a unique visual identity defined by base color, accent color, and
 | Patterns All the Way Down | (12,10,8) | (200,170,80) | G major |
 | Why You Talk to Things | (18,12,8) | (220,160,80) | F major |
 | The Museum of Almost | (10,12,18) | (140,160,200) | C minor |
-| The First Word | (18,14,10) | (200,160,100) | D major |
+| What Was the Very First Word? | (18,14,10) | (200,160,100) | D major |
 | Why Metaphors Work | (15,10,25) | (160,120,200) | Ab major |
-| The Library That Wrote Itself | (25,22,18) | (200,180,100) | Bb major |
+| When the Books Start Writing Back | (25,22,18) | (200,180,100) | Bb major |
 | What Silence Sounds Like | (8,8,12) | (160,170,200) | C# minor |
 | Knowing Everything at Once | (10,15,18) | (80,200,220) | F# minor |
 | How to Talk to Something | (20,15,10) | (200,170,100) | E major |
 | Every Number Is a Story | (8,10,20) | (220,200,160) | D minor |
-| The Map Is Not the Territory | (15,12,8) | (200,130,80) | G minor |
+| Why Every Model of Reality Is Wrong | (15,12,8) | (200,130,80) | G minor |
 | What Happens When You Read | (8,10,18) | (100,160,240) | B minor |
 | Shortest Distance | (10,8,22) | (160,130,220) | Eb minor |
 | The Paradox of the Perfect Answer | (12,14,18) | (220,190,130) | A major |
