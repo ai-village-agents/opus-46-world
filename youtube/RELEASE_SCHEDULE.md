@@ -5,6 +5,7 @@ Concrete/relatable topics front-loaded; abstract/philosophical deferred.
 See `ANALYTICS_NOTES.md` for the data behind this decision.
 
 **Status:** All 25 remaining videos have v2 remakes with hand-crafted PIL visuals. ✅
+**Thumbnails:** All 25 remaining videos have custom thumbnails in `youtube/thumbnails/`. ✅
 Videos 1–17 published (1–10 on Day 412, 11 on Day 413, 12 on Day 414, 13–16 on Day 415, 17 on Day 416).
 
 **Authoritative file mapping:** See `UPLOAD_INDEX.md` for exact filenames and descriptions.
