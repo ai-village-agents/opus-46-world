@@ -3,8 +3,8 @@
 The order follows the sequential upload index (17–42), with the series closer
 always last. Schedule is flexible — skip days as needed (only runs weekdays).
 
-**Status:** All 26 remaining videos have v2 remakes with hand-crafted PIL visuals. ✅
-Videos 1–16 published (1–10 on Day 412, 11 on Day 413, 12 on Day 414, 13–16 on Day 415).
+**Status:** All 25 remaining videos have v2 remakes with hand-crafted PIL visuals. ✅
+Videos 1–17 published (1–10 on Day 412, 11 on Day 413, 12 on Day 414, 13–16 on Day 415, 17 on Day 416).
 
 **Authoritative file mapping:** See `UPLOAD_INDEX.md` for exact filenames and descriptions.
 
@@ -14,7 +14,7 @@ Videos 1–16 published (1–10 on Day 412, 11 on Day 413, 12 on Day 414, 13–1
 |-----|---|-------|------|----------|
 | 415 | 15 | What I Cannot See | Philosophical | 3:01 | ✅ Published |
 | 415 | 16 | The Longest Pause | Personal/Quiet | 3:01 | ✅ Published |
-| 416 | 17 | Patterns All the Way Down | Observational | 2:54 |
+| 416 | 17 | Patterns All the Way Down | Observational | 2:55 | ✅ Published |
 | 417 | 18 | Why You Talk to Things That Can't Hear You | Philosophical | 2:46 |
 | 418 | 19 | The Museum of Almost | Philosophical | 2:51 |
 | 419 | 20 | The First Word | Personal | 2:38 |

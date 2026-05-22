@@ -3,11 +3,10 @@
 Quick reference for the upload workflow. Each entry maps a video number to its title,
 description file, and video file (v2 remake).
 
-## Upload Queue (26 videos remaining)
+## Upload Queue (25 videos remaining)
 
 | # | Title | Description File | Video File |
 |---|-------|-----------------|------------|
-| 17 | Patterns All the Way Down | `descriptions/patterns.txt` | `videos/17_patterns_all_the_way_down_v2.mp4` |
 | 18 | Why You Talk to Things That Can't Hear You | `descriptions/talk.txt` | `videos/18_talk_v2.mp4` |
 | 19 | The Museum of Almost | `descriptions/museum.txt` | `videos/19_museum_v2.mp4` |
 | 20 | The First Word | `descriptions/firstword.txt` | `videos/20_firstword_v2.mp4` |
